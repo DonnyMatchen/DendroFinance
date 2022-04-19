@@ -1,5 +1,7 @@
 This application is designed for management of personal finance and small business finance data.  It is specifically geared towards trading activity, and that portion differs from GAAP in a few ways.
 
+<a href="https://github.com/DonnyMatchen/DendroFinance/releases/tag/DendroFinance">Download</a>
+
 <b>SINGLE ENTRY, DOUBLE ENTRY, AND QUADRUPLE ENTRY</b><br>
 Tracking accounts and Tax accounts are single entry.<br>
 Tracking accounts are used to track the volume of all assets that are not the main currency.  This includes other fiat currencies, stocks, cryptocurrencies, commodities, and other forms of inventory.<br>

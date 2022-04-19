@@ -1,6 +1,6 @@
 package com.donny.dendrofinance.account;
 
-import com.donny.dendrofinance.currency.Inventory;
+import com.donny.dendrofinance.currency.LInventory;
 import com.donny.dendrofinance.currency.LCurrency;
 import com.donny.dendrofinance.currency.LStock;
 import com.donny.dendrofinance.entry.TransactionEntry;
@@ -19,9 +19,10 @@ public class Exchange implements ExportableToJson {
     public final String NAME, ALT;
     public final ArrayList<String> SUPPORTED;
     public final ArrayList<JsonObject> STAKING;
+    public final boolean EXPORT;
 
-    public Exchange(JsonObject obj, Instance curInst) {
-        this(obj.getString("name").getString(), obj.getString("alt").getString(), curInst);
+    public Exchange(JsonObject obj, Instance curInst, boolean export) {
+        this(obj.getString("name").getString(), obj.getString("alt").getString(), curInst, export);
         for (JsonString string : obj.getArray("supported").getStringArray()) {
             SUPPORTED.add(string.getString());
         }
@@ -30,20 +31,21 @@ public class Exchange implements ExportableToJson {
         }
     }
 
-    public Exchange(String name, String alt, Instance curInst) {
-        this(name, alt, new ArrayList<>(), curInst);
+    public Exchange(String name, String alt, Instance curInst, boolean export) {
+        this(name, alt, new ArrayList<>(), curInst, export);
     }
 
-    public Exchange(String name, String alt, ArrayList<String> sup, Instance curInst) {
+    public Exchange(String name, String alt, ArrayList<String> sup, Instance curInst, boolean export) {
         NAME = name;
         ALT = alt;
         SUPPORTED = new ArrayList<>(sup);
         STAKING = new ArrayList<>();
+        EXPORT = export;
         curInst.LOG_HANDLER.trace(this.getClass(), "Exchange " + NAME + " Created");
     }
 
-    public Exchange(String name, String alt, ArrayList<String> sup, ArrayList<JsonObject> stak, Instance curInst) {
-        this(name, alt, sup, curInst);
+    public Exchange(String name, String alt, ArrayList<String> sup, ArrayList<JsonObject> stak, Instance curInst, boolean export) {
+        this(name, alt, sup, curInst, export);
         STAKING.addAll(stak);
     }
 
@@ -60,7 +62,7 @@ public class Exchange implements ExportableToJson {
                     if (SUPPORTED.contains("All Stock")) {
                         return true;
                     }
-                } else if (currency instanceof Inventory) {
+                } else if (currency instanceof LInventory) {
                     if (SUPPORTED.contains("All Inventory")) {
                         return true;
                     }

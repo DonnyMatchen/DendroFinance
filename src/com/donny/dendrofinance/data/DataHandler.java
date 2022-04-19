@@ -3,7 +3,7 @@ package com.donny.dendrofinance.data;
 import com.donny.dendrofinance.account.Account;
 import com.donny.dendrofinance.account.BroadAccountType;
 import com.donny.dendrofinance.account.Exchange;
-import com.donny.dendrofinance.currency.Inventory;
+import com.donny.dendrofinance.currency.LInventory;
 import com.donny.dendrofinance.currency.LCurrency;
 import com.donny.dendrofinance.currency.LStock;
 import com.donny.dendrofinance.entry.BudgetEntry;
@@ -199,7 +199,7 @@ public class DataHandler {
         HashMap<Account, BigDecimal> vals = accountsAsOf(y, m, d);
         Aggregation<LCurrency> fin = new Aggregation<>();
         for (Account a : vals.keySet()) {
-            if (a.getBroadAccountType() == BroadAccountType.TRACKING && !(a.getCurrency() instanceof LStock) && !(a.getCurrency() instanceof Inventory)) {
+            if (a.getBroadAccountType() == BroadAccountType.TRACKING && !(a.getCurrency() instanceof LStock) && !(a.getCurrency() instanceof LInventory)) {
                 fin.add(a.getCurrency(), vals.get(a));
             }
         }
@@ -690,7 +690,7 @@ public class DataHandler {
             String acc = "Crypto";
             if (c instanceof LStock) {
                 acc = "Stock";
-            } else if (c instanceof Inventory) {
+            } else if (c instanceof LInventory) {
                 acc = "Held_Inventory";
             } else if (c.isFiat()) {
                 acc = "Other_Cash";
@@ -753,7 +753,7 @@ public class DataHandler {
             String acc = "Crypto";
             if (c instanceof LStock) {
                 acc = "Stock";
-            } else if (c instanceof Inventory) {
+            } else if (c instanceof LInventory) {
                 acc = "Held_Inventory";
             } else if (c.isFiat()) {
                 acc = "Other_Cash";
@@ -817,7 +817,7 @@ public class DataHandler {
             String acc = "Crypto";
             if (c instanceof LStock) {
                 acc = "Stock";
-            } else if (c instanceof Inventory) {
+            } else if (c instanceof LInventory) {
                 acc = "Held_Inventory";
             } else if (c.isFiat()) {
                 acc = "Other_Cash";

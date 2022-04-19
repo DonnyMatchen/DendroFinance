@@ -309,7 +309,7 @@ public class LCurrency implements ExportableToJson {
         } else {
             if (this instanceof LStock) {
                 return "S!" + getTicker();
-            } else if (this instanceof Inventory) {
+            } else if (this instanceof LInventory) {
                 return "I!" + getTicker();
             } else {
                 return "C!" + getTicker();

@@ -1,6 +1,6 @@
 package com.donny.dendrofinance.data.backingtable;
 
-import com.donny.dendrofinance.currency.Inventory;
+import com.donny.dendrofinance.currency.LInventory;
 import com.donny.dendrofinance.gui.menu.data.backing.BackingTableGui;
 import com.donny.dendrofinance.gui.menu.data.backing.edit.BackingEditGui;
 import com.donny.dendrofinance.gui.menu.data.backing.edit.InventoryEditGui;
@@ -13,20 +13,20 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Comparator;
 
-public class InventoryBTC extends BackingTableCore<Inventory> {
+public class InventoryBTC extends BackingTableCore<LInventory> {
     public InventoryBTC(Instance curInst) {
         super(curInst, true);
     }
 
     @Override
-    public BackingEditGui<Inventory> getEditDialog(BackingTableGui<Inventory> caller, int index) {
+    public BackingEditGui<LInventory> getEditDialog(BackingTableGui<LInventory> caller, int index) {
         return new InventoryEditGui(caller, this, index, CURRENT_INSTANCE);
     }
 
     @Override
     public void load(JsonArray array) {
         for (JsonObject obj : array.getObjectArray()) {
-            TABLE.add(new Inventory(obj, CURRENT_INSTANCE));
+            TABLE.add(new LInventory(obj, CURRENT_INSTANCE));
         }
     }
 
@@ -40,7 +40,7 @@ public class InventoryBTC extends BackingTableCore<Inventory> {
     @Override
     public ArrayList<String[]> getContents() {
         ArrayList<String[]> out = new ArrayList<>();
-        for (Inventory inv : TABLE) {
+        for (LInventory inv : TABLE) {
             out.add(new String[]{
                     inv.getName(), inv.getTicker(), inv.encode(BigDecimal.ZERO), inv.inAccount() ? "X" : "", inv.inUse() ? "X" : ""
             });
@@ -55,7 +55,7 @@ public class InventoryBTC extends BackingTableCore<Inventory> {
 
     @Override
     public int getIndex(String identifier) {
-        for (Inventory inv : TABLE) {
+        for (LInventory inv : TABLE) {
             if (inv.toString().equalsIgnoreCase(identifier)
                     || inv.getName().equalsIgnoreCase(identifier)
                     || inv.getTicker().equalsIgnoreCase(identifier)) {
@@ -82,14 +82,14 @@ public class InventoryBTC extends BackingTableCore<Inventory> {
 
     @Override
     public void sort() {
-        TABLE.sort(Comparator.comparing(Inventory::toString));
+        TABLE.sort(Comparator.comparing(LInventory::toString));
         changed = true;
     }
 
     @Override
     public JsonArray export() {
         JsonArray out = new JsonArray();
-        for (Inventory inv : TABLE) {
+        for (LInventory inv : TABLE) {
             try {
                 out.ARRAY.add(inv.export());
             } catch (JsonFormattingException ex) {

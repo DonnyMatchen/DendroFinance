@@ -25,7 +25,7 @@ public class ExchangeBTC extends BackingTableCore<Exchange> {
     @Override
     public void load(JsonArray array) {
         for (JsonObject obj : array.getObjectArray()) {
-            TABLE.add(new Exchange(obj, CURRENT_INSTANCE));
+            TABLE.add(new Exchange(obj, CURRENT_INSTANCE, true));
         }
     }
 
@@ -62,17 +62,17 @@ public class ExchangeBTC extends BackingTableCore<Exchange> {
 
     @Override
     public boolean canMove(int index) {
-        return index > 1;
+        return canEdit(index);
     }
 
     @Override
     public boolean canEdit(int index) {
-        return index > 1;
+        return TABLE.get(index).EXPORT;
     }
 
     @Override
     public boolean canRemove(int index) {
-        return index > 1 && !TABLE.get(index).inUse(CURRENT_INSTANCE);
+        return canEdit(index) && !TABLE.get(index).inUse(CURRENT_INSTANCE);
     }
 
     @Override

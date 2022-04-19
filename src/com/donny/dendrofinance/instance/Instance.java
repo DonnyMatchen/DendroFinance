@@ -5,7 +5,7 @@ import com.donny.dendrofinance.account.Account;
 import com.donny.dendrofinance.account.AccountType;
 import com.donny.dendrofinance.account.BroadAccountType;
 import com.donny.dendrofinance.account.Exchange;
-import com.donny.dendrofinance.currency.Inventory;
+import com.donny.dendrofinance.currency.LInventory;
 import com.donny.dendrofinance.currency.LCurrency;
 import com.donny.dendrofinance.currency.LStock;
 import com.donny.dendrofinance.data.*;
@@ -221,7 +221,7 @@ public class Instance {
             INVENTORIES.clear();
             JsonArray array = (JsonArray) JsonItem.sanitizeDigest(FILE_HANDLER.read(inventories));
             for (JsonObject obj : array.getObjectArray()) {
-                INVENTORIES.add(new Inventory(obj, this));
+                INVENTORIES.add(new LInventory(obj, this));
             }
             INVENTORIES.changed = false;
             LOG_HANDLER.trace(this.getClass(), "Inventories loaded");
@@ -239,9 +239,11 @@ public class Instance {
         //Exchanges
         {
             EXCHANGES.clear();
+            EXCHANGES.add(new Exchange("Personal", "", this, false));
+            EXCHANGES.add(new Exchange("Cash", "", this, false));
             JsonArray array = (JsonArray) JsonItem.sanitizeDigest(FILE_HANDLER.read(exchanges));
             for (JsonObject obj : array.getObjectArray()) {
-                EXCHANGES.add(new Exchange(obj, this));
+                EXCHANGES.add(new Exchange(obj, this, true));
             }
             EXCHANGES.changed = false;
             LOG_HANDLER.trace(this.getClass(), "Exchanges loaded");
@@ -325,7 +327,7 @@ public class Instance {
                         }
                     }
                 }
-                for (Inventory i : INVENTORIES) {
+                for (LInventory i : INVENTORIES) {
                     if (e.supports(i)) {
                         ACCOUNTS.add(new Account(
                                 e.NAME + "_" + i.getTicker().replace(" ", "_"),

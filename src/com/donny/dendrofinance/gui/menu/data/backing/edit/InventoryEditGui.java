@@ -1,6 +1,6 @@
 package com.donny.dendrofinance.gui.menu.data.backing.edit;
 
-import com.donny.dendrofinance.currency.Inventory;
+import com.donny.dendrofinance.currency.LInventory;
 import com.donny.dendrofinance.data.backingtable.BackingTableCore;
 import com.donny.dendrofinance.gui.customswing.DendroFactory;
 import com.donny.dendrofinance.gui.form.Validation;
@@ -10,13 +10,13 @@ import com.donny.dendrofinance.instance.Instance;
 
 import javax.swing.*;
 
-public class InventoryEditGui extends BackingEditGui<Inventory> {
+public class InventoryEditGui extends BackingEditGui<LInventory> {
     private JTextField name, ticker, symbol, places, val;
     private JCheckBox merch, comod;
     private JLabel a, b, c, d, e;
     private JButton save, cancel;
 
-    public InventoryEditGui(BackingTableGui<Inventory> caller, BackingTableCore<Inventory> core, int index, Instance curInst) {
+    public InventoryEditGui(BackingTableGui<LInventory> caller, BackingTableCore<LInventory> core, int index, Instance curInst) {
         super(caller, core, index, curInst);
     }
 
@@ -43,7 +43,7 @@ public class InventoryEditGui extends BackingEditGui<Inventory> {
             if (INDEX >= 0) {
                 try {
                     if (comod.isSelected()) {
-                        TABLE.replace(INDEX, new Inventory(
+                        TABLE.replace(INDEX, new LInventory(
                                 Validation.validateString(name),
                                 Validation.validateString(ticker),
                                 Validation.validateString(symbol),
@@ -52,7 +52,7 @@ public class InventoryEditGui extends BackingEditGui<Inventory> {
                                 CURRENT_INSTANCE
                         ));
                     } else {
-                        TABLE.replace(INDEX, new Inventory(
+                        TABLE.replace(INDEX, new LInventory(
                                 Validation.validateString(name),
                                 Validation.validateString(ticker),
                                 Validation.validateString(symbol),
@@ -69,7 +69,7 @@ public class InventoryEditGui extends BackingEditGui<Inventory> {
             } else {
                 try {
                     if (comod.isSelected()) {
-                        TABLE.add(new Inventory(
+                        TABLE.add(new LInventory(
                                 Validation.validateString(name),
                                 Validation.validateString(ticker),
                                 Validation.validateString(symbol),
@@ -78,7 +78,7 @@ public class InventoryEditGui extends BackingEditGui<Inventory> {
                                 CURRENT_INSTANCE
                         ));
                     } else {
-                        TABLE.add(new Inventory(
+                        TABLE.add(new LInventory(
                                 Validation.validateString(name),
                                 Validation.validateString(ticker),
                                 Validation.validateString(symbol),
@@ -97,7 +97,7 @@ public class InventoryEditGui extends BackingEditGui<Inventory> {
 
         //populate if in edit mode
         if (INDEX >= 0) {
-            Inventory inv = TABLE.getElement(INDEX);
+            LInventory inv = TABLE.getElement(INDEX);
             name.setText(inv.getName());
             ticker.setText(inv.getTicker());
             symbol.setText(inv.getSymbol().replace("§", ""));

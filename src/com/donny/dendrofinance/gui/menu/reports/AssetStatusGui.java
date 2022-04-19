@@ -2,7 +2,7 @@ package com.donny.dendrofinance.gui.menu.reports;
 
 import com.donny.dendrofinance.account.Account;
 import com.donny.dendrofinance.account.BroadAccountType;
-import com.donny.dendrofinance.currency.Inventory;
+import com.donny.dendrofinance.currency.LInventory;
 import com.donny.dendrofinance.currency.LCurrency;
 import com.donny.dendrofinance.currency.LStock;
 import com.donny.dendrofinance.gui.MainGui;
@@ -122,7 +122,7 @@ public class AssetStatusGui extends RegisterFrame {
                         });
                         if (a.getCurrency() instanceof LStock) {
                             stock = stock.add(acc.get(a).multiply(alpha.get(a.getCurrency())));
-                        } else if (a.getCurrency() instanceof Inventory) {
+                        } else if (a.getCurrency() instanceof LInventory) {
                             inv = inv.add(acc.get(a).multiply(alpha.get(a.getCurrency())));
                         } else {
                             if (a.getCurrency().isFiat()) {

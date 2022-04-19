@@ -89,7 +89,10 @@ public class FileHandler {
     }
 
     public byte[] getTemplate(String path) {
-        InputStream stream = this.getClass().getResourceAsStream("/com/donny/dendrofinance/resources/templates/" + path);
+        return getResource("templates/" + path);
+    }
+    public byte[] getResource(String path) {
+        InputStream stream = this.getClass().getResourceAsStream("/com/donny/dendrofinance/resources/" + path);
         if (stream == null) {
             System.out.println(path);
         }

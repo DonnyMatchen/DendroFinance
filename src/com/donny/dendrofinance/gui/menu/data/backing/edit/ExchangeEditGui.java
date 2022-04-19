@@ -78,7 +78,8 @@ public class ExchangeEditGui extends BackingEditGui<Exchange> {
                                 new ArrayList<>(Arrays.asList(
                                         Validation.validateString(sText).replace(",", "").split(" ")
                                 )),
-                                CURRENT_INSTANCE
+                                CURRENT_INSTANCE,
+                                true
                         ));
                     } else {
                         ArrayList<JsonObject> objs = new ArrayList<>();
@@ -102,7 +103,8 @@ public class ExchangeEditGui extends BackingEditGui<Exchange> {
                                         Validation.validateString(sText).replace(",", "").split(" ")
                                 )),
                                 objs,
-                                CURRENT_INSTANCE
+                                CURRENT_INSTANCE,
+                                true
                         ));
                     }
                     dispose();
@@ -118,7 +120,8 @@ public class ExchangeEditGui extends BackingEditGui<Exchange> {
                                 new ArrayList<>(Arrays.asList(
                                         Validation.validateString(sText).replace(",", "").split(" ")
                                 )),
-                                CURRENT_INSTANCE
+                                CURRENT_INSTANCE,
+                                true
                         ));
                     } else {
                         tText.setBackground(DendroFactory.CONTENT);
@@ -142,7 +145,8 @@ public class ExchangeEditGui extends BackingEditGui<Exchange> {
                                         Validation.validateStringAllowEmpty(sText).replace(",", "").split(" ")
                                 )),
                                 objs,
-                                CURRENT_INSTANCE
+                                CURRENT_INSTANCE,
+                                true
                         ));
                     }
                     dispose();

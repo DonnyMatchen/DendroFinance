@@ -20,6 +20,8 @@ import com.donny.dendrofinance.util.Curation;
 import com.donny.dendrofinance.util.Partitioner;
 
 import java.math.BigDecimal;
+import java.math.MathContext;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -679,6 +681,7 @@ public class DataHandler {
 
     public boolean buySell(LDate date, BigDecimal amount, BigDecimal cost, String exchange, String currency) {
         try {
+
             Exchange e = CURRENT_INSTANCE.EXCHANGES.getElement(exchange);
             LCurrency c = CURRENT_INSTANCE.getLCurrency(currency);
             if (e == null || c == null) {
@@ -740,7 +743,7 @@ public class DataHandler {
 
     public boolean incPay(LDate date, String description, BigDecimal amount, BigDecimal unit, String exchange, String currency) {
         try {
-            BigDecimal cost = amount.multiply(unit);
+            BigDecimal cost = amount.multiply(unit).setScale(CURRENT_INSTANCE.main.getPlaces(), RoundingMode.HALF_UP);
             LCurrency c = CURRENT_INSTANCE.getLCurrency(currency);
             Exchange e = CURRENT_INSTANCE.EXCHANGES.getElement(exchange);
             if (c == null || e == null) {
@@ -801,7 +804,7 @@ public class DataHandler {
                                 String fromExchange, String toExchange, String currency) {
         try {
             BigDecimal fee = toAmnt.subtract(fromAmnt);
-            BigDecimal cost = fee.multiply(unit).abs();
+            BigDecimal cost = fee.multiply(unit).setScale(CURRENT_INSTANCE.main.getPlaces(), RoundingMode.HALF_UP).abs();
             if (cost.compareTo(new BigDecimal("0.01")) < 0) {
                 cost = BigDecimal.ZERO;
             }
@@ -851,14 +854,8 @@ public class DataHandler {
                                  BigDecimal feeUnit, String fromExchange, String toExchange, String transCur, String costCur) {
         try {
             BigDecimal transitLoss = toAmnt.subtract(fromAmnt);
-            BigDecimal cost1 = transitLoss.multiply(fromUnit);
-            if (cost1.abs().compareTo(new BigDecimal("0.01")) < 0) {
-                cost1 = BigDecimal.ZERO;
-            }
-            BigDecimal cost2 = fee.multiply(feeUnit);
-            if (cost2.abs().compareTo(new BigDecimal("0.01")) < 0) {
-                cost2 = BigDecimal.ZERO;
-            }
+            BigDecimal cost1 = transitLoss.multiply(fromUnit).setScale(CURRENT_INSTANCE.main.getPlaces(), RoundingMode.HALF_UP);
+            BigDecimal cost2 = fee.multiply(feeUnit).setScale(CURRENT_INSTANCE.main.getPlaces(), RoundingMode.HALF_UP);
             BigDecimal cost = cost1.abs().add(cost2.abs());
             LCurrency tc = CURRENT_INSTANCE.getLCurrency(transCur);
             LCurrency fc = CURRENT_INSTANCE.getLCurrency(costCur);
@@ -902,10 +899,7 @@ public class DataHandler {
     public boolean trade(LDate date, BigDecimal fromAmnt, BigDecimal toAmnt, BigDecimal unit,
                          String exchange, String fromCur, String toCur) {
         try {
-            BigDecimal cost = fromAmnt.multiply(unit).abs();
-            if (cost.compareTo(new BigDecimal("0.01")) < 0) {
-                cost = BigDecimal.ZERO;
-            }
+            BigDecimal cost = fromAmnt.multiply(unit).setScale(CURRENT_INSTANCE.main.getPlaces(), RoundingMode.HALF_UP).abs();
             LCurrency fc = CURRENT_INSTANCE.getLCurrency(fromCur);
             LCurrency tc = CURRENT_INSTANCE.getLCurrency(toCur);
             Exchange e = CURRENT_INSTANCE.EXCHANGES.getElement(exchange);
@@ -936,7 +930,7 @@ public class DataHandler {
                     new LString("Trade (" + fc + " -> " + tc + ")"),
                     new LAccountSet("B!" + e.NAME + "_" + fc.getTicker() + ", B!" + e.NAME + "_" + tc.getTicker()
                             + ", T!Tax_Cap" + gl, CURRENT_INSTANCE),
-                    new LDecimalSet(fromAmnt.multiply(BigDecimal.valueOf(-1)) + ", " + toAmnt + ", " + profit)
+                    new LDecimalSet(fromAmnt.multiply(BigDecimal.valueOf(-1)) + ", " + toAmnt + ", " + profit.setScale(CURRENT_INSTANCE.main.getPlaces(), RoundingMode.HALF_UP))
             );
             entry.addLedgerMeta(fc, tc, fromAmnt, toAmnt, cost);
             addTransaction(entry);

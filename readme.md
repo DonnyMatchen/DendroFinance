@@ -1,5 +1,7 @@
 This application is designed for management of personal finance and small business finance data.  It is specifically geared towards trading activity, and that portion differs from GAAP in a few ways.
 
+This project requires Java 17.
+
 <a href="https://github.com/DonnyMatchen/DendroFinance/releases/tag/DendroFinance">Download</a>
 
 <b>SINGLE ENTRY, DOUBLE ENTRY, AND QUADRUPLE ENTRY</b><br>

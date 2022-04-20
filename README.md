@@ -2,7 +2,7 @@ This application is designed for management of personal finance and small busine
 
 This project requires Java 17.
 
-<a href="https://github.com/DonnyMatchen/DendroFinance/releases/tag/DendroFinance">Download</a>
+<a href="https://github.com/DonnyMatchen/DendroFinance/releases">Download</a>
 
 <b>SINGLE ENTRY, DOUBLE ENTRY, AND QUADRUPLE ENTRY</b><br>
 Tracking accounts and Tax accounts are single entry.<br>

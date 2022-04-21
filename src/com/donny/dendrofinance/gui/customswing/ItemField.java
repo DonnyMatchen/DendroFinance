@@ -79,7 +79,7 @@ public class ItemField extends JPanel {
         ((DefaultListModel<String>) LIST.getModel()).removeAllElements();
         if (!text.equals("")) {
             MASTER.forEach(string -> {
-                if (string.toLowerCase().contains(getToken(string).toLowerCase())) {
+                if (string.toLowerCase().contains(getToken(text).toLowerCase())) {
                     ((DefaultListModel<String>) LIST.getModel()).addElement(string);
                 }
             });
@@ -105,7 +105,11 @@ public class ItemField extends JPanel {
             }
         }
         String[] tokens = sb.toString().replace(" ", "").split(",");
-        return tokens[tokens.length-1].split("!")[1];
+        if (tokens[tokens.length-1].split("!").length == 2) {
+            return tokens[tokens.length - 1].split("!")[1];
+        } else {
+            return tokens[tokens.length-1];
+        }
     }
 
     public void setText(String text) {

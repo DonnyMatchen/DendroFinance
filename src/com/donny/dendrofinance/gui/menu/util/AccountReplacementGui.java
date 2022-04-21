@@ -10,6 +10,7 @@ import com.donny.dendrofinance.instance.Instance;
 import com.donny.dendrofinance.types.AccountWrapper;
 
 import javax.swing.*;
+import java.math.BigDecimal;
 
 public class AccountReplacementGui extends RegisterFrame {
     public final JPanel BACK;
@@ -31,14 +32,16 @@ public class AccountReplacementGui extends RegisterFrame {
                 for (TransactionEntry entry : CURRENT_INSTANCE.DATA_HANDLER.readTransactions()) {
                     int index = -1;
                     AccountWrapper.AWType column = null;
+                    BigDecimal value = null;
                     for (int i = 0; i < entry.getAccounts().getSize(); i++) {
                         if (entry.getAccounts().get(i).ACCOUNT.equals(a)) {
                             index = i;
                             column = entry.getAccounts().get(i).COLUMN;
+                            value = entry.getAccounts().get(i).VALUE;
                         }
                     }
                     if (index != -1) {
-                        entry.getAccounts().replace(index, new AccountWrapper(b, column.toString()));
+                        entry.getAccounts().replace(index, new AccountWrapper(b, column.toString(), value));
                     }
                 }
                 if (!a.inUse()) {

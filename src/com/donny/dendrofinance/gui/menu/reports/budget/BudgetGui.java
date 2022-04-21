@@ -243,7 +243,7 @@ public class BudgetGui extends RegisterFrame {
                         for (int i = 0; i < entry.getAccounts().getSize(); i++) {
                             AccountWrapper a = entry.getAccounts().get(i);
                             if (a.ACCOUNT.getBroadAccountType() == BroadAccountType.REVENUE || a.ACCOUNT.getBroadAccountType() == BroadAccountType.EXPENSE) {
-                                BigDecimal val = entry.getValues().get(i);
+                                BigDecimal val = a.VALUE;
                                 if (a.COLUMN == AccountWrapper.AWType.DEBIT) {
                                     val = val.multiply(BigDecimal.valueOf(-1));
                                 }

@@ -14,7 +14,6 @@ import com.donny.dendrofinance.types.*;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
-import java.awt.event.ActionEvent;
 import java.util.Arrays;
 import java.util.Vector;
 
@@ -25,7 +24,7 @@ public class NewTransactionEntryGui extends JDialog {
     private final JTabbedPane BACK;
     private final JPanel SIMP_TAB, ADV_TAB, META_TAB;
     private final JLabel A, B, C, D,
-            AA, BB, CC, DD, EE, FF, GG,
+            AA, BB, CC, DD, EE, FF,
             AAA, BBB;
     private final JTextField SIMP_DATE, SIMP_ENT, SIMP_ITM, SIMP_DESC,
             C1, C2, C3, C4, C5, C6,
@@ -35,10 +34,10 @@ public class NewTransactionEntryGui extends JDialog {
     private final JButton SIMP_INSERT, SIMP_CANCEL,
             ADV_INSERT, ADV_CANCEL,
             META_NEW, META_UPDATE, META_SAVE, META_DELETE;
-    private final JScrollPane ADV_VAL_PANE, ADV_META_PANE,
+    private final JScrollPane ADV_META_PANE,
             META_TABLE_PANE, META_TEXT_PANE;
     private final ItemField ACC;
-    private final JTextArea VAL, META, META_TEXT;
+    private final JTextArea META, META_TEXT;
     private final JTable TABLE;
     public JsonObject metaObject;
 
@@ -292,8 +291,7 @@ public class NewTransactionEntryGui extends JDialog {
                 CC = new JLabel("Items");
                 DD = new JLabel("Description");
                 EE = new JLabel("Accounts");
-                FF = new JLabel("Values");
-                GG = new JLabel("Meta-Data");
+                FF = new JLabel("Meta-Data");
 
                 ADV_DATE = new JTextField();
                 ADV_ENT = new JTextField();
@@ -306,8 +304,6 @@ public class NewTransactionEntryGui extends JDialog {
                 ADV_CANCEL.addActionListener(event -> dispose());
 
                 ACC = new ItemField(CURRENT_INSTANCE.getAccountsAsStrings());
-                ADV_VAL_PANE = DendroFactory.getLongField();
-                VAL = (JTextArea) ADV_VAL_PANE.getViewport().getView();
                 ADV_META_PANE = DendroFactory.getScrollField();
                 META = (JTextArea) ADV_META_PANE.getViewport().getView();
 
@@ -331,8 +327,6 @@ public class NewTransactionEntryGui extends JDialog {
                                                             EE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                                     ).addComponent(
                                                             FF, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
-                                                    ).addComponent(
-                                                            GG, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                                     )
                                             ).addGap(DendroFactory.SMALL_GAP).addGroup(
                                                     main.createParallelGroup(GroupLayout.Alignment.LEADING).addComponent(
@@ -345,8 +339,6 @@ public class NewTransactionEntryGui extends JDialog {
                                                             ADV_DESC, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
                                                     ).addComponent(
                                                             ACC, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
-                                                    ).addComponent(
-                                                            ADV_VAL_PANE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
                                                     ).addComponent(
                                                             ADV_META_PANE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
                                                     )
@@ -397,12 +389,6 @@ public class NewTransactionEntryGui extends JDialog {
                                     ).addGap(DendroFactory.SMALL_GAP).addGroup(
                                             main.createParallelGroup(GroupLayout.Alignment.LEADING).addComponent(
                                                     FF, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
-                                            ).addComponent(
-                                                    ADV_VAL_PANE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
-                                            )
-                                    ).addGap(DendroFactory.SMALL_GAP).addGroup(
-                                            main.createParallelGroup(GroupLayout.Alignment.LEADING).addComponent(
-                                                    GG, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                             ).addComponent(
                                                     ADV_META_PANE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                             )
@@ -569,11 +555,11 @@ public class NewTransactionEntryGui extends JDialog {
                     switch (wrapper.COLUMN) {
                         case DEBIT -> beta.setSelectedIndex(0);
                         case CREDIT -> beta.setSelectedIndex(1);
-                        case TAX -> beta.setSelectedIndex(2);
+                        case GHOST -> beta.setSelectedIndex(2);
                         case TRACKER -> beta.setSelectedIndex(3);
                     }
                     alpha.setSelectedIndex(wrapper.ACCOUNT.getName());
-                    gamma.setText(entry.getValues().get(i).toString());
+                    gamma.setText(wrapper.VALUE.toString());
                 }
             }
             ADV_DATE.setText("t(+0) " + entry.getDate().toString());
@@ -581,7 +567,6 @@ public class NewTransactionEntryGui extends JDialog {
             ADV_ITM.setText(entry.getItems());
             ADV_DESC.setText(entry.getDescription());
             ACC.setText(entry.getAccounts().toString());
-            VAL.setText(entry.getValues().toString());
             metaObject = entry.getMeta();
         }
         META.setText(metaObject.toString());
@@ -601,7 +586,7 @@ public class NewTransactionEntryGui extends JDialog {
         int index = a.getSelectedIndex();
         switch (AccountWrapper.AWType.fromString("" + column.charAt(0))) {
             case DEBIT, CREDIT -> a.setMaster(CURRENT_INSTANCE.getDCAccountsAsStrings());
-            case TAX -> a.setMaster(CURRENT_INSTANCE.getTaxAccountsAsStrings());
+            case GHOST -> a.setMaster(CURRENT_INSTANCE.getTaxAccountsAsStrings());
             case TRACKER -> a.setMaster(CURRENT_INSTANCE.getTrackingAccountsAsStrings());
         }
         if (index < a.getListSize()) {
@@ -776,8 +761,7 @@ public class NewTransactionEntryGui extends JDialog {
                     new LString(Validation.validateString(SIMP_ENT)),
                     new LString(Validation.validateStringAllowEmpty(SIMP_ITM)),
                     new LString(Validation.validateStringAllowEmpty(SIMP_DESC)),
-                    new LAccountSet(aArr, CURRENT_INSTANCE),
-                    new LDecimalSet(vArr)
+                    new LAccountSet(aArr, CURRENT_INSTANCE)
             );
         } catch (ValidationFailedException ex) {
             CURRENT_INSTANCE.LOG_HANDLER.warn(this.getClass(), "You did a badness!");
@@ -804,8 +788,7 @@ public class NewTransactionEntryGui extends JDialog {
                     new LString(Validation.validateString(ADV_ENT)),
                     new LString(Validation.validateStringAllowEmpty(ADV_ITM)),
                     new LString(Validation.validateStringAllowEmpty(ADV_DESC)),
-                    new LAccountSet(Validation.validateString(ACC), CURRENT_INSTANCE),
-                    new LDecimalSet(Validation.validateString(VAL))
+                    new LAccountSet(Validation.validateString(ACC), CURRENT_INSTANCE)
             );
             entry.insertIntoField("meta-data", new LJson(Validation.validateJsonObject(META)));
             if (UUID == 0) {

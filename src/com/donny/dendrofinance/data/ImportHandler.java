@@ -44,8 +44,7 @@ public class ImportHandler {
                     new LString(fields[1]),
                     new LString(fields[2]),
                     new LString(fields[3]),
-                    new LAccountSet(fields[4], CURRENT_INSTANCE),
-                    new LDecimalSet(fields[5])
+                    new LAccountSet(fields[4], CURRENT_INSTANCE)
             );
             try {
                 if (!fields[6].equals("{}")) {

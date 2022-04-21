@@ -16,7 +16,6 @@ public class TransactionHeader extends Header {
                 new Field("items", new LString("")),
                 new Field("description", new LString("")),
                 new Field("accounts", new LAccountSet(curInst)),
-                new Field("values", new LDecimalSet()),
                 new Field("meta-data", new LJson(new JsonObject()))
         ));
     }

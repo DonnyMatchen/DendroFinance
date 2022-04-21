@@ -85,10 +85,6 @@ public class Entry<T extends Header> {
         return (LDecimal) get(fieldName);
     }
 
-    public LDecimalSet getDecimalSet(String fieldName) {
-        return (LDecimalSet) get(fieldName);
-    }
-
     public LDate getDate(String fieldName) {
         return (LDate) get(fieldName);
     }

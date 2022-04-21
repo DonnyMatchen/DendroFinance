@@ -14,15 +14,16 @@ import com.donny.dendrofinance.instance.Instance;
 import com.donny.dendrofinance.json.JsonArray;
 import com.donny.dendrofinance.json.JsonFormattingException;
 import com.donny.dendrofinance.json.JsonItem;
+import com.donny.dendrofinance.types.AccountWrapper;
 import com.donny.dendrofinance.types.LAccountSet;
 import com.donny.dendrofinance.types.LDate;
-import com.donny.dendrofinance.types.LDecimalSet;
 import com.donny.dendrofinance.types.LString;
 import com.donny.dendrofinance.util.Aggregation;
 import com.donny.dendrofinance.util.Curation;
 
 import javax.swing.*;
 import java.io.File;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 
 public class ArchiveGui extends RegisterFrame {
@@ -130,91 +131,87 @@ public class ArchiveGui extends RegisterFrame {
                     entries.add(entry);
                 }
             }
-            if (prior != null) {
-                Aggregation<Account> acc = new Aggregation<>();
-                for (TransactionEntry entry : entries) {
-                    for (TransactionEntry.AVPair pair : entry.getAVPairs()) {
-                        acc.add(pair.WRAPPER.ACCOUNT, pair.WRAPPER.alpha(pair.VALUE));
-                    }
+            if (prior == null){
+                prior = new TransactionEntry(CURRENT_INSTANCE);
+            }
+            Aggregation<Account> acc = new Aggregation<>();
+            for (TransactionEntry entry : entries) {
+                for (AccountWrapper wrapper : entry.getAccounts()) {
+                    acc.add(wrapper.ACCOUNT, wrapper.alpha());
                 }
-                StringBuilder aSet = new StringBuilder();
-                StringBuilder dSet = new StringBuilder();
-                for (Account a : acc.keySet()) {
-                    if (a.counts(acc.get(a))) {
-                        aSet.append(a.getDefaultWrapper().toString()).append(", ");
-                        dSet.append(acc.get(a)).append(", ");
-                    }
+            }
+            LAccountSet aSet = new LAccountSet(CURRENT_INSTANCE);
+            for(Account a : acc.keySet()){
+                aSet.add(new AccountWrapper(a, a.getDefaultColumn((acc.get(a).compareTo(BigDecimal.ZERO) >= 0)), acc.get(a)));
+            }
+            LDate end = new LDate(year, 12, 31, CURRENT_INSTANCE);
+            ArrayList<Position> positions = CURRENT_INSTANCE.DATA_HANDLER.getPositions(end);
+            prior.setLedgerMeta(new ArrayList<>());
+            for (Position pos : positions) {
+                for (PositionElement el : pos.ELEMENTS) {
+                    prior.addLedgerMeta(el.DATE, CURRENT_INSTANCE.main, pos.ASSET, el.cost(), el.volume, el.cost());
                 }
-                LDate end = new LDate(year, 12, 31, CURRENT_INSTANCE);
-                ArrayList<Position> positions = CURRENT_INSTANCE.DATA_HANDLER.getPositions(end);
-                prior.setLedgerMeta(new ArrayList<>());
-                for (Position pos : positions) {
-                    for (PositionElement el : pos.ELEMENTS) {
-                        prior.addLedgerMeta(el.DATE, CURRENT_INSTANCE.main, pos.ASSET, el.cost(), el.volume, el.cost());
-                    }
-                }
-                ArrayList<AssetMetadata> assets = CURRENT_INSTANCE.DATA_HANDLER.assetsAsOf(end);
-                prior.setAssetMeta(new ArrayList<>());
-                for (AssetMetadata ass : assets) {
-                    if (ass.isCurrent()) {
-                        LCurrency first = ass.CURRENCY;
-                        prior.addAssetMeta(ass.DATE, ass.NAME, ass.DESC, ass.CURRENCY, ass.getValues().get(ass.CURRENCY), ass.getCount().get(ass.CURRENCY));
-                        for (LCurrency cur : ass.getCurrencies()) {
-                            if (cur != first) {
-                                prior.addAssetChangeMeta(ass.DATE, ass.NAME, cur, ass.getValues().get(cur), ass.getCount().get(cur));
-                            }
+            }
+            ArrayList<AssetMetadata> assets = CURRENT_INSTANCE.DATA_HANDLER.assetsAsOf(end);
+            prior.setAssetMeta(new ArrayList<>());
+            for (AssetMetadata ass : assets) {
+                if (ass.isCurrent()) {
+                    LCurrency first = ass.CURRENCY;
+                    prior.addAssetMeta(ass.DATE, ass.NAME, ass.DESC, ass.CURRENCY, ass.getValues().get(ass.CURRENCY), ass.getCount().get(ass.CURRENCY));
+                    for (LCurrency cur : ass.getCurrencies()) {
+                        if (cur != first) {
+                            prior.addAssetChangeMeta(ass.DATE, ass.NAME, cur, ass.getValues().get(cur), ass.getCount().get(cur));
                         }
                     }
                 }
-                ArrayList<LoanMetadata> loans = CURRENT_INSTANCE.DATA_HANDLER.loansAsOf(end);
-                for (LoanMetadata loan : loans) {
-                    if (loan.isCurrent()) {
-                        prior.addLoanMeta(loan.DATE, loan.NAME, loan.DESC, loan.CUR, loan.principalRemaining(), loan.RATE);
-                    }
+            }
+            ArrayList<LoanMetadata> loans = CURRENT_INSTANCE.DATA_HANDLER.loansAsOf(end);
+            for (LoanMetadata loan : loans) {
+                if (loan.isCurrent()) {
+                    prior.addLoanMeta(loan.DATE, loan.NAME, loan.DESC, loan.CUR, loan.principalRemaining(), loan.RATE);
                 }
-                entries.remove(prior);
-                LDate min = LDate.now(CURRENT_INSTANCE), max = prior.getDate();
-                prior.insert(
-                        new LDate(year, 12, 31, CURRENT_INSTANCE),
-                        new LString("PRIOR"),
-                        new LString(""),
-                        new LString(""),
-                        new LAccountSet(aSet.substring(0, aSet.length() - 1), CURRENT_INSTANCE),
-                        new LDecimalSet(dSet.substring(0, dSet.length() - 1))
-                );
-                JsonArray arr = new JsonArray();
-                for (TransactionEntry entry : entries) {
-                    CURRENT_INSTANCE.DATA_HANDLER.deleteTransaction(entry.getUUID());
-                    if (entry.getDate().compare(min) < 0) {
-                        min = entry.getDate();
-                    }
-                    if (entry.getDate().compare(max) > 0) {
-                        max = entry.getDate();
-                    }
-                    try {
-                        arr.ARRAY.add(entry.export());
-                    } catch (JsonFormattingException ex) {
-                        ex.printStackTrace();
-                    }
+            }
+            entries.remove(prior);
+            LDate min = LDate.now(CURRENT_INSTANCE), max = prior.getDate();
+            prior.insert(
+                    new LDate(year, 12, 31, CURRENT_INSTANCE),
+                    new LString("PRIOR"),
+                    new LString(""),
+                    new LString(""),
+                    aSet
+            );
+            JsonArray arr = new JsonArray();
+            for (TransactionEntry entry : entries) {
+                CURRENT_INSTANCE.DATA_HANDLER.deleteTransaction(entry.getUUID());
+                if (entry.getDate().compare(min) < 0) {
+                    min = entry.getDate();
                 }
-                String name = min.toDateString().replace("/", "-") + " == " + max.toDateString().replace("/", "-") + ".xarc";
-                CURRENT_INSTANCE.FILE_HANDLER.writeEncrypt(DIR, name, arr.toString());
-                Curation<Integer> years = new Curation<>();
-                for (TransactionEntry entry : CURRENT_INSTANCE.DATA_HANDLER.readTransactions()) {
-                    if (!entry.getEntity().equals("PRIOR")) {
-                        years.add(entry.getDate().getYear());
-                    }
+                if (entry.getDate().compare(max) > 0) {
+                    max = entry.getDate();
                 }
-                YEAR.removeAllItems();
-                for (int i : years) {
-                    YEAR.addItem("" + i);
+                try {
+                    arr.ARRAY.add(entry.export());
+                } catch (JsonFormattingException ex) {
+                    ex.printStackTrace();
                 }
-                ARCHIVES.removeAllItems();
-                if (DIR.listFiles() != null) {
-                    for (File f : DIR.listFiles()) {
-                        if (f.getName().contains(".xarc")) {
-                            ARCHIVES.addItem(f.getName().replace(".xarc", ""));
-                        }
+            }
+            String name = min.toDateString().replace("/", "-") + " == " + max.toDateString().replace("/", "-") + ".xarc";
+            CURRENT_INSTANCE.FILE_HANDLER.writeEncrypt(DIR, name, arr.toString());
+            Curation<Integer> years = new Curation<>();
+            for (TransactionEntry entry : CURRENT_INSTANCE.DATA_HANDLER.readTransactions()) {
+                if (!entry.getEntity().equals("PRIOR")) {
+                    years.add(entry.getDate().getYear());
+                }
+            }
+            YEAR.removeAllItems();
+            for (int i : years) {
+                YEAR.addItem("" + i);
+            }
+            ARCHIVES.removeAllItems();
+            if (DIR.listFiles() != null) {
+                for (File f : DIR.listFiles()) {
+                    if (f.getName().contains(".xarc")) {
+                        ARCHIVES.addItem(f.getName().replace(".xarc", ""));
                     }
                 }
             }

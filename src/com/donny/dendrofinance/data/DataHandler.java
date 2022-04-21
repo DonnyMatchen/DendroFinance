@@ -680,6 +680,11 @@ public class DataHandler {
 
     public boolean buySell(LDate date, BigDecimal amount, BigDecimal cost, String exchange, String currency) {
         try {
+            if(amount.compareTo(BigDecimal.ZERO) > 0){
+                cost = cost.abs().multiply(BigDecimal.valueOf(-1));
+            }else{
+                cost = cost.abs();
+            }
             Exchange e = CURRENT_INSTANCE.EXCHANGES.getElement(exchange);
             LCurrency c = CURRENT_INSTANCE.getLCurrency(currency);
             if (e == null || c == null) {
@@ -751,7 +756,8 @@ public class DataHandler {
 
     public boolean incPay(LDate date, String description, BigDecimal amount, BigDecimal unit, String exchange, String currency) {
         try {
-            BigDecimal cost = amount.multiply(unit).setScale(CURRENT_INSTANCE.main.getPlaces(), RoundingMode.HALF_UP);
+            unit = unit.abs();
+            BigDecimal cost = amount.multiply(unit).setScale(CURRENT_INSTANCE.main.getPlaces(), RoundingMode.HALF_UP).abs();
             LCurrency c = CURRENT_INSTANCE.getLCurrency(currency);
             Exchange e = CURRENT_INSTANCE.EXCHANGES.getElement(exchange);
             if (c == null || e == null) {
@@ -781,7 +787,7 @@ public class DataHandler {
                                 + cost + "), T!" + e.NAME + "_" + c.getTicker() + (s ? "_S" : "") + "("
                                 + amount + ")", CURRENT_INSTANCE)
                 );
-                entry.addLedgerMeta(CURRENT_INSTANCE.main, c, BigDecimal.ZERO, amount, cost.abs());
+                entry.addLedgerMeta(CURRENT_INSTANCE.main, c, BigDecimal.ZERO, amount, cost);
                 addTransaction(entry);
                 return true;
             } else if (amount.compareTo(BigDecimal.ZERO) < 0) {
@@ -791,11 +797,11 @@ public class DataHandler {
                         new LString(currency),
                         new LString(description),
                         new LAccountSet("D!Portfolio("
-                                + cost.abs() + "), C!" + acc + "("
-                                + cost.abs() + "), T!" + e.NAME + "_" + c.getTicker() + "("
+                                + cost + "), C!" + acc + "("
+                                + cost + "), T!" + e.NAME + "_" + c.getTicker() + "("
                                 + amount + ")", CURRENT_INSTANCE)
                 );
-                entry.addLedgerMeta(c, CURRENT_INSTANCE.main, amount, BigDecimal.ZERO, cost.abs());
+                entry.addLedgerMeta(c, CURRENT_INSTANCE.main, amount, BigDecimal.ZERO, cost);
                 addTransaction(entry);
                 return true;
             } else {
@@ -809,11 +815,11 @@ public class DataHandler {
     public boolean coinTransfer(LDate date, BigDecimal fromAmnt, BigDecimal toAmnt, BigDecimal unit,
                                 String fromExchange, String toExchange, String currency) {
         try {
-            BigDecimal fee = toAmnt.subtract(fromAmnt);
+            fromAmnt = fromAmnt.abs().multiply(BigDecimal.valueOf(-1));
+            toAmnt = toAmnt.abs();
+            unit = unit.abs();
+            BigDecimal fee = toAmnt.add(fromAmnt);
             BigDecimal cost = fee.multiply(unit).setScale(CURRENT_INSTANCE.main.getPlaces(), RoundingMode.HALF_UP).abs();
-            if (cost.compareTo(new BigDecimal("0.01")) < 0) {
-                cost = BigDecimal.ZERO;
-            }
             LCurrency c = CURRENT_INSTANCE.getLCurrency(currency);
             Exchange ef = CURRENT_INSTANCE.EXCHANGES.getElement(fromExchange);
             Exchange et = CURRENT_INSTANCE.EXCHANGES.getElement(toExchange);
@@ -848,7 +854,7 @@ public class DataHandler {
                     new LAccountSet("D!Portfolio("
                             + cost + "), C!" + acc + "("
                             + cost + "), T!" + ef.NAME + "_" + c.getTicker() + "("
-                            + fromAmnt.multiply(BigDecimal.valueOf(-1)) + "), T!" + et.NAME + "_" + c.getTicker() + "("
+                            + fromAmnt + "), T!" + et.NAME + "_" + c.getTicker() + "("
                             + toAmnt + ")", CURRENT_INSTANCE)
             );
             entry.addLedgerMeta(c, CURRENT_INSTANCE.main, fee, BigDecimal.ZERO, cost);
@@ -862,10 +868,15 @@ public class DataHandler {
     public boolean tokenTransfer(LDate date, BigDecimal fromAmnt, BigDecimal toAmnt, BigDecimal fee, BigDecimal fromUnit,
                                  BigDecimal feeUnit, String fromExchange, String toExchange, String transCur, String costCur) {
         try {
-            BigDecimal transitLoss = toAmnt.subtract(fromAmnt);
-            BigDecimal cost1 = transitLoss.multiply(fromUnit).setScale(CURRENT_INSTANCE.main.getPlaces(), RoundingMode.HALF_UP);
-            BigDecimal cost2 = fee.multiply(feeUnit).setScale(CURRENT_INSTANCE.main.getPlaces(), RoundingMode.HALF_UP);
-            BigDecimal cost = cost1.abs().add(cost2.abs());
+            fromAmnt = fromAmnt.abs().multiply(BigDecimal.valueOf(-1));
+            fee = fee.abs().multiply(BigDecimal.valueOf(-1));
+            toAmnt = toAmnt.abs();
+            fromUnit = fromUnit.abs();
+            feeUnit = feeUnit.abs();
+            BigDecimal transitLoss = toAmnt.add(fromAmnt);
+            BigDecimal cost1 = transitLoss.multiply(fromUnit).setScale(CURRENT_INSTANCE.main.getPlaces(), RoundingMode.HALF_UP).abs();
+            BigDecimal cost2 = fee.multiply(feeUnit).setScale(CURRENT_INSTANCE.main.getPlaces(), RoundingMode.HALF_UP).abs();
+            BigDecimal cost = cost1.add(cost2);
             LCurrency tc = CURRENT_INSTANCE.getLCurrency(transCur);
             LCurrency fc = CURRENT_INSTANCE.getLCurrency(costCur);
             Exchange ef = CURRENT_INSTANCE.EXCHANGES.getElement(fromExchange);
@@ -891,9 +902,9 @@ public class DataHandler {
                     new LString(tc + ", " + fc),
                     new LString(tc + " Transfer"),
                     new LAccountSet("D!Portfolio("
-                            + cost.abs() + "), C!Crypto("
-                            + cost.abs() + "), T!" + ef.NAME + "_" + tc.getTicker() + "("
-                            + fromAmnt.multiply(BigDecimal.valueOf(-1)) + "), T!" + ef.NAME + "_" + fc.getTicker() + "("
+                            + cost + "), C!Crypto("
+                            + cost + "), T!" + ef.NAME + "_" + tc.getTicker() + "("
+                            + fromAmnt + "), T!" + ef.NAME + "_" + fc.getTicker() + "("
                             + fee + "), T!" + et.NAME + "_" + tc.getTicker() + "("
                             + toAmnt + ")", CURRENT_INSTANCE)
             );
@@ -911,6 +922,9 @@ public class DataHandler {
     public boolean trade(LDate date, BigDecimal fromAmnt, BigDecimal toAmnt, BigDecimal unit,
                          String exchange, String fromCur, String toCur) {
         try {
+            fromAmnt = fromAmnt.abs().multiply(BigDecimal.valueOf(-1));
+            toAmnt = toAmnt.abs();
+            unit = unit.abs();
             BigDecimal cost = fromAmnt.multiply(unit).setScale(CURRENT_INSTANCE.main.getPlaces(), RoundingMode.HALF_UP).abs();
             LCurrency fc = CURRENT_INSTANCE.getLCurrency(fromCur);
             LCurrency tc = CURRENT_INSTANCE.getLCurrency(toCur);
@@ -941,7 +955,7 @@ public class DataHandler {
                     new LString(fc + ", " + tc),
                     new LString("Trade (" + fc + " -> " + tc + ")"),
                     new LAccountSet("T!" + e.NAME + "_" + fc.getTicker() + "("
-                            + fromAmnt.multiply(BigDecimal.valueOf(-1)) + "), T!" + e.NAME + "_" + tc.getTicker() + "("
+                            + fromAmnt + "), T!" + e.NAME + "_" + tc.getTicker() + "("
                             + toAmnt + "), G!Tax_Cap" + gl + "("
                             + profit.setScale(CURRENT_INSTANCE.main.getPlaces(), RoundingMode.HALF_UP) + ")", CURRENT_INSTANCE)
             );

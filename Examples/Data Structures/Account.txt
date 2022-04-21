@@ -1,0 +1,26 @@
+Accounts{
+  "asset-prefix": integer
+  "liability-prefix": integer
+  "equity-prefix": integer
+  "revenue-prefix": integer
+  "expense-prefix": integer
+  "ghost-prefix": integer
+  "tracking-prefix": integer
+  "accounts": array(Account)
+}
+
+the prefixes are used to state the first index belonging to the specified broad account type.
+
+Account{
+  "budget": string {optional}
+  "currency": string
+  "id": integer
+  "name": string {unique}
+  "type": string
+}
+
+* budget: the budget ticker.  Reserved for revenue and expenses primarily.
+* currency: the currency the account is in.  Unless it's a tracking account, this should probably be main.
+* id: the account ID.
+* name: the unique account identifier
+* type: the AccountType that the account belongs under.

@@ -19,7 +19,7 @@ public class Account implements ExportableToJson {
     private final int AID;
     private final LCurrency CUR;
     private final AccountType TYPE;
-    private final String B_TYPE;
+    private final String BUDGET;
 
     public Account(String name, int aid, LCurrency cur, AccountType type, String btype, Instance curInst, boolean export) {
         CURRENT_INSTANCE = curInst;
@@ -27,7 +27,7 @@ public class Account implements ExportableToJson {
         AID = aid;
         CUR = cur;
         TYPE = type;
-        B_TYPE = btype;
+        BUDGET = btype;
         EXPORT = export;
         CURRENT_INSTANCE.LOG_HANDLER.trace(this.getClass(), "Account " + NAME + " Created");
     }
@@ -37,15 +37,17 @@ public class Account implements ExportableToJson {
     }
 
     public Account(JsonObject obj, Instance curInst) {
-        this(
-                obj.getString("name").getString(),
-                obj.getDecimal("id").decimal.intValue(),
-                curInst.getLCurrency(obj.getString("currency").getString()),
-                curInst.ACCOUNT_TYPES.getElement(obj.getString("type").getString()),
-                obj.getString("budget").getString(),
-                curInst,
-                true
-        );
+        CURRENT_INSTANCE = curInst;
+        NAME = obj.getString("name").getString();
+        AID = obj.getDecimal("id").decimal.intValue();
+        CUR = curInst.getLCurrency(obj.getString("currency").getString());
+        TYPE = curInst.ACCOUNT_TYPES.getElement(obj.getString("type").getString());
+        EXPORT = true;
+        if (obj.FIELDS.containsKey("budget")) {
+            BUDGET = obj.getString("budget").getString();
+        }else{
+            BUDGET = "";
+        }
     }
 
     public AccountWrapper.AWType getDefaultColumn(boolean positive) {
@@ -89,7 +91,7 @@ public class Account implements ExportableToJson {
     }
 
     public String getBudgetType() {
-        return B_TYPE;
+        return BUDGET;
     }
 
     public String encode(BigDecimal amnt) {
@@ -138,7 +140,7 @@ public class Account implements ExportableToJson {
             obj.FIELDS.put("currency", new JsonString(CUR.getName()));
         }
         obj.FIELDS.put("type", new JsonString(TYPE.NAME));
-        obj.FIELDS.put("budget", new JsonString(B_TYPE));
+        obj.FIELDS.put("budget", new JsonString(BUDGET));
         return obj;
     }
 

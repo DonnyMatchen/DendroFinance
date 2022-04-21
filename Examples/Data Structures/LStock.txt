@@ -1,0 +1,11 @@
+LStock{
+  "flags": string
+  "name": string
+  "tic": string {unique}
+}
+
+* flags:
+  * D: This stock is defunct, valueless, and no longer traded
+  * P: This is a private stock
+* name: The name of the company issuing the stock.
+* tic: The stock ticker as issued by the root exchange where the stock is traded.

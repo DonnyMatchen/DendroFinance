@@ -1,0 +1,7 @@
+AccountType{
+  "name": string {unique}
+  "type": string
+}
+
+* name: The identifier for the account type.
+* type: the BroadAccountType associated with the AccountType.

@@ -1,0 +1,19 @@
+LCurrency{
+  "alt": string
+  "flags": string
+  "name": string
+  "places": integer
+  "symbol": string
+  "tic": string {unique}
+}
+
+* alt: (cryptocurrencies) the identifier for the cryptocurrency used by Coingecko
+* flags:
+  * F: Fiat currency
+  * D: Currency is defunct and valueless
+  * T: (Cryptocurrencies) Token, this cryptocurrency is hosted on antoher block chain, not it's own.
+  * >: Currency symbol should be placed at the end of the number not the beginning.
+* name: The name of the currency.  For cryptocurrencies, if no alt is specified, the name set to lowercase and spaces replaced with hyphens "-" is used.
+* places: The number of decimal places to use when displaying accounts using this currency
+* symbol: The symbol placed in front of (or at the end of) a number representing this currency.  It is reccomended that symbols are unique to avoid confusion.
+* tic: The currency ticker.  For Fiat currencies, thiw should be the ISO 4217 standard ticker for the currency.  In any case, tickers must be unique within a class of currency.  If a specific currency is not supported by Coingecko, the ticker may be needed for it to be supported by other crytpcurrency APIs.

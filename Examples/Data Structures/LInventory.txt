@@ -1,0 +1,17 @@
+LInventory{
+  "flags": string
+  "name": string
+  "places": int
+  "symbol": string
+  "tic": string {unique}
+  "value": decimal {optional}
+}
+
+*flags:
+  * M: This inventory is merchandise
+  * C: This inventory is a commodity
+[Note: these flags are mutually exclusive, as they control how the value of the inventory is calculated.]
+* name: Name of the inventory
+* places: The number of decimal places to use when displaying accounts using this currency
+* symbol: the letters, along with a section sign "§" used to depict the inventory.
+* tic: for commodities, the commodity ticker.  For other forms of inventory, it should simply be unique.

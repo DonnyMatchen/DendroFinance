@@ -60,6 +60,11 @@ public class NewTransactionEntryGui extends JDialog {
             {
                 SIMP_TAB = new JPanel();
 
+                A = new JLabel("Date");
+                B = new JLabel("Entity");
+                C = new JLabel("Items");
+                D = new JLabel("Description");
+
                 SIMP_INSERT = DendroFactory.getButton("Save");
                 SIMP_INSERT.addActionListener(this::simpleInsertAction);
                 SIMP_CANCEL = DendroFactory.getButton("Cancel");
@@ -106,11 +111,6 @@ public class NewTransactionEntryGui extends JDialog {
                 B6 = new JComboBox<>();
                 B6.setModel(new DefaultComboBoxModel<>(new String[]{"Debit", "Credit", "Tax", "Tracking"}));
                 B6.addItemListener(event -> bChanged(B6, A6));
-
-                A = new JLabel("Date");
-                B = new JLabel("Entity");
-                C = new JLabel("Items");
-                D = new JLabel("Description");
 
                 //group layout
                 {

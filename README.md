@@ -1,10 +1,13 @@
-This application is designed for management of personal finance and small business finance data.  It is specifically geared towards trading activity, and that portion differs from GAAP in a few ways.
-
-This project requires Java 17.
-
-<a href="https://github.com/DonnyMatchen/DendroFinance/releases">Download</a>
-
-<b>SINGLE ENTRY, DOUBLE ENTRY, AND QUADRUPLE ENTRY</b><br>
+This application is designed for management of personal finance and small business finance data.  It is specifically geared towards trading activity, and that portion differs from GAAP in a few ways.<br>
+<br>
+<h1>COMPATIBILITY</h1><br>
+This project requires Java 17.<br>
+Torsocks seems to interfere with this applications ability to read and write files and access APIs.<br>
+In Linux systems using the Nautilus filesystem interface or derivitives, there seems to be a problem when .jar files are run.  It seems to set the working directory to the home folder rather than the directory the .jar file is in.<br>
+<br>
+<a href="https://github.com/DonnyMatchen/DendroFinance/releases">Download</a><br>
+<br>
+<h1>SINGLE ENTRY, DOUBLE ENTRY, AND QUADRUPLE ENTRY</h1><br>
 Tracking accounts and Tax accounts are single entry.<br>
 Tracking accounts are used to track the volume of all assets that are not the main currency.  This includes other fiat currencies, stocks, cryptocurrencies, commodities, and other forms of inventory.<br>
 Tax accounts are ghost accounts, used to track tax-relevent totals such as taxable income, capital gains and losses, and exemptable expenses.<br>
@@ -27,11 +30,11 @@ Example:<br>
 D!Cash, C!Gifts<br>
 <br>
 <br>
-<b>ESSENTIAL ELEMENTS</b><br>
+<h1>ESSENTIAL ELEMENTS</h1><br>
 Account and Exchange names must be unique, and cannot contain spaces.<br>
 Most accounts within the default set of accounts are required, and should probably not be deleted or renamed.<br>
 <br>
-<b>DATA STRUCTURES</b><br>
+<h1>DATA STRUCTURES</h1><br>
 LCurrency<br>
 {<br>
   "alt": <code>string</code>,<br>

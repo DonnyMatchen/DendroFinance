@@ -66,7 +66,7 @@ public class NewTransactionEntryGui extends JDialog {
                 D = new JLabel("Description");
 
                 SIMP_INSERT = DendroFactory.getButton("Save");
-                SIMP_INSERT.addActionListener(this::simpleInsertAction);
+                SIMP_INSERT.addActionListener(event -> simpleInsertAction());
                 SIMP_CANCEL = DendroFactory.getButton("Cancel");
                 SIMP_CANCEL.addActionListener(event -> dispose());
 
@@ -301,7 +301,7 @@ public class NewTransactionEntryGui extends JDialog {
                 ADV_DESC = new JTextField();
 
                 ADV_INSERT = DendroFactory.getButton("Save");
-                ADV_INSERT.addActionListener(this::advancedInsertAction);
+                ADV_INSERT.addActionListener(event -> advancedInsertAction());
                 ADV_CANCEL = DendroFactory.getButton("Cancel");
                 ADV_CANCEL.addActionListener(event -> dispose());
 
@@ -426,13 +426,13 @@ public class NewTransactionEntryGui extends JDialog {
                 BBB = new JLabel("Json");
 
                 META_NEW = DendroFactory.getButton("New");
-                META_NEW.addActionListener(this::mNewAction);
+                META_NEW.addActionListener(event -> mNewAction());
                 META_UPDATE = DendroFactory.getButton("Update");
-                META_UPDATE.addActionListener(this::mUpdateAction);
+                META_UPDATE.addActionListener(event -> mUpdateAction());
                 META_SAVE = DendroFactory.getButton("Save");
-                META_SAVE.addActionListener(this::mSaveAction);
+                META_SAVE.addActionListener(event -> mSaveAction());
                 META_DELETE = DendroFactory.getButton("Delete");
-                META_DELETE.addActionListener(this::mDeleteAction);
+                META_DELETE.addActionListener(event -> mDeleteAction());
 
                 META_TEXT_PANE = DendroFactory.getScrollField();
                 META_TEXT = (JTextArea) META_TEXT_PANE.getViewport().getView();
@@ -710,7 +710,7 @@ public class NewTransactionEntryGui extends JDialog {
         }
     }
 
-    public void simpleInsertAction(ActionEvent event) {
+    public void simpleInsertAction() {
         TransactionEntry entry;
         if (UUID == 0) {
             entry = new TransactionEntry(CURRENT_INSTANCE);
@@ -726,7 +726,7 @@ public class NewTransactionEntryGui extends JDialog {
             AccountWrapper.AWType t1 = AccountWrapper.AWType.fromString("" + column.charAt(0));
             aArr.ARRAY.add(new JsonString(t1 + "!" + A1.getSelectedItem()));
             vArr.ARRAY.add(new JsonDecimal(Validation.validateDecimal(C1)));
-            if (!A2.getSelectedItem().equals("<Blank>")) {
+            if (A2.getSelectedItem()  != null) {
                 column = (String) B2.getSelectedItem();
                 if (column.equals("Tracking")) {
                     column = "B";
@@ -734,7 +734,7 @@ public class NewTransactionEntryGui extends JDialog {
                 AccountWrapper.AWType t2 = AccountWrapper.AWType.fromString("" + column.charAt(0));
                 aArr.ARRAY.add(new JsonString(t2 + "!" + A2.getSelectedItem()));
                 vArr.ARRAY.add(new JsonDecimal(Validation.validateDecimal(C2)));
-                if (!A3.getSelectedItem().equals("<Blank>")) {
+                if (A3.getSelectedItem()  != null) {
                     column = (String) B3.getSelectedItem();
                     if (column.equals("Tracking")) {
                         column = "B";
@@ -742,7 +742,7 @@ public class NewTransactionEntryGui extends JDialog {
                     AccountWrapper.AWType t3 = AccountWrapper.AWType.fromString("" + column.charAt(0));
                     aArr.ARRAY.add(new JsonString(t3 + "!" + A3.getSelectedItem()));
                     vArr.ARRAY.add(new JsonDecimal(Validation.validateDecimal(C3)));
-                    if (!A4.getSelectedItem().equals("<Blank>")) {
+                    if (A4.getSelectedItem()  != null) {
                         column = (String) B4.getSelectedItem();
                         if (column.equals("Tracking")) {
                             column = "B";
@@ -750,7 +750,7 @@ public class NewTransactionEntryGui extends JDialog {
                         AccountWrapper.AWType t4 = AccountWrapper.AWType.fromString("" + column.charAt(0));
                         aArr.ARRAY.add(new JsonString(t4 + "!" + A4.getSelectedItem()));
                         vArr.ARRAY.add(new JsonDecimal(Validation.validateDecimal(C4)));
-                        if (!A5.getSelectedItem().equals("<Blank>")) {
+                        if (A5.getSelectedItem()  != null) {
                             column = (String) B5.getSelectedItem();
                             if (column.equals("Tracking")) {
                                 column = "B";
@@ -758,7 +758,7 @@ public class NewTransactionEntryGui extends JDialog {
                             AccountWrapper.AWType t5 = AccountWrapper.AWType.fromString("" + column.charAt(0));
                             aArr.ARRAY.add(new JsonString(t5 + "!" + A5.getSelectedItem()));
                             vArr.ARRAY.add(new JsonDecimal(Validation.validateDecimal(C5)));
-                            if (!A6.getSelectedItem().equals("<Blank>")) {
+                            if (A6.getSelectedItem()  != null) {
                                 column = (String) B6.getSelectedItem();
                                 if (column.equals("Tracking")) {
                                     column = "B";
@@ -791,7 +791,7 @@ public class NewTransactionEntryGui extends JDialog {
         dispose();
     }
 
-    public void advancedInsertAction(ActionEvent event) {
+    public void advancedInsertAction() {
         try {
             TransactionEntry entry;
             if (UUID == 0) {
@@ -818,11 +818,11 @@ public class NewTransactionEntryGui extends JDialog {
         }
     }
 
-    public void mNewAction(ActionEvent event) {
+    public void mNewAction() {
         ((DefaultTableModel) TABLE.getModel()).addRow(new String[]{});
     }
 
-    public void mUpdateAction(ActionEvent event) {
+    public void mUpdateAction() {
         try {
             metaObject = (JsonObject) JsonItem.sanitizeDigest(META_TEXT.getText());
             META.setText(metaObject.toString());
@@ -831,7 +831,7 @@ public class NewTransactionEntryGui extends JDialog {
         }
     }
 
-    public void mSaveAction(ActionEvent event) {
+    public void mSaveAction() {
         boolean flag = true;
         JsonArray arr = new JsonArray();
         DefaultTableModel tableAccess = (DefaultTableModel) TABLE.getModel();
@@ -969,7 +969,7 @@ public class NewTransactionEntryGui extends JDialog {
         }
     }
 
-    public void mDeleteAction(ActionEvent event) {
+    public void mDeleteAction() {
         int x = TABLE.getSelectedRow();
         if (x > -1) {
             ((DefaultTableModel) TABLE.getModel()).removeRow(x);

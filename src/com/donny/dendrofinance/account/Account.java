@@ -48,13 +48,22 @@ public class Account implements ExportableToJson {
         );
     }
 
-    public AccountWrapper getDefaultWrapper() {
-        return switch (getBroadAccountType()) {
-            case TRACKING -> new AccountWrapper(this, "B");
-            case TAX -> new AccountWrapper(this, "T");
-            case ASSET, EQUITY_MINUS, EXPENSE -> new AccountWrapper(this, "D");
-            case LIABILITY, EQUITY_PLUS, REVENUE -> new AccountWrapper(this, "C");
-        };
+    public AccountWrapper.AWType getDefaultColumn(boolean positive) {
+        if(positive) {
+            return switch (getBroadAccountType()) {
+                case TRACKING -> AccountWrapper.AWType.fromString("T");
+                case GHOST -> AccountWrapper.AWType.fromString("G");
+                case ASSET, EQUITY_MINUS, EXPENSE -> AccountWrapper.AWType.fromString("D");
+                case LIABILITY, EQUITY_PLUS, REVENUE -> AccountWrapper.AWType.fromString("C");
+            };
+        }else{
+            return switch (getBroadAccountType()) {
+                case TRACKING -> AccountWrapper.AWType.fromString("T");
+                case GHOST -> AccountWrapper.AWType.fromString("G");
+                case ASSET, EQUITY_MINUS, EXPENSE -> AccountWrapper.AWType.fromString("C");
+                case LIABILITY, EQUITY_PLUS, REVENUE -> AccountWrapper.AWType.fromString("D");
+            };
+        }
     }
 
     public BroadAccountType getBroadAccountType() {

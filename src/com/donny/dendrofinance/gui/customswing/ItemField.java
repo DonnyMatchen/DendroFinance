@@ -31,12 +31,8 @@ public class ItemField extends JPanel {
                 public void mouseClicked(MouseEvent event) {
                     super.mouseClicked(event);
                     if (!TEXT.getText().equals("")) {
-                        String[] temp = TEXT.getText().replace("C!", "")
-                                .replace("B!", "").replace("D!", "")
-                                .replace("T!", "").replace("{", "")
-                                .replace("}", "").split(", ");
-                        String check = temp[temp.length - 1];
-                        TEXT.setText(TEXT.getText().substring(0, TEXT.getText().lastIndexOf(check)) + LIST.getSelectedValue() + ", ");
+                        String check = getToken(TEXT.getText());
+                        TEXT.setText(TEXT.getText().substring(0, TEXT.getText().lastIndexOf(check)) + LIST.getSelectedValue() + "(), ");
                     }
                 }
             });
@@ -82,13 +78,8 @@ public class ItemField extends JPanel {
     public void updateList(String text) {
         ((DefaultListModel<String>) LIST.getModel()).removeAllElements();
         if (!text.equals("")) {
-            String[] temp = text.replace("C!", "")
-                    .replace("B!", "").replace("D!", "")
-                    .replace("T!", "").replace("{", "")
-                    .replace("}", "").split(", ");
-            final String check = temp[temp.length - 1];
             MASTER.forEach(string -> {
-                if (string.toLowerCase().contains(check.toLowerCase())) {
+                if (string.toLowerCase().contains(getToken(string).toLowerCase())) {
                     ((DefaultListModel<String>) LIST.getModel()).addElement(string);
                 }
             });
@@ -97,6 +88,24 @@ public class ItemField extends JPanel {
 
     public String getText() {
         return TEXT.getText();
+    }
+
+    private String getToken(String text){
+        StringBuilder sb = new StringBuilder();
+        boolean ignore = false;
+        for(char c : text.toCharArray()){
+            if(c == '('){
+                ignore = true;
+            }
+            if(!ignore){
+                sb.append(c);
+            }
+            if(c == ')'){
+                ignore = false;
+            }
+        }
+        String[] tokens = sb.toString().replace(" ", "").split(",");
+        return tokens[tokens.length-1].split("!")[1];
     }
 
     public void setText(String text) {

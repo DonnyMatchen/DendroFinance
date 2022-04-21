@@ -672,7 +672,7 @@ public class Instance {
     public ArrayList<String> getDCAccountsAsStrings() {
         ArrayList<String> out = new ArrayList<>();
         ACCOUNTS.forEach(a -> {
-            if (a.getBroadAccountType() != BroadAccountType.TAX && a.getBroadAccountType() != BroadAccountType.TRACKING) {
+            if (a.getBroadAccountType() != BroadAccountType.GHOST && a.getBroadAccountType() != BroadAccountType.TRACKING) {
                 out.add(a.getName());
             }
         });
@@ -682,7 +682,7 @@ public class Instance {
     public ArrayList<String> getTaxAccountsAsStrings() {
         ArrayList<String> out = new ArrayList<>();
         ACCOUNTS.forEach(a -> {
-            if (a.getBroadAccountType() == BroadAccountType.TAX) {
+            if (a.getBroadAccountType() == BroadAccountType.GHOST) {
                 out.add(a.getName());
             }
         });

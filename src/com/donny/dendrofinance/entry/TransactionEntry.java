@@ -14,7 +14,6 @@ import com.donny.dendrofinance.types.*;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Comparator;
 
 public class TransactionEntry extends Entry<TransactionHeader> implements Comparable<TransactionEntry> {
 
@@ -27,26 +26,14 @@ public class TransactionEntry extends Entry<TransactionHeader> implements Compar
     }
 
     public void insert(LDate date, LString ent, LString itm, LString desc,
-                       LAccountSet accounts, LDecimalSet values
+                       LAccountSet accounts
     ) {
-        ArrayList<AVPair> temp = new ArrayList<>();
-        for (int i = 0; i < accounts.getSize(); i++) {
-            temp.add(new AVPair(accounts.get(i), values.get(i)));
-        }
-        temp.sort(Comparator.comparingInt(AVPair::firstVal));
-        temp.sort(Comparator.comparingInt(AVPair::secVal));
-        accounts = new LAccountSet(CURRENT_INSTANCE);
-        values = new LDecimalSet();
-        for (AVPair pair : temp) {
-            accounts.add(pair.WRAPPER);
-            values.add(pair.VALUE);
-        }
+        accounts.sort();
         insertIntoField("date", date);
         insertIntoField("entity", ent);
         insertIntoField("items", itm);
         insertIntoField("description", desc);
         insertIntoField("accounts", accounts);
-        insertIntoField("values", values);
     }
 
     public JsonItem getMeta(String key) {
@@ -284,30 +271,12 @@ public class TransactionEntry extends Entry<TransactionHeader> implements Compar
         return getAccountSet("accounts");
     }
 
-    public LDecimalSet getValues() {
-        return getDecimalSet("values");
-    }
-
-    public ArrayList<AVPair> getAVPairs() {
-        ArrayList<AVPair> out = new ArrayList<>();
-        for (int i = 0; i < getAccounts().getSize(); i++) {
-            if (i >= getValues().getSize()) {
-                out.add(new AVPair(getAccounts().get(i), BigDecimal.ZERO));
-            } else {
-                out.add(new AVPair(getAccounts().get(i), getValues().get(i)));
-            }
-        }
-        return out;
-    }
-
     public void addAccount(String column, Account a, BigDecimal d) {
-        getAccounts().add(new AccountWrapper(a, column));
-        getValues().add(d);
+        getAccounts().add(new AccountWrapper(a, column, d));
     }
 
-    public void deleteValue(int i) {
+    public void deleteAccount(int i) {
         getAccounts().remove(i);
-        getValues().remove(i);
     }
 
     public boolean hasBudgetAccounts() {
@@ -319,9 +288,9 @@ public class TransactionEntry extends Entry<TransactionHeader> implements Compar
         return false;
     }
 
-    public boolean hasTaxAccounts() {
+    public boolean hasGhostAccounts() {
         for (AccountWrapper aw : getAccounts()) {
-            if (aw.ACCOUNT.getBroadAccountType() == BroadAccountType.TAX) {
+            if (aw.ACCOUNT.getBroadAccountType() == BroadAccountType.GHOST) {
                 return true;
             }
         }
@@ -341,34 +310,34 @@ public class TransactionEntry extends Entry<TransactionHeader> implements Compar
         BigDecimal cred = BigDecimal.ZERO, deb = BigDecimal.ZERO,
                 ass = BigDecimal.ZERO, lia = BigDecimal.ZERO, equ = BigDecimal.ZERO;
         boolean corCol = true;
-        for (AVPair pair : getAVPairs()) {
-            if (pair.WRAPPER.COLUMN == AccountWrapper.AWType.CREDIT) {
-                cred = cred.add(pair.VALUE);
-            } else if (pair.WRAPPER.COLUMN == AccountWrapper.AWType.DEBIT) {
-                deb = deb.add(pair.VALUE);
+        for (AccountWrapper wrapper : getAccounts()) {
+            if (wrapper.COLUMN == AccountWrapper.AWType.CREDIT) {
+                cred = cred.add(wrapper.VALUE);
+            } else if (wrapper.COLUMN == AccountWrapper.AWType.DEBIT) {
+                deb = deb.add(wrapper.VALUE);
             }
-            if (pair.WRAPPER.ACCOUNT.getBroadAccountType() == null) {
-                System.out.println(pair.WRAPPER.ACCOUNT.getName());
+            if (wrapper.ACCOUNT.getBroadAccountType() == null) {
+                System.out.println(wrapper.ACCOUNT.getName());
             }
-            switch (pair.WRAPPER.ACCOUNT.getBroadAccountType()) {
-                case ASSET -> ass = ass.add(pair.WRAPPER.alpha(pair.VALUE));
-                case LIABILITY -> lia = lia.add(pair.WRAPPER.alpha(pair.VALUE));
-                case EQUITY_MINUS, EXPENSE -> equ = equ.subtract(pair.WRAPPER.alpha(pair.VALUE));
-                case EQUITY_PLUS, REVENUE -> equ = equ.add(pair.WRAPPER.alpha(pair.VALUE));
+            switch (wrapper.ACCOUNT.getBroadAccountType()) {
+                case ASSET -> ass = ass.add(wrapper.alpha());
+                case LIABILITY -> lia = lia.add(wrapper.alpha());
+                case EQUITY_MINUS, EXPENSE -> equ = equ.subtract(wrapper.alpha());
+                case EQUITY_PLUS, REVENUE -> equ = equ.add(wrapper.alpha());
             }
-            switch (pair.WRAPPER.COLUMN) {
+            switch (wrapper.COLUMN) {
                 case TRACKER -> {
-                    if (pair.WRAPPER.ACCOUNT.getBroadAccountType() != BroadAccountType.TRACKING) {
+                    if (wrapper.ACCOUNT.getBroadAccountType() != BroadAccountType.TRACKING) {
                         corCol = false;
                     }
                 }
-                case TAX -> {
-                    if (pair.WRAPPER.ACCOUNT.getBroadAccountType() != BroadAccountType.TAX) {
+                case GHOST -> {
+                    if (wrapper.ACCOUNT.getBroadAccountType() != BroadAccountType.GHOST) {
                         corCol = false;
                     }
                 }
                 case CREDIT, DEBIT -> {
-                    if (pair.WRAPPER.ACCOUNT.getBroadAccountType() == BroadAccountType.TAX || pair.WRAPPER.ACCOUNT.getBroadAccountType() == BroadAccountType.TRACKING) {
+                    if (wrapper.ACCOUNT.getBroadAccountType() == BroadAccountType.GHOST || wrapper.ACCOUNT.getBroadAccountType() == BroadAccountType.TRACKING) {
                         corCol = false;
                     }
                 }
@@ -386,13 +355,13 @@ public class TransactionEntry extends Entry<TransactionHeader> implements Compar
                     if (i == 0) {
                         layers.add(new String[]{
                                 getUUID() + "", getDate().toString(), getEntity(), getItems(), getDescription(),
-                                wrapper.ACCOUNT.getName(), wrapper.ACCOUNT.getCurrency().encode(getValues().get(i)),
+                                wrapper.ACCOUNT.getName(), wrapper.ACCOUNT.getCurrency().encode(wrapper.VALUE),
                                 "", "", ""
                         });
                     } else {
                         layers.add(new String[]{
                                 "", "", "", "", "",
-                                wrapper.ACCOUNT.getName(), wrapper.ACCOUNT.getCurrency().encode(getValues().get(i)),
+                                wrapper.ACCOUNT.getName(), wrapper.ACCOUNT.getCurrency().encode(wrapper.VALUE),
                                 "", "", ""
                         });
                     }
@@ -401,27 +370,27 @@ public class TransactionEntry extends Entry<TransactionHeader> implements Compar
                     if (i == 0) {
                         layers.add(new String[]{
                                 getUUID() + "", getDate().toString(), getEntity(), getItems(), getDescription(),
-                                wrapper.ACCOUNT.getName(), "", wrapper.ACCOUNT.getCurrency().encode(getValues().get(i)),
+                                wrapper.ACCOUNT.getName(), "", wrapper.ACCOUNT.getCurrency().encode(wrapper.VALUE),
                                 "", ""
                         });
                     } else {
                         layers.add(new String[]{
                                 "", "", "", "", "",
-                                wrapper.ACCOUNT.getName(), "", wrapper.ACCOUNT.getCurrency().encode(getValues().get(i)),
+                                wrapper.ACCOUNT.getName(), "", wrapper.ACCOUNT.getCurrency().encode(wrapper.VALUE),
                                 "", ""
                         });
                     }
                 }
-                case TAX -> {
+                case GHOST -> {
                     if (i == 0) {
                         layers.add(new String[]{
                                 getUUID() + "", getDate().toString(), getEntity(), getItems(), getDescription(),
-                                wrapper.ACCOUNT.getName(), "", "", "", wrapper.ACCOUNT.getCurrency().encode(getValues().get(i))
+                                wrapper.ACCOUNT.getName(), "", "", "", wrapper.ACCOUNT.getCurrency().encode(wrapper.VALUE)
                         });
                     } else {
                         layers.add(new String[]{
                                 "", "", "", "", "",
-                                wrapper.ACCOUNT.getName(), "", "", "", wrapper.ACCOUNT.getCurrency().encode(getValues().get(i))
+                                wrapper.ACCOUNT.getName(), "", "", "", wrapper.ACCOUNT.getCurrency().encode(wrapper.VALUE)
                         });
                     }
                 }
@@ -430,13 +399,13 @@ public class TransactionEntry extends Entry<TransactionHeader> implements Compar
                         layers.add(new String[]{
                                 getUUID() + "", getDate().toString(), getEntity(), getItems(), getDescription(),
                                 wrapper.ACCOUNT.getName(), "", "",
-                                wrapper.ACCOUNT.getCurrency().encode(getValues().get(i)), ""
+                                wrapper.ACCOUNT.getCurrency().encode(wrapper.VALUE), ""
                         });
                     } else {
                         layers.add(new String[]{
                                 "", "", "", "", "",
                                 wrapper.ACCOUNT.getName(), "", "",
-                                wrapper.ACCOUNT.getCurrency().encode(getValues().get(i)), ""
+                                wrapper.ACCOUNT.getCurrency().encode(wrapper.VALUE), ""
                         });
                     }
                 }
@@ -458,10 +427,10 @@ public class TransactionEntry extends Entry<TransactionHeader> implements Compar
                 .append("\n\nItems: ").append(getItems())
                 .append("\n\nDescription: ").append(getDescription())
                 .append("\n\nAccounts:");
-        for (AVPair pair : getAVPairs()) {
-            sb.append("\n").append(pair.WRAPPER.ACCOUNT.getName()).append(" (")
-                    .append(pair.WRAPPER.COLUMN.toString()).append("): ");
-            sb.append(pair.WRAPPER.ACCOUNT.getCurrency().encode(pair.VALUE));
+        for (AccountWrapper wrapper : getAccounts()) {
+            sb.append("\n").append(wrapper.ACCOUNT.getName()).append(" (")
+                    .append(wrapper.COLUMN.toString()).append("): ");
+            sb.append(wrapper.ACCOUNT.getCurrency().encode(wrapper.VALUE));
         }
         sb.append("\n\nMetaData:");
         if (hasMeta("loan")) {
@@ -495,28 +464,5 @@ public class TransactionEntry extends Entry<TransactionHeader> implements Compar
             }
         }
         return sb.toString();
-    }
-
-    public static class AVPair {
-        public final AccountWrapper WRAPPER;
-        public final BigDecimal VALUE;
-
-        public AVPair(AccountWrapper wrap, BigDecimal val) {
-            WRAPPER = wrap;
-            VALUE = val;
-        }
-
-        public int firstVal() {
-            return WRAPPER.ACCOUNT.getAid();
-        }
-
-        public int secVal() {
-            return switch (WRAPPER.COLUMN) {
-                case DEBIT -> 1;
-                case CREDIT -> 2;
-                case TRACKER -> 3;
-                case TAX -> 4;
-            };
-        }
     }
 }

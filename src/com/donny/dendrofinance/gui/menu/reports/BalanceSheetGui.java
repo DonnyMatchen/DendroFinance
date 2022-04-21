@@ -133,7 +133,7 @@ public class BalanceSheetGui extends RegisterFrame {
                             case LIABILITY, EQUITY_PLUS, REVENUE -> TABLE_ACCESS.addRow(new String[]{
                                     a.getName(), "", a.getCurrency().encode(acc.get(a)), "", ""
                             });
-                            case TAX -> TABLE_ACCESS.addRow(new String[]{
+                            case GHOST -> TABLE_ACCESS.addRow(new String[]{
                                     a.getName(), "", "", a.getCurrency().encode(acc.get(a)), ""
                             });
                             case TRACKING -> TABLE_ACCESS.addRow(new String[]{
@@ -155,7 +155,7 @@ public class BalanceSheetGui extends RegisterFrame {
                         case LIABILITY, EQUITY_PLUS, REVENUE -> TABLE_ACCESS.addRow(new String[]{
                                 type.NAME, "", CURRENT_INSTANCE.$(accTyp.get(type)), "", ""
                         });
-                        case TAX, TRACKING -> {
+                        case GHOST, TRACKING -> {
                         }
                     }
                 }

@@ -14,15 +14,16 @@ import com.donny.dendrofinance.instance.Instance;
 import com.donny.dendrofinance.json.JsonArray;
 import com.donny.dendrofinance.json.JsonFormattingException;
 import com.donny.dendrofinance.json.JsonItem;
+import com.donny.dendrofinance.types.AccountWrapper;
 import com.donny.dendrofinance.types.LAccountSet;
 import com.donny.dendrofinance.types.LDate;
-import com.donny.dendrofinance.types.LDecimalSet;
 import com.donny.dendrofinance.types.LString;
 import com.donny.dendrofinance.util.Aggregation;
 import com.donny.dendrofinance.util.Curation;
 
 import javax.swing.*;
 import java.io.File;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 
 public class ArchiveGui extends RegisterFrame {
@@ -133,17 +134,13 @@ public class ArchiveGui extends RegisterFrame {
             if (prior != null) {
                 Aggregation<Account> acc = new Aggregation<>();
                 for (TransactionEntry entry : entries) {
-                    for (TransactionEntry.AVPair pair : entry.getAVPairs()) {
-                        acc.add(pair.WRAPPER.ACCOUNT, pair.WRAPPER.alpha(pair.VALUE));
+                    for (AccountWrapper wrapper : entry.getAccounts()) {
+                        acc.add(wrapper.ACCOUNT, wrapper.alpha());
                     }
                 }
-                StringBuilder aSet = new StringBuilder();
-                StringBuilder dSet = new StringBuilder();
-                for (Account a : acc.keySet()) {
-                    if (a.counts(acc.get(a))) {
-                        aSet.append(a.getDefaultWrapper().toString()).append(", ");
-                        dSet.append(acc.get(a)).append(", ");
-                    }
+                LAccountSet aSet = new LAccountSet(CURRENT_INSTANCE);
+                for(Account a : acc.keySet()){
+                    aSet.add(new AccountWrapper(a, a.getDefaultColumn((acc.get(a).compareTo(BigDecimal.ZERO) >= 0)), acc.get(a)));
                 }
                 LDate end = new LDate(year, 12, 31, CURRENT_INSTANCE);
                 ArrayList<Position> positions = CURRENT_INSTANCE.DATA_HANDLER.getPositions(end);
@@ -179,8 +176,7 @@ public class ArchiveGui extends RegisterFrame {
                         new LString("PRIOR"),
                         new LString(""),
                         new LString(""),
-                        new LAccountSet(aSet.substring(0, aSet.length() - 1), CURRENT_INSTANCE),
-                        new LDecimalSet(dSet.substring(0, dSet.length() - 1))
+                        aSet
                 );
                 JsonArray arr = new JsonArray();
                 for (TransactionEntry entry : entries) {

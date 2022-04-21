@@ -28,7 +28,6 @@ public class Field {
             case JSON -> value = new LJson((JsonObject) item);
             case STRING -> value = new LString(((JsonString) item).getString());
             case DECIMAL -> value = new LDecimal(((JsonDecimal) item).decimal);
-            case SET_DECIMAL -> value = new LDecimalSet((JsonArray) item);
             case NULL -> value = null;
         }
     }

@@ -174,10 +174,10 @@ public class RevExpGui extends RegisterFrame {
                         }
                         if ((a.ACCOUNT.getBroadAccountType() == BroadAccountType.REVENUE || a.ACCOUNT.getBroadAccountType() == BroadAccountType.EXPENSE) && flag) {
                             switch (per) {
-                                case "Yearly" -> data.add(a.ACCOUNT, entry.getDate().getYear() + "", a.alpha(entry.getValues().get(i)));
-                                case "Semiannually" -> data.add(a.ACCOUNT, entry.getDate().getYear() + " " + entry.getDate().getSemi(), a.alpha(entry.getValues().get(i)));
-                                case "Quarterly" -> data.add(a.ACCOUNT, entry.getDate().getYear() + " " + entry.getDate().getQuarter(), a.alpha(entry.getValues().get(i)));
-                                case "Monthly" -> data.add(a.ACCOUNT, entry.getDate().getYear() + " " + entry.getDate().getMonth(), a.alpha(entry.getValues().get(i)));
+                                case "Yearly" -> data.add(a.ACCOUNT, entry.getDate().getYear() + "", a.alpha());
+                                case "Semiannually" -> data.add(a.ACCOUNT, entry.getDate().getYear() + " " + entry.getDate().getSemi(), a.alpha());
+                                case "Quarterly" -> data.add(a.ACCOUNT, entry.getDate().getYear() + " " + entry.getDate().getQuarter(), a.alpha());
+                                case "Monthly" -> data.add(a.ACCOUNT, entry.getDate().getYear() + " " + entry.getDate().getMonth(), a.alpha());
                             }
                         }
                     }

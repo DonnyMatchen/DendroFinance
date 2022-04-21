@@ -3,12 +3,10 @@ package com.donny.dendrofinance.types;
 import com.donny.dendrofinance.account.Account;
 import com.donny.dendrofinance.currency.LCurrency;
 import com.donny.dendrofinance.instance.Instance;
-import com.donny.dendrofinance.json.JsonArray;
-import com.donny.dendrofinance.json.JsonFormattingException;
-import com.donny.dendrofinance.json.JsonItem;
-import com.donny.dendrofinance.json.JsonString;
+import com.donny.dendrofinance.json.*;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Iterator;
 
 public class LAccountSet extends LType<ArrayList<AccountWrapper>> implements Iterable<AccountWrapper> {
@@ -22,13 +20,9 @@ public class LAccountSet extends LType<ArrayList<AccountWrapper>> implements Ite
 
     public LAccountSet(JsonArray array, Instance curInst) {
         this(curInst);
-        for (JsonString item : array.getStringArray()) {
-            String[] parts = item.getString().split("!");
-            for (Account a : CURRENT_INSTANCE.ACCOUNTS) {
-                if (a.getName().equalsIgnoreCase(parts[1])) {
-                    REGISTRY.add(new AccountWrapper(a, parts[0]));
-                    break;
-                }
+        for (JsonObject obj : array.getObjectArray()) {
+            if(obj.FIELDS.containsKey("acc") && obj.FIELDS.containsKey("col") && obj.FIELDS.containsKey("val")){
+                REGISTRY.add(new AccountWrapper(obj, CURRENT_INSTANCE));
             }
         }
     }
@@ -36,34 +30,27 @@ public class LAccountSet extends LType<ArrayList<AccountWrapper>> implements Ite
     public LAccountSet(String raw, Instance curInst) {
         this(curInst);
         for (String acc : raw.replace("{", "").replace("}", "").replace(" ", "").split(",")) {
-            String[] parts = acc.split("!");
-            boolean flag = true;
-            for (Account a : CURRENT_INSTANCE.ACCOUNTS) {
-                if (a.getName().equalsIgnoreCase(parts[1])) {
-                    REGISTRY.add(new AccountWrapper(a, parts[0]));
-                    flag = false;
-                    break;
-                }
-            }
-            if (flag) {
+            AccountWrapper wrapper = new AccountWrapper(acc, CURRENT_INSTANCE);
+            if (wrapper.ACCOUNT == null) {
                 CURRENT_INSTANCE.LOG_HANDLER.error(this.getClass(), "Account not found: " + acc);
+            } else {
+                REGISTRY.add(wrapper);
             }
         }
     }
 
     @Override
     public boolean sameAs(ArrayList<AccountWrapper> b) {
-        boolean flag = true;
         if (REGISTRY.size() == b.size()) {
             for (int i = 0; i < b.size(); i++) {
                 if (!REGISTRY.get(i).equals(b.get(i))) {
-                    flag = false;
-                    break;
+                    return false;
                 }
             }
-            return flag;
+            return true;
+        } else {
+            return false;
         }
-        return false;
     }
 
     @Override
@@ -98,7 +85,7 @@ public class LAccountSet extends LType<ArrayList<AccountWrapper>> implements Ite
     public JsonItem export() throws JsonFormattingException {
         JsonArray arr = new JsonArray();
         for (AccountWrapper a : REGISTRY) {
-            arr.ARRAY.add(new JsonString(a.toString()));
+            arr.ARRAY.add(a.export());
         }
         return arr;
     }
@@ -139,7 +126,7 @@ public class LAccountSet extends LType<ArrayList<AccountWrapper>> implements Ite
 
     public boolean containsTax() {
         for (AccountWrapper a : REGISTRY) {
-            if (a.COLUMN == AccountWrapper.AWType.TAX) {
+            if (a.COLUMN == AccountWrapper.AWType.GHOST) {
                 return true;
             }
         }
@@ -154,6 +141,11 @@ public class LAccountSet extends LType<ArrayList<AccountWrapper>> implements Ite
             }
         }
         return out;
+    }
+
+    public void sort(){
+        REGISTRY.sort((w1, w2) -> w1.ACCOUNT.compareTo(w2.ACCOUNT));
+        REGISTRY.sort(Comparator.comparing(w -> w.COLUMN));
     }
 
     @Override

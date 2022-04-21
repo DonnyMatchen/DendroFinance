@@ -53,7 +53,7 @@ public class LCurrency implements ExportableToJson {
         CURRENT_INSTANCE = curInst;
         String flags = obj.getString("flags").getString();
         if (!obj.FIELDS.containsKey("name")) {
-            System.out.println(obj);
+            CURRENT_INSTANCE.LOG_HANDLER.warn(this.getClass(), "Nameless Currency:\n" + obj);
         }
         NAME = obj.getString("name").getString();
         TIC = obj.getString("tic").getString();

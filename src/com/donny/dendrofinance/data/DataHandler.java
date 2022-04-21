@@ -328,12 +328,12 @@ public class DataHandler {
      * The following is a list of implemented features of this search function
      * searching <code>a b c</code> will check separately for the presence of the character sequences <code>a</code>, <code>b</code>, and <code>c</code>.  Only entries with all three present will be included.
      * searching <code>"a b c"</code> will check for the character sequence <code>a b c</code> and only entries with that character sequence will be included
-     * $T will return entries that have a tax account
-     * $t will return entries that do not have a tax account
+     * $G will return entries that have a ghost account
+     * $g will return entries that do not have a ghost account
      * $B will return entries that have a budget account
      * $b will return entries that do not have a budget account
-     * $C will return entries that have a tracking account
-     * $c will return entries that do not have a tracking account
+     * $T will return entries that have a tracking account
+     * $t will return entries that do not have a tracking account
      * $L will return entries that have trading metadata
      * $l will return entries that do not have trading metadata
      * $A will return entries that have asset metadata
@@ -357,12 +357,12 @@ public class DataHandler {
                     switch (token.charAt(0)) {
                         case '$' -> {
                             switch (token) {
-                                case "$T" -> {
+                                case "$G" -> {
                                     if (!entry.hasGhostAccounts()) {
                                         flag = false;
                                     }
                                 }
-                                case "$t" -> {
+                                case "$g" -> {
                                     if (entry.hasGhostAccounts()) {
                                         flag = false;
                                     }
@@ -377,12 +377,12 @@ public class DataHandler {
                                         flag = false;
                                     }
                                 }
-                                case "$C" -> {
+                                case "$T" -> {
                                     if (!entry.hasTrackingAccounts()) {
                                         flag = false;
                                     }
                                 }
-                                case "$c" -> {
+                                case "$t" -> {
                                     if (entry.hasTrackingAccounts()) {
                                         flag = false;
                                     }

@@ -2,13 +2,13 @@ package com.donny.dendrofinance.gui.menu.util;
 
 import com.donny.dendrofinance.account.AWColumn;
 import com.donny.dendrofinance.account.Account;
+import com.donny.dendrofinance.account.AccountWrapper;
 import com.donny.dendrofinance.entry.TransactionEntry;
 import com.donny.dendrofinance.gui.MainGui;
 import com.donny.dendrofinance.gui.RegisterFrame;
 import com.donny.dendrofinance.gui.customswing.DendroFactory;
 import com.donny.dendrofinance.gui.customswing.SearchBox;
 import com.donny.dendrofinance.instance.Instance;
-import com.donny.dendrofinance.account.AccountWrapper;
 
 import javax.swing.*;
 import java.math.BigDecimal;

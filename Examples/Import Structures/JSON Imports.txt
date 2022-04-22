@@ -1,0 +1,3 @@
+JSON Imports are raw exports from this software in LEntry JSON Format.
+
+For understanding of this format, it is suggested that you run the export function and examine the resulting files.

@@ -1,6 +1,7 @@
 package com.donny.dendrofinance.gui.addedit;
 
 import com.donny.dendrofinance.account.AWColumn;
+import com.donny.dendrofinance.account.AccountWrapper;
 import com.donny.dendrofinance.currency.LCurrency;
 import com.donny.dendrofinance.entry.TransactionEntry;
 import com.donny.dendrofinance.gui.MainGui;
@@ -11,7 +12,6 @@ import com.donny.dendrofinance.gui.form.Validation;
 import com.donny.dendrofinance.gui.form.ValidationFailedException;
 import com.donny.dendrofinance.instance.Instance;
 import com.donny.dendrofinance.json.*;
-import com.donny.dendrofinance.account.AccountWrapper;
 import com.donny.dendrofinance.types.LAccountSet;
 import com.donny.dendrofinance.types.LJson;
 import com.donny.dendrofinance.types.LString;

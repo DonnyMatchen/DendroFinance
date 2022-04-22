@@ -23,7 +23,8 @@ public class DendroFactory {
             CARET = new Color(211, 211, 211);
 
     public static final Border PANEL_BORDER = BorderFactory.createBevelBorder(0),
-            CONTENT_BORDER = BorderFactory.createBevelBorder(1);;
+            CONTENT_BORDER = BorderFactory.createBevelBorder(1);
+    ;
     public static final int SMALL_GAP = 5;
     public static final int MEDIUM_GAP = 10;
     public static final int LARGE_GAP = 15;

@@ -2,7 +2,6 @@ package com.donny.dendrofinance.data.backingtable;
 
 import com.donny.dendrofinance.currency.LInventory;
 import com.donny.dendrofinance.gui.menu.data.backing.BackingTableGui;
-import com.donny.dendrofinance.gui.menu.data.backing.edit.BackingEditGui;
 import com.donny.dendrofinance.gui.menu.data.backing.edit.InventoryEditGui;
 import com.donny.dendrofinance.instance.Instance;
 import com.donny.dendrofinance.json.JsonArray;

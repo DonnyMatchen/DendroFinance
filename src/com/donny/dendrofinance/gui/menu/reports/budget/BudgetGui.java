@@ -1,6 +1,7 @@
 package com.donny.dendrofinance.gui.menu.reports.budget;
 
 import com.donny.dendrofinance.account.AWColumn;
+import com.donny.dendrofinance.account.AccountWrapper;
 import com.donny.dendrofinance.account.BroadAccountType;
 import com.donny.dendrofinance.entry.BudgetEntry;
 import com.donny.dendrofinance.entry.TransactionEntry;
@@ -9,7 +10,6 @@ import com.donny.dendrofinance.gui.RegisterFrame;
 import com.donny.dendrofinance.gui.customswing.DendroFactory;
 import com.donny.dendrofinance.instance.Instance;
 import com.donny.dendrofinance.json.JsonDecimal;
-import com.donny.dendrofinance.account.AccountWrapper;
 import com.donny.dendrofinance.util.Aggregation;
 import com.donny.dendrofinance.util.Curation;
 

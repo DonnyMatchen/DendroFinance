@@ -19,8 +19,8 @@ public class InventoryBTC extends BackingTableCore<LInventory> {
     }
 
     @Override
-    public BackingEditGui<LInventory> getEditDialog(BackingTableGui<LInventory> caller, int index) {
-        return new InventoryEditGui(caller, this, index, CURRENT_INSTANCE);
+    public void getEditDialog(BackingTableGui<LInventory> caller, int index) {
+        new InventoryEditGui(caller, this, index, CURRENT_INSTANCE);
     }
 
     @Override

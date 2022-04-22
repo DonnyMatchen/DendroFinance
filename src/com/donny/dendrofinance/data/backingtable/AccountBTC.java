@@ -17,8 +17,8 @@ public class AccountBTC extends BackingTableCore<Account> {
     }
 
     @Override
-    public BackingEditGui<Account> getEditDialog(BackingTableGui<Account> caller, int index) {
-        return new AccountEditGui(caller, this, index, CURRENT_INSTANCE);
+    public void getEditDialog(BackingTableGui<Account> caller, int index) {
+        new AccountEditGui(caller, this, index, CURRENT_INSTANCE);
     }
 
     @Override

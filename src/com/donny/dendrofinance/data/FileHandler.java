@@ -94,9 +94,6 @@ public class FileHandler {
 
     public byte[] getResource(String path) {
         InputStream stream = this.getClass().getResourceAsStream("/com/donny/dendrofinance/resources/" + path);
-        if (stream == null) {
-            System.out.println(path);
-        }
         try {
             return stream.readAllBytes();
         } catch (IOException e) {
@@ -224,9 +221,6 @@ public class FileHandler {
 
     public BigDecimal hitTwelveData(String ticker, LDate date) {
         String day = new SimpleDateFormat("yyyy-MM-dd").format(date.getTime());
-        System.out.println(
-                "https://api.twelvedata.com/time_series?symbol=" + ticker + "&interval=1day&outputsize=1&end_date=" + day + "&apikey=" + CURRENT_INSTANCE.twelveDataApiKey
-        );
         JsonObject obj = (JsonObject) hit("https://api.twelvedata.com/time_series?symbol=" + ticker + "&interval=1day&outputsize=1&end_date=" + day + "&apikey=" + CURRENT_INSTANCE.twelveDataApiKey);
         if (obj.FIELDS.containsKey("values")) {
             JsonArray res = obj.getArray("values");

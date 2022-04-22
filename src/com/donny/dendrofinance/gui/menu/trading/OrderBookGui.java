@@ -12,7 +12,6 @@ import javax.swing.table.DefaultTableModel;
 import java.util.Objects;
 
 public class OrderBookGui extends RegisterFrame {
-    private final JPanel BACK;
     private final JLabel A, B;
     private final JComboBox<String> YEAR, PERIOD;
     private final JScrollPane PANE;
@@ -23,7 +22,6 @@ public class OrderBookGui extends RegisterFrame {
         super(caller, curInst);
         //Draw Gui
         {
-            BACK = new JPanel();
             PANE = DendroFactory.getTable(new String[]{
                     "Bought Ref", "Bought Date", "Sold Ref", "Sold Date", "Asset", "Volume", "Bought", "Sold", "Profit"
             }, new Object[][]{}, false);
@@ -63,8 +61,8 @@ public class OrderBookGui extends RegisterFrame {
             }
             //back
             {
-                GroupLayout main = new GroupLayout(BACK);
-                BACK.setLayout(main);
+                GroupLayout main = new GroupLayout(getContentPane());
+                getContentPane().setLayout(main);
                 main.setHorizontalGroup(
                         main.createSequentialGroup().addContainerGap().addGroup(
                                 main.createParallelGroup(GroupLayout.Alignment.CENTER).addGroup(
@@ -100,8 +98,6 @@ public class OrderBookGui extends RegisterFrame {
                         ).addContainerGap()
                 );
             }
-
-            add(BACK);
 
             pack();
         }

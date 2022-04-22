@@ -2,19 +2,18 @@ package com.donny.dendrofinance.gui.menu.util;
 
 import com.donny.dendrofinance.account.AWColumn;
 import com.donny.dendrofinance.account.Account;
+import com.donny.dendrofinance.account.AccountWrapper;
 import com.donny.dendrofinance.entry.TransactionEntry;
 import com.donny.dendrofinance.gui.MainGui;
 import com.donny.dendrofinance.gui.RegisterFrame;
 import com.donny.dendrofinance.gui.customswing.DendroFactory;
 import com.donny.dendrofinance.gui.customswing.SearchBox;
 import com.donny.dendrofinance.instance.Instance;
-import com.donny.dendrofinance.account.AccountWrapper;
 
 import javax.swing.*;
 import java.math.BigDecimal;
 
 public class AccountReplacementGui extends RegisterFrame {
-    public final JPanel BACK;
     public final SearchBox OLD, NEW;
     public final JButton GO;
 
@@ -23,7 +22,6 @@ public class AccountReplacementGui extends RegisterFrame {
 
         //draw gui
         {
-            BACK = new JPanel();
             OLD = new SearchBox("Existing Account", CURRENT_INSTANCE.getAccountsInUseAsStrings());
             NEW = new SearchBox("Replacement Account", CURRENT_INSTANCE.getAccountsAsStrings());
             GO = new JButton("Do Change");
@@ -54,8 +52,8 @@ public class AccountReplacementGui extends RegisterFrame {
 
             //group layout
             {
-                GroupLayout main = new GroupLayout(BACK);
-                BACK.setLayout(main);
+                GroupLayout main = new GroupLayout(getContentPane());
+                getContentPane().setLayout(main);
                 main.setHorizontalGroup(
                         main.createSequentialGroup().addContainerGap().addGroup(
                                 main.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(
@@ -77,8 +75,6 @@ public class AccountReplacementGui extends RegisterFrame {
                         ).addContainerGap()
                 );
             }
-
-            add(BACK);
 
             pack();
         }

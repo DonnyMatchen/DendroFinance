@@ -13,7 +13,6 @@ import javax.swing.table.DefaultTableModel;
 import java.math.BigDecimal;
 
 public class LedgerGui extends RegisterFrame {
-    private final JPanel BACK;
     private final SearchBox CUR;
     private final JScrollPane PANE;
     private final JTable TABLE;
@@ -23,7 +22,6 @@ public class LedgerGui extends RegisterFrame {
         super(caller, curInst);
         //Draw Gui
         {
-            BACK = new JPanel();
             PANE = DendroFactory.getTable(new String[]{
                     "Uuid", "Date", "From", "To", "Value", "Price"
             }, new Object[][]{}, false);
@@ -34,8 +32,8 @@ public class LedgerGui extends RegisterFrame {
 
             //back
             {
-                GroupLayout main = new GroupLayout(BACK);
-                BACK.setLayout(main);
+                GroupLayout main = new GroupLayout(getContentPane());
+                getContentPane().setLayout(main);
                 main.setHorizontalGroup(
                         main.createSequentialGroup().addContainerGap().addGroup(
                                 main.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(
@@ -53,8 +51,6 @@ public class LedgerGui extends RegisterFrame {
                         ).addContainerGap()
                 );
             }
-
-            add(BACK);
 
             pack();
         }

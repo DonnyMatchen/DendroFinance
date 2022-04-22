@@ -78,8 +78,8 @@ public class StockEditGui extends BackingEditGui<LStock> {
 
         //Group Layout
         {
-            GroupLayout main = new GroupLayout(BACK);
-            BACK.setLayout(main);
+            GroupLayout main = new GroupLayout(getContentPane());
+            getContentPane().setLayout(main);
             main.setHorizontalGroup(
                     main.createSequentialGroup().addContainerGap().addGroup(
                             main.createParallelGroup(GroupLayout.Alignment.CENTER).addGroup(

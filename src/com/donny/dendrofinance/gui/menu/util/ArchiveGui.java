@@ -1,6 +1,7 @@
 package com.donny.dendrofinance.gui.menu.util;
 
 import com.donny.dendrofinance.account.Account;
+import com.donny.dendrofinance.account.AccountWrapper;
 import com.donny.dendrofinance.currency.LCurrency;
 import com.donny.dendrofinance.entry.TransactionEntry;
 import com.donny.dendrofinance.entry.meta.AssetMetadata;
@@ -14,7 +15,6 @@ import com.donny.dendrofinance.instance.Instance;
 import com.donny.dendrofinance.json.JsonArray;
 import com.donny.dendrofinance.json.JsonFormattingException;
 import com.donny.dendrofinance.json.JsonItem;
-import com.donny.dendrofinance.account.AccountWrapper;
 import com.donny.dendrofinance.types.LAccountSet;
 import com.donny.dendrofinance.types.LDate;
 import com.donny.dendrofinance.types.LString;
@@ -29,7 +29,6 @@ import java.util.ArrayList;
 public class ArchiveGui extends RegisterFrame {
     private final File DIR;
 
-    private final JPanel BACK;
     private final JLabel A, B;
     private final JComboBox<String> YEAR, ARCHIVES;
     private final JButton GO, EXPORT;
@@ -41,7 +40,6 @@ public class ArchiveGui extends RegisterFrame {
 
         //draw gui
         {
-            BACK = new JPanel();
             A = new JLabel("Year");
             B = new JLabel("Archive");
             YEAR = new JComboBox<>();
@@ -70,8 +68,8 @@ public class ArchiveGui extends RegisterFrame {
 
             //group layout
             {
-                GroupLayout main = new GroupLayout(BACK);
-                BACK.setLayout(main);
+                GroupLayout main = new GroupLayout(getContentPane());
+                getContentPane().setLayout(main);
                 main.setHorizontalGroup(
                         main.createSequentialGroup().addContainerGap().addGroup(
                                 main.createParallelGroup(GroupLayout.Alignment.CENTER).addGroup(
@@ -113,7 +111,6 @@ public class ArchiveGui extends RegisterFrame {
                         ).addContainerGap()
                 );
             }
-            add(BACK);
 
             pack();
         }

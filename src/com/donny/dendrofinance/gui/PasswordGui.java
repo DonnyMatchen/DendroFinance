@@ -12,7 +12,6 @@ import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.spec.SecretKeySpec;
 import javax.swing.*;
-import java.awt.event.ActionEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.io.File;
@@ -33,7 +32,6 @@ public class PasswordGui extends javax.swing.JFrame {
     public final String[] ARGS;
     public final ArrayList<JsonObject> PROFILES;
     //Swin components
-    private final JPanel BACK;
     private final JLabel A, B;
     private final JPasswordField PASSWORD;
     private final JComboBox<String> PROFILE;
@@ -50,8 +48,6 @@ public class PasswordGui extends javax.swing.JFrame {
         //draw gui
         {
             setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-
-            BACK = new JPanel();
 
             A = new JLabel("Password");
 
@@ -86,17 +82,17 @@ public class PasswordGui extends javax.swing.JFrame {
             ENTER.addActionListener(event -> enterPressed());
 
             NEW_INSTANCE = DendroFactory.getButton("New Instance");
-            NEW_INSTANCE.addActionListener(this::newInstance);
+            NEW_INSTANCE.addActionListener(event -> newInstance());
 
             EDIT_PROFILE = DendroFactory.getButton("Edit Profile");
-            EDIT_PROFILE.addActionListener(this::editProfile);
+            EDIT_PROFILE.addActionListener(event -> editProfile());
 
             NEW_PROFILE = DendroFactory.getButton("New Profile");
-            NEW_PROFILE.addActionListener(this::newProfile);
+            NEW_PROFILE.addActionListener(event -> newProfile());
 
             {
-                GroupLayout backgroundLayout = new GroupLayout(BACK);
-                BACK.setLayout(backgroundLayout);
+                GroupLayout backgroundLayout = new GroupLayout(getContentPane());
+                getContentPane().setLayout(backgroundLayout);
                 backgroundLayout.setHorizontalGroup(
                         backgroundLayout.createSequentialGroup().addContainerGap().addGroup(
                                 backgroundLayout.createParallelGroup(GroupLayout.Alignment.TRAILING).addComponent(
@@ -153,7 +149,7 @@ public class PasswordGui extends javax.swing.JFrame {
                 );
             }
 
-            add(BACK);
+            //add(BACK);
 
             pack();
         }
@@ -226,7 +222,9 @@ public class PasswordGui extends javax.swing.JFrame {
                 done = true;
                 setVisible(false);
             } else {
-                new PassFailGui(this, CURRENT_INSTANCE).setVisible(true);
+                CURRENT_INSTANCE.LOG_HANDLER.fatal(this.getClass(), "Password Hashing Failed!");
+                CURRENT_INSTANCE.LOG_HANDLER.save();
+                System.exit(1);
             }
         } else {
             noTB = true;
@@ -359,11 +357,11 @@ public class PasswordGui extends javax.swing.JFrame {
         return config;
     }
 
-    public void newInstance(ActionEvent event) {
+    public void newInstance() {
         new Thread(() -> DendroFinance.main(ARGS)).start();
     }
 
-    public void newProfile(ActionEvent event) {
+    public void newProfile() {
         try {
             new ProfileGui(this, getConfig("DEFAULT")).setVisible(true);
         } catch (JsonFormattingException e) {
@@ -373,7 +371,7 @@ public class PasswordGui extends javax.swing.JFrame {
         }
     }
 
-    public void editProfile(ActionEvent event) {
+    public void editProfile() {
         String name = (String) PROFILE.getSelectedItem();
         boolean flag = true;
         for (JsonObject prof : PROFILES) {
@@ -386,7 +384,7 @@ public class PasswordGui extends javax.swing.JFrame {
             }
         }
         if (flag) {
-            newProfile(null);
+            newProfile();
         }
     }
 

@@ -51,7 +51,7 @@ public class ImportHandler {
                     new LAccountSet(fields[4], CURRENT_INSTANCE)
             );
             try {
-                if (!fields[6].equals("{}")) {
+                if (!fields[5].equals("{}")) {
                     entry.insertIntoField("meta-data", new LJson((JsonObject) JsonItem.sanitizeDigest(fields[6])));
                 }
             } catch (JsonFormattingException e) {

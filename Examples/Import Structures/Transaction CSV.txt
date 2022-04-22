@@ -1,0 +1,6 @@
+DATE{TAB}ENTITY{TAB}ITEMS{TAB}DESCRIPTION{TAB}ACCOUNTS{TAB}META
+
+DATE: in either format "1/1/2019 | 9:48:46" or "1/1/2019".  Make sure you match the date and time format you have selected for your profile.
+ACCOUNTS: D!Bank(5000), C!Cash(5000)
+
+make sure the delimiter is a tab character (0x0009).  The intention for this method is to create entries in a spreadsheet, copy them to a text file, and save it as is with the .csv extension.

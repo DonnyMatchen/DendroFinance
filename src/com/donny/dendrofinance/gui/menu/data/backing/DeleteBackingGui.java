@@ -9,7 +9,6 @@ import com.donny.dendrofinance.util.ExportableToJsonObject;
 import javax.swing.*;
 
 public class DeleteBackingGui<E extends ExportableToJsonObject> extends JDialog {
-    private final JPanel BACK;
     private final JLabel A;
     private final JScrollPane PANE;
     private final JTextArea TEXT;
@@ -20,7 +19,6 @@ public class DeleteBackingGui<E extends ExportableToJsonObject> extends JDialog 
 
         //draw gui
         {
-            BACK = new JPanel();
             A = new JLabel("Are you sure you want to delete this?");
             PANE = DendroFactory.getScrollField();
             TEXT = (JTextArea) PANE.getViewport().getView();
@@ -42,8 +40,8 @@ public class DeleteBackingGui<E extends ExportableToJsonObject> extends JDialog 
 
             //group layout
             {
-                GroupLayout main = new GroupLayout(BACK);
-                BACK.setLayout(main);
+                GroupLayout main = new GroupLayout(getContentPane());
+                getContentPane().setLayout(main);
                 main.setHorizontalGroup(
                         main.createSequentialGroup().addContainerGap().addGroup(
                                 main.createParallelGroup(GroupLayout.Alignment.LEADING).addComponent(
@@ -75,8 +73,6 @@ public class DeleteBackingGui<E extends ExportableToJsonObject> extends JDialog 
                         ).addContainerGap()
                 );
             }
-
-            add(BACK);
 
             pack();
         }

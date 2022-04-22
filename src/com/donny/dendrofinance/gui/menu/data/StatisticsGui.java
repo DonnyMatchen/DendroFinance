@@ -13,7 +13,6 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 
 public class StatisticsGui extends RegisterFrame {
-    private final JPanel BACK;
     private final JScrollPane PANE;
     private final JTable TABLE;
     private final DefaultTableModel TABLE_ACCESS;
@@ -21,7 +20,6 @@ public class StatisticsGui extends RegisterFrame {
     public StatisticsGui(MainGui caller, Instance curInst) {
         super(caller, curInst);
         {
-            BACK = new JPanel();
             PANE = DendroFactory.getTable(new String[]{
                     "Name", "Value"
             }, new Object[][]{}, false);
@@ -29,8 +27,8 @@ public class StatisticsGui extends RegisterFrame {
             TABLE_ACCESS = ((DefaultTableModel) TABLE.getModel());
             //group layout
             {
-                GroupLayout main = new GroupLayout(BACK);
-                BACK.setLayout(main);
+                GroupLayout main = new GroupLayout(getContentPane());
+                getContentPane().setLayout(main);
                 main.setHorizontalGroup(
                         main.createSequentialGroup().addContainerGap().addComponent(
                                 PANE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
@@ -42,8 +40,6 @@ public class StatisticsGui extends RegisterFrame {
                         ).addContainerGap()
                 );
             }
-
-            add(BACK);
 
             pack();
         }

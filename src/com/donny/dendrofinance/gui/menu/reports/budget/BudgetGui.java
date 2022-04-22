@@ -1,6 +1,7 @@
 package com.donny.dendrofinance.gui.menu.reports.budget;
 
 import com.donny.dendrofinance.account.AWColumn;
+import com.donny.dendrofinance.account.AccountWrapper;
 import com.donny.dendrofinance.account.BroadAccountType;
 import com.donny.dendrofinance.entry.BudgetEntry;
 import com.donny.dendrofinance.entry.TransactionEntry;
@@ -9,7 +10,6 @@ import com.donny.dendrofinance.gui.RegisterFrame;
 import com.donny.dendrofinance.gui.customswing.DendroFactory;
 import com.donny.dendrofinance.instance.Instance;
 import com.donny.dendrofinance.json.JsonDecimal;
-import com.donny.dendrofinance.account.AccountWrapper;
 import com.donny.dendrofinance.util.Aggregation;
 import com.donny.dendrofinance.util.Curation;
 
@@ -38,6 +38,7 @@ public class BudgetGui extends RegisterFrame {
             //view tab
             {
                 VIEW = new JPanel();
+                VIEW.setBorder(null);
                 VIEW_PANE = DendroFactory.getTable(new String[]{
                         "Line Item", "Value", "Budgeted", "Remaining"
                 }, new Object[][]{}, false);
@@ -115,6 +116,7 @@ public class BudgetGui extends RegisterFrame {
             //edit tab
             {
                 EDIT = new JPanel();
+                EDIT.setBorder(null);
                 EDIT_PANE = DendroFactory.getTable(new String[]{}, new Object[][]{}, true);
                 EDIT_TABLE = (JTable) EDIT_PANE.getViewport().getView();
                 EDIT_TABLE.setModel(new DefaultTableModel(new Object[][]{}, new String[]{
@@ -189,6 +191,7 @@ public class BudgetGui extends RegisterFrame {
             BACK.addTab("Edit", EDIT);
 
             add(BACK);
+
             pack();
         }
         updateBudget();

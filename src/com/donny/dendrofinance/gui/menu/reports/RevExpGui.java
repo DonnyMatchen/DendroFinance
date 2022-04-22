@@ -1,13 +1,13 @@
 package com.donny.dendrofinance.gui.menu.reports;
 
 import com.donny.dendrofinance.account.Account;
+import com.donny.dendrofinance.account.AccountWrapper;
 import com.donny.dendrofinance.account.BroadAccountType;
 import com.donny.dendrofinance.entry.TransactionEntry;
 import com.donny.dendrofinance.gui.MainGui;
 import com.donny.dendrofinance.gui.RegisterFrame;
 import com.donny.dendrofinance.gui.customswing.DendroFactory;
 import com.donny.dendrofinance.instance.Instance;
-import com.donny.dendrofinance.account.AccountWrapper;
 import com.donny.dendrofinance.types.LDate;
 import com.donny.dendrofinance.util.DoubleAggregation;
 
@@ -19,7 +19,6 @@ import java.util.Objects;
 import java.util.Vector;
 
 public class RevExpGui extends RegisterFrame {
-    private final JPanel BACK;
     private final JTextField START, END;
     private final JLabel A, B, C, D;
     private final JComboBox<String> PERIOD, TYPE;
@@ -31,7 +30,6 @@ public class RevExpGui extends RegisterFrame {
 
         //draw GUI
         {
-            BACK = new JPanel();
             PERIOD = new JComboBox<>();
             PERIOD.addItem("Yearly");
             PERIOD.addItem("Semiannually");
@@ -63,8 +61,8 @@ public class RevExpGui extends RegisterFrame {
 
             //back layout
             {
-                GroupLayout main = new GroupLayout(BACK);
-                BACK.setLayout(main);
+                GroupLayout main = new GroupLayout(getContentPane());
+                getContentPane().setLayout(main);
                 main.setHorizontalGroup(
                         main.createSequentialGroup().addContainerGap().addGroup(
                                 main.createParallelGroup(GroupLayout.Alignment.CENTER).addGroup(
@@ -122,8 +120,6 @@ public class RevExpGui extends RegisterFrame {
                         ).addContainerGap()
                 );
             }
-
-            add(BACK);
 
             pack();
         }

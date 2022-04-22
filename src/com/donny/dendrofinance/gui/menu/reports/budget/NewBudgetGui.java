@@ -10,7 +10,6 @@ public class NewBudgetGui extends JDialog {
     public final Instance CURRENT_INSTANCE;
     public final BudgetGui CALLER;
 
-    private final JPanel BACK;
     private final JLabel A;
     private final JTextField NAME;
     private final JButton CANCEL, OK;
@@ -21,7 +20,6 @@ public class NewBudgetGui extends JDialog {
         CALLER = caller;
         //draw gui
         {
-            BACK = new JPanel();
             A = new JLabel("Budget Name:");
             NAME = new JTextField();
             CANCEL = DendroFactory.getButton("Cancel");
@@ -35,8 +33,8 @@ public class NewBudgetGui extends JDialog {
 
             //back layout
             {
-                GroupLayout main = new GroupLayout(BACK);
-                BACK.setLayout(main);
+                GroupLayout main = new GroupLayout(getContentPane());
+                getContentPane().setLayout(main);
                 main.setHorizontalGroup(
                         main.createSequentialGroup().addContainerGap().addGroup(
                                 main.createParallelGroup(GroupLayout.Alignment.CENTER).addGroup(
@@ -72,8 +70,6 @@ public class NewBudgetGui extends JDialog {
                         ).addContainerGap()
                 );
             }
-
-            add(BACK);
 
             pack();
         }

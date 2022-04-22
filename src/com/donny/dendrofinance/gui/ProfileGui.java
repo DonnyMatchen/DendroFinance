@@ -8,7 +8,7 @@ import com.donny.dendrofinance.json.JsonString;
 import javax.swing.*;
 
 public class ProfileGui extends JDialog {
-    private final JPanel BACK, FLAGS;
+    private final JPanel FLAGS;
     private final JLabel A, B, C, D, E, F, G, H;
     private final JCheckBox LOG, EXP, AMER, DAY;
     private final JButton SAVE, CANCEL;
@@ -22,7 +22,6 @@ public class ProfileGui extends JDialog {
         {
             setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 
-            BACK = new JPanel();
             FLAGS = new JPanel();
 
             A = new JLabel("Name");
@@ -55,10 +54,6 @@ public class ProfileGui extends JDialog {
             STOCK_API.addItem("Twelve Data");
             STOCK_API.addItem("Polygon.io");
 
-            //flags
-            {
-
-            }
             //group layouts
             {
                 GroupLayout flags = new GroupLayout(FLAGS);
@@ -94,8 +89,8 @@ public class ProfileGui extends JDialog {
                         )
                 );
 
-                GroupLayout main = new GroupLayout(BACK);
-                BACK.setLayout(main);
+                GroupLayout main = new GroupLayout(getContentPane());
+                getContentPane().setLayout(main);
                 main.setHorizontalGroup(
                         main.createSequentialGroup().addContainerGap().addGroup(
                                 main.createParallelGroup(GroupLayout.Alignment.CENTER).addGroup(
@@ -207,8 +202,6 @@ public class ProfileGui extends JDialog {
                         ).addContainerGap()
                 );
             }
-
-            add(BACK);
 
             pack();
         }

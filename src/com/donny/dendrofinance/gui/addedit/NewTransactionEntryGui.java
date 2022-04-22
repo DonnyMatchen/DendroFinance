@@ -1,6 +1,7 @@
 package com.donny.dendrofinance.gui.addedit;
 
 import com.donny.dendrofinance.account.AWColumn;
+import com.donny.dendrofinance.account.AccountWrapper;
 import com.donny.dendrofinance.currency.LCurrency;
 import com.donny.dendrofinance.entry.TransactionEntry;
 import com.donny.dendrofinance.gui.MainGui;
@@ -11,7 +12,6 @@ import com.donny.dendrofinance.gui.form.Validation;
 import com.donny.dendrofinance.gui.form.ValidationFailedException;
 import com.donny.dendrofinance.instance.Instance;
 import com.donny.dendrofinance.json.*;
-import com.donny.dendrofinance.account.AccountWrapper;
 import com.donny.dendrofinance.types.LAccountSet;
 import com.donny.dendrofinance.types.LJson;
 import com.donny.dendrofinance.types.LString;
@@ -62,6 +62,7 @@ public class NewTransactionEntryGui extends JDialog {
             //simple tab
             {
                 SIMP_TAB = new JPanel();
+                SIMP_TAB.setBorder(null);
 
                 A = new JLabel("Date");
                 B = new JLabel("Entity");
@@ -289,6 +290,7 @@ public class NewTransactionEntryGui extends JDialog {
             //advanced tab
             {
                 ADV_TAB = new JPanel();
+                ADV_TAB.setBorder(null);
 
                 AA = new JLabel("Date");
                 BB = new JLabel("Entity");
@@ -411,6 +413,7 @@ public class NewTransactionEntryGui extends JDialog {
             //advanced meta tab
             {
                 META_TAB = new JPanel();
+                META_TAB.setBorder(null);
 
                 AAA = new JLabel("List");
                 BBB = new JLabel("Json");

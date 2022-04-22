@@ -20,7 +20,7 @@ public class ItemField extends JPanel {
 
         //gui setup
         {
-            this.setBorder(null);
+            setBorder(null);
             TEXT_PANE = DendroFactory.getLongField();
             TEXT = (JTextArea) TEXT_PANE.getViewport().getView();
             LIST_PANE = DendroFactory.getScrollPane(false, true);

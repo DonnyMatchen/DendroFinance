@@ -18,8 +18,8 @@ public class ExchangeBTC extends BackingTableCore<Exchange> {
     }
 
     @Override
-    public BackingEditGui<Exchange> getEditDialog(BackingTableGui<Exchange> caller, int index) {
-        return new ExchangeEditGui(caller, this, index, CURRENT_INSTANCE);
+    public void getEditDialog(BackingTableGui<Exchange> caller, int index) {
+        new ExchangeEditGui(caller, this, index, CURRENT_INSTANCE);
     }
 
     @Override

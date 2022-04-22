@@ -18,8 +18,8 @@ public class StockBTC extends BackingTableCore<LStock> {
     }
 
     @Override
-    public BackingEditGui<LStock> getEditDialog(BackingTableGui<LStock> caller, int index) {
-        return new StockEditGui(caller, this, index, CURRENT_INSTANCE);
+    public void getEditDialog(BackingTableGui<LStock> caller, int index) {
+        new StockEditGui(caller, this, index, CURRENT_INSTANCE);
     }
 
     @Override

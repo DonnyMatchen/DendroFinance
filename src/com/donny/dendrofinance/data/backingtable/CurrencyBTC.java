@@ -19,8 +19,8 @@ public class CurrencyBTC extends BackingTableCore<LCurrency> {
     }
 
     @Override
-    public BackingEditGui<LCurrency> getEditDialog(BackingTableGui<LCurrency> caller, int index) {
-        return new CurrencyEditGui(caller, this, index, CURRENT_INSTANCE);
+    public void getEditDialog(BackingTableGui<LCurrency> caller, int index) {
+        new CurrencyEditGui(caller, this, index, CURRENT_INSTANCE);
     }
 
     @Override

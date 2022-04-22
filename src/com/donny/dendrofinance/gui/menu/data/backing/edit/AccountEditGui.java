@@ -87,8 +87,8 @@ public class AccountEditGui extends BackingEditGui<Account> {
 
         //Group Layout
         {
-            GroupLayout main = new GroupLayout(BACK);
-            BACK.setLayout(main);
+            GroupLayout main = new GroupLayout(getContentPane());
+            getContentPane().setLayout(main);
             main.setHorizontalGroup(
                     main.createSequentialGroup().addContainerGap().addGroup(
                             main.createParallelGroup(GroupLayout.Alignment.CENTER).addGroup(

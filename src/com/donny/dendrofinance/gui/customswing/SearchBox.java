@@ -20,7 +20,7 @@ public class SearchBox extends JPanel {
 
         //gui setup
         {
-            this.setBorder(null);
+            setBorder(null);
             A = new JLabel(name);
             SEARCH = new JTextField();
             LIST = DendroFactory.getList();

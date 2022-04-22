@@ -5,7 +5,6 @@ import com.donny.dendrofinance.gui.customswing.DendroFactory;
 import javax.swing.*;
 
 public class ClosePrompt extends JDialog {
-    private final JPanel BACK;
     private final JLabel A;
     private final JButton CANCEL, D_SAVE, SAVE;
 
@@ -14,7 +13,6 @@ public class ClosePrompt extends JDialog {
 
         //make gui
         {
-            BACK = new JPanel();
             A = new JLabel("Do you want to save?");
             CANCEL = DendroFactory.getButton("Cancel");
             CANCEL.addActionListener(event -> dispose());
@@ -25,8 +23,8 @@ public class ClosePrompt extends JDialog {
 
             //GroupLayout
             {
-                GroupLayout main = new GroupLayout(BACK);
-                BACK.setLayout(main);
+                GroupLayout main = new GroupLayout(getContentPane());
+                getContentPane().setLayout(main);
                 main.setHorizontalGroup(
                         main.createSequentialGroup().addContainerGap().addGroup(
                                 main.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(
@@ -60,8 +58,6 @@ public class ClosePrompt extends JDialog {
                         ).addContainerGap()
                 );
             }
-
-            add(BACK);
 
             pack();
         }

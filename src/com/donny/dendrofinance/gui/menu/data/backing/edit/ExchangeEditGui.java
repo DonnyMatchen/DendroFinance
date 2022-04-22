@@ -181,8 +181,8 @@ public class ExchangeEditGui extends BackingEditGui<Exchange> {
 
         //Group Layout
         {
-            GroupLayout main = new GroupLayout(BACK);
-            BACK.setLayout(main);
+            GroupLayout main = new GroupLayout(getContentPane());
+            getContentPane().setLayout(main);
             main.setHorizontalGroup(
                     main.createSequentialGroup().addContainerGap().addGroup(
                             main.createParallelGroup(GroupLayout.Alignment.LEADING).addGroup(

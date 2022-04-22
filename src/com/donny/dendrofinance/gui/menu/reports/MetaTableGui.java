@@ -17,7 +17,7 @@ import java.awt.event.MouseEvent;
 public class MetaTableGui extends RegisterFrame {
     private final MetaTableCore CORE;
 
-    private final JPanel BACK, TAB, INF;
+    private final JPanel TAB, INF;
     private final JLabel A, B, C, D;
     private final JTextField DATE, SEARCH;
     private final JButton ENTER;
@@ -32,8 +32,6 @@ public class MetaTableGui extends RegisterFrame {
 
         //draw GUI
         {
-            BACK = new JPanel();
-
             //table
             {
                 TAB = new JPanel();
@@ -151,8 +149,8 @@ public class MetaTableGui extends RegisterFrame {
                 }
             }
 
-            GroupLayout layout = new GroupLayout(BACK);
-            BACK.setLayout(layout);
+            GroupLayout layout = new GroupLayout(getContentPane());
+            getContentPane().setLayout(layout);
             layout.setHorizontalGroup(
                     layout.createSequentialGroup().addContainerGap().addComponent(
                             TAB, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
@@ -170,7 +168,6 @@ public class MetaTableGui extends RegisterFrame {
                     ).addContainerGap()
             );
 
-            add(BACK);
             pack();
         }
 

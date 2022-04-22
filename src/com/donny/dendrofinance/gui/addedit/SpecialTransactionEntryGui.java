@@ -47,6 +47,7 @@ public class SpecialTransactionEntryGui extends JDialog {
             //buy sell
             {
                 BS = new JPanel();
+                BS.setBorder(null);
                 A = new JLabel("Date");
                 B = new JLabel("Cost");
                 C = new JLabel("Amount");
@@ -140,9 +141,9 @@ public class SpecialTransactionEntryGui extends JDialog {
             BACK.addTab("Buy/Sell", BS);
 
             //income payment
-
             {
                 IP = new JPanel();
+                IP.setBorder(null);
                 D = new JLabel("Date");
                 E = new JLabel("Desc");
                 F = new JLabel("Unit");
@@ -249,6 +250,7 @@ public class SpecialTransactionEntryGui extends JDialog {
             //coin transfer
             {
                 CT = new JPanel();
+                CT.setBorder(null);
                 H = new JLabel("Date");
                 I = new JLabel("From Amount");
                 J = new JLabel("To Amount");
@@ -361,6 +363,7 @@ public class SpecialTransactionEntryGui extends JDialog {
             //token transfer
             {
                 TT = new JPanel();
+                TT.setBorder(null);
                 L = new JLabel("Date");
                 M = new JLabel("From Amount");
                 N = new JLabel("To Amount");
@@ -509,6 +512,7 @@ public class SpecialTransactionEntryGui extends JDialog {
             //trade
             {
                 TD = new JPanel();
+                TD.setBorder(null);
                 R = new JLabel("Date");
                 S = new JLabel("From Amount");
                 T = new JLabel("To Amount");

@@ -17,7 +17,6 @@ import java.math.BigDecimal;
 import java.util.HashMap;
 
 public class AssetStatusGui extends RegisterFrame {
-    private final JPanel BACK;
     private final JLabel A;
     private final JTextField DATE;
     private final JButton ENTER;
@@ -29,8 +28,6 @@ public class AssetStatusGui extends RegisterFrame {
         super(caller, curInst);
         //draw gui
         {
-            BACK = new JPanel();
-
             A = new JLabel("Date");
 
             DATE = new JTextField();
@@ -46,8 +43,8 @@ public class AssetStatusGui extends RegisterFrame {
 
             //back layout
             {
-                GroupLayout main = new GroupLayout(BACK);
-                BACK.setLayout(main);
+                GroupLayout main = new GroupLayout(getContentPane());
+                getContentPane().setLayout(main);
                 main.setHorizontalGroup(
                         main.createSequentialGroup().addContainerGap().addGroup(
                                 main.createParallelGroup(GroupLayout.Alignment.CENTER).addGroup(
@@ -77,8 +74,6 @@ public class AssetStatusGui extends RegisterFrame {
                         ).addContainerGap()
                 );
             }
-
-            add(BACK);
 
             pack();
         }

@@ -62,6 +62,7 @@ public class NewTransactionEntryGui extends JDialog {
             //simple tab
             {
                 SIMP_TAB = new JPanel();
+                SIMP_TAB.setBorder(null);
 
                 A = new JLabel("Date");
                 B = new JLabel("Entity");
@@ -289,6 +290,7 @@ public class NewTransactionEntryGui extends JDialog {
             //advanced tab
             {
                 ADV_TAB = new JPanel();
+                ADV_TAB.setBorder(null);
 
                 AA = new JLabel("Date");
                 BB = new JLabel("Entity");
@@ -411,6 +413,7 @@ public class NewTransactionEntryGui extends JDialog {
             //advanced meta tab
             {
                 META_TAB = new JPanel();
+                META_TAB.setBorder(null);
 
                 AAA = new JLabel("List");
                 BBB = new JLabel("Json");

@@ -12,17 +12,12 @@ public abstract class BackingEditGui<E extends ExportableToJsonObject> extends J
     protected final BackingTableCore<E> TABLE;
     protected final int INDEX;
 
-    protected final JPanel BACK;
-
     public BackingEditGui(BackingTableGui<E> caller, BackingTableCore<E> core, int index, Instance curInst) {
         super(caller, true);
         TABLE = core;
         INDEX = index;
         CURRENT_INSTANCE = curInst;
-
-        BACK = new JPanel();
         initComponents();
-        add(BACK);
         pack();
         setVisible(true);
     }

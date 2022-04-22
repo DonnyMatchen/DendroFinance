@@ -11,7 +11,6 @@ import javax.swing.*;
 import java.math.BigDecimal;
 
 public class ConversionGui extends RegisterFrame {
-    private final JPanel BACK;
     private final JLabel A;
     private final JTextField AMNT;
     private final SearchBox CUR_A, CUR_B;
@@ -24,7 +23,6 @@ public class ConversionGui extends RegisterFrame {
 
         //draw gui
         {
-            BACK = new JPanel();
             A = new JLabel("Amount");
             AMNT = new JTextField();
             CUR_A = new SearchBox("Currency A", CURRENT_INSTANCE.getAllAssetsAsStrings());
@@ -46,8 +44,8 @@ public class ConversionGui extends RegisterFrame {
 
             //group layout
             {
-                GroupLayout main = new GroupLayout(BACK);
-                BACK.setLayout(main);
+                GroupLayout main = new GroupLayout(getContentPane());
+                getContentPane().setLayout(main);
                 main.setHorizontalGroup(
                         main.createSequentialGroup().addContainerGap().addGroup(
                                 main.createParallelGroup(GroupLayout.Alignment.CENTER).addGroup(
@@ -85,8 +83,6 @@ public class ConversionGui extends RegisterFrame {
                         ).addContainerGap()
                 );
             }
-
-            add(BACK);
 
             pack();
         }

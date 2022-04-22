@@ -9,7 +9,6 @@ import javax.swing.*;
 public class RemoveBudgetGui extends JDialog {
     public final Instance CURRENT_INSTANCE;
 
-    private JPanel BACK;
     private JLabel A;
     private JButton NO, YES;
 
@@ -21,7 +20,6 @@ public class RemoveBudgetGui extends JDialog {
         } else {
             //draw gui
             {
-                BACK = new JPanel();
                 A = new JLabel("Do you want to delete " + budget + "?");
                 NO = DendroFactory.getButton("No");
                 NO.addActionListener(event -> dispose());
@@ -43,8 +41,8 @@ public class RemoveBudgetGui extends JDialog {
 
                 //back layout
                 {
-                    GroupLayout main = new GroupLayout(BACK);
-                    BACK.setLayout(main);
+                    GroupLayout main = new GroupLayout(getContentPane());
+                    getContentPane().setLayout(main);
                     main.setHorizontalGroup(
                             main.createSequentialGroup().addContainerGap().addGroup(
                                     main.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(
@@ -72,8 +70,6 @@ public class RemoveBudgetGui extends JDialog {
                             ).addContainerGap()
                     );
                 }
-
-                add(BACK);
 
                 pack();
             }

@@ -17,7 +17,6 @@ import java.awt.event.MouseEvent;
 public class BackingTableGui<E extends ExportableToJsonObject> extends RegisterFrame {
     private final BackingTableCore<E> TABLE_CORE;
 
-    private final JPanel BACK;
     private final JScrollPane PANE;
     private final JTable TABLE;
     private final DefaultTableModel TABLE_ACCESS;
@@ -29,7 +28,6 @@ public class BackingTableGui<E extends ExportableToJsonObject> extends RegisterF
 
         //draw gui
         {
-            BACK = new JPanel();
             PANE = DendroFactory.getTable(TABLE_CORE.getHeader(), new Object[][]{}, false);
             TABLE = (JTable) PANE.getViewport().getView();
             TABLE.addMouseListener(new MouseAdapter() {
@@ -87,8 +85,8 @@ public class BackingTableGui<E extends ExportableToJsonObject> extends RegisterF
 
             //back layout
             {
-                GroupLayout main = new GroupLayout(BACK);
-                BACK.setLayout(main);
+                GroupLayout main = new GroupLayout(getContentPane());
+                getContentPane().setLayout(main);
                 main.setHorizontalGroup(
                         main.createSequentialGroup().addContainerGap().addComponent(
                                 PANE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
@@ -132,8 +130,6 @@ public class BackingTableGui<E extends ExportableToJsonObject> extends RegisterF
             }
 
             updateTable();
-
-            add(BACK);
 
             pack();
         }

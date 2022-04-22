@@ -11,7 +11,6 @@ import javax.swing.table.DefaultTableModel;
 import java.math.BigDecimal;
 
 public class PositionGui extends RegisterFrame {
-    private final JPanel BACK;
     private final JButton RECALC;
     private final JScrollPane PANE;
     private final JTable TABLE;
@@ -22,8 +21,6 @@ public class PositionGui extends RegisterFrame {
 
         //Draw Gui
         {
-            BACK = new JPanel();
-
             PANE = DendroFactory.getTable(new String[]{
                     "Asset", "Volume", "Cost", "Unit", "Value", "Unit", "Position"
             }, new Object[][]{}, false);
@@ -35,8 +32,8 @@ public class PositionGui extends RegisterFrame {
 
             //group layout
             {
-                GroupLayout main = new GroupLayout(BACK);
-                BACK.setLayout(main);
+                GroupLayout main = new GroupLayout(getContentPane());
+                getContentPane().setLayout(main);
                 main.setHorizontalGroup(
                         main.createSequentialGroup().addContainerGap().addGroup(
                                 main.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(
@@ -54,8 +51,6 @@ public class PositionGui extends RegisterFrame {
                         ).addContainerGap()
                 );
             }
-
-            add(BACK);
 
             pack();
         }

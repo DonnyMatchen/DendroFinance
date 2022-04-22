@@ -296,26 +296,14 @@ public class Instance {
                                 x++;
                             }
                         } else {
-                            if (!j.isFiat()) {
-                                if (!j.equals(getLCurrency("C!XMR"))) {
-                                    ACCOUNTS.add(new Account(e.NAME + "_" + j.getTicker(), x,
-                                            j, ACCOUNT_TYPES.getElement("Tracking"), this, false));
-                                } else {
-                                    ACCOUNTS.add(new Account(e.NAME + "_" + j.getTicker(), x,
-                                            getLCurrency("Monero F"), ACCOUNT_TYPES.getElement("Tracking"),
-                                            this, false));
-                                }
+                            if (!j.equals(getLCurrency("main"))) {
+                                ACCOUNTS.add(new Account(e.NAME + "_" + j.getTicker(), x, j,
+                                        ACCOUNT_TYPES.getElement("Tracking"), this, false));
                                 x++;
                             } else {
-                                if (!j.equals(getLCurrency("main"))) {
-                                    ACCOUNTS.add(new Account(e.NAME + "_" + j.getTicker(), x, j,
-                                            ACCOUNT_TYPES.getElement("Tracking"), this, false));
-                                    x++;
-                                } else {
-                                    ACCOUNTS.add(new Account(e.NAME + "_" + j.getTicker(), y, main,
-                                            ACCOUNT_TYPES.getElement("Portfolio_Cash"), this, false));
-                                    y++;
-                                }
+                                ACCOUNTS.add(new Account(e.NAME + "_" + j.getTicker(), y, main,
+                                        ACCOUNT_TYPES.getElement("Portfolio_Cash"), this, false));
+                                y++;
                             }
                         }
                         int places = e.stakes(j);

@@ -37,7 +37,7 @@ import java.util.ArrayList;
 public class MainGui extends JFrame {
     public final ArrayList<RegisterFrame> FRAME_REGISTRY;
     private final Instance CURRENT_INSTANCE;
-    private final JPanel BACK, TABLE_PANEL, DISPLAY_PANEL;
+    private final JPanel TABLE_PANEL, DISPLAY_PANEL;
     private final JLabel A, B, C;
     private final JScrollPane TABLE_PANE, DISPLAY_PANE;
     private final JTextArea DISPLAY;
@@ -56,8 +56,7 @@ public class MainGui extends JFrame {
         {
             setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 
-            BACK = new JPanel();
-            BACK.addMouseListener(new MouseAdapter() {
+            getGlassPane().addMouseListener(new MouseAdapter() {
                 @Override
                 public void mouseEntered(MouseEvent e) {
                     force = false;
@@ -317,8 +316,8 @@ public class MainGui extends JFrame {
                 );
             }
             //back
-            GroupLayout main = new GroupLayout(BACK);
-            BACK.setLayout(main);
+            GroupLayout main = new GroupLayout(getContentPane());
+            getContentPane().setLayout(main);
             main.setHorizontalGroup(
                     main.createSequentialGroup().addContainerGap().addComponent(
                             TABLE_PANEL, GroupLayout.PREFERRED_SIZE, 800, Short.MAX_VALUE
@@ -335,8 +334,6 @@ public class MainGui extends JFrame {
                             )
                     ).addContainerGap()
             );
-
-            add(BACK);
 
             pack();
         }

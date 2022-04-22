@@ -16,7 +16,6 @@ import java.math.BigDecimal;
 import java.util.HashMap;
 
 public class BalanceSheetGui extends RegisterFrame {
-    private final JPanel BACK;
     private final JLabel A, B;
     private final JTextField DATE, SEARCH;
     private final JButton ENTER;
@@ -28,8 +27,6 @@ public class BalanceSheetGui extends RegisterFrame {
         super(caller, curInst);
         //draw gui
         {
-            BACK = new JPanel();
-
             A = new JLabel("Date");
             B = new JLabel("Search");
 
@@ -47,8 +44,8 @@ public class BalanceSheetGui extends RegisterFrame {
 
             //back layout
             {
-                GroupLayout main = new GroupLayout(BACK);
-                BACK.setLayout(main);
+                GroupLayout main = new GroupLayout(getContentPane());
+                getContentPane().setLayout(main);
                 main.setHorizontalGroup(
                         main.createSequentialGroup().addContainerGap().addGroup(
                                 main.createParallelGroup(GroupLayout.Alignment.CENTER).addGroup(
@@ -90,8 +87,6 @@ public class BalanceSheetGui extends RegisterFrame {
                         ).addContainerGap()
                 );
             }
-
-            add(BACK);
 
             pack();
         }

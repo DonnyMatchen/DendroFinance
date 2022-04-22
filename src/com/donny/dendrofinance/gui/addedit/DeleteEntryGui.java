@@ -11,7 +11,6 @@ public class DeleteEntryGui extends JDialog {
     public final MainGui MAIN;
     public final long UUID;
 
-    private final JPanel BACK;
     private final JLabel TEXT1, TEXT2;
     private final JButton OK, CANCEL;
     private final JScrollPane PANE;
@@ -24,8 +23,6 @@ public class DeleteEntryGui extends JDialog {
         MAIN = caller;
         //draw gui
         {
-            BACK = new JPanel();
-
             TEXT1 = new JLabel("Are you sure you'd like to delete");
             TEXT2 = new JLabel("the entry bellow?");
 
@@ -38,8 +35,8 @@ public class DeleteEntryGui extends JDialog {
             CANCEL.addActionListener(event -> dispose());
             //back
             {
-                GroupLayout main = new GroupLayout(BACK);
-                BACK.setLayout(main);
+                GroupLayout main = new GroupLayout(getContentPane());
+                getContentPane().setLayout(main);
                 main.setHorizontalGroup(
                         main.createSequentialGroup().addContainerGap().addGroup(
                                 main.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(
@@ -75,8 +72,6 @@ public class DeleteEntryGui extends JDialog {
                         ).addContainerGap()
                 );
             }
-
-            add(BACK);
 
             pack();
         }

@@ -22,7 +22,8 @@ public class DendroFactory {
             SELECTION = new Color(0, 100, 100),
             CARET = new Color(211, 211, 211);
 
-    public static final Border BORDER = BorderFactory.createBevelBorder(0);
+    public static final Border PANEL_BORDER = BorderFactory.createBevelBorder(0),
+            CONTENT_BORDER = BorderFactory.createBevelBorder(1);;
     public static final int SMALL_GAP = 5;
     public static final int MEDIUM_GAP = 10;
     public static final int LARGE_GAP = 15;
@@ -51,7 +52,8 @@ public class DendroFactory {
             case "TEXT" -> TEXT;
             case "SELECTION" -> SELECTION;
             case "CARET" -> CARET;
-            case "BORDER" -> BORDER;
+            case "PANEL_BORDER" -> PANEL_BORDER;
+            case "CONTENT_BORDER" -> CONTENT_BORDER;
             case "UNIFONT" -> unifont;
             case "VERDANA" -> verdana;
             default -> null;
@@ -165,7 +167,7 @@ public class DendroFactory {
 
     public static JButton getButton(String text, int padding) {
         JButton button = new JButton(text);
-        button.setBorder(BorderFactory.createCompoundBorder(BORDER, BorderFactory.createEmptyBorder(padding, padding, padding, padding)));
+        button.setBorder(BorderFactory.createCompoundBorder(PANEL_BORDER, BorderFactory.createEmptyBorder(padding, padding, padding, padding)));
         return button;
     }
 

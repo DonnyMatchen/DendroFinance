@@ -68,7 +68,7 @@
           {
             "key": "DesktopIcon.border",
             "class": "class javax.swing.plaf.BorderUIResource$CompoundBorderUIResource",
-            "value": "BORDER"
+            "value": "PANEL_BORDER"
           },
           {
             "key": "DesktopIcon.font",
@@ -158,7 +158,7 @@
           {
             "key": "InternalFrame.border",
             "class": "class javax.swing.plaf.metal.MetalBorders$InternalFrameBorder",
-            "value": "BORDER"
+            "value": null
           },
           {
             "key": "InternalFrame.borderColor",
@@ -298,7 +298,7 @@
           {
             "key": "OptionPane.border",
             "class": "class javax.swing.plaf.BorderUIResource$EmptyBorderUIResource",
-            "value": "BORDER"
+            "value": "PANEL_BORDER"
           },
           {
             "key": "OptionPane.buttonAreaBorder",
@@ -463,7 +463,7 @@
           {
             "key": "Panel.border",
             "class": "class sun.swing.PrintColorUIResource",
-            "value": "BORDER"
+            "value": "PANEL_BORDER"
           }
         ]
       },
@@ -483,7 +483,7 @@
           {
             "key": "PopupMenu.border",
             "class": "class javax.swing.plaf.metal.MetalBorders$PopupMenuBorder",
-            "value": "BORDER"
+            "value": "PANEL_BORDER"
           },
           {
             "key": "PopupMenu.consumeEventOnClose",
@@ -593,7 +593,7 @@
           {
             "key": "SplitPane.border",
             "class": "class javax.swing.plaf.basic.BasicBorders$SplitPaneBorder",
-            "value": "BORDER"
+            "value": "PANEL_BORDER"
           },
           {
             "key": "SplitPane.centerOneTouchButtons",
@@ -823,7 +823,7 @@
           {
             "key": "ToolTip.border",
             "class": "class javax.swing.plaf.BorderUIResource$LineBorderUIResource",
-            "value": "BORDER"
+            "value": "PANEL_BORDER"
           },
           {
             "key": "ToolTip.borderInactive",
@@ -893,7 +893,7 @@
           {
             "key": "CheckBoxMenuItem.border",
             "class": "class javax.swing.border.BevelBorder",
-            "value": "BORDER"
+            "value": "PANEL_BORDER"
           },
           {
             "key": "CheckBoxMenuItem.borderPainted",
@@ -983,7 +983,7 @@
           {
             "key": "Menu.border",
             "class": "class javax.swing.plaf.metal.MetalBorders$MenuItemBorder",
-            "value": "BORDER"
+            "value": "PANEL_BORDER"
           },
           {
             "key": "Menu.borderPainted",
@@ -1083,7 +1083,7 @@
           {
             "key": "MenuBar.border",
             "class": "class javax.swing.plaf.metal.MetalBorders$MenuBarBorder",
-            "value": "BORDER"
+            "value": null
           },
           {
             "key": "MenuBar.borderColor",
@@ -1163,7 +1163,7 @@
           {
             "key": "MenuItem.border",
             "class": "class javax.swing.plaf.metal.MetalBorders$MenuItemBorder",
-            "value": "BORDER"
+            "value": null
           },
           {
             "key": "MenuItem.borderPainted",
@@ -1238,7 +1238,7 @@
           {
             "key": "RadioButtonMenuItem.border",
             "class": "class javax.swing.plaf.metal.MetalBorders$MenuItemBorder",
-            "value": "BORDER"
+            "value": "PANEL_BORDER"
           },
           {
             "key": "RadioButtonMenuItem.borderPainted",
@@ -1333,7 +1333,7 @@
           {
             "key": "ToolBar.border",
             "class": "class javax.swing.plaf.metal.MetalBorders$ToolBarBorder",
-            "value": "BORDER"
+            "value": "PANEL_BORDER"
           },
           {
             "key": "ToolBar.borderColor",
@@ -1708,7 +1708,7 @@
           {
             "key": "EditorPane.border",
             "class": "class javax.swing.border.BevelBorder",
-            "value": "BORDER"
+            "value": "CONTENT_BORDER"
           },
           {
             "key": "EditorPane.caretBlinkRate",
@@ -1768,7 +1768,7 @@
           {
             "key": "FormattedTextField.border",
             "class": "class javax.swing.border.BevelBorder",
-            "value": "BORDER"
+            "value": "CONTENT_BORDER"
           },
           {
             "key": "FormattedTextField.caretBlinkRate",
@@ -1943,7 +1943,7 @@
           {
             "key": "PasswordField.border",
             "class": "class javax.swing.plaf.BorderUIResource$CompoundBorderUIResource",
-            "value": "BORDER"
+            "value": "CONTENT_BORDER"
           },
           {
             "key": "PasswordField.caretBlinkRate",
@@ -2013,7 +2013,7 @@
           {
             "key": "ProgressBar.border",
             "class": "class javax.swing.plaf.BorderUIResource$LineBorderUIResource",
-            "value": "BORDER"
+            "value": "CONTENT_BORDER"
           },
           {
             "key": "ProgressBar.cellLength",
@@ -2078,7 +2078,7 @@
           {
             "key": "RadioButton.border",
             "class": "class javax.swing.plaf.BorderUIResource$CompoundBorderUIResource",
-            "value": "BORDER"
+            "value": "PANEL_BORDER"
           },
           {
             "key": "RadioButton.darkShadow",
@@ -2193,7 +2193,7 @@
           {
             "key": "ScrollPane.border",
             "class": "class javax.swing.plaf.metal.MetalBorders$ScrollPaneBorder",
-            "value": "BORDER"
+            "value": "PANEL_BORDER"
           },
           {
             "key": "ScrollPane.font",
@@ -2463,7 +2463,7 @@
           {
             "key": "Spinner.border",
             "class": "class javax.swing.plaf.BorderUIResource$CompoundBorderUIResource",
-            "value": "BORDER"
+            "value": "PANEL_BORDER"
           },
           {
             "key": "Spinner.editorAlignment",
@@ -2603,7 +2603,7 @@
           {
             "key": "TableHeader.cellBorder",
             "class": "class javax.swing.plaf.metal.MetalBorders$TableHeaderBorder",
-            "value": "BORDER"
+            "value": "PANEL_BORDER"
           },
           {
             "key": "TableHeader.focusCellBackground",
@@ -2638,7 +2638,7 @@
           {
             "key": "TextArea.border",
             "class": "class javax.swing.plaf.basic.BasicBorders$MarginBorder",
-            "value": "BORDER"
+            "value": "CONTENT_BORDER"
           },
           {
             "key": "TextArea.caretBlinkRate",
@@ -2703,7 +2703,7 @@
           {
             "key": "TextField.border",
             "class": "class javax.swing.plaf.BorderUIResource$CompoundBorderUIResource",
-            "value": "BORDER"
+            "value": "CONTENT_BORDER"
           },
           {
             "key": "TextField.caretBlinkRate",
@@ -2783,12 +2783,12 @@
           {
             "key": "TextPane.background",
             "class": "class javax.swing.plaf.ColorUIResource",
-            "value": null
+            "value": "CONTENT"
           },
           {
             "key": "TextPane.border",
             "class": "class javax.swing.plaf.basic.BasicBorders$MarginBorder",
-            "value": null
+            "value": "CONTENT_BORDER"
           },
           {
             "key": "TextPane.caretBlinkRate",
@@ -2798,7 +2798,7 @@
           {
             "key": "TextPane.caretForeground",
             "class": "class sun.swing.PrintColorUIResource",
-            "value": null
+            "value": "CARET"
           },
           {
             "key": "TextPane.focusInputMap",
@@ -2808,12 +2808,12 @@
           {
             "key": "TextPane.font",
             "class": "class javax.swing.plaf.FontUIResource",
-            "value": null
+            "value": "UNIFONT"
           },
           {
             "key": "TextPane.foreground",
             "class": "class sun.swing.PrintColorUIResource",
-            "value": null
+            "value": "TEXT"
           },
           {
             "key": "TextPane.inactiveForeground",
@@ -2828,12 +2828,12 @@
           {
             "key": "TextPane.selectionBackground",
             "class": "class javax.swing.plaf.ColorUIResource",
-            "value": null
+            "value": "SELECTION"
           },
           {
             "key": "TextPane.selectionForeground",
             "class": "class sun.swing.PrintColorUIResource",
-            "value": null
+            "value": "CARET"
           }
         ]
       },

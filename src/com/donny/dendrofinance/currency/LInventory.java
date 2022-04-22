@@ -63,7 +63,13 @@ public class LInventory extends LCurrency {
     @Override
     public BigDecimal getTotal(BigDecimal amount) {
         if (COMMODITY) {
-            return amount.multiply(CURRENT_INSTANCE.FILE_HANDLER.hitTwelveDataForex(getTicker()));
+            if (CURRENT_INSTANCE.stockAPI.equals("polygon")) {
+                return amount.multiply(CURRENT_INSTANCE.FILE_HANDLER.hitPolygonForex(getTicker()));
+            } else if (CURRENT_INSTANCE.stockAPI.equals("twelve")) {
+                return amount.multiply(CURRENT_INSTANCE.FILE_HANDLER.hitTwelveDataForex(getTicker()));
+            } else {
+                return BigDecimal.ZERO;
+            }
         } else if (MERCHANDISE) {
             Position p = CURRENT_INSTANCE.DATA_HANDLER.getPosition(this);
             if (p == null) {

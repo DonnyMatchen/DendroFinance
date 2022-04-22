@@ -21,13 +21,13 @@ public class Account implements ExportableToJson {
     private final AccountType TYPE;
     private final String BUDGET;
 
-    public Account(String name, int aid, LCurrency cur, AccountType type, String btype, Instance curInst, boolean export) {
+    public Account(String name, int aid, LCurrency cur, AccountType type, String budget, Instance curInst, boolean export) {
         CURRENT_INSTANCE = curInst;
         NAME = name;
         AID = aid;
         CUR = cur;
         TYPE = type;
-        BUDGET = btype;
+        BUDGET = budget;
         EXPORT = export;
         CURRENT_INSTANCE.LOG_HANDLER.trace(this.getClass(), "Account " + NAME + " Created");
     }
@@ -45,20 +45,20 @@ public class Account implements ExportableToJson {
         EXPORT = true;
         if (obj.FIELDS.containsKey("budget")) {
             BUDGET = obj.getString("budget").getString();
-        }else{
+        } else {
             BUDGET = "";
         }
     }
 
     public AccountWrapper.AWType getDefaultColumn(boolean positive) {
-        if(positive) {
+        if (positive) {
             return switch (getBroadAccountType()) {
                 case TRACKING -> AccountWrapper.AWType.fromString("T");
                 case GHOST -> AccountWrapper.AWType.fromString("G");
                 case ASSET, EQUITY_MINUS, EXPENSE -> AccountWrapper.AWType.fromString("D");
                 case LIABILITY, EQUITY_PLUS, REVENUE -> AccountWrapper.AWType.fromString("C");
             };
-        }else{
+        } else {
             return switch (getBroadAccountType()) {
                 case TRACKING -> AccountWrapper.AWType.fromString("T");
                 case GHOST -> AccountWrapper.AWType.fromString("G");
@@ -81,21 +81,8 @@ public class Account implements ExportableToJson {
         return TYPE;
     }
 
-    public boolean counts(BigDecimal value) {
-        if (CUR.getPlaces() > 0) {
-            BigDecimal check = new BigDecimal("0." + "0".repeat(CUR.getPlaces() - 1) + "1");
-            return value.abs().compareTo(check) >= 0;
-        } else {
-            return value.compareTo(BigDecimal.ZERO) != 0;
-        }
-    }
-
     public String getBudgetType() {
         return BUDGET;
-    }
-
-    public String encode(BigDecimal amnt) {
-        return CUR.encode(amnt);
     }
 
     public LCurrency getCurrency() {

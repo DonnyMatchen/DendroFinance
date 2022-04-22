@@ -50,22 +50,6 @@ public class Entry<T extends Header> {
         return UUID;
     }
 
-    public void clean() {
-        HashMap<String, Field> fields = new HashMap<>(VALUES);
-        for (String key : fields.keySet()) {
-            boolean flag = true;
-            for (Field g : HEADER.getProto()) {
-                if (g.getName().equals(fields.get(key).getName())) {
-                    flag = false;
-                    break;
-                }
-            }
-            if (flag) {
-                VALUES.remove(key);
-            }
-        }
-    }
-
     public LType get(String fieldName) {
         if (VALUES.containsKey(fieldName)) {
             return VALUES.get(fieldName).getValue();
@@ -144,9 +128,5 @@ public class Entry<T extends Header> {
             obj.FIELDS.put(key, f.getValue().export());
         }
         return obj;
-    }
-
-    public int fieldsSize() {
-        return VALUES.keySet().size();
     }
 }

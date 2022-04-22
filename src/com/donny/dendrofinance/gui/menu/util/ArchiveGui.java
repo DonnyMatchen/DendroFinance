@@ -55,8 +55,9 @@ public class ArchiveGui extends RegisterFrame {
                 YEAR.addItem("" + i);
             }
             ARCHIVES = new JComboBox<>();
-            if (DIR.listFiles() != null) {
-                for (File f : DIR.listFiles()) {
+            File[] dirList = DIR.listFiles();
+            if (dirList != null) {
+                for (File f : dirList) {
                     if (f.getName().contains(".xarc")) {
                         ARCHIVES.addItem(f.getName().replace(".xarc", ""));
                     }
@@ -131,7 +132,7 @@ public class ArchiveGui extends RegisterFrame {
                     entries.add(entry);
                 }
             }
-            if (prior == null){
+            if (prior == null) {
                 prior = new TransactionEntry(CURRENT_INSTANCE);
             }
             Aggregation<Account> acc = new Aggregation<>();
@@ -141,7 +142,7 @@ public class ArchiveGui extends RegisterFrame {
                 }
             }
             LAccountSet aSet = new LAccountSet(CURRENT_INSTANCE);
-            for(Account a : acc.keySet()){
+            for (Account a : acc.keySet()) {
                 aSet.add(new AccountWrapper(a, a.getDefaultColumn((acc.get(a).compareTo(BigDecimal.ZERO) >= 0)), acc.get(a)));
             }
             LDate end = new LDate(year, 12, 31, CURRENT_INSTANCE);
@@ -208,8 +209,9 @@ public class ArchiveGui extends RegisterFrame {
                 YEAR.addItem("" + i);
             }
             ARCHIVES.removeAllItems();
-            if (DIR.listFiles() != null) {
-                for (File f : DIR.listFiles()) {
+            File[] dirList = DIR.listFiles();
+            if (dirList != null) {
+                for (File f : dirList) {
                     if (f.getName().contains(".xarc")) {
                         ARCHIVES.addItem(f.getName().replace(".xarc", ""));
                     }

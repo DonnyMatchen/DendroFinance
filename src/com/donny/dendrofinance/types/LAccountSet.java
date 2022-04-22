@@ -1,9 +1,11 @@
 package com.donny.dendrofinance.types;
 
-import com.donny.dendrofinance.account.Account;
 import com.donny.dendrofinance.currency.LCurrency;
 import com.donny.dendrofinance.instance.Instance;
-import com.donny.dendrofinance.json.*;
+import com.donny.dendrofinance.json.JsonArray;
+import com.donny.dendrofinance.json.JsonFormattingException;
+import com.donny.dendrofinance.json.JsonItem;
+import com.donny.dendrofinance.json.JsonObject;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -21,7 +23,7 @@ public class LAccountSet extends LType<ArrayList<AccountWrapper>> implements Ite
     public LAccountSet(JsonArray array, Instance curInst) {
         this(curInst);
         for (JsonObject obj : array.getObjectArray()) {
-            if(obj.FIELDS.containsKey("acc") && obj.FIELDS.containsKey("col") && obj.FIELDS.containsKey("val")){
+            if (obj.FIELDS.containsKey("acc") && obj.FIELDS.containsKey("col") && obj.FIELDS.containsKey("val")) {
                 REGISTRY.add(new AccountWrapper(obj, CURRENT_INSTANCE));
             }
         }
@@ -124,7 +126,7 @@ public class LAccountSet extends LType<ArrayList<AccountWrapper>> implements Ite
         return false;
     }
 
-    public boolean containsTax() {
+    public boolean containsGhost() {
         for (AccountWrapper a : REGISTRY) {
             if (a.COLUMN == AccountWrapper.AWType.GHOST) {
                 return true;
@@ -143,7 +145,7 @@ public class LAccountSet extends LType<ArrayList<AccountWrapper>> implements Ite
         return out;
     }
 
-    public void sort(){
+    public void sort() {
         REGISTRY.sort((w1, w2) -> w1.ACCOUNT.compareTo(w2.ACCOUNT));
         REGISTRY.sort(Comparator.comparing(w -> w.COLUMN));
     }

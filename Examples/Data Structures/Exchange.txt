@@ -2,10 +2,17 @@ Exchange{
   "alt": string
   "name": string {unique}
   "supported": array(string)
-  "staking": array(string) {optional}
+  "staking": array(StakingObject) {optional}
 }
 
 * alt: the identifier for the exchange used by coingecko if applicable.
 * name: the name of the exchange used in the construction of auto-generation of accounts.
 * supported: an array of identifiers of currencies, stocks, and or inventories that the exchange supports.
 * staking: an optional array of identifiers of cryptocurrencies for exchanges that stake cryptocurrencies in a separate account.
+
+StakingObject{
+  "cur": string
+  "places": integer
+}
+* cur: an identifiers for a currency that an exchange supports staking or interest for by placing it in a separate account
+* places: the number of places for staking.  Often this is the same as the baseline currency, but sometimes it differs.

@@ -20,6 +20,7 @@ public class AccountWrapper implements ExportableToJson {
         COLUMN = column;
         VALUE = value;
     }
+
     public AccountWrapper(Account account, String column, BigDecimal value) {
         this(
                 account,
@@ -27,6 +28,7 @@ public class AccountWrapper implements ExportableToJson {
                 value
         );
     }
+
     public AccountWrapper(JsonObject obj, Instance curInst) {
         this(
                 curInst.ACCOUNTS.getElement(obj.getString("acc").getString()),
@@ -34,6 +36,7 @@ public class AccountWrapper implements ExportableToJson {
                 obj.getDecimal("val").decimal
         );
     }
+
     public AccountWrapper(String raw, Instance curInst) {
         String[] acv = raw.split("\\(");
         String[] ac = acv[0].split("!");
@@ -42,7 +45,7 @@ public class AccountWrapper implements ExportableToJson {
         VALUE = new BigDecimal(acv[1].replace(")", ""));
     }
 
-    public AccountWrapper modify(BigDecimal newVal){
+    public AccountWrapper modify(BigDecimal newVal) {
         return new AccountWrapper(ACCOUNT, COLUMN, newVal);
     }
 
@@ -73,7 +76,7 @@ public class AccountWrapper implements ExportableToJson {
         return object;
     }
 
-    public boolean equals(AccountWrapper b){
+    public boolean equals(AccountWrapper b) {
         return ACCOUNT.equals(b.ACCOUNT) && COLUMN == b.COLUMN && VALUE.compareTo(b.VALUE) == 0;
     }
 

@@ -1,7 +1,6 @@
 package com.donny.dendrofinance.entry.totals;
 
 import com.donny.dendrofinance.currency.LCurrency;
-import com.donny.dendrofinance.instance.Instance;
 import com.donny.dendrofinance.types.LDate;
 
 import java.math.BigDecimal;
@@ -25,12 +24,6 @@ public class OrderBookEntry {
 
     public BigDecimal profit() {
         return SOLD.add(COST);
-    }
-
-    public String[] print(Instance curInst) {
-        return new String[]{
-                START.toString(), curInst.$(COST), END.toString(), curInst.$(SOLD), curInst.$(profit())
-        };
     }
 
     @Override

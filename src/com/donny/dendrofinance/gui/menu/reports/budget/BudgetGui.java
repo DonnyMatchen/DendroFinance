@@ -129,9 +129,7 @@ public class BudgetGui extends RegisterFrame {
                 EDIT_B.addItemListener(event -> updateEdit());
 
                 ADD = DendroFactory.getButton("Add");
-                ADD.addActionListener(event -> {
-                    new NewBudgetGui(this, CURRENT_INSTANCE).setVisible(true);
-                });
+                ADD.addActionListener(event -> new NewBudgetGui(this, CURRENT_INSTANCE).setVisible(true));
                 REMOVE = DendroFactory.getButton("Remove");
                 REMOVE.addActionListener(event -> new RemoveBudgetGui(this, (String) EDIT_B.getSelectedItem(), CURRENT_INSTANCE).setVisible(true));
                 RESET = DendroFactory.getButton("Reset");

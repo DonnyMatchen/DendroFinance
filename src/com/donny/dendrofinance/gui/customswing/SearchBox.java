@@ -121,10 +121,10 @@ public class SearchBox extends JPanel {
     }
 
     private void updateList(String term) {
-        ((DefaultListModel) LIST.getModel()).removeAllElements();
+        ((DefaultListModel<String>) LIST.getModel()).removeAllElements();
         master.forEach(s -> {
             if (s.toLowerCase().contains(term.toLowerCase())) {
-                ((DefaultListModel) LIST.getModel()).add(LIST.getModel().getSize(), s);
+                ((DefaultListModel<String>) LIST.getModel()).add(LIST.getModel().getSize(), s);
             }
         });
     }

@@ -91,6 +91,7 @@ public class FileHandler {
     public byte[] getTemplate(String path) {
         return getResource("templates/" + path);
     }
+
     public byte[] getResource(String path) {
         InputStream stream = this.getClass().getResourceAsStream("/com/donny/dendrofinance/resources/" + path);
         if (stream == null) {
@@ -188,8 +189,9 @@ public class FileHandler {
     }
 
     public void deleteR(File root) {
-        if (root.isDirectory() && root.listFiles() != null) {
-            for (File f : root.listFiles()) {
+        File[] rootList = root.listFiles();
+        if (root.isDirectory() && rootList != null) {
+            for (File f : rootList) {
                 deleteR(f);
             }
         }
@@ -388,8 +390,9 @@ public class FileHandler {
     public JsonArray getPrivateStock(String name) {
         File directory = new File(CURRENT_INSTANCE.data.getPath() + File.separator + "P_Stock");
         JsonArray history = null;
-        if (directory.exists() && directory.listFiles() != null) {
-            for (File f : directory.listFiles()) {
+        File[] directoryList = directory.listFiles();
+        if (directory.exists() && directoryList != null) {
+            for (File f : directoryList) {
                 if (f.getName().contains(name)) {
                     try {
                         history = (JsonArray) JsonItem.sanitizeDigest(readPlain(f));

@@ -6,7 +6,6 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Random;
 
-
 public class DendroFinance {
     public static final ArrayList<Instance> INSTANCES = new ArrayList<>();
 

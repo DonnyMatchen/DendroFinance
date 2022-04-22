@@ -7,12 +7,11 @@ import com.donny.dendrofinance.json.JsonDecimal;
 import com.donny.dendrofinance.json.JsonFormattingException;
 import com.donny.dendrofinance.json.JsonObject;
 import com.donny.dendrofinance.json.JsonString;
-import com.donny.dendrofinance.types.AccountWrapper;
-import com.donny.dendrofinance.util.ExportableToJson;
+import com.donny.dendrofinance.util.ExportableToJsonObject;
 
 import java.math.BigDecimal;
 
-public class Account implements ExportableToJson {
+public class Account implements ExportableToJsonObject {
     public final Instance CURRENT_INSTANCE;
     public final boolean EXPORT;
     private final String NAME;
@@ -21,13 +20,13 @@ public class Account implements ExportableToJson {
     private final AccountType TYPE;
     private final String BUDGET;
 
-    public Account(String name, int aid, LCurrency cur, AccountType type, String btype, Instance curInst, boolean export) {
+    public Account(String name, int aid, LCurrency cur, AccountType type, String budget, Instance curInst, boolean export) {
         CURRENT_INSTANCE = curInst;
         NAME = name;
         AID = aid;
         CUR = cur;
         TYPE = type;
-        BUDGET = btype;
+        BUDGET = budget;
         EXPORT = export;
         CURRENT_INSTANCE.LOG_HANDLER.trace(this.getClass(), "Account " + NAME + " Created");
     }
@@ -45,25 +44,25 @@ public class Account implements ExportableToJson {
         EXPORT = true;
         if (obj.FIELDS.containsKey("budget")) {
             BUDGET = obj.getString("budget").getString();
-        }else{
+        } else {
             BUDGET = "";
         }
     }
 
-    public AccountWrapper.AWType getDefaultColumn(boolean positive) {
-        if(positive) {
+    public AWColumn getDefaultColumn(boolean positive) {
+        if (positive) {
             return switch (getBroadAccountType()) {
-                case TRACKING -> AccountWrapper.AWType.fromString("T");
-                case GHOST -> AccountWrapper.AWType.fromString("G");
-                case ASSET, EQUITY_MINUS, EXPENSE -> AccountWrapper.AWType.fromString("D");
-                case LIABILITY, EQUITY_PLUS, REVENUE -> AccountWrapper.AWType.fromString("C");
+                case TRACKING -> AWColumn.fromString("T");
+                case GHOST -> AWColumn.fromString("G");
+                case ASSET, EQUITY_MINUS, EXPENSE -> AWColumn.fromString("D");
+                case LIABILITY, EQUITY_PLUS, REVENUE -> AWColumn.fromString("C");
             };
-        }else{
+        } else {
             return switch (getBroadAccountType()) {
-                case TRACKING -> AccountWrapper.AWType.fromString("T");
-                case GHOST -> AccountWrapper.AWType.fromString("G");
-                case ASSET, EQUITY_MINUS, EXPENSE -> AccountWrapper.AWType.fromString("C");
-                case LIABILITY, EQUITY_PLUS, REVENUE -> AccountWrapper.AWType.fromString("D");
+                case TRACKING -> AWColumn.fromString("T");
+                case GHOST -> AWColumn.fromString("G");
+                case ASSET, EQUITY_MINUS, EXPENSE -> AWColumn.fromString("C");
+                case LIABILITY, EQUITY_PLUS, REVENUE -> AWColumn.fromString("D");
             };
         }
     }
@@ -81,21 +80,8 @@ public class Account implements ExportableToJson {
         return TYPE;
     }
 
-    public boolean counts(BigDecimal value) {
-        if (CUR.getPlaces() > 0) {
-            BigDecimal check = new BigDecimal("0." + "0".repeat(CUR.getPlaces() - 1) + "1");
-            return value.abs().compareTo(check) >= 0;
-        } else {
-            return value.compareTo(BigDecimal.ZERO) != 0;
-        }
-    }
-
     public String getBudgetType() {
         return BUDGET;
-    }
-
-    public String encode(BigDecimal amnt) {
-        return CUR.encode(amnt);
     }
 
     public LCurrency getCurrency() {

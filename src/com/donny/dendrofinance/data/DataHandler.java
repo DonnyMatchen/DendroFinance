@@ -1,10 +1,8 @@
 package com.donny.dendrofinance.data;
 
-import com.donny.dendrofinance.account.Account;
-import com.donny.dendrofinance.account.BroadAccountType;
-import com.donny.dendrofinance.account.Exchange;
-import com.donny.dendrofinance.currency.LInventory;
+import com.donny.dendrofinance.account.*;
 import com.donny.dendrofinance.currency.LCurrency;
+import com.donny.dendrofinance.currency.LInventory;
 import com.donny.dendrofinance.currency.LStock;
 import com.donny.dendrofinance.entry.BudgetEntry;
 import com.donny.dendrofinance.entry.EntryType;
@@ -14,7 +12,9 @@ import com.donny.dendrofinance.entry.totals.OrderBookEntry;
 import com.donny.dendrofinance.entry.totals.Position;
 import com.donny.dendrofinance.instance.Instance;
 import com.donny.dendrofinance.json.JsonFormattingException;
-import com.donny.dendrofinance.types.*;
+import com.donny.dendrofinance.types.LAccountSet;
+import com.donny.dendrofinance.types.LDate;
+import com.donny.dendrofinance.types.LString;
 import com.donny.dendrofinance.util.Aggregation;
 import com.donny.dendrofinance.util.Curation;
 import com.donny.dendrofinance.util.Partitioner;
@@ -680,9 +680,9 @@ public class DataHandler {
 
     public boolean buySell(LDate date, BigDecimal amount, BigDecimal cost, String exchange, String currency) {
         try {
-            if(amount.compareTo(BigDecimal.ZERO) > 0){
+            if (amount.compareTo(BigDecimal.ZERO) > 0) {
                 cost = cost.abs().multiply(BigDecimal.valueOf(-1));
-            }else{
+            } else {
                 cost = cost.abs();
             }
             Exchange e = CURRENT_INSTANCE.EXCHANGES.getElement(exchange);
@@ -711,10 +711,10 @@ public class DataHandler {
                         new LAccountSet(
                                 "D!" + acc + "("
                                         + cost.abs() + "), D!Trading_Expenses("
-                                        + cost.abs()  + "), C!" + e.NAME + "_USD("
-                                        + cost.abs()  + "), C!Portfolio("
-                                        + cost.abs()  + "), T!" + e.NAME + "_" + c.getTicker() + "("
-                                        + amount  + ")", CURRENT_INSTANCE)
+                                        + cost.abs() + "), C!" + e.NAME + "_USD("
+                                        + cost.abs() + "), C!Portfolio("
+                                        + cost.abs() + "), T!" + e.NAME + "_" + c.getTicker() + "("
+                                        + amount + ")", CURRENT_INSTANCE)
                 );
                 entry.addLedgerMeta(CURRENT_INSTANCE.main, c, cost, amount, cost.abs());
                 addTransaction(entry);
@@ -978,7 +978,7 @@ public class DataHandler {
                 Aggregation<String> curAg = new Aggregation<>();
                 Aggregation<String> ledgAg = new Aggregation<>();
                 for (AccountWrapper wrapper : entry.getAccounts()) {
-                    if (wrapper.COLUMN == AccountWrapper.AWType.TRACKER) {
+                    if (wrapper.COLUMN == AWColumn.TRACKER) {
                         String c = wrapper.ACCOUNT.getCurrency().toUnifiedString();
                         curAg.add(c, wrapper.VALUE);
                     }
@@ -1015,7 +1015,7 @@ public class DataHandler {
             boolean flag = true;
             if (entry.hasGhostAccounts()) {
                 for (AccountWrapper wrapper : entry.getAccounts()) {
-                    if (wrapper.COLUMN == AccountWrapper.AWType.GHOST) {
+                    if (wrapper.COLUMN == AWColumn.GHOST) {
                         if (wrapper.ACCOUNT.getName().contains("CapGain") || wrapper.ACCOUNT.getName().contains("CapLoss")) {
                             flag = false;
                             BigDecimal negative = wrapper.VALUE.multiply(BigDecimal.valueOf(-1));

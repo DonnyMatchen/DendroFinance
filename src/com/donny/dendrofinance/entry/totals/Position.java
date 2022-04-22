@@ -6,7 +6,7 @@ import com.donny.dendrofinance.types.LDate;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.List;
 
 public class Position {
     public final Instance CURRENT_INSTANCE;
@@ -59,13 +59,13 @@ public class Position {
                 if (ELEMENTS.get(0).volume.compareTo(amnt.abs()) > 0) {
                     ELEMENTS.get(0).volume = ELEMENTS.get(0).volume.add(amnt);
                     BigDecimal cst = amnt.abs().multiply(ELEMENTS.get(0).UNIT);
-                    return new ArrayList<>(Arrays.asList(new OrderBookEntry(ASSET, ELEMENTS.get(0).DATE, date, ELEMENTS.get(0).UUID, uuid, amnt.abs(), cst, cost)));
+                    return new ArrayList<>(List.of(new OrderBookEntry(ASSET, ELEMENTS.get(0).DATE, date, ELEMENTS.get(0).UUID, uuid, amnt.abs(), cst, cost)));
                 } else if (ELEMENTS.get(0).volume.compareTo(amnt.abs()) == 0) {
                     BigDecimal cst = amnt.abs().multiply(ELEMENTS.get(0).UNIT);
                     LDate fDate = ELEMENTS.get(0).DATE;
                     long fUUID = ELEMENTS.get(0).UUID;
                     ELEMENTS.remove(0);
-                    return new ArrayList<>(Arrays.asList(new OrderBookEntry(ASSET, fDate, date, fUUID, uuid, amnt.abs(), cst, cost)));
+                    return new ArrayList<>(List.of(new OrderBookEntry(ASSET, fDate, date, fUUID, uuid, amnt.abs(), cst, cost)));
                 } else {
                     BigDecimal cst = ELEMENTS.get(0).volume.multiply(ELEMENTS.get(0).UNIT);
                     BigDecimal pUnit = cost.divide(amnt.abs(), CURRENT_INSTANCE.PRECISION);
@@ -99,14 +99,6 @@ public class Position {
         } else {
             return new BigDecimal[]{vol, cost, cost.divide(vol, CURRENT_INSTANCE.PRECISION)};
         }
-    }
-
-    public ArrayList<String[]> view() {
-        ArrayList<String[]> brackets = new ArrayList<>();
-        for (PositionElement el : ELEMENTS) {
-            brackets.add(el.view(ASSET, CURRENT_INSTANCE.main__));
-        }
-        return brackets;
     }
 
     @Override

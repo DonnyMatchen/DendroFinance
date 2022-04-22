@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 import java.util.HashMap;
 
 public enum BroadAccountType {
-    ASSET, LIABILITY, EQUITY_PLUS, EQUITY_MINUS, REVENUE, EXPENSE, GHOST, TRACKING;
+    ASSET, LIABILITY, EQUITY_PLUS, EQUITY_MINUS, REVENUE, EXPENSE, TRACKING, GHOST;
 
     private static final HashMap<BroadAccountType, String> CODEX = new HashMap<>();
 

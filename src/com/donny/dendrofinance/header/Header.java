@@ -33,13 +33,5 @@ public abstract class Header {
         return new ArrayList<>(PROTOTYPE);
     }
 
-    public ArrayList<String> getFieldNames() {
-        ArrayList<String> names = new ArrayList<>();
-        for (Field f : PROTOTYPE) {
-            names.add(f.getName());
-        }
-        return names;
-    }
-
     public abstract String getName();
 }

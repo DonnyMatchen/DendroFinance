@@ -5,7 +5,7 @@ import com.donny.dendrofinance.gui.MainGui;
 import com.donny.dendrofinance.gui.RegisterFrame;
 import com.donny.dendrofinance.gui.customswing.DendroFactory;
 import com.donny.dendrofinance.instance.Instance;
-import com.donny.dendrofinance.util.ExportableToJson;
+import com.donny.dendrofinance.util.ExportableToJsonObject;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -14,7 +14,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-public class BackingTableGui<E extends ExportableToJson> extends RegisterFrame {
+public class BackingTableGui<E extends ExportableToJsonObject> extends RegisterFrame {
     private final BackingTableCore<E> TABLE_CORE;
 
     private final JPanel BACK;
@@ -73,7 +73,7 @@ public class BackingTableGui<E extends ExportableToJson> extends RegisterFrame {
             EDIT.addActionListener(event -> TABLE_CORE.getEditDialog(this, TABLE.getSelectedRow()));
 
             DELETE = DendroFactory.getButton("Remove");
-            DELETE.addActionListener(actionEvent -> new DeleteBackingGui<E>(this, TABLE_CORE, TABLE.getSelectedRow(), curInst).setVisible(true));
+            DELETE.addActionListener(actionEvent -> new DeleteBackingGui<>(this, TABLE_CORE, TABLE.getSelectedRow(), curInst).setVisible(true));
 
             CREATE = DendroFactory.getButton("New");
             CREATE.addActionListener(event -> TABLE_CORE.getEditDialog(this, -1));
@@ -143,7 +143,7 @@ public class BackingTableGui<E extends ExportableToJson> extends RegisterFrame {
         while (TABLE.getRowCount() > 0) {
             TABLE_ACCESS.removeRow(0);
         }
-        TABLE_CORE.getContents().forEach((row) -> TABLE_ACCESS.addRow(row));
+        TABLE_CORE.getContents().forEach(TABLE_ACCESS::addRow);
     }
 
     public void tableCursorChanged(int row) {

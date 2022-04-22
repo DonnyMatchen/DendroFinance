@@ -90,30 +90,30 @@ public class ItemField extends JPanel {
         return TEXT.getText();
     }
 
-    private String getToken(String text){
+    public void setText(String text) {
+        TEXT.setText(text);
+    }
+
+    private String getToken(String text) {
         StringBuilder sb = new StringBuilder();
         boolean ignore = false;
-        for(char c : text.toCharArray()){
-            if(c == '('){
+        for (char c : text.toCharArray()) {
+            if (c == '(') {
                 ignore = true;
             }
-            if(!ignore){
+            if (!ignore) {
                 sb.append(c);
             }
-            if(c == ')'){
+            if (c == ')') {
                 ignore = false;
             }
         }
         String[] tokens = sb.toString().replace(" ", "").split(",");
-        if (tokens[tokens.length-1].split("!").length == 2) {
+        if (tokens[tokens.length - 1].split("!").length == 2) {
             return tokens[tokens.length - 1].split("!")[1];
         } else {
-            return tokens[tokens.length-1];
+            return tokens[tokens.length - 1];
         }
-    }
-
-    public void setText(String text) {
-        TEXT.setText(text);
     }
 
     public void setTextBackground(Color color) {

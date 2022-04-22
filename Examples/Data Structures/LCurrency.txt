@@ -11,7 +11,7 @@ LCurrency{
 * flags:
   * F: Fiat currency
   * D: Currency is defunct and valueless
-  * T: (Cryptocurrencies) Token, this cryptocurrency is hosted on antoher block chain, not it's own.
+  * T: (Cryptocurrencies) Token, this cryptocurrency is hosted on another blockchain, not it's own.
   * >: Currency symbol should be placed at the end of the number not the beginning.
 * name: The name of the currency.  For cryptocurrencies, if no alt is specified, the name set to lowercase and spaces replaced with hyphens "-" is used.
 * places: The number of decimal places to use when displaying accounts using this currency

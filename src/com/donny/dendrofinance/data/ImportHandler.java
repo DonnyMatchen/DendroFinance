@@ -7,7 +7,10 @@ import com.donny.dendrofinance.json.JsonArray;
 import com.donny.dendrofinance.json.JsonFormattingException;
 import com.donny.dendrofinance.json.JsonItem;
 import com.donny.dendrofinance.json.JsonObject;
-import com.donny.dendrofinance.types.*;
+import com.donny.dendrofinance.types.LAccountSet;
+import com.donny.dendrofinance.types.LDate;
+import com.donny.dendrofinance.types.LJson;
+import com.donny.dendrofinance.types.LString;
 
 import java.io.File;
 
@@ -21,8 +24,9 @@ public class ImportHandler {
     }
 
     public final void load() {
-        if (CURRENT_INSTANCE.data.listFiles().length > 0) {
-            for (File f : CURRENT_INSTANCE.data.listFiles()) {
+        File[] dataList = CURRENT_INSTANCE.data.listFiles();
+        if (dataList != null) {
+            for (File f : dataList) {
                 if (!f.isDirectory()) {
                     if (f.getName().contains(".csv")) {
                         loadCSV(f);

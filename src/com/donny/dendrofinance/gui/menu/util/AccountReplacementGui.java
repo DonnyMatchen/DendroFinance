@@ -1,5 +1,6 @@
 package com.donny.dendrofinance.gui.menu.util;
 
+import com.donny.dendrofinance.account.AWColumn;
 import com.donny.dendrofinance.account.Account;
 import com.donny.dendrofinance.entry.TransactionEntry;
 import com.donny.dendrofinance.gui.MainGui;
@@ -7,7 +8,7 @@ import com.donny.dendrofinance.gui.RegisterFrame;
 import com.donny.dendrofinance.gui.customswing.DendroFactory;
 import com.donny.dendrofinance.gui.customswing.SearchBox;
 import com.donny.dendrofinance.instance.Instance;
-import com.donny.dendrofinance.types.AccountWrapper;
+import com.donny.dendrofinance.account.AccountWrapper;
 
 import javax.swing.*;
 import java.math.BigDecimal;
@@ -31,7 +32,7 @@ public class AccountReplacementGui extends RegisterFrame {
                 Account b = CURRENT_INSTANCE.ACCOUNTS.getElement(NEW.getSelectedItem());
                 for (TransactionEntry entry : CURRENT_INSTANCE.DATA_HANDLER.readTransactions()) {
                     int index = -1;
-                    AccountWrapper.AWType column = null;
+                    AWColumn column = null;
                     BigDecimal value = null;
                     for (int i = 0; i < entry.getAccounts().getSize(); i++) {
                         if (entry.getAccounts().get(i).ACCOUNT.equals(a)) {

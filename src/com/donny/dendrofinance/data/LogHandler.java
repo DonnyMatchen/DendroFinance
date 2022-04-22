@@ -11,6 +11,7 @@ public class LogHandler {
     public final Instance CURRENT_INSTANCE;
     public final int LOG_LEVEL;
     private final StringBuilder LOG, TRACE;
+
     public LogHandler(int logLevel, Instance curInst) {
         CURRENT_INSTANCE = curInst;
         LOG_LEVEL = logLevel;

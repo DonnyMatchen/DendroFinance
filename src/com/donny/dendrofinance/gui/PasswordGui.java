@@ -206,8 +206,9 @@ public class PasswordGui extends javax.swing.JFrame {
         }
         File directory = new File(CURRENT_INSTANCE.data.getPath() + File.separator + "Entries");
         boolean flag = true, noTB = false;
-        if (directory.isDirectory() && directory.listFiles().length > 0) {
-            for (File f : directory.listFiles()) {
+        File[] directoryList = directory.listFiles();
+        if (directory.isDirectory() && directoryList != null) {
+            for (File f : directoryList) {
                 if (f.getName().contains(".xtbl")) {
                     String plain = CURRENT_INSTANCE.FILE_HANDLER.readDecrypt(f);
                     if (plain != null) {

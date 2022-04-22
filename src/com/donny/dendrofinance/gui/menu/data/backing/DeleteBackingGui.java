@@ -4,11 +4,11 @@ import com.donny.dendrofinance.data.backingtable.BackingTableCore;
 import com.donny.dendrofinance.gui.customswing.DendroFactory;
 import com.donny.dendrofinance.instance.Instance;
 import com.donny.dendrofinance.json.JsonFormattingException;
-import com.donny.dendrofinance.util.ExportableToJson;
+import com.donny.dendrofinance.util.ExportableToJsonObject;
 
 import javax.swing.*;
 
-public class DeleteBackingGui<E extends ExportableToJson> extends JDialog {
+public class DeleteBackingGui<E extends ExportableToJsonObject> extends JDialog {
     private final JPanel BACK;
     private final JLabel A;
     private final JScrollPane PANE;

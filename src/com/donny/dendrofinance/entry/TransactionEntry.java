@@ -1,5 +1,6 @@
 package com.donny.dendrofinance.entry;
 
+import com.donny.dendrofinance.account.AWColumn;
 import com.donny.dendrofinance.account.Account;
 import com.donny.dendrofinance.account.BroadAccountType;
 import com.donny.dendrofinance.currency.LCurrency;
@@ -10,7 +11,7 @@ import com.donny.dendrofinance.json.JsonArray;
 import com.donny.dendrofinance.json.JsonFormattingException;
 import com.donny.dendrofinance.json.JsonItem;
 import com.donny.dendrofinance.json.JsonObject;
-import com.donny.dendrofinance.types.AccountWrapper;
+import com.donny.dendrofinance.account.AccountWrapper;
 import com.donny.dendrofinance.types.LAccountSet;
 import com.donny.dendrofinance.types.LDate;
 import com.donny.dendrofinance.types.LString;
@@ -314,9 +315,9 @@ public class TransactionEntry extends Entry<TransactionHeader> implements Compar
                 ass = BigDecimal.ZERO, lia = BigDecimal.ZERO, equ = BigDecimal.ZERO;
         boolean corCol = true;
         for (AccountWrapper wrapper : getAccounts()) {
-            if (wrapper.COLUMN == AccountWrapper.AWType.CREDIT) {
+            if (wrapper.COLUMN == AWColumn.CREDIT) {
                 cred = cred.add(wrapper.VALUE);
-            } else if (wrapper.COLUMN == AccountWrapper.AWType.DEBIT) {
+            } else if (wrapper.COLUMN == AWColumn.DEBIT) {
                 deb = deb.add(wrapper.VALUE);
             }
             if (wrapper.ACCOUNT.getBroadAccountType() == null) {

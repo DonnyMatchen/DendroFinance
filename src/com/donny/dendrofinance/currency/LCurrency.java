@@ -7,14 +7,14 @@ import com.donny.dendrofinance.json.JsonDecimal;
 import com.donny.dendrofinance.json.JsonFormattingException;
 import com.donny.dendrofinance.json.JsonObject;
 import com.donny.dendrofinance.json.JsonString;
-import com.donny.dendrofinance.types.AccountWrapper;
+import com.donny.dendrofinance.account.AccountWrapper;
 import com.donny.dendrofinance.types.LDate;
-import com.donny.dendrofinance.util.ExportableToJson;
+import com.donny.dendrofinance.util.ExportableToJsonObject;
 
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 
-public class LCurrency implements ExportableToJson {
+public class LCurrency implements ExportableToJsonObject {
     public final Instance CURRENT_INSTANCE;
     protected final String TIC;
     private final String NAME, SYMBOL, ALT_NAME;

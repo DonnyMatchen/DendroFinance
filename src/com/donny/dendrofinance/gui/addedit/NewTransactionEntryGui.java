@@ -1,5 +1,6 @@
 package com.donny.dendrofinance.gui.addedit;
 
+import com.donny.dendrofinance.account.AWColumn;
 import com.donny.dendrofinance.currency.LCurrency;
 import com.donny.dendrofinance.entry.TransactionEntry;
 import com.donny.dendrofinance.gui.MainGui;
@@ -10,7 +11,7 @@ import com.donny.dendrofinance.gui.form.Validation;
 import com.donny.dendrofinance.gui.form.ValidationFailedException;
 import com.donny.dendrofinance.instance.Instance;
 import com.donny.dendrofinance.json.*;
-import com.donny.dendrofinance.types.AccountWrapper;
+import com.donny.dendrofinance.account.AccountWrapper;
 import com.donny.dendrofinance.types.LAccountSet;
 import com.donny.dendrofinance.types.LJson;
 import com.donny.dendrofinance.types.LString;
@@ -587,7 +588,7 @@ public class NewTransactionEntryGui extends JDialog {
             column = "B";
         }
         int index = a.getSelectedIndex();
-        switch (AccountWrapper.AWType.fromString("" + column.charAt(0))) {
+        switch (AWColumn.fromString("" + column.charAt(0))) {
             case DEBIT, CREDIT -> a.setMaster(CURRENT_INSTANCE.getDCAccountsAsStrings());
             case GHOST -> a.setMaster(CURRENT_INSTANCE.getTaxAccountsAsStrings());
             case TRACKER -> a.setMaster(CURRENT_INSTANCE.getTrackingAccountsAsStrings());
@@ -711,7 +712,7 @@ public class NewTransactionEntryGui extends JDialog {
             if (column.equals("Tracking")) {
                 column = "B";
             }
-            AccountWrapper.AWType t1 = AccountWrapper.AWType.fromString("" + column.charAt(0));
+            AWColumn t1 = AWColumn.fromString("" + column.charAt(0));
             aArr.ARRAY.add(new JsonString(t1 + "!" + A1.getSelectedItem()));
             vArr.ARRAY.add(new JsonDecimal(Validation.validateDecimal(C1)));
             if (A2.getSelectedItem() != null) {
@@ -719,7 +720,7 @@ public class NewTransactionEntryGui extends JDialog {
                 if (column.equals("Tracking")) {
                     column = "B";
                 }
-                AccountWrapper.AWType t2 = AccountWrapper.AWType.fromString("" + column.charAt(0));
+                AWColumn t2 = AWColumn.fromString("" + column.charAt(0));
                 aArr.ARRAY.add(new JsonString(t2 + "!" + A2.getSelectedItem()));
                 vArr.ARRAY.add(new JsonDecimal(Validation.validateDecimal(C2)));
                 if (A3.getSelectedItem() != null) {
@@ -727,7 +728,7 @@ public class NewTransactionEntryGui extends JDialog {
                     if (column.equals("Tracking")) {
                         column = "B";
                     }
-                    AccountWrapper.AWType t3 = AccountWrapper.AWType.fromString("" + column.charAt(0));
+                    AWColumn t3 = AWColumn.fromString("" + column.charAt(0));
                     aArr.ARRAY.add(new JsonString(t3 + "!" + A3.getSelectedItem()));
                     vArr.ARRAY.add(new JsonDecimal(Validation.validateDecimal(C3)));
                     if (A4.getSelectedItem() != null) {
@@ -735,7 +736,7 @@ public class NewTransactionEntryGui extends JDialog {
                         if (column.equals("Tracking")) {
                             column = "B";
                         }
-                        AccountWrapper.AWType t4 = AccountWrapper.AWType.fromString("" + column.charAt(0));
+                        AWColumn t4 = AWColumn.fromString("" + column.charAt(0));
                         aArr.ARRAY.add(new JsonString(t4 + "!" + A4.getSelectedItem()));
                         vArr.ARRAY.add(new JsonDecimal(Validation.validateDecimal(C4)));
                         if (A5.getSelectedItem() != null) {
@@ -743,7 +744,7 @@ public class NewTransactionEntryGui extends JDialog {
                             if (column.equals("Tracking")) {
                                 column = "B";
                             }
-                            AccountWrapper.AWType t5 = AccountWrapper.AWType.fromString("" + column.charAt(0));
+                            AWColumn t5 = AWColumn.fromString("" + column.charAt(0));
                             aArr.ARRAY.add(new JsonString(t5 + "!" + A5.getSelectedItem()));
                             vArr.ARRAY.add(new JsonDecimal(Validation.validateDecimal(C5)));
                             if (A6.getSelectedItem() != null) {
@@ -751,7 +752,7 @@ public class NewTransactionEntryGui extends JDialog {
                                 if (column.equals("Tracking")) {
                                     column = "B";
                                 }
-                                AccountWrapper.AWType t6 = AccountWrapper.AWType.fromString("" + column.charAt(0));
+                                AWColumn t6 = AWColumn.fromString("" + column.charAt(0));
                                 aArr.ARRAY.add(new JsonString(t6 + "!" + A6.getSelectedItem()));
                                 vArr.ARRAY.add(new JsonDecimal(Validation.validateDecimal(C6)));
                             }

@@ -7,12 +7,11 @@ import com.donny.dendrofinance.json.JsonDecimal;
 import com.donny.dendrofinance.json.JsonFormattingException;
 import com.donny.dendrofinance.json.JsonObject;
 import com.donny.dendrofinance.json.JsonString;
-import com.donny.dendrofinance.types.AccountWrapper;
-import com.donny.dendrofinance.util.ExportableToJson;
+import com.donny.dendrofinance.util.ExportableToJsonObject;
 
 import java.math.BigDecimal;
 
-public class Account implements ExportableToJson {
+public class Account implements ExportableToJsonObject {
     public final Instance CURRENT_INSTANCE;
     public final boolean EXPORT;
     private final String NAME;
@@ -50,20 +49,20 @@ public class Account implements ExportableToJson {
         }
     }
 
-    public AccountWrapper.AWType getDefaultColumn(boolean positive) {
+    public AWColumn getDefaultColumn(boolean positive) {
         if (positive) {
             return switch (getBroadAccountType()) {
-                case TRACKING -> AccountWrapper.AWType.fromString("T");
-                case GHOST -> AccountWrapper.AWType.fromString("G");
-                case ASSET, EQUITY_MINUS, EXPENSE -> AccountWrapper.AWType.fromString("D");
-                case LIABILITY, EQUITY_PLUS, REVENUE -> AccountWrapper.AWType.fromString("C");
+                case TRACKING -> AWColumn.fromString("T");
+                case GHOST -> AWColumn.fromString("G");
+                case ASSET, EQUITY_MINUS, EXPENSE -> AWColumn.fromString("D");
+                case LIABILITY, EQUITY_PLUS, REVENUE -> AWColumn.fromString("C");
             };
         } else {
             return switch (getBroadAccountType()) {
-                case TRACKING -> AccountWrapper.AWType.fromString("T");
-                case GHOST -> AccountWrapper.AWType.fromString("G");
-                case ASSET, EQUITY_MINUS, EXPENSE -> AccountWrapper.AWType.fromString("C");
-                case LIABILITY, EQUITY_PLUS, REVENUE -> AccountWrapper.AWType.fromString("D");
+                case TRACKING -> AWColumn.fromString("T");
+                case GHOST -> AWColumn.fromString("G");
+                case ASSET, EQUITY_MINUS, EXPENSE -> AWColumn.fromString("C");
+                case LIABILITY, EQUITY_PLUS, REVENUE -> AWColumn.fromString("D");
             };
         }
     }

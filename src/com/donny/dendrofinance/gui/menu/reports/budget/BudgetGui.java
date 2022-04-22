@@ -1,5 +1,6 @@
 package com.donny.dendrofinance.gui.menu.reports.budget;
 
+import com.donny.dendrofinance.account.AWColumn;
 import com.donny.dendrofinance.account.BroadAccountType;
 import com.donny.dendrofinance.entry.BudgetEntry;
 import com.donny.dendrofinance.entry.TransactionEntry;
@@ -8,7 +9,7 @@ import com.donny.dendrofinance.gui.RegisterFrame;
 import com.donny.dendrofinance.gui.customswing.DendroFactory;
 import com.donny.dendrofinance.instance.Instance;
 import com.donny.dendrofinance.json.JsonDecimal;
-import com.donny.dendrofinance.types.AccountWrapper;
+import com.donny.dendrofinance.account.AccountWrapper;
 import com.donny.dendrofinance.util.Aggregation;
 import com.donny.dendrofinance.util.Curation;
 
@@ -242,7 +243,7 @@ public class BudgetGui extends RegisterFrame {
                             AccountWrapper a = entry.getAccounts().get(i);
                             if (a.ACCOUNT.getBroadAccountType() == BroadAccountType.REVENUE || a.ACCOUNT.getBroadAccountType() == BroadAccountType.EXPENSE) {
                                 BigDecimal val = a.VALUE;
-                                if (a.COLUMN == AccountWrapper.AWType.DEBIT) {
+                                if (a.COLUMN == AWColumn.DEBIT) {
                                     val = val.multiply(BigDecimal.valueOf(-1));
                                 }
                                 budgets.add(a.ACCOUNT.getBudgetType(), val);

@@ -1,5 +1,7 @@
 package com.donny.dendrofinance.types;
 
+import com.donny.dendrofinance.account.AWColumn;
+import com.donny.dendrofinance.account.AccountWrapper;
 import com.donny.dendrofinance.currency.LCurrency;
 import com.donny.dendrofinance.instance.Instance;
 import com.donny.dendrofinance.json.JsonArray;
@@ -128,7 +130,7 @@ public class LAccountSet extends LType<ArrayList<AccountWrapper>> implements Ite
 
     public boolean containsGhost() {
         for (AccountWrapper a : REGISTRY) {
-            if (a.COLUMN == AccountWrapper.AWType.GHOST) {
+            if (a.COLUMN == AWColumn.GHOST) {
                 return true;
             }
         }

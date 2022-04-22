@@ -1,8 +1,6 @@
 package com.donny.dendrofinance.data;
 
-import com.donny.dendrofinance.account.Account;
-import com.donny.dendrofinance.account.BroadAccountType;
-import com.donny.dendrofinance.account.Exchange;
+import com.donny.dendrofinance.account.*;
 import com.donny.dendrofinance.currency.LCurrency;
 import com.donny.dendrofinance.currency.LInventory;
 import com.donny.dendrofinance.currency.LStock;
@@ -14,7 +12,6 @@ import com.donny.dendrofinance.entry.totals.OrderBookEntry;
 import com.donny.dendrofinance.entry.totals.Position;
 import com.donny.dendrofinance.instance.Instance;
 import com.donny.dendrofinance.json.JsonFormattingException;
-import com.donny.dendrofinance.types.AccountWrapper;
 import com.donny.dendrofinance.types.LAccountSet;
 import com.donny.dendrofinance.types.LDate;
 import com.donny.dendrofinance.types.LString;
@@ -981,7 +978,7 @@ public class DataHandler {
                 Aggregation<String> curAg = new Aggregation<>();
                 Aggregation<String> ledgAg = new Aggregation<>();
                 for (AccountWrapper wrapper : entry.getAccounts()) {
-                    if (wrapper.COLUMN == AccountWrapper.AWType.TRACKER) {
+                    if (wrapper.COLUMN == AWColumn.TRACKER) {
                         String c = wrapper.ACCOUNT.getCurrency().toUnifiedString();
                         curAg.add(c, wrapper.VALUE);
                     }
@@ -1018,7 +1015,7 @@ public class DataHandler {
             boolean flag = true;
             if (entry.hasGhostAccounts()) {
                 for (AccountWrapper wrapper : entry.getAccounts()) {
-                    if (wrapper.COLUMN == AccountWrapper.AWType.GHOST) {
+                    if (wrapper.COLUMN == AWColumn.GHOST) {
                         if (wrapper.ACCOUNT.getName().contains("CapGain") || wrapper.ACCOUNT.getName().contains("CapLoss")) {
                             flag = false;
                             BigDecimal negative = wrapper.VALUE.multiply(BigDecimal.valueOf(-1));

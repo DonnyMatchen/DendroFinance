@@ -36,3 +36,5 @@ D!Cash(200), C!Gifts(200)<br>
 <h1>ESSENTIAL ELEMENTS</h1><br>
 Account and Exchange names must be unique, and cannot contain spaces.<br>
 Most accounts within the default set of accounts are required, and should probably not be deleted or renamed.<br>
+<br>
+More specific information can be found under Examples.

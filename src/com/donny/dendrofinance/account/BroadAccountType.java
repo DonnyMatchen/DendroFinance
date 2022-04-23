@@ -25,7 +25,7 @@ public enum BroadAccountType {
                 return a;
             }
         }
-        return null;
+        return GHOST;
     }
 
     public BigDecimal alpha(boolean credit) {

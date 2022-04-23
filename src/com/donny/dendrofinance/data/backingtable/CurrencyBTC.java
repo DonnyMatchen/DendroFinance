@@ -41,7 +41,7 @@ public class CurrencyBTC extends BackingTableCore<LCurrency> {
         ArrayList<String[]> out = new ArrayList<>();
         for (LCurrency cur : TABLE) {
             String check = search;
-            boolean flagU = false, flagA = false, allow = true;
+            boolean flagU = false, rFlagU = false, flagA = false, rFlagA = false, allow = true;
             if (check.contains("$U")) {
                 flagU = true;
                 check = check.replace("$U", "").trim();
@@ -49,10 +49,24 @@ public class CurrencyBTC extends BackingTableCore<LCurrency> {
                     allow = false;
                 }
             }
+            if (check.contains("$u")) {
+                rFlagU = true;
+                check = check.replace("$u", "").trim();
+                if (cur.inUse()) {
+                    allow = false;
+                }
+            }
             if (check.contains("$A")) {
                 flagA = true;
                 check = check.replace("$A", "").trim();
                 if (!cur.inAccount()) {
+                    allow = false;
+                }
+            }
+            if (check.contains("$a")) {
+                rFlagA = true;
+                check = check.replace("$a", "").trim();
+                if (cur.inAccount()) {
                     allow = false;
                 }
             }
@@ -77,7 +91,9 @@ public class CurrencyBTC extends BackingTableCore<LCurrency> {
             }
             if (allow) {
                 out.add(new String[]{
-                        name.toString(), cur.getTicker(), cur.encode(BigDecimal.ZERO), type.toString(), (flagA || cur.inAccount()) ? "X" : "", (flagU || cur.inUse()) ? "X" : ""
+                        name.toString(), cur.getTicker(), cur.encode(BigDecimal.ZERO), type.toString(),
+                        (!rFlagA && (flagA || cur.inAccount())) ? "X" : "",
+                        (!rFlagU && (flagU || cur.inUse())) ? "X" : ""
                 });
             }
         }

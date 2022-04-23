@@ -39,11 +39,18 @@ public class AccountBTC extends BackingTableCore<Account> {
         ArrayList<String[]> out = new ArrayList<>();
         for (Account a : TABLE) {
             String check = search;
-            boolean flag = false, allow = true;
+            boolean flag = false, rFlag = false, allow = true;
             if (check.contains("$U")) {
                 flag = true;
                 check = check.replace("$U", "").trim();
                 if (!a.inUse()) {
+                    allow = false;
+                }
+            }
+            if (check.contains("$u")) {
+                rFlag = true;
+                check = check.replace("$u", "").trim();
+                if (a.inUse()) {
                     allow = false;
                 }
             }
@@ -60,7 +67,7 @@ public class AccountBTC extends BackingTableCore<Account> {
                 out.add(new String[]{
                         "" + a.getAid(), a.getName(), a.getCurrency().getName(), a.getAccountType().NAME,
                         a.getBroadAccountType().toString(), a.getBudgetType(), !a.EXPORT ? "X" : "",
-                        (flag || a.inUse()) ? "X" : ""
+                        (!rFlag && (flag || a.inUse())) ? "X" : ""
                 });
             }
         }
@@ -94,7 +101,7 @@ public class AccountBTC extends BackingTableCore<Account> {
 
     @Override
     public boolean canRemove(int index) {
-        return !TABLE.get(index).inUse();
+        return canMove(index) && !TABLE.get(index).inUse();
     }
 
     @Override

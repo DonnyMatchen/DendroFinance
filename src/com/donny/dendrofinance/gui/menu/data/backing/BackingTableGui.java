@@ -8,6 +8,8 @@ import com.donny.dendrofinance.instance.Instance;
 import com.donny.dendrofinance.util.ExportableToJsonObject;
 
 import javax.swing.*;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
@@ -17,6 +19,7 @@ import java.awt.event.MouseEvent;
 public class BackingTableGui<E extends ExportableToJsonObject> extends RegisterFrame {
     private final BackingTableCore<E> TABLE_CORE;
 
+    private final JTextField SEARCH;
     private final JScrollPane PANE;
     private final JTable TABLE;
     private final DefaultTableModel TABLE_ACCESS;
@@ -28,6 +31,24 @@ public class BackingTableGui<E extends ExportableToJsonObject> extends RegisterF
 
         //draw gui
         {
+            SEARCH = new JTextField();
+            SEARCH.getDocument().addDocumentListener(new DocumentListener() {
+                @Override
+                public void changedUpdate(DocumentEvent e) {
+                    updateTable();
+                }
+
+                @Override
+                public void removeUpdate(DocumentEvent e) {
+                    updateTable();
+                }
+
+                @Override
+                public void insertUpdate(DocumentEvent e) {
+                    updateTable();
+                }
+            });
+
             PANE = DendroFactory.getTable(TABLE_CORE.getHeader(), new Object[][]{}, false);
             TABLE = (JTable) PANE.getViewport().getView();
             TABLE.addMouseListener(new MouseAdapter() {
@@ -88,8 +109,12 @@ public class BackingTableGui<E extends ExportableToJsonObject> extends RegisterF
                 GroupLayout main = new GroupLayout(getContentPane());
                 getContentPane().setLayout(main);
                 main.setHorizontalGroup(
-                        main.createSequentialGroup().addContainerGap().addComponent(
-                                PANE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
+                        main.createSequentialGroup().addContainerGap().addGroup(
+                                main.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(
+                                        SEARCH, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
+                                ).addComponent(
+                                        PANE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
+                                )
                         ).addGap(DendroFactory.SMALL_GAP).addGroup(
                                 main.createParallelGroup(GroupLayout.Alignment.TRAILING).addComponent(
                                         UP, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
@@ -108,8 +133,12 @@ public class BackingTableGui<E extends ExportableToJsonObject> extends RegisterF
                 );
                 main.setVerticalGroup(
                         main.createSequentialGroup().addContainerGap().addGroup(
-                                main.createParallelGroup(GroupLayout.Alignment.LEADING).addComponent(
-                                        PANE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
+                                main.createParallelGroup(GroupLayout.Alignment.LEADING).addGroup(
+                                        main.createSequentialGroup().addComponent(
+                                                SEARCH, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                        ).addGap(DendroFactory.SMALL_GAP).addComponent(
+                                                PANE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
+                                        )
                                 ).addGroup(
                                         main.createSequentialGroup().addComponent(
                                                 UP, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
@@ -136,10 +165,14 @@ public class BackingTableGui<E extends ExportableToJsonObject> extends RegisterF
     }
 
     public final void updateTable() {
+        updateTable(SEARCH.getText());
+    }
+
+    public final void updateTable(String search) {
         while (TABLE.getRowCount() > 0) {
             TABLE_ACCESS.removeRow(0);
         }
-        TABLE_CORE.getContents().forEach(TABLE_ACCESS::addRow);
+        TABLE_CORE.getContents(search).forEach(TABLE_ACCESS::addRow);
     }
 
     public void tableCursorChanged(int row) {

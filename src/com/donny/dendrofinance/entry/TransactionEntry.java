@@ -320,9 +320,6 @@ public class TransactionEntry extends Entry<TransactionHeader> implements Compar
             } else if (wrapper.COLUMN == AWColumn.DEBIT) {
                 deb = deb.add(wrapper.VALUE);
             }
-            if (wrapper.ACCOUNT.getBroadAccountType() == null) {
-                System.out.println(wrapper.ACCOUNT.getName());
-            }
             switch (wrapper.ACCOUNT.getBroadAccountType()) {
                 case ASSET -> ass = ass.add(wrapper.alpha());
                 case LIABILITY -> lia = lia.add(wrapper.alpha());

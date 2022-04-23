@@ -37,12 +37,38 @@ public class InventoryBTC extends BackingTableCore<LInventory> {
     }
 
     @Override
-    public ArrayList<String[]> getContents() {
+    public ArrayList<String[]> getContents(String search) {
         ArrayList<String[]> out = new ArrayList<>();
         for (LInventory inv : TABLE) {
-            out.add(new String[]{
-                    inv.getName(), inv.getTicker(), inv.encode(BigDecimal.ZERO), inv.inAccount() ? "X" : "", inv.inUse() ? "X" : ""
-            });
+            String check = search;
+            boolean flagU = false, flagA = false, allow = true;
+            if (check.contains("$U")) {
+                flagU = true;
+                check = check.replace("$U", "").trim();
+                if (!inv.inUse()) {
+                    allow = false;
+                }
+            }
+            if (check.contains("$A")) {
+                flagA = true;
+                check = check.replace("$A", "").trim();
+                if (!inv.inAccount()) {
+                    allow = false;
+                }
+            }
+            if (!(inv.getName().toLowerCase().contains(check.toLowerCase())
+                    || inv.getTicker().toLowerCase().contains(check.toLowerCase())
+                    || inv.encode(BigDecimal.ZERO).contains(check)
+                    || inv.toString().toLowerCase().contains(check.toLowerCase())
+                    || inv.getName().toLowerCase().contains(check.toLowerCase()))) {
+                allow = false;
+            }
+            if (allow) {
+                out.add(new String[]{
+                        inv.getName(), inv.getTicker(), inv.encode(BigDecimal.ZERO),
+                        (flagA || inv.inAccount()) ? "X" : "", (flagU || inv.inUse()) ? "X" : ""
+                });
+            }
         }
         return out;
     }

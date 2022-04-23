@@ -36,16 +36,39 @@ public class StockBTC extends BackingTableCore<LStock> {
     }
 
     @Override
-    public ArrayList<String[]> getContents() {
+    public ArrayList<String[]> getContents(String search) {
         ArrayList<String[]> out = new ArrayList<>();
         for (LStock stk : TABLE) {
+            String check = search;
+            boolean flagU = false, flagA = false, allow = true;
+            if (check.contains("$U")) {
+                flagU = true;
+                check = check.replace("$U", "").trim();
+                if (!stk.inUse()) {
+                    allow = false;
+                }
+            }
+            if (check.contains("$A")) {
+                flagA = true;
+                check = check.replace("$A", "").trim();
+                if (!stk.inAccount()) {
+                    allow = false;
+                }
+            }
             String name = stk.getName();
             if (stk.isDead()) {
                 name = "[" + name + "]";
             }
-            out.add(new String[]{
-                    name, stk.getTicker(), stk.inAccount() ? "X" : "", stk.inUse() ? "X" : ""
-            });
+            if (!(name.toLowerCase().contains(check.toLowerCase())
+                    || stk.getName().toLowerCase().contains(check.toLowerCase())
+                    || stk.getTicker().toLowerCase().contains(check.toLowerCase()))) {
+                allow = false;
+            }
+            if (allow) {
+                out.add(new String[]{
+                        name, stk.getTicker(), (flagA || stk.inAccount()) ? "X" : "", (flagU || stk.inUse()) ? "X" : ""
+                });
+            }
         }
         return out;
     }

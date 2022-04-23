@@ -35,14 +35,34 @@ public class AccountBTC extends BackingTableCore<Account> {
     }
 
     @Override
-    public ArrayList<String[]> getContents() {
+    public ArrayList<String[]> getContents(String search) {
         ArrayList<String[]> out = new ArrayList<>();
         for (Account a : TABLE) {
-            out.add(new String[]{
-                    "" + a.getAid(), a.getName(), a.getCurrency().getName(), a.getAccountType().NAME,
-                    a.getBroadAccountType().toString(), a.getBudgetType(), !a.EXPORT ? "X" : "",
-                    a.inUse() ? "X" : ""
-            });
+            String check = search;
+            boolean flag = false, allow = true;
+            if (check.contains("$U")) {
+                flag = true;
+                check = check.replace("$U", "").trim();
+                if (!a.inUse()) {
+                    allow = false;
+                }
+            }
+            if (!((a.getAid() + "").contains(check)
+                    || a.getName().toLowerCase().contains(check.toLowerCase())
+                    || a.getCurrency().getName().toLowerCase().contains(check.toLowerCase())
+                    || a.getCurrency().toString().toLowerCase().contains(check.toLowerCase())
+                    || a.getAccountType().NAME.toLowerCase().contains(check.toLowerCase())
+                    || a.getBudgetType().toLowerCase().contains(check.toLowerCase())
+                    || a.getBroadAccountType().toString().toLowerCase().contains(check.toLowerCase()))) {
+                allow = false;
+            }
+            if (allow) {
+                out.add(new String[]{
+                        "" + a.getAid(), a.getName(), a.getCurrency().getName(), a.getAccountType().NAME,
+                        a.getBroadAccountType().toString(), a.getBudgetType(), !a.EXPORT ? "X" : "",
+                        (flag || a.inUse()) ? "X" : ""
+                });
+            }
         }
         return out;
     }

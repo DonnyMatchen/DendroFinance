@@ -1,0 +1,21 @@
+The following is a list of implemented features of this search function
+searching <code>a b c</code> will check separately for the presence of the character sequences <code>a</code>, <code>b</code>, and <code>c</code>.  Only entries with all three present will be included.
+searching <code>"a b c"</code> will check for the character sequence <code>a b c</code> and only entries with that character sequence will be included
+$G will return entries that have a ghost account
+$g will return entries that do not have a ghost account
+$B will return entries that have a budget account
+$b will return entries that do not have a budget account
+$T will return entries that have a tracking account
+$t will return entries that do not have a tracking account
+$L will return entries that have trading metadata
+$l will return entries that do not have trading metadata
+$A will return entries that have asset metadata
+$a will return entries that do not have asset metadata
+$D will return entries that have loan metadata
+$d will return entries that do not have loan metadata
+$@ will return entries that are unbalanced
+$or(<code>[tokens]</code>) acts as an or test rather than the default and with the included tokens.
+
+this search:
+$l $T BTC
+will return only those transactions that have no trading ledger metadata, that contain a tracking account, and that contain the text "BTC".

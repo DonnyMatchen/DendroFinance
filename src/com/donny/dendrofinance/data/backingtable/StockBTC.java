@@ -40,7 +40,7 @@ public class StockBTC extends BackingTableCore<LStock> {
         ArrayList<String[]> out = new ArrayList<>();
         for (LStock stk : TABLE) {
             String check = search;
-            boolean flagU = false, flagA = false, allow = true;
+            boolean flagU = false, rFlagU = false, flagA = false, rFlagA = false, allow = true;
             if (check.contains("$U")) {
                 flagU = true;
                 check = check.replace("$U", "").trim();
@@ -48,10 +48,24 @@ public class StockBTC extends BackingTableCore<LStock> {
                     allow = false;
                 }
             }
+            if (check.contains("$u")) {
+                rFlagU = true;
+                check = check.replace("$u", "").trim();
+                if (stk.inUse()) {
+                    allow = false;
+                }
+            }
             if (check.contains("$A")) {
                 flagA = true;
                 check = check.replace("$A", "").trim();
                 if (!stk.inAccount()) {
+                    allow = false;
+                }
+            }
+            if (check.contains("$a")) {
+                rFlagA = true;
+                check = check.replace("$a", "").trim();
+                if (stk.inAccount()) {
                     allow = false;
                 }
             }
@@ -66,7 +80,7 @@ public class StockBTC extends BackingTableCore<LStock> {
             }
             if (allow) {
                 out.add(new String[]{
-                        name, stk.getTicker(), (flagA || stk.inAccount()) ? "X" : "", (flagU || stk.inUse()) ? "X" : ""
+                        name, stk.getTicker(), (rFlagA && (flagA || stk.inAccount())) ? "X" : "", (rFlagU && (flagU || stk.inUse())) ? "X" : ""
                 });
             }
         }

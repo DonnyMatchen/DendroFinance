@@ -175,8 +175,8 @@ public class BackingTableGui<E extends ExportableToJsonObject> extends RegisterF
         TABLE_CORE.getContents(search).forEach(TABLE_ACCESS::addRow);
     }
 
-    private String getIdentifier(int row){
-        return (String)TABLE.getValueAt(row, TABLE_CORE.contentIdentifierIndex());
+    private String getIdentifier(int row) {
+        return (String) TABLE.getValueAt(row, TABLE_CORE.contentIdentifierIndex());
     }
 
     public void tableCursorChanged(int row) {

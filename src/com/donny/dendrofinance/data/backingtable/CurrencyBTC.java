@@ -37,23 +37,49 @@ public class CurrencyBTC extends BackingTableCore<LCurrency> {
     }
 
     @Override
-    public ArrayList<String[]> getContents() {
+    public ArrayList<String[]> getContents(String search) {
         ArrayList<String[]> out = new ArrayList<>();
         for (LCurrency cur : TABLE) {
-            String name = cur.getName();
+            String check = search;
+            boolean flagU = false, flagA = false, allow = true;
+            if (check.contains("$U")) {
+                flagU = true;
+                check = check.replace("$U", "").trim();
+                if (!cur.inUse()) {
+                    allow = false;
+                }
+            }
+            if (check.contains("$A")) {
+                flagA = true;
+                check = check.replace("$A", "").trim();
+                if (!cur.inAccount()) {
+                    allow = false;
+                }
+            }
+            StringBuilder name = new StringBuilder(cur.getName());
             if (!cur.getAltName().equals("")) {
-                name += " (" + cur.getAltName() + ")";
+                name.append(" (").append(cur.getAltName()).append(")");
             }
             if (cur.isDead()) {
-                name = "[" + name + "]";
+                name = new StringBuilder("[" + name + "]");
             }
-            String type = cur.isFiat() ? "Fiat" : "Cryptocurrency";
+            StringBuilder type = new StringBuilder(cur.isFiat() ? "Fiat" : "Cryptocurrency");
             if (cur.isToken()) {
-                type += " (token)";
+                type.append(" (token)");
             }
-            out.add(new String[]{
-                    name, cur.getTicker(), cur.encode(BigDecimal.ZERO), type, cur.inAccount() ? "X" : "", cur.inUse() ? "X" : ""
-            });
+            if (!(name.toString().toLowerCase().contains(check.toLowerCase())
+                    || cur.getName().toLowerCase().contains(check.toLowerCase())
+                    || cur.getTicker().toLowerCase().contains(check.toLowerCase())
+                    || cur.encode(BigDecimal.ZERO).contains(check)
+                    || type.toString().toLowerCase().contains(check.toLowerCase())
+                    || cur.getName().toLowerCase().contains(check.toLowerCase()))) {
+                allow = false;
+            }
+            if (allow) {
+                out.add(new String[]{
+                        name.toString(), cur.getTicker(), cur.encode(BigDecimal.ZERO), type.toString(), (flagA || cur.inAccount()) ? "X" : "", (flagU || cur.inUse()) ? "X" : ""
+                });
+            }
         }
         return out;
     }

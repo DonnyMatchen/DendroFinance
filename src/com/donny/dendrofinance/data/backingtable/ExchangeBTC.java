@@ -36,10 +36,13 @@ public class ExchangeBTC extends BackingTableCore<Exchange> {
     }
 
     @Override
-    public ArrayList<String[]> getContents() {
+    public ArrayList<String[]> getContents(String search) {
         ArrayList<String[]> out = new ArrayList<>();
         for (Exchange exch : TABLE) {
-            out.add(exch.print(CURRENT_INSTANCE));
+            if (exch.NAME.toLowerCase().contains(search.toLowerCase())
+                    || exch.ALT.toLowerCase().contains(search.toLowerCase())) {
+                out.add(exch.print(CURRENT_INSTANCE));
+            }
         }
         return out;
     }

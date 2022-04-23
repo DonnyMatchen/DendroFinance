@@ -27,7 +27,7 @@ public abstract class BackingTableCore<E extends ExportableToJsonObject> impleme
 
     public abstract String[] getHeader();
 
-    public abstract ArrayList<String[]> getContents();
+    public abstract ArrayList<String[]> getContents(String search);
 
     public boolean add(E element) {
         if (TABLE.add(element)) {

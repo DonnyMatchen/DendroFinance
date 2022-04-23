@@ -35,12 +35,15 @@ public class AccountTypeBTC extends BackingTableCore<AccountType> {
     }
 
     @Override
-    public ArrayList<String[]> getContents() {
+    public ArrayList<String[]> getContents(String search) {
         ArrayList<String[]> out = new ArrayList<>();
         for (AccountType a : TABLE) {
-            out.add(new String[]{
-                    a.NAME, "" + a.TYPE, a.inUse(CURRENT_INSTANCE) ? "X" : ""
-            });
+            if (a.NAME.toLowerCase().contains(search.toLowerCase())
+                    || a.TYPE.toString().toLowerCase().contains(search.toLowerCase())) {
+                out.add(new String[]{
+                        a.NAME, "" + a.TYPE, a.inUse(CURRENT_INSTANCE) ? "X" : ""
+                });
+            }
         }
         return out;
     }

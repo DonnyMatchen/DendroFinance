@@ -78,21 +78,21 @@ public class BackingTableGui<E extends ExportableToJsonObject> extends RegisterF
 
             UP = DendroFactory.getButton("Move Up");
             UP.addActionListener(actionEvent -> {
-                TABLE_CORE.move(TABLE.getSelectedRow(), true);
+                TABLE_CORE.move(getIdentifier(TABLE.getSelectedRow()), true);
                 updateTable();
             });
 
             DOWN = DendroFactory.getButton("Move Down");
             DOWN.addActionListener(actionEvent -> {
-                TABLE_CORE.move(TABLE.getSelectedRow(), false);
+                TABLE_CORE.move(getIdentifier(TABLE.getSelectedRow()), false);
                 updateTable();
             });
 
             EDIT = DendroFactory.getButton("Edit");
-            EDIT.addActionListener(event -> TABLE_CORE.getEditDialog(this, TABLE.getSelectedRow()));
+            EDIT.addActionListener(event -> TABLE_CORE.getEditDialog(this, TABLE_CORE.getIndex(getIdentifier(TABLE.getSelectedRow()))));
 
             DELETE = DendroFactory.getButton("Remove");
-            DELETE.addActionListener(actionEvent -> new DeleteBackingGui<>(this, TABLE_CORE, TABLE.getSelectedRow(), curInst).setVisible(true));
+            DELETE.addActionListener(actionEvent -> new DeleteBackingGui<>(this, TABLE_CORE, TABLE_CORE.getIndex(getIdentifier(TABLE.getSelectedRow())), curInst).setVisible(true));
 
             CREATE = DendroFactory.getButton("New");
             CREATE.addActionListener(event -> TABLE_CORE.getEditDialog(this, -1));
@@ -175,29 +175,33 @@ public class BackingTableGui<E extends ExportableToJsonObject> extends RegisterF
         TABLE_CORE.getContents(search).forEach(TABLE_ACCESS::addRow);
     }
 
+    private String getIdentifier(int row){
+        return (String)TABLE.getValueAt(row, TABLE_CORE.contentIdentifierIndex());
+    }
+
     public void tableCursorChanged(int row) {
-        if (TABLE_CORE.canMove(row)) {
+        if (TABLE_CORE.canMove(getIdentifier(row))) {
             UP.setEnabled(true);
             UP.setBackground(DendroFactory.REGULAR);
         } else {
             UP.setEnabled(false);
             UP.setBackground(DendroFactory.DISABLED);
         }
-        if (TABLE_CORE.canMove(row)) {
+        if (TABLE_CORE.canMove(getIdentifier(row))) {
             DOWN.setEnabled(true);
             DOWN.setBackground(DendroFactory.REGULAR);
         } else {
             DOWN.setEnabled(false);
             DOWN.setBackground(DendroFactory.DISABLED);
         }
-        if (TABLE_CORE.canEdit(row)) {
+        if (TABLE_CORE.canEdit(getIdentifier(row))) {
             EDIT.setEnabled(true);
             EDIT.setBackground(DendroFactory.REGULAR);
         } else {
             EDIT.setEnabled(false);
             EDIT.setBackground(DendroFactory.DISABLED);
         }
-        if (TABLE_CORE.canRemove(row)) {
+        if (TABLE_CORE.canRemove(getIdentifier(row))) {
             DELETE.setEnabled(true);
             DELETE.setBackground(DendroFactory.REGULAR);
         } else {

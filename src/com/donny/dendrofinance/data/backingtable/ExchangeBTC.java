@@ -11,7 +11,6 @@ import com.donny.dendrofinance.json.JsonObject;
 import java.util.ArrayList;
 
 public class ExchangeBTC extends BackingTableCore<Exchange> {
-
     public ExchangeBTC(Instance curInst) {
         super(curInst, false);
     }
@@ -33,6 +32,11 @@ public class ExchangeBTC extends BackingTableCore<Exchange> {
         return new String[]{
                 "Name", "Alternate Name", "# Fiat", "# Stock", "# Crypto", "# Inventory", "In Use"
         };
+    }
+
+    @Override
+    public int contentIdentifierIndex() {
+        return 0;
     }
 
     @Override
@@ -63,18 +67,18 @@ public class ExchangeBTC extends BackingTableCore<Exchange> {
     }
 
     @Override
-    public boolean canMove(int index) {
-        return canEdit(index);
+    public boolean canMove(String identifier) {
+        return canEdit(identifier);
     }
 
     @Override
-    public boolean canEdit(int index) {
-        return TABLE.get(index).EXPORT;
+    public boolean canEdit(String identifier) {
+        return getElement(identifier).EXPORT;
     }
 
     @Override
-    public boolean canRemove(int index) {
-        return canEdit(index) && !TABLE.get(index).inUse(CURRENT_INSTANCE);
+    public boolean canRemove(String identifier) {
+        return canEdit(identifier) && !getElement(identifier).inUse(CURRENT_INSTANCE);
     }
 
     @Override

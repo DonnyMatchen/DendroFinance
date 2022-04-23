@@ -37,6 +37,11 @@ public class InventoryBTC extends BackingTableCore<LInventory> {
     }
 
     @Override
+    public int contentIdentifierIndex() {
+        return 1;
+    }
+
+    @Override
     public ArrayList<String[]> getContents(String search) {
         ArrayList<String[]> out = new ArrayList<>();
         for (LInventory inv : TABLE) {
@@ -106,18 +111,18 @@ public class InventoryBTC extends BackingTableCore<LInventory> {
     }
 
     @Override
-    public boolean canMove(int index) {
+    public boolean canMove(String identifier) {
         return true;
     }
 
     @Override
-    public boolean canEdit(int index) {
+    public boolean canEdit(String identifier) {
         return true;
     }
 
     @Override
-    public boolean canRemove(int index) {
-        return !TABLE.get(index).inAccount();
+    public boolean canRemove(String identifier) {
+        return !getElement(identifier).inAccount();
     }
 
     @Override

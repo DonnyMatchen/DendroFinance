@@ -35,6 +35,11 @@ public class AccountBTC extends BackingTableCore<Account> {
     }
 
     @Override
+    public int contentIdentifierIndex() {
+        return 1;
+    }
+
+    @Override
     public ArrayList<String[]> getContents(String search) {
         ArrayList<String[]> out = new ArrayList<>();
         for (Account a : TABLE) {
@@ -90,18 +95,18 @@ public class AccountBTC extends BackingTableCore<Account> {
     }
 
     @Override
-    public boolean canMove(int index) {
-        return TABLE.get(index).EXPORT;
+    public boolean canMove(String identifier) {
+        return getElement(identifier).EXPORT;
     }
 
     @Override
-    public boolean canEdit(int index) {
-        return TABLE.get(index).EXPORT;
+    public boolean canEdit(String identifier) {
+        return getElement(identifier).EXPORT;
     }
 
     @Override
-    public boolean canRemove(int index) {
-        return canMove(index) && !TABLE.get(index).inUse();
+    public boolean canRemove(String identifier) {
+        return canMove(identifier) && !getElement(identifier).inUse();
     }
 
     @Override

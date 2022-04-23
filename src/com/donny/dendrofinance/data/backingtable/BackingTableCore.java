@@ -27,6 +27,8 @@ public abstract class BackingTableCore<E extends ExportableToJsonObject> impleme
 
     public abstract String[] getHeader();
 
+    public abstract int contentIdentifierIndex();
+
     public abstract ArrayList<String[]> getContents(String search);
 
     public boolean add(E element) {
@@ -89,17 +91,14 @@ public abstract class BackingTableCore<E extends ExportableToJsonObject> impleme
         }
     }
 
-    public abstract boolean canMove(int index);
+    public abstract boolean canMove(String identifier);
 
-    public abstract boolean canEdit(int index);
+    public abstract boolean canEdit(String identifier);
 
-    public abstract boolean canRemove(int index);
+    public abstract boolean canRemove(String identifier);
 
     public boolean move(String identifier, boolean up) {
-        return move(getIndex(identifier), up);
-    }
-
-    public boolean move(int index, boolean up) {
+        int index = getIndex(identifier);
         if (index < 0) {
             return false;
         } else if (index == 0 && !up) {
@@ -107,7 +106,7 @@ public abstract class BackingTableCore<E extends ExportableToJsonObject> impleme
         } else if (index == TABLE.size() - 1 && up) {
             return false;
         } else {
-            if (canMove(index + (up ? 1 : -1))) {
+            if (canMove(getIdentifier(index + (up ? 1 : -1)))) {
                 E temp = TABLE.get(index);
                 if (up) {
                     TABLE.remove(index);

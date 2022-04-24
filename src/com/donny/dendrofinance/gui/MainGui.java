@@ -21,6 +21,7 @@ import com.donny.dendrofinance.gui.menu.trading.PricesGui;
 import com.donny.dendrofinance.gui.menu.util.AccountReplacementGui;
 import com.donny.dendrofinance.gui.menu.util.ArchiveGui;
 import com.donny.dendrofinance.gui.menu.util.ConversionGui;
+import com.donny.dendrofinance.gui.menu.util.LogClearGui;
 import com.donny.dendrofinance.instance.Instance;
 import com.donny.dendrofinance.json.JsonFormattingException;
 
@@ -223,9 +224,12 @@ public class MainGui extends JFrame {
                 conv.addActionListener(event -> new ConversionGui(this, CURRENT_INSTANCE).setVisible(true));
                 JMenuItem arch = new JMenuItem("Archive Transactions");
                 arch.addActionListener(event -> new ArchiveGui(this, CURRENT_INSTANCE).setVisible(true));
+                JMenuItem logs = new JMenuItem("Logs");
+                logs.addActionListener(event -> new LogClearGui(this, CURRENT_INSTANCE).setVisible(true));
                 util.add(repl);
                 util.add(conv);
                 util.add(arch);
+                util.add(logs);
 
                 //add menus
                 bar.add(data);

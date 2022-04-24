@@ -33,11 +33,11 @@ public class ClosePrompt extends JDialog {
                                         main.createSequentialGroup().addComponent(
                                                 CANCEL, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                         ).addGap(
-                                                DendroFactory.SMALL_GAP, DendroFactory.SMALL_GAP, Short.MAX_VALUE
+                                                DendroFactory.LARGE_GAP, DendroFactory.LARGE_GAP, Short.MAX_VALUE
                                         ).addComponent(
                                                 D_SAVE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                         ).addGap(
-                                                DendroFactory.SMALL_GAP, DendroFactory.SMALL_GAP, Short.MAX_VALUE
+                                                DendroFactory.LARGE_GAP, DendroFactory.LARGE_GAP, Short.MAX_VALUE
                                         ).addComponent(
                                                 SAVE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                         )

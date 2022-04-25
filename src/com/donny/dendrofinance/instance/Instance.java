@@ -42,6 +42,7 @@ public class Instance {
     public final AccountBTC ACCOUNTS;
     public final ExchangeBTC EXCHANGES;
     public final AccountTypeBTC ACCOUNT_TYPES;
+    public final TaxItemBTC TAX_ITEMS;
     public final ArrayList<LCurrency> VS = new ArrayList<>();
     public final ImportHandler IMPORT_HANDLER;
     public final ExportHandler EXPORT_HANDLER;
@@ -79,6 +80,7 @@ public class Instance {
         ACCOUNTS = new AccountBTC(this);
         EXCHANGES = new ExchangeBTC(this);
         ACCOUNT_TYPES = new AccountTypeBTC(this);
+        TAX_ITEMS = new TaxItemBTC(this);
         LOG_HANDLER = new LogHandler(logLevel.getLevel(), this);
         FILE_HANDLER = new FileHandler(this);
         DendroFactory.init(this);
@@ -125,7 +127,8 @@ public class Instance {
                 exchanges = new File(data.getPath() + File.separator + "Accounts" + File.separator + "exchanges.json"),
                 accounts = new File(data.getPath() + File.separator + "Accounts" + File.separator + "accounts.json"),
                 extran = new File(data.getPath() + File.separator + "Accounts" + File.separator + "extranious.json"),
-                accTyp = new File(data.getPath() + File.separator + "Accounts" + File.separator + "account-types.json");
+                accTyp = new File(data.getPath() + File.separator + "Accounts" + File.separator + "account-types.json"),
+                taxItm = new File(data.getPath() + File.separator + "Accounts" + File.separator + "tax-items.json");
         //Create Defaults for new profiles
         {
             //Folders
@@ -171,6 +174,9 @@ public class Instance {
                 }
                 if (!accTyp.exists()) {
                     FILE_HANDLER.write(accTyp, new String(FILE_HANDLER.getTemplate("Accounts/account-types.json"), Charset.forName("unicode")));
+                }
+                if (!taxItm.exists()) {
+                    FILE_HANDLER.write(taxItm, new String(FILE_HANDLER.getTemplate("Accounts/tax-items.json"), Charset.forName("unicode")));
                 }
             }
             LOG_HANDLER.trace(this.getClass(), "Defaults set where necessary");
@@ -335,6 +341,12 @@ public class Instance {
             ACCOUNTS.changed = false;
             LOG_HANDLER.trace(this.getClass(), "Accounts loaded");
         }
+        //Tax
+        {
+            TAX_ITEMS.clear();
+            JsonArray taxArray = (JsonArray) JsonItem.sanitizeDigest(FILE_HANDLER.read(taxItm));
+            TAX_ITEMS.load(taxArray);
+        }
     }
 
     public void conclude(boolean save) {
@@ -345,7 +357,8 @@ public class Instance {
                     inventories = new File(data.getPath() + File.separator + "Currencies" + File.separator + "inventories.json"),
                     exchanges = new File(data.getPath() + File.separator + "Accounts" + File.separator + "exchanges.json"),
                     accounts = new File(data.getPath() + File.separator + "Accounts" + File.separator + "accounts.json"),
-                    accTyp = new File(data.getPath() + File.separator + "Accounts" + File.separator + "account-types.json");
+                    accTyp = new File(data.getPath() + File.separator + "Accounts" + File.separator + "account-types.json"),
+                    taxItm = new File(data.getPath() + File.separator + "Accounts" + File.separator + "tax-items.json");
             if (CURRENCIES.changed) {
                 FILE_HANDLER.write(currencies, CURRENCIES.export().toString());
             }
@@ -363,6 +376,9 @@ public class Instance {
             }
             if (ACCOUNT_TYPES.changed) {
                 FILE_HANDLER.write(accTyp, ACCOUNT_TYPES.export().toString());
+            }
+            if (TAX_ITEMS.changed) {
+                FILE_HANDLER.write(taxItm, TAX_ITEMS.export().toString());
             }
         }
         ENCRYPTION_HANDLER.dispose();
@@ -511,6 +527,12 @@ public class Instance {
                 return new BigDecimal(out.toString());
             }
         }
+    }
+
+    public ArrayList<String> getAllTaxItemsAsStrings() {
+        ArrayList<String> out = new ArrayList<>();
+        TAX_ITEMS.forEach(item -> out.add(item.NAME));
+        return out;
     }
 
     public ArrayList<String> getAllAssetsAsStrings() {

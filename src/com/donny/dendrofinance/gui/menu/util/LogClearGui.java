@@ -8,7 +8,6 @@ import com.donny.dendrofinance.instance.Instance;
 import javax.swing.*;
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Comparator;
 
 public class LogClearGui extends RegisterFrame {
     private final JScrollPane LIST_PANE, VIEW_PANE;
@@ -38,7 +37,7 @@ public class LogClearGui extends RegisterFrame {
             });
             REMOVE_ALL = DendroFactory.getButton("Remove All");
             REMOVE_ALL.addActionListener(event -> {
-                for(int i = 0; i < LIST.getModel().getSize(); i++){
+                for (int i = 0; i < LIST.getModel().getSize(); i++) {
                     CURRENT_INSTANCE.FILE_HANDLER.delete(LOGS, LIST.getModel().getElementAt(i));
                 }
                 updateList();
@@ -100,11 +99,11 @@ public class LogClearGui extends RegisterFrame {
         updateList();
     }
 
-    private void updateList(){
-        ((DefaultListModel<String>)LIST.getModel()).removeAllElements();
-        if(LOGS.exists()){
+    private void updateList() {
+        ((DefaultListModel<String>) LIST.getModel()).removeAllElements();
+        if (LOGS.exists()) {
             File[] files = LOGS.listFiles();
-            if(files != null){
+            if (files != null) {
                 ArrayList<String> temp = new ArrayList<>();
                 for (File f : files) {
                     temp.add(f.getName());

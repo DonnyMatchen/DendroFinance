@@ -111,7 +111,7 @@ public class TaxItem implements ExportableToJsonObject {
         }
 
         @Override
-        public JsonObject export(){
+        public JsonObject export() {
             JsonObject obj = new JsonObject();
             obj.FIELDS.put("bound", new JsonDecimal(LOWER_BOUND));
             obj.FIELDS.put("rate", new JsonDecimal(RATE));

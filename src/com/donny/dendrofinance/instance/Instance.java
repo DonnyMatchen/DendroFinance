@@ -360,25 +360,25 @@ public class Instance {
                     accTyp = new File(data.getPath() + File.separator + "Accounts" + File.separator + "account-types.json"),
                     taxItm = new File(data.getPath() + File.separator + "Accounts" + File.separator + "tax-items.json");
             if (CURRENCIES.changed) {
-                FILE_HANDLER.write(currencies, CURRENCIES.export().toString());
+                FILE_HANDLER.write(currencies, CURRENCIES.export().print());
             }
             if (STOCKS.changed) {
-                FILE_HANDLER.write(stocks, STOCKS.export().toString());
+                FILE_HANDLER.write(stocks, STOCKS.export().print());
             }
             if (INVENTORIES.changed) {
-                FILE_HANDLER.write(inventories, INVENTORIES.export().toString());
+                FILE_HANDLER.write(inventories, INVENTORIES.export().print());
             }
             if (ACCOUNTS.changed) {
-                FILE_HANDLER.write(accounts, ACCOUNTS.export().toString());
+                FILE_HANDLER.write(accounts, ACCOUNTS.export().print());
             }
             if (EXCHANGES.changed) {
-                FILE_HANDLER.write(exchanges, EXCHANGES.export().toString());
+                FILE_HANDLER.write(exchanges, EXCHANGES.export().print());
             }
             if (ACCOUNT_TYPES.changed) {
-                FILE_HANDLER.write(accTyp, ACCOUNT_TYPES.export().toString());
+                FILE_HANDLER.write(accTyp, ACCOUNT_TYPES.export().print());
             }
             if (TAX_ITEMS.changed) {
-                FILE_HANDLER.write(taxItm, TAX_ITEMS.export().toString());
+                FILE_HANDLER.write(taxItm, TAX_ITEMS.export().print());
             }
         }
         ENCRYPTION_HANDLER.dispose();

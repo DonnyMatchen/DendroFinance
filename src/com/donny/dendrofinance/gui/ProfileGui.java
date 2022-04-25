@@ -264,6 +264,7 @@ public class ProfileGui extends JDialog {
             if (CALLER.PROFILES.get(i).FIELDS.containsKey("name")) {
                 if (CALLER.PROFILES.get(i).getString("name").getString().equals(NAME.getText())) {
                     CALLER.PROFILES.remove(i);
+                    break;
                 }
             }
         }

@@ -1,0 +1,18 @@
+BracketItem{
+  "bound": decimal
+  "rate": decimal
+}
+* bound: the lower bound for the bracket in main currency
+* rate: the tax rate in that bracket.  for 10%, this is 0.1
+
+TaxItem{
+  "bound": decimal
+  "brackets": array(BracketItem)
+  "exempt": decimal
+  "name": string
+}
+
+* bound: the ceiling for the tax rate, as with US OASDI taxes
+* brackets: an array of bracket items, for flat taxes, there is only one bracket with a lower bound of 0.  For calculation to work, the lower bound must be 0.
+* exempt: the default exemption for this tax item.
+* name: the display name of the tax

@@ -43,11 +43,9 @@ public class LogClearGui extends RegisterFrame {
                 updateList();
             });
             LOAD = DendroFactory.getButton("Load");
-            LOAD.addActionListener(event -> {
-                VIEW.setText(
-                        CURRENT_INSTANCE.FILE_HANDLER.readPlain(LOGS, LIST.getSelectedValue())
-                );
-            });
+            LOAD.addActionListener(event -> VIEW.setText(
+                    CURRENT_INSTANCE.FILE_HANDLER.readPlain(LOGS, LIST.getSelectedValue())
+            ));
 
             //group layout
             {

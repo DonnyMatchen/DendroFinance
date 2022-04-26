@@ -45,7 +45,7 @@ public class NetIncomeGui extends RegisterFrame {
                     sb.append("D!Net_Income(").append(net.abs()).append(")");
                 }
                 for (Account a : accounts.keySet()) {
-                    if (a.getBroadAccountType() == BroadAccountType.REVENUE || a.getBroadAccountType() == BroadAccountType.EXPENSE) {
+                    if ((a.getBroadAccountType() == BroadAccountType.REVENUE || a.getBroadAccountType() == BroadAccountType.EXPENSE) && accounts.get(a).compareTo(BigDecimal.ZERO) != 0) {
                         sb.append(", ").append(a.getDefaultColumn(false)).append("!").append(a.getName())
                                 .append("(").append(accounts.get(a)).append(")");
                     }

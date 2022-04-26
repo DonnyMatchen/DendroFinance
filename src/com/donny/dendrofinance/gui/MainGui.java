@@ -58,7 +58,7 @@ public class MainGui extends JFrame {
         {
             setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 
-            getGlassPane().addMouseListener(new MouseAdapter() {
+            getContentPane().addMouseListener(new MouseAdapter() {
                 @Override
                 public void mouseEntered(MouseEvent e) {
                     force = false;

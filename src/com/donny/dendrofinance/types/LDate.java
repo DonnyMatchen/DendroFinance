@@ -37,12 +37,16 @@ public class LDate extends LType<LDate> {
         CURRENT_INSTANCE = curInst;
     }
 
-    public LDate(int year, int month, int day, int hour, int minute, int second, Instance curInst) {
+    public LDate(int year, int month, int day, int hour, int minute, int second, int mili, Instance curInst) {
         Calendar date = Calendar.getInstance();
         date.set(year, month - 1, day, hour, minute, second);
         long temp = date.getTime().getTime();
-        DATE = new Date(temp - (temp % 1000));
+        DATE = new Date(temp - (temp % 1000) + mili);
         CURRENT_INSTANCE = curInst;
+    }
+
+    public LDate(int year, int month, int day, int hour, int minute, int second, Instance curInst) {
+        this(year, month, day, hour, minute, second, 0, curInst);
     }
 
     public LDate(String raw, Instance curInst) {
@@ -70,11 +74,24 @@ public class LDate extends LType<LDate> {
                 }
                 hour = Integer.parseInt(timeParts[0]);
                 minute = Integer.parseInt(timeParts[1]);
-                second = Integer.parseInt(timeParts[2]);
+                int mili = 0;
+                second = 0;
+                if (timeParts.length >= 3) {
+                    if (timeParts[2].contains(".")) {
+                        StringBuilder temp = new StringBuilder(timeParts[2].split("\\.")[1]);
+                        while (temp.length() < 3) {
+                            temp.append("0");
+                        }
+                        mili = Integer.parseInt(temp.toString());
+                        second = Integer.parseInt(timeParts[2].split("\\.")[0]);
+                    } else {
+                        second = Integer.parseInt(timeParts[2]);
+                    }
+                }
                 Calendar date = Calendar.getInstance();
                 date.set(year, month - 1, day, hour, minute, second);
                 long temp = date.getTime().getTime();
-                DATE = new Date(temp - (temp % 1000));
+                DATE = new Date(temp - (temp % 1000) + mili);
                 CURRENT_INSTANCE = curInst;
             } else {
                 String[] dayParts = raw.split("/");

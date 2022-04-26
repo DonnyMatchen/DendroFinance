@@ -10,6 +10,10 @@ import java.util.Date;
 public class LogHandler {
     public final Instance CURRENT_INSTANCE;
     public final int LOG_LEVEL;
+    /*
+     * regardless of log level, LOG stores all log statements bellow trace level
+     * regardless of log level, TRACE stores all log statements
+     */
     private final StringBuilder LOG, TRACE;
 
     public LogHandler(int logLevel, Instance curInst) {
@@ -64,6 +68,7 @@ public class LogHandler {
         String str = "[" + cause.toString().split(" ")[1].substring(24) + "/TRACE] " + message;
         Date now = new Date();
         DateFormat format = new SimpleDateFormat("{MMM dd yyyy} (hh:mm:ss a z) ");
+        LOG.append(format.format(now)).append(str).append("\n");
         TRACE.append(format.format(now)).append(str).append("\n");
         if (LOG_LEVEL >= LogLevel.LOG_LEVEL_TRACE) {
             System.out.println(format.format(now) + str);

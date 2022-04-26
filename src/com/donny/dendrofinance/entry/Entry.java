@@ -25,18 +25,26 @@ public class Entry<T extends Header> {
     }
 
     public Entry(JsonObject obj, Instance curInst) {
+        CURRENT_INSTANCE = curInst;
         HEADER = (T) Header.getHeader(obj.getString("_header").getString(), curInst);
         VALUES = HEADER.getBlank();
         JsonObject types = obj.getObject("_types");
         if (obj.FIELDS.containsKey("_uuid")) {
-            UUID = obj.getDecimal("_uuid").decimal.longValue();
+            long candidate = obj.getDecimal("_uuid").decimal.longValue();;
+            if(CURRENT_INSTANCE.UUID_HANDLER.UUIDS.contains(candidate)){
+                CURRENT_INSTANCE.LOG_HANDLER.warn(this.getClass(), "Clashing UUID: " + candidate);
+                UUID = CURRENT_INSTANCE.UUID_HANDLER.generateUUID();
+            }else{
+                UUID = candidate;
+                CURRENT_INSTANCE.UUID_HANDLER.UUIDS.add(UUID);
+            }
         } else {
             UUID = curInst.UUID_HANDLER.generateUUID();
         }
         for (String key : types.FIELDS.keySet()) {
             insertIntoField(key, new Field(key, types.getString(key), obj.FIELDS.get(key), curInst));
         }
-        CURRENT_INSTANCE = curInst;
+
     }
 
     public static Entry get(EntryType type, JsonObject obj, Instance curInst) {

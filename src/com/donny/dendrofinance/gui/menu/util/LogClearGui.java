@@ -29,7 +29,7 @@ public class LogClearGui extends RegisterFrame {
             LIST_PANE.setViewportView(LIST);
             VIEW_PANE = DendroFactory.getScrollField();
             VIEW = (JTextArea) VIEW_PANE.getViewport().getView();
-            VIEW.setEnabled(false);
+            VIEW.setEditable(false);
             REMOVE = DendroFactory.getButton("Remove");
             REMOVE.addActionListener(event -> {
                 CURRENT_INSTANCE.FILE_HANDLER.delete(LOGS, LIST.getSelectedValue());

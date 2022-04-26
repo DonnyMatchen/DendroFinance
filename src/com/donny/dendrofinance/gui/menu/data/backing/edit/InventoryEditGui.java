@@ -106,7 +106,7 @@ public class InventoryEditGui extends BackingEditGui<LInventory> {
             merch.setSelected(inv.isMerchandise());
             comod.setSelected(inv.isCommodity());
             if (inv.inAccount()) {
-                ticker.setEnabled(false);
+                ticker.setEditable(false);
                 ticker.setBackground(DendroFactory.BACKDROP);
             }
         }

@@ -8,6 +8,8 @@ import com.donny.dendrofinance.gui.customswing.SearchBox;
 import com.donny.dendrofinance.instance.Instance;
 
 import javax.swing.*;
+import javax.swing.event.MouseInputAdapter;
+import java.awt.event.MouseEvent;
 import java.math.BigDecimal;
 
 public class ConversionGui extends RegisterFrame {
@@ -29,7 +31,7 @@ public class ConversionGui extends RegisterFrame {
             CUR_B = new SearchBox("Currency B", CURRENT_INSTANCE.getAllAssetsAsStrings());
             PANE = DendroFactory.getScrollField();
             DISPLAY = (JTextArea) PANE.getViewport().getView();
-            DISPLAY.setEnabled(false);
+            DISPLAY.setEditable(false);
             CONVERT = DendroFactory.getButton("Convert");
             CONVERT.addActionListener(event -> {
                 LCurrency a = CURRENT_INSTANCE.getLCurrency(CUR_A.getSelectedItem());

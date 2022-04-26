@@ -41,6 +41,7 @@ public class DataHandler {
         try {
             TRANSACTIONS.load();
             BUDGETS.load();
+            System.out.println(CURRENT_INSTANCE.UUID_HANDLER.UUIDS.size());
         } catch (JsonFormattingException e) {
             CURRENT_INSTANCE.LOG_HANDLER.error(this.getClass(), "Error loading datasets: " + e);
         }

@@ -174,7 +174,7 @@ public class ExchangeEditGui extends BackingEditGui<Exchange> {
                 sText.setText(sb.substring(2));
             }
             if (exch.inUse(CURRENT_INSTANCE)) {
-                name.setEnabled(false);
+                name.setEditable(false);
                 name.setBackground(DendroFactory.DISABLED);
             }
         }

@@ -97,7 +97,7 @@ public class CurrencyEditGui extends BackingEditGui<LCurrency> {
             token.setSelected(cur.isToken());
             forwards.setSelected(cur.isForwards());
             if (cur.inAccount()) {
-                ticker.setEnabled(false);
+                ticker.setEditable(false);
                 ticker.setBackground(DendroFactory.BACKDROP);
             }
         }

@@ -13,13 +13,15 @@ public abstract class RegisterFrame extends JFrame {
         CURRENT_INSTANCE = curInst;
         CALLER.FRAME_REGISTRY.add(this);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-        CURRENT_INSTANCE.LOG_HANDLER.trace(this.getClass(), "RegisterFrame created");
+        String[] clss = getClass().toString().split("\\.");
+        CURRENT_INSTANCE.LOG_HANDLER.trace(this.getClass(), clss[clss.length - 1] + " created");
     }
 
     @Override
     public void dispose() {
         CALLER.FRAME_REGISTRY.remove(this);
-        CURRENT_INSTANCE.LOG_HANDLER.trace(this.getClass(), "RegisterFrame destroyed");
+        String[] clss = getClass().toString().split("\\.");
+        CURRENT_INSTANCE.LOG_HANDLER.trace(this.getClass(), clss[clss.length - 1] + " destroyed");
         super.dispose();
     }
 }

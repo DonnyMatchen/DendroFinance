@@ -22,6 +22,9 @@ import com.donny.dendrofinance.gui.menu.util.AccountReplacementGui;
 import com.donny.dendrofinance.gui.menu.util.ArchiveGui;
 import com.donny.dendrofinance.gui.menu.util.ConversionGui;
 import com.donny.dendrofinance.gui.menu.util.LogClearGui;
+import com.donny.dendrofinance.gui.menu.util.acc.AppDepGui;
+import com.donny.dendrofinance.gui.menu.util.acc.NetIncomeGui;
+import com.donny.dendrofinance.gui.menu.util.acc.TaxZeroGui;
 import com.donny.dendrofinance.gui.menu.util.taxgui.TaxGui;
 import com.donny.dendrofinance.instance.Instance;
 import com.donny.dendrofinance.json.JsonFormattingException;
@@ -229,11 +232,21 @@ public class MainGui extends JFrame {
                 logs.addActionListener(event -> new LogClearGui(this, CURRENT_INSTANCE).setVisible(true));
                 JMenuItem taxes = new JMenuItem("Tax Calculator");
                 taxes.addActionListener(event -> new TaxGui(this, CURRENT_INSTANCE).setVisible(true));
+                JMenuItem appDep = new JMenuItem("Appreciation");
+                appDep.addActionListener(event -> new AppDepGui(this, CURRENT_INSTANCE).setVisible(true));
+                JMenuItem netInc = new JMenuItem("Net Income");
+                netInc.addActionListener(event -> new NetIncomeGui(this, CURRENT_INSTANCE).setVisible(true));
+                JMenuItem taxZero = new JMenuItem("Tax Zeroing");
+                taxZero.addActionListener(event -> new TaxZeroGui(this, CURRENT_INSTANCE).setVisible(true));
                 util.add(repl);
                 util.add(conv);
                 util.add(arch);
                 util.add(logs);
+                util.add(new JSeparator());
                 util.add(taxes);
+                util.add(appDep);
+                util.add(netInc);
+                util.add(taxZero);
 
                 //add menus
                 bar.add(data);

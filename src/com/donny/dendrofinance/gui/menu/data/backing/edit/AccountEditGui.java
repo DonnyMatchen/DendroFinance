@@ -80,7 +80,7 @@ public class AccountEditGui extends BackingEditGui<Account> {
             currency.setSelectedIndex("" + acc.getCurrency());
             type.setSelectedIndex(acc.getAccountType().NAME);
             if (acc.inUse()) {
-                name.setEnabled(false);
+                name.setEditable(false);
                 name.setBackground(DendroFactory.BACKDROP);
             }
         }

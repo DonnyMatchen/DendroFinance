@@ -62,9 +62,9 @@ public class AppDepGui extends RegisterFrame {
                 }
             });
             STOCK_CURRENT = new JTextField();
-            STOCK_CURRENT.setEnabled(false);
+            STOCK_CURRENT.setEditable(false);
             STOCK_APP = new JTextField();
-            STOCK_APP.setEnabled(false);
+            STOCK_APP.setEditable(false);
             CRYPTO = new JTextField();
             CRYPTO.getDocument().addDocumentListener(new DocumentListener() {
                 @Override
@@ -95,9 +95,9 @@ public class AppDepGui extends RegisterFrame {
                 }
             });
             CRYPTO_CURRENT = new JTextField();
-            CRYPTO_CURRENT.setEnabled(false);
+            CRYPTO_CURRENT.setEditable(false);
             CRYPTO_APP = new JTextField();
-            CRYPTO_APP.setEnabled(false);
+            CRYPTO_APP.setEditable(false);
             INV = new JTextField();
             INV.getDocument().addDocumentListener(new DocumentListener() {
                 @Override
@@ -128,9 +128,9 @@ public class AppDepGui extends RegisterFrame {
                 }
             });
             INV_CURRENT = new JTextField();
-            INV_CURRENT.setEnabled(false);
+            INV_CURRENT.setEditable(false);
             INV_APP = new JTextField();
-            INV_APP.setEnabled(false);
+            INV_APP.setEditable(false);
             FIAT = new JTextField();
             FIAT.getDocument().addDocumentListener(new DocumentListener() {
                 @Override
@@ -161,9 +161,9 @@ public class AppDepGui extends RegisterFrame {
                 }
             });
             FIAT_CURRENT = new JTextField();
-            FIAT_CURRENT.setEnabled(false);
+            FIAT_CURRENT.setEditable(false);
             FIAT_APP = new JTextField();
-            FIAT_APP.setEnabled(false);
+            FIAT_APP.setEditable(false);
             SAVE = DendroFactory.getButton("Save");
             SAVE.addActionListener(event -> {
                 BigDecimal x = BigDecimal.ZERO;

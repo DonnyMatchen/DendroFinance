@@ -71,7 +71,7 @@ public class StockEditGui extends BackingEditGui<LStock> {
             publik.setSelected(stk.isPublic());
             dead.setSelected(stk.isDead());
             if (stk.inAccount()) {
-                ticker.setEnabled(false);
+                ticker.setEditable(false);
                 ticker.setBackground(DendroFactory.BACKDROP);
             }
         }

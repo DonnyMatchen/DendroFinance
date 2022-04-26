@@ -6,6 +6,8 @@ import com.donny.dendrofinance.gui.customswing.DendroFactory;
 import com.donny.dendrofinance.instance.Instance;
 
 import javax.swing.*;
+import javax.swing.event.MouseInputAdapter;
+import java.awt.event.MouseEvent;
 
 public class TaxGui extends RegisterFrame {
     private final JTextField VALUE, EXEMPT, RESULT;
@@ -21,7 +23,13 @@ public class TaxGui extends RegisterFrame {
             VALUE = new JTextField();
             EXEMPT = new JTextField();
             RESULT = new JTextField();
-            RESULT.setEnabled(false);
+            RESULT.setEditable(false);
+            RESULT.addMouseListener(new MouseInputAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    RESULT.selectAll();
+                }
+            });
             ITEMS = new JComboBox<>();
 
             A = new JLabel("Taxable Value");

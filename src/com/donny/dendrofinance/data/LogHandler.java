@@ -27,6 +27,7 @@ public class LogHandler {
     public void print(String str, boolean print) {
         Date now = new Date();
         DateFormat format = new SimpleDateFormat("{MMM dd yyyy} (hh:mm:ss a z) ");
+        TRACE.append(format.format(now)).append(str).append("\n");
         LOG.append(format.format(now)).append(str).append("\n");
         if (print) {
             System.out.println(format.format(now) + str);
@@ -68,7 +69,6 @@ public class LogHandler {
         String str = "[" + cause.toString().split(" ")[1].substring(24) + "/TRACE] " + message;
         Date now = new Date();
         DateFormat format = new SimpleDateFormat("{MMM dd yyyy} (hh:mm:ss a z) ");
-        LOG.append(format.format(now)).append(str).append("\n");
         TRACE.append(format.format(now)).append(str).append("\n");
         if (LOG_LEVEL >= LogLevel.LOG_LEVEL_TRACE) {
             System.out.println(format.format(now) + str);

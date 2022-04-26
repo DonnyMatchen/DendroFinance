@@ -33,7 +33,7 @@ public class TaxZeroGui extends RegisterFrame {
                 HashMap<Account, BigDecimal> accounts = CURRENT_INSTANCE.DATA_HANDLER.accountsAsOf(new LDate(DATE.getText(), CURRENT_INSTANCE));
                 StringBuilder sb = new StringBuilder();
                 for (Account a : accounts.keySet()) {
-                    if (a.getBroadAccountType() == BroadAccountType.GHOST) {
+                    if (a.getBroadAccountType() == BroadAccountType.GHOST && accounts.get(a).compareTo(BigDecimal.ZERO) != 0) {
                         sb.append(", G!").append(a.getName()).append("(").append(accounts.get(a).multiply(BigDecimal.valueOf(-1))).append(")");
                     }
                 }

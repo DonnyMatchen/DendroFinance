@@ -12,8 +12,8 @@ import com.donny.dendrofinance.util.ExportableToJsonObject;
 import java.math.BigDecimal;
 
 public class Account implements ExportableToJsonObject {
-    public final Instance CURRENT_INSTANCE;
     public final boolean EXPORT;
+    private final Instance CURRENT_INSTANCE;
     private final String NAME;
     private final int AID;
     private final LCurrency CUR;

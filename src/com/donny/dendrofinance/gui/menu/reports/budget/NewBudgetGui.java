@@ -7,9 +7,8 @@ import com.donny.dendrofinance.instance.Instance;
 import javax.swing.*;
 
 public class NewBudgetGui extends JDialog {
-    public final Instance CURRENT_INSTANCE;
     public final BudgetGui CALLER;
-
+    private final Instance CURRENT_INSTANCE;
     private final JLabel A;
     private final JTextField NAME;
     private final JButton CANCEL, OK;

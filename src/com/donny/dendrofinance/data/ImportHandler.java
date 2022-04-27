@@ -15,7 +15,7 @@ import com.donny.dendrofinance.types.LString;
 import java.io.File;
 
 public class ImportHandler {
-    public final Instance CURRENT_INSTANCE;
+    private final Instance CURRENT_INSTANCE;
 
     public ImportHandler(Instance curInst) {
         CURRENT_INSTANCE = curInst;

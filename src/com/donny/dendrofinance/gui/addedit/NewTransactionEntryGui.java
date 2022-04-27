@@ -22,9 +22,9 @@ import java.util.Arrays;
 import java.util.Vector;
 
 public class NewTransactionEntryGui extends JDialog {
-    public final Instance CURRENT_INSTANCE;
     public final MainGui MAIN;
     public final long UUID;
+    private final Instance CURRENT_INSTANCE;
     private final JTabbedPane BACK;
     private final JPanel SIMP_TAB, ADV_TAB, META_TAB;
     private final JLabel A, B, C, D,

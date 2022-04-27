@@ -15,9 +15,8 @@ import java.math.BigDecimal;
 import java.text.DecimalFormat;
 
 public class LCurrency implements ExportableToJsonObject {
-    public final Instance CURRENT_INSTANCE;
-    protected final String TIC;
-    private final String NAME, SYMBOL, ALT_NAME;
+    protected final Instance CURRENT_INSTANCE;
+    private final String NAME, TIC, SYMBOL, ALT_NAME;
     private final int PLACES;
     private final boolean FIAT, EXTINCT, TOKEN, FORWARDS;
     private String altApi = "";

@@ -7,7 +7,7 @@ import com.donny.dendrofinance.instance.Instance;
 import javax.swing.*;
 
 public class RemoveBudgetGui extends JDialog {
-    public final Instance CURRENT_INSTANCE;
+    private final Instance CURRENT_INSTANCE;
 
     private JLabel A;
     private JButton NO, YES;

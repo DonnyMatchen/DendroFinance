@@ -12,7 +12,7 @@ import java.io.File;
 import java.util.ArrayList;
 
 public class DataSet<E extends Entry> {
-    public final Instance CURRENT_INSTANCE;
+    private final Instance CURRENT_INSTANCE;
     private final EntryType TYPE;
     private final File ARCHIVE;
     private final ArrayList<E> TABLE;

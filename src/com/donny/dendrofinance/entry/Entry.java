@@ -12,9 +12,9 @@ import java.math.BigDecimal;
 import java.util.HashMap;
 
 public class Entry<T extends Header> {
-    public final Instance CURRENT_INSTANCE;
     public final HashMap<String, Field> VALUES;
     protected final T HEADER;
+    protected final Instance CURRENT_INSTANCE;
     private final long UUID;
 
     public Entry(Instance curInst, String header) {
@@ -30,11 +30,11 @@ public class Entry<T extends Header> {
         VALUES = HEADER.getBlank();
         JsonObject types = obj.getObject("_types");
         if (obj.FIELDS.containsKey("_uuid")) {
-            long candidate = obj.getDecimal("_uuid").decimal.longValue();;
-            if(CURRENT_INSTANCE.UUID_HANDLER.UUIDS.contains(candidate)){
+            long candidate = obj.getDecimal("_uuid").decimal.longValue();
+            if (CURRENT_INSTANCE.UUID_HANDLER.UUIDS.contains(candidate)) {
                 CURRENT_INSTANCE.LOG_HANDLER.warn(this.getClass(), "Clashing UUID: " + candidate);
                 UUID = CURRENT_INSTANCE.UUID_HANDLER.generateUUID();
-            }else{
+            } else {
                 UUID = candidate;
                 CURRENT_INSTANCE.UUID_HANDLER.UUIDS.add(UUID);
             }

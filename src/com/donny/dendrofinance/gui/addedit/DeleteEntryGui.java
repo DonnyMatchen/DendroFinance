@@ -7,10 +7,9 @@ import com.donny.dendrofinance.instance.Instance;
 import javax.swing.*;
 
 public class DeleteEntryGui extends JDialog {
-    public final Instance CURRENT_INSTANCE;
     public final MainGui MAIN;
     public final long UUID;
-
+    private final Instance CURRENT_INSTANCE;
     private final JLabel TEXT1, TEXT2;
     private final JButton OK, CANCEL;
     private final JScrollPane PANE;

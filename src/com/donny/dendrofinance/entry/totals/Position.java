@@ -9,9 +9,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Position {
-    public final Instance CURRENT_INSTANCE;
     public final LCurrency ASSET;
     public final ArrayList<PositionElement> ELEMENTS;
+    private final Instance CURRENT_INSTANCE;
 
     public Position(LCurrency asset, Instance curInst) {
         CURRENT_INSTANCE = curInst;

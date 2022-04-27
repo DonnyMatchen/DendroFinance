@@ -18,6 +18,15 @@ public class CurrencyBTC extends BackingTableCore<LCurrency> {
     }
 
     @Override
+    public String getName(boolean plural) {
+        if (plural) {
+            return "Currencies";
+        } else {
+            return "Currency";
+        }
+    }
+
+    @Override
     public void getEditDialog(BackingTableGui<LCurrency> caller, int index) {
         new CurrencyEditGui(caller, this, index, CURRENT_INSTANCE);
     }

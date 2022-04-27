@@ -24,7 +24,7 @@ public class BalanceSheetGui extends RegisterFrame {
     private final DefaultTableModel TABLE_ACCESS;
 
     public BalanceSheetGui(MainGui caller, Instance curInst) {
-        super(caller, curInst);
+        super(caller, "Balance Sheet", curInst);
         //draw gui
         {
             A = new JLabel("Date");
@@ -37,7 +37,7 @@ public class BalanceSheetGui extends RegisterFrame {
             ENTER.addActionListener(event -> updateTable());
 
             PANE = DendroFactory.getTable(new String[]{
-                    "Account", "Debit", "Credit", "Tax", "Tracking"
+                    "Account", "Debit", "Credit", "Tracking", "Ghost"
             }, new Object[][]{}, false);
             TABLE = (JTable) PANE.getViewport().getView();
             TABLE_ACCESS = (DefaultTableModel) TABLE.getModel();
@@ -128,10 +128,10 @@ public class BalanceSheetGui extends RegisterFrame {
                             case LIABILITY, EQUITY_PLUS, REVENUE -> TABLE_ACCESS.addRow(new String[]{
                                     a.getName(), "", a.getCurrency().encode(acc.get(a)), "", ""
                             });
-                            case GHOST -> TABLE_ACCESS.addRow(new String[]{
+                            case TRACKING -> TABLE_ACCESS.addRow(new String[]{
                                     a.getName(), "", "", a.getCurrency().encode(acc.get(a)), ""
                             });
-                            case TRACKING -> TABLE_ACCESS.addRow(new String[]{
+                            case GHOST -> TABLE_ACCESS.addRow(new String[]{
                                     a.getName(), "", "", "", a.getCurrency().encode(acc.get(a))
                             });
                         }

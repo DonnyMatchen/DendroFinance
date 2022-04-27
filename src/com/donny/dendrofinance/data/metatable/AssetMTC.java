@@ -16,6 +16,15 @@ public class AssetMTC extends MetaTableCore {
     }
 
     @Override
+    public String getId(boolean plural) {
+        if (plural) {
+            return "Assets";
+        } else {
+            return "Asset";
+        }
+    }
+
+    @Override
     public String[] getHeader() {
         return new String[]{
                 "Uuid", "Name", "Description", "Value", "Count", "Acquired", "Disposed"

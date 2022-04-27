@@ -13,6 +13,15 @@ public class LoanMTC extends MetaTableCore {
     }
 
     @Override
+    public String getId(boolean plural) {
+        if (plural) {
+            return "Loans";
+        } else {
+            return "Loan";
+        }
+    }
+
+    @Override
     public String[] getHeader() {
         return new String[]{
                 "Uuid", "Name", "Description", "Principal", "Rate", "Begun", "Ended"

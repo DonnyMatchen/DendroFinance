@@ -9,7 +9,7 @@ public class ClosePrompt extends JDialog {
     private final JButton CANCEL, D_SAVE, SAVE;
 
     public ClosePrompt(MainGui caller) {
-        super(caller, true);
+        super(caller, "Close", true);
 
         //make gui
         {

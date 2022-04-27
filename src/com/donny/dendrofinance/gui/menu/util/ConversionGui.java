@@ -19,7 +19,7 @@ public class ConversionGui extends RegisterFrame {
     private final JButton CONVERT;
 
     public ConversionGui(MainGui caller, Instance curInst) {
-        super(caller, curInst);
+        super(caller, "Asset Conversion", curInst);
 
         //draw gui
         {

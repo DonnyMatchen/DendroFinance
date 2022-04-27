@@ -21,7 +21,7 @@ public class NetIncomeGui extends RegisterFrame {
     private final JButton SAVE;
 
     public NetIncomeGui(MainGui caller, Instance curInst) {
-        super(caller, curInst);
+        super(caller, "Net Income Automator", curInst);
 
         //draw gui
         {

@@ -19,7 +19,7 @@ public class OrderBookGui extends RegisterFrame {
     private final DefaultTableModel TABLE_ACCESS;
 
     public OrderBookGui(MainGui caller, Instance curInst) {
-        super(caller, curInst);
+        super(caller, "Order Book", curInst);
         //Draw Gui
         {
             PANE = DendroFactory.getTable(new String[]{

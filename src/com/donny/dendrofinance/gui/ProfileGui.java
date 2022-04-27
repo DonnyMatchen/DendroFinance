@@ -10,7 +10,7 @@ import javax.swing.*;
 
 public class ProfileGui extends JDialog {
     private final Instance CURRENT_INSTANCE;
-    
+
     private final JPanel FLAGS;
     private final JLabel A, B, C, D, E, F, G, H;
     private final JCheckBox LOG, EXP, AMER, DAY;
@@ -20,7 +20,7 @@ public class ProfileGui extends JDialog {
     private final PasswordGui CALLER;
 
     public ProfileGui(PasswordGui caller, JsonObject config, Instance curInst) {
-        super(caller, true);
+        super(caller, "Profile Gui", true);
         CURRENT_INSTANCE = curInst;
         CALLER = caller;
         {

@@ -16,6 +16,15 @@ public class AccountTypeBTC extends BackingTableCore<AccountType> {
     }
 
     @Override
+    public String getName(boolean plural) {
+        if (plural) {
+            return "Account Types";
+        } else {
+            return "Account Type";
+        }
+    }
+
+    @Override
     public void getEditDialog(BackingTableGui<AccountType> caller, int index) {
         new AccountTypeEditGui(caller, this, index, CURRENT_INSTANCE);
     }

@@ -27,7 +27,7 @@ public class MetaTableGui extends RegisterFrame {
     private final JTextArea INFO;
 
     public MetaTableGui(MainGui caller, MetaTableCore core, Instance curInst) {
-        super(caller, curInst);
+        super(caller, core.getId(true), curInst);
         CORE = core;
 
         //draw GUI

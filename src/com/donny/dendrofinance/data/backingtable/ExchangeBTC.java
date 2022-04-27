@@ -16,6 +16,15 @@ public class ExchangeBTC extends BackingTableCore<Exchange> {
     }
 
     @Override
+    public String getName(boolean plural) {
+        if (plural) {
+            return "Exchanges";
+        } else {
+            return "Exchange";
+        }
+    }
+
+    @Override
     public void getEditDialog(BackingTableGui<Exchange> caller, int index) {
         new ExchangeEditGui(caller, this, index, CURRENT_INSTANCE);
     }

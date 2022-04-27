@@ -13,7 +13,7 @@ public class RemoveBudgetGui extends JDialog {
     private JButton NO, YES;
 
     public RemoveBudgetGui(BudgetGui caller, String budget, Instance curInst) {
-        super(caller, true);
+        super(caller, "Remove Budget", true);
         CURRENT_INSTANCE = curInst;
         if (budget == null) {
             dispose();

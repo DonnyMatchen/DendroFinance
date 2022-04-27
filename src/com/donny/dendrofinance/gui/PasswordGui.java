@@ -27,7 +27,7 @@ import java.util.Comparator;
 /**
  * @author Donny
  */
-public class PasswordGui extends javax.swing.JFrame {
+public class PasswordGui extends JFrame {
     public final String[] ARGS;
     public final ArrayList<JsonObject> PROFILES;
     private final Instance CURRENT_INSTANCE;
@@ -42,6 +42,7 @@ public class PasswordGui extends javax.swing.JFrame {
     private SecretKeySpec aesKey, bflKey;
 
     public PasswordGui(String[] args, Instance curInst) {
+        super("Log In");
         CURRENT_INSTANCE = curInst;
         PROFILES = new ArrayList<>();
         ARGS = args;

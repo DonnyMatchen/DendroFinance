@@ -17,6 +17,15 @@ public class StockBTC extends BackingTableCore<LStock> {
     }
 
     @Override
+    public String getName(boolean plural) {
+        if (plural) {
+            return "Stocks";
+        } else {
+            return "Stock";
+        }
+    }
+
+    @Override
     public void getEditDialog(BackingTableGui<LStock> caller, int index) {
         new StockEditGui(caller, this, index, CURRENT_INSTANCE);
     }

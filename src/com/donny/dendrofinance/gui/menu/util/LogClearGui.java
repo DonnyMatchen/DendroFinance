@@ -18,7 +18,7 @@ public class LogClearGui extends RegisterFrame {
     private final File LOGS;
 
     public LogClearGui(MainGui caller, Instance curInst) {
-        super(caller, curInst);
+        super(caller, "Log Clearing", curInst);
 
         LOGS = new File(CURRENT_INSTANCE.data.getPath() + File.separator + "Logs");
 

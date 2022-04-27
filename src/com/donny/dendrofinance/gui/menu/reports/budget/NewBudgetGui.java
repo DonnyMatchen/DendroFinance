@@ -14,7 +14,7 @@ public class NewBudgetGui extends JDialog {
     private final JButton CANCEL, OK;
 
     public NewBudgetGui(BudgetGui caller, Instance curInst) {
-        super(caller, true);
+        super(caller, "New Budget", true);
         CURRENT_INSTANCE = curInst;
         CALLER = caller;
         //draw gui

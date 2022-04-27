@@ -21,6 +21,8 @@ public abstract class BackingTableCore<E extends ExportableToJsonObject> impleme
         changed = false;
     }
 
+    public abstract String getName(boolean plural);
+
     public abstract void getEditDialog(BackingTableGui<E> caller, int index);
 
     public abstract void load(JsonArray array);

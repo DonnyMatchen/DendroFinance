@@ -16,7 +16,7 @@ public class DeleteEntryGui extends JDialog {
     private final JTextArea AREA;
 
     public DeleteEntryGui(MainGui caller, long uuid, Instance curInst) {
-        super(caller, true);
+        super(caller, "Delete Transaction Entry", true);
         UUID = uuid;
         CURRENT_INSTANCE = curInst;
         MAIN = caller;

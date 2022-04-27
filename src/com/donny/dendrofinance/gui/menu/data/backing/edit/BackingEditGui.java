@@ -13,7 +13,7 @@ public abstract class BackingEditGui<E extends ExportableToJsonObject> extends J
     protected final int INDEX;
 
     public BackingEditGui(BackingTableGui<E> caller, BackingTableCore<E> core, int index, Instance curInst) {
-        super(caller, true);
+        super(caller, (index >= 0 ? "Edit " : "New ") + core.getName(false), true);
         TABLE = core;
         INDEX = index;
         CURRENT_INSTANCE = curInst;

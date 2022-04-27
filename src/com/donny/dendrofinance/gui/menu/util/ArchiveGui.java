@@ -34,7 +34,7 @@ public class ArchiveGui extends RegisterFrame {
     private final JButton GO, EXPORT;
 
     public ArchiveGui(MainGui caller, Instance curInst) {
-        super(caller, curInst);
+        super(caller, "Archive", curInst);
 
         DIR = new File(CURRENT_INSTANCE.data.getPath() + File.separator + "Archives");
 

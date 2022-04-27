@@ -30,7 +30,7 @@ public class BudgetGui extends RegisterFrame {
     private final DefaultTableModel VIEW_TABLE_ACCESS, EDIT_TABLE_ACCESS;
 
     public BudgetGui(MainGui caller, Instance curInst) {
-        super(caller, curInst);
+        super(caller, "Budgets", curInst);
 
         //draw GUI
         {

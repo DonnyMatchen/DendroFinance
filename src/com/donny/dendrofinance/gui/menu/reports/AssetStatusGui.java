@@ -25,7 +25,7 @@ public class AssetStatusGui extends RegisterFrame {
     private final DefaultTableModel TABLE_ACCESS;
 
     public AssetStatusGui(MainGui caller, Instance curInst) {
-        super(caller, curInst);
+        super(caller, "Market Asset Status", curInst);
         //draw gui
         {
             A = new JLabel("Date");

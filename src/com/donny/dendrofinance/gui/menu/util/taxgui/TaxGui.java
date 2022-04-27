@@ -16,7 +16,7 @@ public class TaxGui extends RegisterFrame {
     private final JButton CALCULATE, NEW, DELETE;
 
     public TaxGui(MainGui caller, Instance curInst) {
-        super(caller, curInst);
+        super(caller, "Tax Calculator", curInst);
 
         //draw gui
         {

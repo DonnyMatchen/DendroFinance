@@ -16,6 +16,15 @@ public class TaxItemBTC extends BackingTableCore<TaxItem> {
     }
 
     @Override
+    public String getName(boolean plural) {
+        if (plural) {
+            return "Tax Items";
+        } else {
+            return "Tax Item";
+        }
+    }
+
+    @Override
     public void getEditDialog(BackingTableGui<TaxItem> caller, int index) {
 
     }

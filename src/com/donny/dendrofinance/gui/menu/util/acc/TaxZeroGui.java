@@ -21,7 +21,7 @@ public class TaxZeroGui extends RegisterFrame {
     private final JButton SAVE;
 
     public TaxZeroGui(MainGui caller, Instance curInst) {
-        super(caller, curInst);
+        super(caller, "Ghost Zeroing Automation", curInst);
 
         //draw gui
         {

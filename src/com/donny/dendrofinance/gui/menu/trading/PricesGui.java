@@ -19,7 +19,7 @@ public class PricesGui extends RegisterFrame {
     private final DefaultTableModel TABLE_ACCESS;
 
     public PricesGui(MainGui caller, Instance curInst) {
-        super(caller, curInst);
+        super(caller, "Trading Prices", curInst);
         //Draw Gui
         {
             PANE = DendroFactory.getTable(new String[]{

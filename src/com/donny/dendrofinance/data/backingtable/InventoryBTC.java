@@ -18,6 +18,15 @@ public class InventoryBTC extends BackingTableCore<LInventory> {
     }
 
     @Override
+    public String getName(boolean plural) {
+        if (plural) {
+            return "Inventories";
+        } else {
+            return "Inventory";
+        }
+    }
+
+    @Override
     public void getEditDialog(BackingTableGui<LInventory> caller, int index) {
         new InventoryEditGui(caller, this, index, CURRENT_INSTANCE);
     }

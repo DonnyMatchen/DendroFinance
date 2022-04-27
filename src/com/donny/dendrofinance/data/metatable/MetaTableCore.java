@@ -12,6 +12,8 @@ public abstract class MetaTableCore {
         CURRENT_INSTANCE = curInst;
     }
 
+    public abstract String getId(boolean plural);
+
     public abstract String[] getHeader();
 
     public abstract ArrayList<String[]> getContents(LDate date, String search);

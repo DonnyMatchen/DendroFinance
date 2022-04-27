@@ -7,17 +7,16 @@ import com.donny.dendrofinance.instance.Instance;
 import javax.swing.*;
 
 public class DeleteEntryGui extends JDialog {
-    public final Instance CURRENT_INSTANCE;
     public final MainGui MAIN;
     public final long UUID;
-
+    private final Instance CURRENT_INSTANCE;
     private final JLabel TEXT1, TEXT2;
     private final JButton OK, CANCEL;
     private final JScrollPane PANE;
     private final JTextArea AREA;
 
     public DeleteEntryGui(MainGui caller, long uuid, Instance curInst) {
-        super(caller, true);
+        super(caller, "Delete Transaction Entry", true);
         UUID = uuid;
         CURRENT_INSTANCE = curInst;
         MAIN = caller;

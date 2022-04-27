@@ -533,7 +533,7 @@ public class DataHandler {
                             }
                         }
                         if (flag) {
-                            Position newP = new Position(meta.TO, entry.CURRENT_INSTANCE);
+                            Position newP = new Position(meta.TO, CURRENT_INSTANCE);
                             orderBook.addAll(newP.change(entry.getUUID(), meta.DATE, meta.TO, meta.TO_AMNT, meta.FROM_AMNT));
                             positions.add(newP);
                         }
@@ -547,7 +547,7 @@ public class DataHandler {
                             }
                         }
                         if (flag) {
-                            Position newP = new Position(meta.FROM, entry.CURRENT_INSTANCE);
+                            Position newP = new Position(meta.FROM, CURRENT_INSTANCE);
                             orderBook.addAll(newP.change(entry.getUUID(), meta.DATE, meta.FROM, meta.FROM_AMNT, meta.TO_AMNT));
                             positions.add(newP);
                         }
@@ -564,18 +564,18 @@ public class DataHandler {
                             }
                         }
                         if (flag && auxFlag) {
-                            Position newP = new Position(meta.TO, entry.CURRENT_INSTANCE);
+                            Position newP = new Position(meta.TO, CURRENT_INSTANCE);
                             orderBook.addAll(newP.change(entry.getUUID(), meta.DATE, meta.TO, meta.TO_AMNT, meta.negativeMainValue()));
                             positions.add(newP);
-                            newP = new Position(meta.FROM, entry.CURRENT_INSTANCE);
+                            newP = new Position(meta.FROM, CURRENT_INSTANCE);
                             orderBook.addAll(newP.change(entry.getUUID(), meta.DATE, meta.FROM, meta.FROM_AMNT, meta.MAIN_VALUE));
                             positions.add(newP);
                         } else if (flag) {
-                            Position newP = new Position(meta.TO, entry.CURRENT_INSTANCE);
+                            Position newP = new Position(meta.TO, CURRENT_INSTANCE);
                             orderBook.addAll(newP.change(entry.getUUID(), meta.DATE, meta.TO, meta.TO_AMNT, meta.negativeMainValue()));
                             positions.add(newP);
                         } else if (auxFlag) {
-                            Position newP = new Position(meta.FROM, entry.CURRENT_INSTANCE);
+                            Position newP = new Position(meta.FROM, CURRENT_INSTANCE);
                             orderBook.addAll(newP.change(entry.getUUID(), meta.DATE, meta.FROM, meta.FROM_AMNT, meta.MAIN_VALUE));
                             positions.add(newP);
                         }

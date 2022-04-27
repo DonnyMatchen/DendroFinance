@@ -1,6 +1,7 @@
 package com.donny.dendrofinance.gui;
 
 import com.donny.dendrofinance.gui.customswing.DendroFactory;
+import com.donny.dendrofinance.instance.Instance;
 import com.donny.dendrofinance.json.JsonFormattingException;
 import com.donny.dendrofinance.json.JsonObject;
 import com.donny.dendrofinance.json.JsonString;
@@ -8,6 +9,8 @@ import com.donny.dendrofinance.json.JsonString;
 import javax.swing.*;
 
 public class ProfileGui extends JDialog {
+    private final Instance CURRENT_INSTANCE;
+
     private final JPanel FLAGS;
     private final JLabel A, B, C, D, E, F, G, H;
     private final JCheckBox LOG, EXP, AMER, DAY;
@@ -16,8 +19,9 @@ public class ProfileGui extends JDialog {
     private final JComboBox<String> STOCK_API;
     private final PasswordGui CALLER;
 
-    public ProfileGui(PasswordGui caller, JsonObject config) {
-        super(caller, true);
+    public ProfileGui(PasswordGui caller, JsonObject config, Instance curInst) {
+        super(caller, "Profile Gui", true);
+        CURRENT_INSTANCE = curInst;
         CALLER = caller;
         {
             setDefaultCloseOperation(DISPOSE_ON_CLOSE);
@@ -306,8 +310,8 @@ public class ProfileGui extends JDialog {
             CALLER.addProfile(config, true);
             dispose();
         } catch (JsonFormattingException e) {
-            CALLER.CURRENT_INSTANCE.LOG_HANDLER.fatal(this.getClass(), "Mis-formatted Profiles!\n" + e);
-            CALLER.CURRENT_INSTANCE.LOG_HANDLER.save();
+            CURRENT_INSTANCE.LOG_HANDLER.fatal(this.getClass(), "Mis-formatted Profiles!\n" + e);
+            CURRENT_INSTANCE.LOG_HANDLER.save();
             System.exit(1);
         }
     }

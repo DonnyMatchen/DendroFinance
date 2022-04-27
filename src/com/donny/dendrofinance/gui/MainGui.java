@@ -53,7 +53,7 @@ public class MainGui extends JFrame {
     private boolean force = true;
 
     public MainGui(Instance curInst) {
-        super();
+        super("Dendrogram Finance");
         CURRENT_INSTANCE = curInst;
         FRAME_REGISTRY = new ArrayList<>();
 

@@ -8,17 +8,15 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class LogHandler {
-    public final Instance CURRENT_INSTANCE;
-    public final int LOG_LEVEL;
+    private final Instance CURRENT_INSTANCE;
     /*
      * regardless of log level, LOG stores all log statements bellow trace level
      * regardless of log level, TRACE stores all log statements
      */
     private final StringBuilder LOG, TRACE;
 
-    public LogHandler(int logLevel, Instance curInst) {
+    public LogHandler(Instance curInst) {
         CURRENT_INSTANCE = curInst;
-        LOG_LEVEL = logLevel;
         LOG = new StringBuilder();
         TRACE = new StringBuilder();
         trace(this.getClass(), "Log Handler Initiated");
@@ -46,23 +44,23 @@ public class LogHandler {
     }
 
     public void fatal(Class cause, String message) {
-        print("[" + cause.toString().split(" ")[1].substring(24) + "/FATAL] " + message, LOG_LEVEL >= LogLevel.LOG_LEVEL_FATAL);
+        print("[" + cause.toString().split(" ")[1].substring(24) + "/FATAL] " + message, CURRENT_INSTANCE.logLevel != null && CURRENT_INSTANCE.logLevel.getLevel() >= LogLevel.FATAL);
     }
 
     public void error(Class cause, String message) {
-        print("[" + cause.toString().split(" ")[1].substring(24) + "/ERROR] " + message, LOG_LEVEL >= LogLevel.LOG_LEVEL_ERROR);
+        print("[" + cause.toString().split(" ")[1].substring(24) + "/ERROR] " + message, CURRENT_INSTANCE.logLevel != null && CURRENT_INSTANCE.logLevel.getLevel() >= LogLevel.ERROR);
     }
 
     public void warn(Class cause, String message) {
-        print("[" + cause.toString().split(" ")[1].substring(24) + "/WARN] " + message, LOG_LEVEL >= LogLevel.LOG_LEVEL_WARN);
+        print("[" + cause.toString().split(" ")[1].substring(24) + "/WARN] " + message, CURRENT_INSTANCE.logLevel != null && CURRENT_INSTANCE.logLevel.getLevel() >= LogLevel.WARN);
     }
 
     public void info(Class cause, String message) {
-        print("[" + cause.toString().split(" ")[1].substring(24) + "/INFO] " + message, LOG_LEVEL >= LogLevel.LOG_LEVEL_INFO);
+        print("[" + cause.toString().split(" ")[1].substring(24) + "/INFO] " + message, CURRENT_INSTANCE.logLevel != null && CURRENT_INSTANCE.logLevel.getLevel() >= LogLevel.INFO);
     }
 
     public void debug(Class cause, String message) {
-        print("[" + cause.toString().split(" ")[1].substring(24) + "/DEBUG] " + message, LOG_LEVEL >= LogLevel.LOG_LEVEL_DEBUG);
+        print("[" + cause.toString().split(" ")[1].substring(24) + "/DEBUG] " + message, CURRENT_INSTANCE.logLevel != null && CURRENT_INSTANCE.logLevel.getLevel() >= LogLevel.DEBUG);
     }
 
     public final void trace(Class cause, String message) {
@@ -70,19 +68,19 @@ public class LogHandler {
         Date now = new Date();
         DateFormat format = new SimpleDateFormat("{MMM dd yyyy} (hh:mm:ss a z) ");
         TRACE.append(format.format(now)).append(str).append("\n");
-        if (LOG_LEVEL >= LogLevel.LOG_LEVEL_TRACE) {
+        if (CURRENT_INSTANCE.logLevel != null && CURRENT_INSTANCE.logLevel.getLevel() >= LogLevel.TRACE) {
             System.out.println(format.format(now) + str);
         }
     }
 
     public static class LogLevel {
-        public static final int LOG_LEVEL_OFF = 0;
-        public static final int LOG_LEVEL_FATAL = 1;
-        public static final int LOG_LEVEL_ERROR = 2;
-        public static final int LOG_LEVEL_WARN = 3;
-        public static final int LOG_LEVEL_INFO = 4;
-        public static final int LOG_LEVEL_DEBUG = 5;
-        public static final int LOG_LEVEL_TRACE = 6;
+        public static final int OFF = 0;
+        public static final int FATAL = 1;
+        public static final int ERROR = 2;
+        public static final int WARN = 3;
+        public static final int INFO = 4;
+        public static final int DEBUG = 5;
+        public static final int TRACE = 6;
 
         private final String NAME;
 
@@ -92,13 +90,13 @@ public class LogHandler {
 
         public int getLevel() {
             return switch (NAME) {
-                case "off" -> LOG_LEVEL_OFF;
-                case "fatal" -> LOG_LEVEL_FATAL;
-                case "error" -> LOG_LEVEL_ERROR;
-                case "warn" -> LOG_LEVEL_WARN;
-                case "debug" -> LOG_LEVEL_DEBUG;
-                case "trace", "all" -> LOG_LEVEL_TRACE;
-                default -> LOG_LEVEL_INFO;
+                case "off" -> OFF;
+                case "fatal" -> FATAL;
+                case "error" -> ERROR;
+                case "warn" -> WARN;
+                case "debug" -> DEBUG;
+                case "trace", "all" -> TRACE;
+                default -> INFO;
             };
         }
 

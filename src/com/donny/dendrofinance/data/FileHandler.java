@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class FileHandler {
-    public final Instance CURRENT_INSTANCE;
+    private final Instance CURRENT_INSTANCE;
 
     public FileHandler(Instance curInst) {
         CURRENT_INSTANCE = curInst;

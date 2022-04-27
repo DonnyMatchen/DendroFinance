@@ -27,10 +27,10 @@ import java.util.Comparator;
 /**
  * @author Donny
  */
-public class PasswordGui extends javax.swing.JFrame {
-    public final Instance CURRENT_INSTANCE;
+public class PasswordGui extends JFrame {
     public final String[] ARGS;
     public final ArrayList<JsonObject> PROFILES;
+    private final Instance CURRENT_INSTANCE;
     //Swin components
     private final JLabel A, B;
     private final JPasswordField PASSWORD;
@@ -42,6 +42,7 @@ public class PasswordGui extends javax.swing.JFrame {
     private SecretKeySpec aesKey, bflKey;
 
     public PasswordGui(String[] args, Instance curInst) {
+        super("Log In");
         CURRENT_INSTANCE = curInst;
         PROFILES = new ArrayList<>();
         ARGS = args;
@@ -363,7 +364,7 @@ public class PasswordGui extends javax.swing.JFrame {
 
     public void newProfile() {
         try {
-            new ProfileGui(this, getConfig("DEFAULT")).setVisible(true);
+            new ProfileGui(this, getConfig("DEFAULT"), CURRENT_INSTANCE).setVisible(true);
         } catch (JsonFormattingException e) {
             CURRENT_INSTANCE.LOG_HANDLER.fatal(this.getClass(), "Mis-formatted Profiles!\n" + e);
             CURRENT_INSTANCE.LOG_HANDLER.save();
@@ -377,7 +378,7 @@ public class PasswordGui extends javax.swing.JFrame {
         for (JsonObject prof : PROFILES) {
             if (prof.FIELDS.containsKey("name")) {
                 if (prof.getString("name").getString().equalsIgnoreCase(name)) {
-                    new ProfileGui(this, prof).setVisible(true);
+                    new ProfileGui(this, prof, CURRENT_INSTANCE).setVisible(true);
                     flag = false;
                     break;
                 }

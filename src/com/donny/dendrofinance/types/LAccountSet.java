@@ -14,7 +14,7 @@ import java.util.Comparator;
 import java.util.Iterator;
 
 public class LAccountSet extends LType<ArrayList<AccountWrapper>> implements Iterable<AccountWrapper> {
-    public final Instance CURRENT_INSTANCE;
+    private final Instance CURRENT_INSTANCE;
     private final ArrayList<AccountWrapper> REGISTRY;
 
     public LAccountSet(Instance curInst) {

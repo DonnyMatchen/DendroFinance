@@ -15,7 +15,7 @@ public class DeleteBackingGui<E extends ExportableToJsonObject> extends JDialog 
     private final JButton CANCEL, DELETE;
 
     public DeleteBackingGui(BackingTableGui<E> caller, BackingTableCore<E> core, int index, Instance curInst) {
-        super(caller, true);
+        super(caller, "Delete " + core.getName(false), true);
 
         //draw gui
         {

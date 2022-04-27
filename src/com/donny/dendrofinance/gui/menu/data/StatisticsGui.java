@@ -18,7 +18,7 @@ public class StatisticsGui extends RegisterFrame {
     private final DefaultTableModel TABLE_ACCESS;
 
     public StatisticsGui(MainGui caller, Instance curInst) {
-        super(caller, curInst);
+        super(caller, "Statistics", curInst);
         {
             PANE = DendroFactory.getTable(new String[]{
                     "Name", "Value"

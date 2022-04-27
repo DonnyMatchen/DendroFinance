@@ -8,7 +8,8 @@ public abstract class RegisterFrame extends JFrame {
     protected final MainGui CALLER;
     protected final Instance CURRENT_INSTANCE;
 
-    public RegisterFrame(MainGui caller, Instance curInst) {
+    public RegisterFrame(MainGui caller, String name, Instance curInst) {
+        super(name);
         CALLER = caller;
         CURRENT_INSTANCE = curInst;
         CALLER.FRAME_REGISTRY.add(this);

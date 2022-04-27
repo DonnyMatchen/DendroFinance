@@ -26,7 +26,7 @@ public class BackingTableGui<E extends ExportableToJsonObject> extends RegisterF
     private final JButton UP, DOWN, EDIT, DELETE, CREATE, SORT;
 
     public BackingTableGui(MainGui caller, BackingTableCore<E> core, Instance curInst) {
-        super(caller, curInst);
+        super(caller, core.getName(true), curInst);
         TABLE_CORE = core;
 
         //draw gui

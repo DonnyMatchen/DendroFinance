@@ -18,7 +18,7 @@ public class NewTaxGui extends JDialog {
     private final JButton SAVE, CANCEL, NEW, DELETE;
 
     public NewTaxGui(TaxGui caller, Instance curInst) {
-        super(caller, true);
+        super(caller, "New Tax", true);
 
         //draw gui
         {

@@ -18,7 +18,7 @@ public class AccountReplacementGui extends RegisterFrame {
     public final JButton GO;
 
     public AccountReplacementGui(MainGui caller, Instance curInst) {
-        super(caller, curInst);
+        super(caller, "Account Replacement", curInst);
 
         //draw gui
         {

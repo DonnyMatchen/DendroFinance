@@ -37,7 +37,7 @@ public class SpecialTransactionEntryGui extends JDialog {
     private final Instance CURRENT_INSTANCE;
 
     public SpecialTransactionEntryGui(MainGui caller, Instance curInst) {
-        super(caller, true);
+        super(caller, "New Special Transaction Entry", true);
         CURRENT_INSTANCE = curInst;
         MAIN = caller;
         //draw GUI

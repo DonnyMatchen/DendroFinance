@@ -20,7 +20,7 @@ public class AppDepGui extends RegisterFrame {
     private final JButton SAVE;
 
     public AppDepGui(MainGui caller, Instance curInst) {
-        super(caller, curInst);
+        super(caller, "Appreciation Automator", curInst);
 
         //draw gui
         {

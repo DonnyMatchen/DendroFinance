@@ -17,7 +17,7 @@ public class PositionGui extends RegisterFrame {
     private final DefaultTableModel TABLE_ACCESS;
 
     public PositionGui(MainGui caller, Instance curInst) {
-        super(caller, curInst);
+        super(caller, "Trading Position", curInst);
 
         //Draw Gui
         {

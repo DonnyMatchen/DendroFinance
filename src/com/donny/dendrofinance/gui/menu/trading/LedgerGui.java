@@ -19,7 +19,7 @@ public class LedgerGui extends RegisterFrame {
     private final DefaultTableModel TABLE_ACCESS;
 
     public LedgerGui(MainGui caller, Instance curInst) {
-        super(caller, curInst);
+        super(caller, "Trading Ledgers", curInst);
         //Draw Gui
         {
             PANE = DendroFactory.getTable(new String[]{

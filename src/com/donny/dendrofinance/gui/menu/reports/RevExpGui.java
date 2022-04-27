@@ -26,7 +26,7 @@ public class RevExpGui extends RegisterFrame {
     private final JTable TABLE;
 
     public RevExpGui(MainGui caller, Instance curInst) {
-        super(caller, curInst);
+        super(caller, "Revenue and Expenses", curInst);
 
         //draw GUI
         {

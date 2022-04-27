@@ -57,22 +57,6 @@ public class Instance {
     public LCurrency main__;
 
     public Instance(String iid, String[] args) {
-        if (args.length > 0) {
-            for (int i = 0; i < args.length; i++) {
-                String arg = args[i];
-                if (arg.equalsIgnoreCase("-X")) {
-                    export = true;
-                } else if (arg.equalsIgnoreCase("-L")) {
-                    log = true;
-                    if (args.length > i + 1) {
-                        logLevel = new LogHandler.LogLevel(args[i + 1].toLowerCase());
-                    }
-                }
-            }
-        }
-        if (logLevel == null) {
-            logLevel = new LogHandler.LogLevel("info");
-        }
         IID = iid;
         CURRENCIES = new CurrencyBTC(this);
         STOCKS = new StockBTC(this);
@@ -81,7 +65,7 @@ public class Instance {
         EXCHANGES = new ExchangeBTC(this);
         ACCOUNT_TYPES = new AccountTypeBTC(this);
         TAX_ITEMS = new TaxItemBTC(this);
-        LOG_HANDLER = new LogHandler(logLevel.getLevel(), this);
+        LOG_HANDLER = new LogHandler(this);
         FILE_HANDLER = new FileHandler(this);
         DendroFactory.init(this);
         ENCRYPTION_HANDLER = new PasswordGui(args, this);

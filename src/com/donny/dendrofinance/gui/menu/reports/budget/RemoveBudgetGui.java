@@ -7,13 +7,13 @@ import com.donny.dendrofinance.instance.Instance;
 import javax.swing.*;
 
 public class RemoveBudgetGui extends JDialog {
-    public final Instance CURRENT_INSTANCE;
+    private final Instance CURRENT_INSTANCE;
 
     private JLabel A;
     private JButton NO, YES;
 
     public RemoveBudgetGui(BudgetGui caller, String budget, Instance curInst) {
-        super(caller, true);
+        super(caller, "Remove Budget", true);
         CURRENT_INSTANCE = curInst;
         if (budget == null) {
             dispose();

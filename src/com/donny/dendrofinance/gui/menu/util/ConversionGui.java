@@ -8,8 +8,6 @@ import com.donny.dendrofinance.gui.customswing.SearchBox;
 import com.donny.dendrofinance.instance.Instance;
 
 import javax.swing.*;
-import javax.swing.event.MouseInputAdapter;
-import java.awt.event.MouseEvent;
 import java.math.BigDecimal;
 
 public class ConversionGui extends RegisterFrame {
@@ -21,7 +19,7 @@ public class ConversionGui extends RegisterFrame {
     private final JButton CONVERT;
 
     public ConversionGui(MainGui caller, Instance curInst) {
-        super(caller, curInst);
+        super(caller, "Asset Conversion", curInst);
 
         //draw gui
         {

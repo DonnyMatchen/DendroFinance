@@ -1,5 +1,6 @@
 LCurrency{
   "alt": string
+  "factor": decimal {optional}
   "flags": string
   "name": string
   "places": integer
@@ -8,6 +9,7 @@ LCurrency{
 }
 
 * alt: (cryptocurrencies) the identifier for the cryptocurrency used by Coingecko
+* factor: The factor by which the price should be multiplied.  For example, for US cents (¢), the factor is 100.  $1.00 is 100¢.
 * flags:
   * F: Fiat currency
   * D: Currency is defunct and valueless

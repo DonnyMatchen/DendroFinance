@@ -18,11 +18,12 @@ public class LCurrency implements ExportableToJsonObject {
     protected final Instance CURRENT_INSTANCE;
     private final String NAME, TIC, SYMBOL, ALT_NAME;
     private final int PLACES;
+    private final BigDecimal FACTOR;
     private final boolean FIAT, EXTINCT, TOKEN, FORWARDS;
     private String altApi = "";
 
     public LCurrency(String name, String tic, boolean fiat, String symbol, boolean forwards, int places,
-                     String alt, boolean token, boolean dead, Instance curInst) {
+                     BigDecimal factor, String alt, boolean token, boolean dead, Instance curInst) {
         CURRENT_INSTANCE = curInst;
         NAME = name;
         TIC = tic;
@@ -31,8 +32,14 @@ public class LCurrency implements ExportableToJsonObject {
         PLACES = places;
         EXTINCT = dead;
         TOKEN = token;
+        FACTOR = factor;
         ALT_NAME = alt;
         FORWARDS = forwards;
+    }
+
+    public LCurrency(String name, String tic, boolean fiat, String symbol, boolean forwards, int places,
+                     String alt, boolean token, boolean dead, Instance curInst) {
+        this(name, tic, fiat, symbol, forwards, places, BigDecimal.ONE, alt, token, dead, curInst);
     }
 
     public LCurrency(LCurrency old, String name, int addPlace) {
@@ -44,6 +51,7 @@ public class LCurrency implements ExportableToJsonObject {
         PLACES = old.PLACES + addPlace;
         EXTINCT = old.EXTINCT;
         TOKEN = old.TOKEN;
+        FACTOR = old.FACTOR;
         ALT_NAME = old.ALT_NAME;
         FORWARDS = old.FORWARDS;
     }
@@ -53,6 +61,11 @@ public class LCurrency implements ExportableToJsonObject {
         String flags = obj.getString("flags").getString();
         if (!obj.FIELDS.containsKey("name")) {
             CURRENT_INSTANCE.LOG_HANDLER.warn(this.getClass(), "Nameless Currency:\n" + obj);
+        }
+        if (obj.FIELDS.containsKey("factor")) {
+            FACTOR = obj.getDecimal("factor").decimal;
+        } else {
+            FACTOR = BigDecimal.ONE;
         }
         NAME = obj.getString("name").getString();
         TIC = obj.getString("tic").getString();
@@ -77,7 +90,7 @@ public class LCurrency implements ExportableToJsonObject {
             if (FORWARDS) {
                 return SYMBOL + format.format(num);
             } else {
-                return format.format(num) + " " + SYMBOL;
+                return format.format(num) + SYMBOL;
             }
         } else {
             if (FORWARDS) {
@@ -102,6 +115,10 @@ public class LCurrency implements ExportableToJsonObject {
 
     public int getPlaces() {
         return PLACES;
+    }
+
+    public BigDecimal getFactor() {
+        return FACTOR;
     }
 
     public String getSymbol() {
@@ -140,9 +157,9 @@ public class LCurrency implements ExportableToJsonObject {
             } else {
                 if (FIAT) {
                     if (TIC.equals(CURRENT_INSTANCE.main.getTicker())) {
-                        return amount;
+                        return amount.divide(FACTOR, CURRENT_INSTANCE.PRECISION);
                     } else {
-                        return amount.multiply(CURRENT_INSTANCE.FILE_HANDLER.hitPolygonForex(TIC));
+                        return amount.divide(FACTOR, CURRENT_INSTANCE.PRECISION).multiply(CURRENT_INSTANCE.FILE_HANDLER.hitPolygonForex(TIC));
                     }
                 } else {
                     BigDecimal alpha;
@@ -155,24 +172,7 @@ public class LCurrency implements ExportableToJsonObject {
                             alpha = CURRENT_INSTANCE.FILE_HANDLER.hitCoinGecko(ALT_NAME);
                         }
                     }
-                    if (!first()) {
-                        if (NAME.contains("Mili")) {
-                            alpha = alpha.divide(new BigDecimal("1000"), CURRENT_INSTANCE.PRECISION);
-                        } else if (NAME.contains("Centi")) {
-                            alpha = alpha.divide(new BigDecimal("100"), CURRENT_INSTANCE.PRECISION);
-                        } else if (NAME.contains("Deci")) {
-                            alpha = alpha.divide(new BigDecimal("10"), CURRENT_INSTANCE.PRECISION);
-                        } else if (NAME.contains("Hecta")) {
-                            alpha = alpha.multiply(new BigDecimal("100"));
-                        } else if (NAME.contains("Nano")) {
-                            alpha = alpha.divide(new BigDecimal("1000000000"), CURRENT_INSTANCE.PRECISION);
-                        } else if (NAME.contains("Micro")) {
-                            alpha = alpha.divide(new BigDecimal("1000000"), CURRENT_INSTANCE.PRECISION);
-                        } else if (NAME.contains("Satoshi")) {
-                            alpha = alpha.divide(new BigDecimal("100000000"), CURRENT_INSTANCE.PRECISION);
-                        }
-                    }
-                    return alpha.multiply(amount);
+                    return alpha.divide(FACTOR, CURRENT_INSTANCE.PRECISION).multiply(amount);
                 }
             }
         } catch (NumberFormatException ex) {
@@ -192,14 +192,14 @@ public class LCurrency implements ExportableToJsonObject {
             } else {
                 if (FIAT) {
                     if (TIC.equals(CURRENT_INSTANCE.main.getTicker())) {
-                        return amount;
+                        return amount.divide(FACTOR, CURRENT_INSTANCE.PRECISION);
                     } else {
-                        return amount.multiply(CURRENT_INSTANCE.FILE_HANDLER.hitPolygonForex(TIC));
+                        return amount.divide(FACTOR, CURRENT_INSTANCE.PRECISION).multiply(CURRENT_INSTANCE.FILE_HANDLER.hitPolygonForex(TIC, date));
                     }
                 } else {
                     BigDecimal alpha;
-                    if (TIC.equals("REPV2")) {
-                        alpha = CURRENT_INSTANCE.FILE_HANDLER.hitKrakenHistory("REPV2", date);
+                    if (altApi.equals("kraken")) {
+                        alpha = CURRENT_INSTANCE.FILE_HANDLER.hitKrakenHistory(TIC, date);
                     } else {
                         if (ALT_NAME.equals("")) {
                             alpha = CURRENT_INSTANCE.FILE_HANDLER.hitCoinGeckoHistory(NAME, date);
@@ -207,24 +207,7 @@ public class LCurrency implements ExportableToJsonObject {
                             alpha = CURRENT_INSTANCE.FILE_HANDLER.hitCoinGeckoHistory(ALT_NAME, date);
                         }
                     }
-                    if (!first()) {
-                        if (NAME.contains("Mili")) {
-                            alpha = alpha.divide(new BigDecimal("1000"), CURRENT_INSTANCE.PRECISION);
-                        } else if (NAME.contains("Centi")) {
-                            alpha = alpha.divide(new BigDecimal("100"), CURRENT_INSTANCE.PRECISION);
-                        } else if (NAME.contains("Deci")) {
-                            alpha = alpha.divide(new BigDecimal("10"), CURRENT_INSTANCE.PRECISION);
-                        } else if (NAME.contains("Hecta")) {
-                            alpha = alpha.multiply(new BigDecimal("100"));
-                        } else if (NAME.contains("Nano")) {
-                            alpha = alpha.divide(new BigDecimal("1000000000"), CURRENT_INSTANCE.PRECISION);
-                        } else if (NAME.contains("Micro")) {
-                            alpha = alpha.divide(new BigDecimal("1000000"), CURRENT_INSTANCE.PRECISION);
-                        } else if (NAME.contains("Satoshi")) {
-                            alpha = alpha.divide(new BigDecimal("100000000"), CURRENT_INSTANCE.PRECISION);
-                        }
-                    }
-                    return alpha.multiply(amount);
+                    return alpha.divide(FACTOR, CURRENT_INSTANCE.PRECISION).multiply(amount);
                 }
             }
         } catch (NumberFormatException ex) {

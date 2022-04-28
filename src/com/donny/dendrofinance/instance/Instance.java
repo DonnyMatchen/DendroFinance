@@ -390,47 +390,54 @@ public class Instance {
         if (a.getTicker().equalsIgnoreCase(b.getTicker()) && a.getName().equalsIgnoreCase(b.getName())) {
             return amnt;
         } else {
+            if (a.getTicker().equals(b.getTicker()) && a.getClass() == b.getClass() && a.isFiat() == b.isFiat()) {
+                return amnt.multiply(b.getFactor().divide(a.getFactor(), PRECISION));
+            }
             if (a.isFiat() && b.isFiat()) {
                 if (root.contains(a.getTicker())) {
-                    return amnt.multiply(FILE_HANDLER.hitPolygonForex(a.getTicker(), b.getTicker()));
+                    return amnt.multiply(FILE_HANDLER.hitPolygonForex(a.getTicker(), b.getTicker())).multiply(b.getFactor().divide(a.getFactor(), PRECISION));
                 } else if (root.contains(b.getTicker())) {
-                    return amnt.multiply(BigDecimal.ONE.divide(FILE_HANDLER.hitPolygonForex(b.getTicker(), a.getTicker()), PRECISION));
+                    return amnt.divide(FILE_HANDLER.hitPolygonForex(b.getTicker(), a.getTicker()), PRECISION).multiply(b.getFactor().divide(a.getFactor(), PRECISION));
                 }
             }
-            boolean vs = false, f = true;
-            if (!a.isFiat()) {
-                for (LCurrency cur : VS) {
-                    if (b.equals(cur)) {
-                        vs = true;
-                        break;
+            if (a.getClass() == LCurrency.class && b.getClass() == LCurrency.class) {
+                boolean vs = false, f = true;
+                if (!a.isFiat()) {
+                    for (LCurrency cur : VS) {
+                        if (b.equals(cur) || (b.isFiat() == cur.isFiat() && b.getClass() == cur.getClass() && b.getTicker().equals(cur.getTicker()))) {
+                            vs = true;
+                            break;
+                        }
                     }
                 }
-            }
-            if (!vs) {
-                for (LCurrency cur : VS) {
-                    if (cur.equals(a)) {
-                        vs = true;
-                        f = false;
-                        break;
+                if (!vs) {
+                    for (LCurrency cur : VS) {
+                        if (a.equals(cur) || (a.isFiat() == cur.isFiat() && a.getClass() == cur.getClass() && a.getTicker().equals(cur.getTicker()))) {
+                            vs = true;
+                            f = false;
+                            break;
+                        }
                     }
                 }
-            }
-            if (vs) {
-                String name;
-                if (f) {
-                    if (a.getAltName().equals("")) {
-                        name = a.getName().toLowerCase().replace(" ", "-");
+                if (vs) {
+                    String name;
+                    if (f) {
+                        if (a.getAltName().equals("")) {
+                            name = a.getName().toLowerCase().replace(" ", "-");
+                        } else {
+                            name = a.getAltName();
+                        }
+                        return FILE_HANDLER.hitCoinGecko(name, b.getTicker()).multiply(amnt).multiply(b.getFactor().divide(a.getFactor(), PRECISION));
                     } else {
-                        name = a.getAltName();
+                        if (b.getAltName().equals("")) {
+                            name = b.getName().toLowerCase().replace(" ", "-");
+                        } else {
+                            name = b.getAltName();
+                        }
+                        return amnt.divide(FILE_HANDLER.hitCoinGecko(name, a.getTicker().toLowerCase()), PRECISION).multiply(b.getFactor().divide(a.getFactor(), PRECISION));
                     }
-                    return FILE_HANDLER.hitCoinGecko(name, b.getTicker()).multiply(amnt);
                 } else {
-                    if (b.getAltName().equals("")) {
-                        name = b.getName().toLowerCase().replace(" ", "-");
-                    } else {
-                        name = b.getAltName();
-                    }
-                    return amnt.divide(FILE_HANDLER.hitCoinGecko(name, a.getTicker().toLowerCase()), PRECISION);
+                    return b.reverseTotal(a.getTotal(amnt));
                 }
             } else {
                 return b.reverseTotal(a.getTotal(amnt));

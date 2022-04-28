@@ -410,7 +410,7 @@ public class PasswordGui extends JFrame {
             JsonArray out = new JsonArray();
             out.ARRAY.addAll(PROFILES);
             File file = new File(CURRENT_INSTANCE.data.getPath() + File.separator + "profiles.json");
-            CURRENT_INSTANCE.FILE_HANDLER.write(file, out.toString());
+            CURRENT_INSTANCE.FILE_HANDLER.write(file, out.print());
         }
     }
 }

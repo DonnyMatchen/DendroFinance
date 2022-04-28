@@ -405,6 +405,7 @@ public class FileHandler {
     }
 
     public JsonItem hit(String url) {
+        System.out.println(url);
         try {
             return JsonItem.sanitizeDigest(streamRaw(url));
         } catch (JsonFormattingException e) {

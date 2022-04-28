@@ -150,8 +150,6 @@ public class PasswordGui extends JFrame {
                 );
             }
 
-            //add(BACK);
-
             pack();
         }
         CURRENT_INSTANCE.LOG_HANDLER.trace(this.getClass(), "PasswordGui created");

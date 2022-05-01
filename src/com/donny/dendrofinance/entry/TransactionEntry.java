@@ -116,18 +116,18 @@ public class TransactionEntry extends Entry<TransactionHeader> implements Compar
         addLoanMeta(getUUID(), getDate(), name, desc, cur, principal, rate);
     }
 
-    public void addLedgerMeta(long uuid, LDate date, LCurrency from, LCurrency to, BigDecimal fromAmnt, BigDecimal toAmnt, BigDecimal mainValue) {
+    public void addLedgerMeta(long uuid, LDate date, LCurrency from, LCurrency to, BigDecimal fromAmount, BigDecimal toAmount, BigDecimal mainValue) {
         ArrayList<LedgerMetadata> meta = getLedgerMeta();
-        meta.add(new LedgerMetadata(uuid, date, from, to, fromAmnt, toAmnt, mainValue, CURRENT_INSTANCE));
+        meta.add(new LedgerMetadata(uuid, date, from, to, fromAmount, toAmount, mainValue, CURRENT_INSTANCE));
         setLedgerMeta(meta);
     }
 
-    public void addLedgerMeta(LDate date, LCurrency from, LCurrency to, BigDecimal fromAmnt, BigDecimal toAmnt, BigDecimal mainValue) {
-        addLedgerMeta(getUUID(), date, from, to, fromAmnt, toAmnt, mainValue);
+    public void addLedgerMeta(LDate date, LCurrency from, LCurrency to, BigDecimal fromAmount, BigDecimal toAmount, BigDecimal mainValue) {
+        addLedgerMeta(getUUID(), date, from, to, fromAmount, toAmount, mainValue);
     }
 
-    public void addLedgerMeta(LCurrency from, LCurrency to, BigDecimal fromAmnt, BigDecimal toAmnt, BigDecimal mainValue) {
-        addLedgerMeta(getUUID(), getDate(), from, to, fromAmnt, toAmnt, mainValue);
+    public void addLedgerMeta(LCurrency from, LCurrency to, BigDecimal fromAmount, BigDecimal toAmount, BigDecimal mainValue) {
+        addLedgerMeta(getUUID(), getDate(), from, to, fromAmount, toAmount, mainValue);
     }
 
     public ArrayList<AssetMetadata> getAssetMeta() {

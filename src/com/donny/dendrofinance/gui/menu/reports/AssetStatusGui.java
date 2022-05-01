@@ -96,7 +96,7 @@ public class AssetStatusGui extends RegisterFrame {
             m = Integer.parseInt(temp[1]);
         }
         HashMap<Account, BigDecimal> acc = CURRENT_INSTANCE.DATA_HANDLER.accountsAsOf(y, m, d);
-        HashMap<LCurrency, BigDecimal> alpha = CURRENT_INSTANCE.DATA_HANDLER.pricesAsOf(y, m, d);
+        HashMap<LCurrency, BigDecimal> prices = CURRENT_INSTANCE.DATA_HANDLER.pricesAsOf(y, m, d);
         BigDecimal stock = BigDecimal.ZERO, crypt = BigDecimal.ZERO, inv = BigDecimal.ZERO, fiat = BigDecimal.ZERO,
                 main = BigDecimal.ZERO, total = BigDecimal.ZERO, nf = BigDecimal.ZERO, rec = BigDecimal.ZERO, debts = BigDecimal.ZERO;
         for (Account a : CURRENT_INSTANCE.ACCOUNTS) {
@@ -109,16 +109,16 @@ public class AssetStatusGui extends RegisterFrame {
                     if ((a.getBroadAccountType() == BroadAccountType.ASSET || a.getBroadAccountType() == BroadAccountType.TRACKING)
                             && (!a.getName().equalsIgnoreCase("Crypto") && !a.getName().equalsIgnoreCase("Stock")
                             && !a.getName().equalsIgnoreCase("Held_Inventory") && !a.getName().equalsIgnoreCase("Other_Cash"))) {
-                        if (alpha.get(a.getCurrency()) == null) {
-                            CURRENT_INSTANCE.LOG_HANDLER.error(this.getClass(), "Missing alpha: " + a.getCurrency());
+                        if (prices.get(a.getCurrency()) == null) {
+                            CURRENT_INSTANCE.LOG_HANDLER.error(this.getClass(), "Missing prices: " + a.getCurrency());
                         }
                         TABLE_ACCESS.addRow(new String[]{
-                                a.getName(), a.getCurrency().encode(acc.get(a)), CURRENT_INSTANCE.$(acc.get(a).multiply(alpha.get(a.getCurrency())))
+                                a.getName(), a.getCurrency().encode(acc.get(a)), CURRENT_INSTANCE.$(acc.get(a).multiply(prices.get(a.getCurrency())))
                         });
                         if (a.getCurrency() instanceof LStock) {
-                            stock = stock.add(acc.get(a).multiply(alpha.get(a.getCurrency())));
+                            stock = stock.add(acc.get(a).multiply(prices.get(a.getCurrency())));
                         } else if (a.getCurrency() instanceof LInventory) {
-                            inv = inv.add(acc.get(a).multiply(alpha.get(a.getCurrency())));
+                            inv = inv.add(acc.get(a).multiply(prices.get(a.getCurrency())));
                         } else {
                             if (a.getCurrency().isFiat()) {
                                 if (a.getCurrency().equals(CURRENT_INSTANCE.main)) {
@@ -133,16 +133,16 @@ public class AssetStatusGui extends RegisterFrame {
                                         }
                                     }
                                 } else {
-                                    fiat = fiat.add(acc.get(a).multiply(alpha.get(a.getCurrency())));
+                                    fiat = fiat.add(acc.get(a).multiply(prices.get(a.getCurrency())));
                                 }
                             } else {
-                                crypt = crypt.add(acc.get(a).multiply(alpha.get(a.getCurrency())));
+                                crypt = crypt.add(acc.get(a).multiply(prices.get(a.getCurrency())));
                             }
                         }
-                        total = total.add(acc.get(a).multiply(alpha.get(a.getCurrency())));
+                        total = total.add(acc.get(a).multiply(prices.get(a.getCurrency())));
                     } else if (a.getBroadAccountType() == BroadAccountType.LIABILITY) {
-                        debts = debts.subtract(acc.get(a).multiply(alpha.get(a.getCurrency())));
-                        total = total.subtract(acc.get(a).multiply(alpha.get(a.getCurrency())));
+                        debts = debts.subtract(acc.get(a).multiply(prices.get(a.getCurrency())));
+                        total = total.subtract(acc.get(a).multiply(prices.get(a.getCurrency())));
                     }
                 }
             }

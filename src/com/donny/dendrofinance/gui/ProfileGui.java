@@ -11,7 +11,6 @@ import com.donny.dendrofinance.json.JsonString;
 
 import javax.swing.*;
 import java.math.BigDecimal;
-import java.math.BigInteger;
 
 public class ProfileGui extends JDialog {
     private final Instance CURRENT_INSTANCE;

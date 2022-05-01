@@ -93,6 +93,7 @@ public class Instance {
         }
         DATA_HANDLER.checkLedgers();
         DATA_HANDLER.checkCG();
+        DATA_HANDLER.checkCurToMain();
         IMPORT_HANDLER = new ImportHandler(this);
         EXPORT_HANDLER = new ExportHandler(this);
         new MainGui(this).setVisible(true);

@@ -1,13 +1,15 @@
 v0.4.0
 * began keeping a permanent changelog
-* removed all instances of "amnt"
+* removed all instances of "amnt", "cst", "xchg", and "cncl" as a variable name and in code
 * added hang to prevent race condition with file IO
 * overhauled Instance.convert()
-  X added date to conversion gui
+  * added date to conversion gui
+  * added check for "today" in AssetStatusGui
 -> modularized market price APIs
   * added LMarketApi and market-apis.json
   * added MarketApiBTC
   * removed api-keys from profile and profile gui and from Instance
+  * added check for currency -> main
   X added gui
   X added gui editing
 X integrated exchanges more heavily with accounts

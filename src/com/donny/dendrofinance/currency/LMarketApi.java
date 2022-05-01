@@ -8,7 +8,6 @@ import com.donny.dendrofinance.util.ExportableToJsonObject;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Locale;
 
 public class LMarketApi implements ExportableToJsonObject {
     public final String NAME, TYPES, BASE_URL, BASE_URL_HISTORY, KEY;
@@ -100,7 +99,8 @@ public class LMarketApi implements ExportableToJsonObject {
     public boolean canConvert(LCurrency a, LCurrency b) {
         return (canSearch(a) && hasNat(b)) ||
                 (canSearch(b) && hasNat(a)) ||
-                (canSearch(a) && canSearch(b));
+                (canSearch(a) && canSearch(b)) ||
+                (a.getTicker().equals(b.getTicker()) && a.isFiat() == b.isFiat() && a.getClass() == b.getClass());
     }
 
     /**

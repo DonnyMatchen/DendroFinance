@@ -302,7 +302,7 @@ public class PasswordGui extends JFrame {
                 CURRENT_INSTANCE.day = true;
             }
         }
-        if(config.FIELDS.containsKey("precision")){
+        if (config.FIELDS.containsKey("precision")) {
             CURRENT_INSTANCE.precision = new MathContext(config.getDecimal("precision").decimal.intValue());
         }
         if (config.FIELDS.containsKey("log")) {

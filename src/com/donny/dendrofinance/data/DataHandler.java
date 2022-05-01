@@ -3,6 +3,7 @@ package com.donny.dendrofinance.data;
 import com.donny.dendrofinance.account.*;
 import com.donny.dendrofinance.currency.LCurrency;
 import com.donny.dendrofinance.currency.LInventory;
+import com.donny.dendrofinance.currency.LMarketApi;
 import com.donny.dendrofinance.currency.LStock;
 import com.donny.dendrofinance.entry.BudgetEntry;
 import com.donny.dendrofinance.entry.EntryType;
@@ -17,12 +18,10 @@ import com.donny.dendrofinance.types.LDate;
 import com.donny.dendrofinance.types.LString;
 import com.donny.dendrofinance.util.Aggregation;
 import com.donny.dendrofinance.util.Curation;
-import com.donny.dendrofinance.util.Partitioner;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 
 public class DataHandler {
@@ -121,7 +120,7 @@ public class DataHandler {
     }
 
     public HashMap<LCurrency, BigDecimal> pricesAsOf(int y, int m, int d) {
-        CURRENT_INSTANCE.LOG_HANDLER.trace(this.getClass(), "Price get started");
+        CURRENT_INSTANCE.LOG_HANDLER.trace(this.getClass(), "Price-get started");
         HashMap<Account, BigDecimal> acc = accountsAsOf(y, m, d);
         HashMap<LCurrency, BigDecimal> out = new HashMap<>();
         for (Account a : acc.keySet()) {
@@ -131,7 +130,12 @@ public class DataHandler {
             }
             if (acc.get(a).abs().compareTo(compare) >= 0) {
                 if (!out.containsKey(a.getCurrency())) {
-                    out.put(a.getCurrency(), a.getCurrency().getTotal(BigDecimal.ONE, new LDate(y, m, d, CURRENT_INSTANCE)));
+                    LDate now = LDate.now(CURRENT_INSTANCE);
+                    if (now.getYear() == y && now.getMonth() == m && now.getDay() == d) {
+                        out.put(a.getCurrency(), a.getCurrency().getTotal(BigDecimal.ONE));
+                    } else {
+                        out.put(a.getCurrency(), a.getCurrency().getTotal(BigDecimal.ONE, new LDate(y, m, d, CURRENT_INSTANCE)));
+                    }
                 }
             }
         }
@@ -768,13 +772,13 @@ public class DataHandler {
         }
     }
 
-    public boolean coinTransfer(LDate date, BigDecimal fromAmnt, BigDecimal toAmnt, BigDecimal unit,
+    public boolean coinTransfer(LDate date, BigDecimal fromAmount, BigDecimal toAmount, BigDecimal unit,
                                 String fromExchange, String toExchange, String currency) {
         try {
-            fromAmnt = fromAmnt.abs().multiply(BigDecimal.valueOf(-1));
-            toAmnt = toAmnt.abs();
+            fromAmount = fromAmount.abs().multiply(BigDecimal.valueOf(-1));
+            toAmount = toAmount.abs();
             unit = unit.abs();
-            BigDecimal fee = toAmnt.add(fromAmnt);
+            BigDecimal fee = toAmount.add(fromAmount);
             BigDecimal cost = fee.multiply(unit).setScale(CURRENT_INSTANCE.main.getPlaces(), RoundingMode.HALF_UP).abs();
             LCurrency c = CURRENT_INSTANCE.getLCurrency(currency);
             Exchange ef = CURRENT_INSTANCE.EXCHANGES.getElement(fromExchange);
@@ -810,8 +814,8 @@ public class DataHandler {
                     new LAccountSet("D!Portfolio("
                             + cost + "), C!" + acc + "("
                             + cost + "), T!" + ef.NAME + "_" + c.getTicker() + "("
-                            + fromAmnt + "), T!" + et.NAME + "_" + c.getTicker() + "("
-                            + toAmnt + ")", CURRENT_INSTANCE)
+                            + fromAmount + "), T!" + et.NAME + "_" + c.getTicker() + "("
+                            + toAmount + ")", CURRENT_INSTANCE)
             );
             entry.addLedgerMeta(c, CURRENT_INSTANCE.main, fee, BigDecimal.ZERO, cost);
             addTransaction(entry);
@@ -821,15 +825,15 @@ public class DataHandler {
         }
     }
 
-    public boolean tokenTransfer(LDate date, BigDecimal fromAmnt, BigDecimal toAmnt, BigDecimal fee, BigDecimal fromUnit,
+    public boolean tokenTransfer(LDate date, BigDecimal fromAmount, BigDecimal toAmount, BigDecimal fee, BigDecimal fromUnit,
                                  BigDecimal feeUnit, String fromExchange, String toExchange, String transCur, String costCur) {
         try {
-            fromAmnt = fromAmnt.abs().multiply(BigDecimal.valueOf(-1));
+            fromAmount = fromAmount.abs().multiply(BigDecimal.valueOf(-1));
             fee = fee.abs().multiply(BigDecimal.valueOf(-1));
-            toAmnt = toAmnt.abs();
+            toAmount = toAmount.abs();
             fromUnit = fromUnit.abs();
             feeUnit = feeUnit.abs();
-            BigDecimal transitLoss = toAmnt.add(fromAmnt);
+            BigDecimal transitLoss = toAmount.add(fromAmount);
             BigDecimal cost1 = transitLoss.multiply(fromUnit).setScale(CURRENT_INSTANCE.main.getPlaces(), RoundingMode.HALF_UP).abs();
             BigDecimal cost2 = fee.multiply(feeUnit).setScale(CURRENT_INSTANCE.main.getPlaces(), RoundingMode.HALF_UP).abs();
             BigDecimal cost = cost1.add(cost2);
@@ -860,9 +864,9 @@ public class DataHandler {
                     new LAccountSet("D!Portfolio("
                             + cost + "), C!Crypto("
                             + cost + "), T!" + ef.NAME + "_" + tc.getTicker() + "("
-                            + fromAmnt + "), T!" + ef.NAME + "_" + fc.getTicker() + "("
+                            + fromAmount + "), T!" + ef.NAME + "_" + fc.getTicker() + "("
                             + fee + "), T!" + et.NAME + "_" + tc.getTicker() + "("
-                            + toAmnt + ")", CURRENT_INSTANCE)
+                            + toAmount + ")", CURRENT_INSTANCE)
             );
             if (transitLoss.compareTo(BigDecimal.ZERO) != 0) {
                 entry.addLedgerMeta(tc, CURRENT_INSTANCE.main, transitLoss, BigDecimal.ZERO, cost1.abs());
@@ -875,13 +879,13 @@ public class DataHandler {
         }
     }
 
-    public boolean trade(LDate date, BigDecimal fromAmnt, BigDecimal toAmnt, BigDecimal unit,
+    public boolean trade(LDate date, BigDecimal fromAmount, BigDecimal toAmount, BigDecimal unit,
                          String exchange, String fromCur, String toCur) {
         try {
-            fromAmnt = fromAmnt.abs().multiply(BigDecimal.valueOf(-1));
-            toAmnt = toAmnt.abs();
+            fromAmount = fromAmount.abs().multiply(BigDecimal.valueOf(-1));
+            toAmount = toAmount.abs();
             unit = unit.abs();
-            BigDecimal cost = fromAmnt.multiply(unit).setScale(CURRENT_INSTANCE.main.getPlaces(), RoundingMode.HALF_UP).abs();
+            BigDecimal cost = fromAmount.multiply(unit).setScale(CURRENT_INSTANCE.main.getPlaces(), RoundingMode.HALF_UP).abs();
             LCurrency fc = CURRENT_INSTANCE.getLCurrency(fromCur);
             LCurrency tc = CURRENT_INSTANCE.getLCurrency(toCur);
             Exchange e = CURRENT_INSTANCE.EXCHANGES.getElement(exchange);
@@ -896,7 +900,7 @@ public class DataHandler {
             }
             TransactionEntry entry = new TransactionEntry(CURRENT_INSTANCE);
             Position temp = getPosition(fc);
-            ArrayList<OrderBookEntry> orders = temp.change(entry.getUUID(), date, fc, fromAmnt.multiply(BigDecimal.valueOf(-1)), cost);
+            ArrayList<OrderBookEntry> orders = temp.change(entry.getUUID(), date, fc, fromAmount.multiply(BigDecimal.valueOf(-1)), cost);
             BigDecimal profit = BigDecimal.ZERO;
             for (OrderBookEntry order : orders) {
                 profit = profit.add(order.profit());
@@ -911,11 +915,11 @@ public class DataHandler {
                     new LString(fc + ", " + tc),
                     new LString("Trade (" + fc + " -> " + tc + ")"),
                     new LAccountSet("T!" + e.NAME + "_" + fc.getTicker() + "("
-                            + fromAmnt + "), T!" + e.NAME + "_" + tc.getTicker() + "("
-                            + toAmnt + "), G!Tax_Cap" + gl + "("
+                            + fromAmount + "), T!" + e.NAME + "_" + tc.getTicker() + "("
+                            + toAmount + "), G!Tax_Cap" + gl + "("
                             + profit.setScale(CURRENT_INSTANCE.main.getPlaces(), RoundingMode.HALF_UP) + ")", CURRENT_INSTANCE)
             );
-            entry.addLedgerMeta(fc, tc, fromAmnt, toAmnt, cost);
+            entry.addLedgerMeta(fc, tc, fromAmount, toAmount, cost);
             addTransaction(entry);
             return true;
         } catch (NumberFormatException ex) {
@@ -1002,6 +1006,47 @@ public class DataHandler {
             if (flag && !entry.equals(getPrior())) {
                 CURRENT_INSTANCE.LOG_HANDLER.error(this.getClass(), "Sale missing Capital Gain/Loss: " + entry.getUUID());
                 CURRENT_INSTANCE.LOG_HANDLER.error(this.getClass(), "Value should be: " + map.get(uuid));
+            }
+        }
+    }
+
+    public void checkCurToMain() {
+        for (LCurrency currency : CURRENT_INSTANCE.CURRENCIES) {
+            boolean flag = true;
+            for (LMarketApi marketApi : CURRENT_INSTANCE.MARKET_APIS) {
+                if (marketApi.canConvert(currency, CURRENT_INSTANCE.main)) {
+                    flag = false;
+                    break;
+                }
+            }
+            if (flag) {
+                CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Currency can't be converted to main: " + currency);
+            }
+        }
+        for (LStock stock : CURRENT_INSTANCE.STOCKS) {
+            boolean flag = true;
+            for (LMarketApi marketApi : CURRENT_INSTANCE.MARKET_APIS) {
+                if (marketApi.canConvert(stock, CURRENT_INSTANCE.main)) {
+                    flag = false;
+                    break;
+                }
+            }
+            if (flag) {
+                CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Stock can't be converted to main: " + stock);
+            }
+        }
+        for (LInventory inventory : CURRENT_INSTANCE.INVENTORIES) {
+            if (inventory.isCommodity()) {
+                boolean flag = true;
+                for (LMarketApi marketApi : CURRENT_INSTANCE.MARKET_APIS) {
+                    if (marketApi.canConvert(inventory, CURRENT_INSTANCE.main)) {
+                        flag = false;
+                        break;
+                    }
+                }
+                if (flag) {
+                    CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Commodity can't be converted to main: " + inventory);
+                }
             }
         }
     }

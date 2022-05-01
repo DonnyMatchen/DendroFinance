@@ -58,21 +58,21 @@ public class Position {
                 }
                 if (ELEMENTS.get(0).volume.compareTo(amount.abs()) > 0) {
                     ELEMENTS.get(0).volume = ELEMENTS.get(0).volume.add(amount);
-                    BigDecimal cst = amount.abs().multiply(ELEMENTS.get(0).UNIT);
-                    return new ArrayList<>(List.of(new OrderBookEntry(ASSET, ELEMENTS.get(0).DATE, date, ELEMENTS.get(0).UUID, uuid, amount.abs(), cst, cost)));
+                    BigDecimal newCost = amount.abs().multiply(ELEMENTS.get(0).UNIT);
+                    return new ArrayList<>(List.of(new OrderBookEntry(ASSET, ELEMENTS.get(0).DATE, date, ELEMENTS.get(0).UUID, uuid, amount.abs(), newCost, cost)));
                 } else if (ELEMENTS.get(0).volume.compareTo(amount.abs()) == 0) {
-                    BigDecimal cst = amount.abs().multiply(ELEMENTS.get(0).UNIT);
+                    BigDecimal newCost = amount.abs().multiply(ELEMENTS.get(0).UNIT);
                     LDate fDate = ELEMENTS.get(0).DATE;
                     long fUUID = ELEMENTS.get(0).UUID;
                     ELEMENTS.remove(0);
-                    return new ArrayList<>(List.of(new OrderBookEntry(ASSET, fDate, date, fUUID, uuid, amount.abs(), cst, cost)));
+                    return new ArrayList<>(List.of(new OrderBookEntry(ASSET, fDate, date, fUUID, uuid, amount.abs(), newCost, cost)));
                 } else {
-                    BigDecimal cst = ELEMENTS.get(0).volume.multiply(ELEMENTS.get(0).UNIT);
+                    BigDecimal newCost = ELEMENTS.get(0).volume.multiply(ELEMENTS.get(0).UNIT);
                     BigDecimal pUnit = cost.divide(amount.abs(), CURRENT_INSTANCE.precision);
-                    BigDecimal newAmnt = amount.add(ELEMENTS.get(0).volume);
-                    blank.add(new OrderBookEntry(ASSET, ELEMENTS.get(0).DATE, date, ELEMENTS.get(0).UUID, uuid, ELEMENTS.get(0).volume.abs(), cst, ELEMENTS.get(0).volume.multiply(pUnit)));
+                    BigDecimal newAmount = amount.add(ELEMENTS.get(0).volume);
+                    blank.add(new OrderBookEntry(ASSET, ELEMENTS.get(0).DATE, date, ELEMENTS.get(0).UUID, uuid, ELEMENTS.get(0).volume.abs(), newCost, ELEMENTS.get(0).volume.multiply(pUnit)));
                     ELEMENTS.remove(0);
-                    blank.addAll(change(uuid, date, ASSET, newAmnt, newAmnt.abs().multiply(pUnit)));
+                    blank.addAll(change(uuid, date, ASSET, newAmount, newAmount.abs().multiply(pUnit)));
                     return blank;
                 }
             } else {

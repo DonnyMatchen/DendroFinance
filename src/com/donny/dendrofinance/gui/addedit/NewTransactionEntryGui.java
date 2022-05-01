@@ -644,7 +644,7 @@ public class NewTransactionEntryGui extends JDialog {
                 }
             }
             case (2) -> {
-                TABLE.setModel(new DefaultTableModel(new Vector<>(Arrays.asList("From", "To", "F Amnt", "To Amnt", "Main Amnt")), 0) {
+                TABLE.setModel(new DefaultTableModel(new Vector<>(Arrays.asList("From", "To", "F Amount", "To Amount", "Main Amnt")), 0) {
                     @Override
                     public boolean isCellEditable(int row, int column) {
                         return false;

@@ -147,72 +147,22 @@ public class LCurrency implements ExportableToJsonObject {
 
     public BigDecimal reverseTotal(BigDecimal amount) {
         BigDecimal temp = getTotal(BigDecimal.ONE);
-        return !temp.equals(BigDecimal.ZERO) ? amount.divide(temp, CURRENT_INSTANCE.PRECISION) : BigDecimal.ZERO;
+        return !temp.equals(BigDecimal.ZERO) ? amount.divide(temp, CURRENT_INSTANCE.precision) : BigDecimal.ZERO;
     }
 
     public BigDecimal getTotal(BigDecimal amount) {
-        try {
-            if (EXTINCT) {
-                return BigDecimal.ZERO;
-            } else {
-                if (FIAT) {
-                    if (TIC.equals(CURRENT_INSTANCE.main.getTicker())) {
-                        return amount.divide(FACTOR, CURRENT_INSTANCE.PRECISION);
-                    } else {
-                        return amount.divide(FACTOR, CURRENT_INSTANCE.PRECISION).multiply(CURRENT_INSTANCE.FILE_HANDLER.hitPolygonForex(TIC));
-                    }
-                } else {
-                    BigDecimal alpha;
-                    if (altApi.equals("kraken")) {
-                        alpha = CURRENT_INSTANCE.FILE_HANDLER.hitKraken(TIC);
-                    } else {
-                        if (ALT_NAME.equals("")) {
-                            alpha = CURRENT_INSTANCE.FILE_HANDLER.hitCoinGecko(NAME);
-                        } else {
-                            alpha = CURRENT_INSTANCE.FILE_HANDLER.hitCoinGecko(ALT_NAME);
-                        }
-                    }
-                    return alpha.divide(FACTOR, CURRENT_INSTANCE.PRECISION).multiply(amount);
-                }
-            }
-        } catch (NumberFormatException ex) {
-            CURRENT_INSTANCE.LOG_HANDLER.error(this.getClass(), "{" + this + "} NumberFormatException for string: " + ex.getMessage());
+        if (EXTINCT) {
             return BigDecimal.ZERO;
+        } else {
+            return CURRENT_INSTANCE.convert(amount, this, CURRENT_INSTANCE.main);
         }
     }
 
-    public BigDecimal getTotal(BigDecimal amount, LCurrency nat) {
-        return CURRENT_INSTANCE.convert(this, amount, nat);
-    }
-
     public BigDecimal getTotal(BigDecimal amount, LDate date) {
-        try {
-            if (EXTINCT) {
-                return BigDecimal.ZERO;
-            } else {
-                if (FIAT) {
-                    if (TIC.equals(CURRENT_INSTANCE.main.getTicker())) {
-                        return amount.divide(FACTOR, CURRENT_INSTANCE.PRECISION);
-                    } else {
-                        return amount.divide(FACTOR, CURRENT_INSTANCE.PRECISION).multiply(CURRENT_INSTANCE.FILE_HANDLER.hitPolygonForex(TIC, date));
-                    }
-                } else {
-                    BigDecimal alpha;
-                    if (altApi.equals("kraken")) {
-                        alpha = CURRENT_INSTANCE.FILE_HANDLER.hitKrakenHistory(TIC, date);
-                    } else {
-                        if (ALT_NAME.equals("")) {
-                            alpha = CURRENT_INSTANCE.FILE_HANDLER.hitCoinGeckoHistory(NAME, date);
-                        } else {
-                            alpha = CURRENT_INSTANCE.FILE_HANDLER.hitCoinGeckoHistory(ALT_NAME, date);
-                        }
-                    }
-                    return alpha.divide(FACTOR, CURRENT_INSTANCE.PRECISION).multiply(amount);
-                }
-            }
-        } catch (NumberFormatException ex) {
-            CURRENT_INSTANCE.LOG_HANDLER.error(this.getClass(), "{" + this + "} NumberFormatException for string: " + ex.getMessage());
+        if (EXTINCT) {
             return BigDecimal.ZERO;
+        } else {
+            return CURRENT_INSTANCE.convert(amount, this, CURRENT_INSTANCE.main, date);
         }
     }
 

@@ -76,7 +76,7 @@ public class LedgerGui extends RegisterFrame {
                                 "" + meta.UUID, meta.DATE.toDateString(),
                                 meta.FROM.encode(meta.FROM_AMNT), meta.TO.encode(meta.TO_AMNT),
                                 CURRENT_INSTANCE.$(meta.MAIN_VALUE),
-                                meta.FROM.encode(BigDecimal.ONE) + " = " + meta.TO.encode(meta.TO_AMNT.divide(meta.FROM_AMNT, CURRENT_INSTANCE.PRECISION).abs())
+                                meta.FROM.encode(BigDecimal.ONE) + " = " + meta.TO.encode(meta.TO_AMNT.divide(meta.FROM_AMNT, CURRENT_INSTANCE.precision).abs())
                         });
                     }
                 } else {
@@ -92,7 +92,7 @@ public class LedgerGui extends RegisterFrame {
                                 "" + meta.UUID, meta.DATE.toDateString(),
                                 meta.FROM.encode(meta.FROM_AMNT), meta.TO.encode(meta.TO_AMNT),
                                 CURRENT_INSTANCE.$(meta.MAIN_VALUE),
-                                meta.TO.encode(BigDecimal.ONE) + " = " + meta.FROM.encode(meta.FROM_AMNT.divide(meta.TO_AMNT, CURRENT_INSTANCE.PRECISION).abs())
+                                meta.TO.encode(BigDecimal.ONE) + " = " + meta.FROM.encode(meta.FROM_AMNT.divide(meta.TO_AMNT, CURRENT_INSTANCE.precision).abs())
                         });
                     }
                 }

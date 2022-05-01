@@ -124,34 +124,6 @@ public class DataHandler {
         CURRENT_INSTANCE.LOG_HANDLER.trace(this.getClass(), "Price get started");
         HashMap<Account, BigDecimal> acc = accountsAsOf(y, m, d);
         HashMap<LCurrency, BigDecimal> out = new HashMap<>();
-        boolean stock = false;
-        HashMap<String, BigDecimal> stocks = new HashMap<>();
-        if (CURRENT_INSTANCE.stockAPI.equals("twelve")) {
-            ArrayList<String> twelve = new ArrayList<>();
-            for (Account a : acc.keySet()) {
-                if (a.getCurrency() instanceof LStock s) {
-                    if (s.isPublic()) {
-                        BigDecimal compare = BigDecimal.ONE;
-                        if (a.getCurrency().getPlaces() > 0) {
-                            compare = new BigDecimal("0." + "0".repeat(a.getCurrency().getPlaces() - 1) + "1");
-                        }
-                        if (acc.get(a).compareTo(compare) >= 0 || acc.get(a).compareTo(compare.multiply(BigDecimal.valueOf(-1))) <= 0) {
-                            stock = true;
-                            twelve.add(a.getCurrency().getTicker());
-                        }
-                    }
-                }
-            }
-            if (stock) {
-                if (twelve.size() > 120) {
-                    for (String[] partition : Partitioner.partitionString(twelve, 120)) {
-                        stocks.putAll(CURRENT_INSTANCE.FILE_HANDLER.hitTwelveData(new ArrayList<>(Arrays.asList(partition)), new LDate(y, m, d, CURRENT_INSTANCE)));
-                    }
-                } else {
-                    stocks = CURRENT_INSTANCE.FILE_HANDLER.hitTwelveData(twelve, new LDate(y, m, d, CURRENT_INSTANCE));
-                }
-            }
-        }
         for (Account a : acc.keySet()) {
             BigDecimal compare = BigDecimal.ONE;
             if (a.getCurrency().getPlaces() > 0) {
@@ -159,11 +131,7 @@ public class DataHandler {
             }
             if (acc.get(a).abs().compareTo(compare) >= 0) {
                 if (!out.containsKey(a.getCurrency())) {
-                    if (CURRENT_INSTANCE.stockAPI.equals("twelve") && a.getCurrency() instanceof LStock && ((LStock) a.getCurrency()).isPublic()) {
-                        out.put(a.getCurrency(), stocks.get(a.getCurrency().getTicker()));
-                    } else {
-                        out.put(a.getCurrency(), a.getCurrency().getTotal(BigDecimal.ONE, new LDate(y, m, d, CURRENT_INSTANCE)));
-                    }
+                    out.put(a.getCurrency(), a.getCurrency().getTotal(BigDecimal.ONE, new LDate(y, m, d, CURRENT_INSTANCE)));
                 }
             }
         }
@@ -205,19 +173,7 @@ public class DataHandler {
             }
         }
         for (LCurrency c : fin.keySet()) {
-            if (fin.get(c).compareTo(BigDecimal.ZERO) > 0) {
-                if (!c.isFiat()) {
-                    if (!c.getName().contains("v2")) {
-                        if (c.getAltName().equals("")) {
-                            crypto = crypto.add(fin.get(c).multiply(CURRENT_INSTANCE.FILE_HANDLER.hitCoinGeckoHistory(c.getName().toLowerCase().replace(" ", "-"), natural.getTicker(), y, m, d)));
-                        } else {
-                            crypto = crypto.add(fin.get(c).multiply(CURRENT_INSTANCE.FILE_HANDLER.hitCoinGeckoHistory(c.getAltName(), natural.getTicker(), y, m, d)));
-                        }
-                    } else {
-                        CURRENT_INSTANCE.LOG_HANDLER.warn(this.getClass(), "REPv2: ɍ" + fin.get(c));
-                    }
-                }
-            }
+            crypto = crypto.add(CURRENT_INSTANCE.convert(fin.get(c), c, natural));
         }
         return crypto;
     }

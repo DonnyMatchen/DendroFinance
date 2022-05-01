@@ -38,7 +38,7 @@ public class ConversionGui extends RegisterFrame {
                 if (x.compareTo(BigDecimal.ZERO) == 0) {
                     x = BigDecimal.ONE;
                 }
-                BigDecimal y = CURRENT_INSTANCE.convert(a, x, b);
+                BigDecimal y = CURRENT_INSTANCE.convert(x, a, b);
                 DISPLAY.setText(a.encode(x) + "\n=\n" + b.encode(y));
             });
 

@@ -43,14 +43,14 @@ public class LedgerMetadata {
     }
 
     public BigDecimal fromMain() {
-        return MAIN_VALUE.divide(FROM_AMNT, CURRENT_INSTANCE.PRECISION).abs();
+        return MAIN_VALUE.divide(FROM_AMNT, CURRENT_INSTANCE.precision).abs();
     }
 
     public BigDecimal toMain() {
         if (TO_AMNT.compareTo(BigDecimal.ZERO) == 0) {
             return MAIN_VALUE;
         } else {
-            return MAIN_VALUE.divide(TO_AMNT, CURRENT_INSTANCE.PRECISION);
+            return MAIN_VALUE.divide(TO_AMNT, CURRENT_INSTANCE.precision);
         }
     }
 

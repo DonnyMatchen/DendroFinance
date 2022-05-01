@@ -7,6 +7,7 @@ import com.donny.dendrofinance.account.BroadAccountType;
 import com.donny.dendrofinance.account.Exchange;
 import com.donny.dendrofinance.currency.LCurrency;
 import com.donny.dendrofinance.currency.LInventory;
+import com.donny.dendrofinance.currency.LMarketApi;
 import com.donny.dendrofinance.currency.LStock;
 import com.donny.dendrofinance.data.*;
 import com.donny.dendrofinance.data.backingtable.*;
@@ -16,6 +17,7 @@ import com.donny.dendrofinance.gui.PasswordGui;
 import com.donny.dendrofinance.gui.customswing.DendroFactory;
 import com.donny.dendrofinance.gui.customswing.SearchBox;
 import com.donny.dendrofinance.json.*;
+import com.donny.dendrofinance.types.LDate;
 
 import javax.swing.*;
 import java.io.File;
@@ -24,14 +26,11 @@ import java.math.MathContext;
 import java.nio.charset.Charset;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 public class Instance {
-    private static final ArrayList<String> root = new ArrayList<>(Arrays.asList("USD", "EUR", "GBP", "CHF", "JPY", "CNY"));
 
     //Major managing objects and handling lists
     public final String IID;
-    public final MathContext PRECISION = new MathContext(20);
     public final LogHandler LOG_HANDLER;
     public final PasswordGui ENCRYPTION_HANDLER;
     public final FileHandler FILE_HANDLER;
@@ -43,15 +42,16 @@ public class Instance {
     public final ExchangeBTC EXCHANGES;
     public final AccountTypeBTC ACCOUNT_TYPES;
     public final TaxItemBTC TAX_ITEMS;
-    public final ArrayList<LCurrency> VS = new ArrayList<>();
+    public final MarketApiBTC MARKET_APIS;
     public final ImportHandler IMPORT_HANDLER;
     public final ExportHandler EXPORT_HANDLER;
     public final DataHandler DATA_HANDLER;
     public File data = new File(System.getProperty("user.dir") + File.separator + "data");
 
     //flags, api keys, and other minor alterable things
+    public MathContext precision = new MathContext(20);
     public boolean log = false, export = false, american = true, day = false;
-    public String twelveDataApiKey = "ADD KEY HERE", polygonApiKey = "ADD KEY HERE", stockAPI = "twelve", mainTicker = "USD", main__Ticker = "USD Extra";
+    public String mainTicker = "USD", main__Ticker = "USD Extra";
     public LogHandler.LogLevel logLevel;
     public LCurrency main;
     public LCurrency main__;
@@ -65,6 +65,7 @@ public class Instance {
         EXCHANGES = new ExchangeBTC(this);
         ACCOUNT_TYPES = new AccountTypeBTC(this);
         TAX_ITEMS = new TaxItemBTC(this);
+        MARKET_APIS = new MarketApiBTC(this);
         LOG_HANDLER = new LogHandler(this);
         FILE_HANDLER = new FileHandler(this);
         DendroFactory.init(this);
@@ -112,7 +113,8 @@ public class Instance {
                 accounts = new File(data.getPath() + File.separator + "Accounts" + File.separator + "accounts.json"),
                 extran = new File(data.getPath() + File.separator + "Accounts" + File.separator + "extranious.json"),
                 accTyp = new File(data.getPath() + File.separator + "Accounts" + File.separator + "account-types.json"),
-                taxItm = new File(data.getPath() + File.separator + "Accounts" + File.separator + "tax-items.json");
+                taxItm = new File(data.getPath() + File.separator + "Accounts" + File.separator + "tax-items.json"),
+                marApi = new File(data.getPath() + File.separator + "Currencies" + File.separator + "market-apis.json");
         //Create Defaults for new profiles
         {
             //Folders
@@ -143,6 +145,9 @@ public class Instance {
                 }
                 if (!special.exists()) {
                     FILE_HANDLER.write(special, new String(FILE_HANDLER.getTemplate("Currencies/special.json"), Charset.forName("unicode")));
+                }
+                if (!marApi.exists()) {
+                    FILE_HANDLER.write(marApi, new String(FILE_HANDLER.getTemplate("Currencies/market-apis.json"), Charset.forName("unicode")));
                 }
             }
             //Accounts
@@ -187,14 +192,6 @@ public class Instance {
                 CURRENCIES.add(__);
             }
             CURRENCIES.changed = false;
-            LOG_HANDLER.trace(this.getClass(), "Currencies loaded");
-            JsonArray tickers = (JsonArray) FILE_HANDLER.hit("https://api.coingecko.com/api/v3/simple/supported_vs_currencies");
-            for (JsonString s : tickers.getStringArray()) {
-                LCurrency cur = getLCurrency(s.getString());
-                if (cur != null) {
-                    VS.add(cur);
-                }
-            }
         }
         //LStock
         {
@@ -215,6 +212,12 @@ public class Instance {
             }
             INVENTORIES.changed = false;
             LOG_HANDLER.trace(this.getClass(), "Inventories loaded");
+        }
+        //Market APIs
+        {
+            MARKET_APIS.clear();
+            MARKET_APIS.load((JsonArray) JsonItem.sanitizeDigest(FILE_HANDLER.read(marApi)));
+            MARKET_APIS.changed = false;
         }
         //Account Types
         {
@@ -386,61 +389,70 @@ public class Instance {
         return main__.encode(d);
     }
 
-    public BigDecimal convert(LCurrency a, BigDecimal amnt, LCurrency b) {
+    public BigDecimal convert(BigDecimal amount, LCurrency a, LCurrency b) {
         if (a.getTicker().equalsIgnoreCase(b.getTicker()) && a.getName().equalsIgnoreCase(b.getName())) {
-            return amnt;
+            return amount;
         } else {
-            if (a.getTicker().equals(b.getTicker()) && a.getClass() == b.getClass() && a.isFiat() == b.isFiat()) {
-                return amnt.multiply(b.getFactor().divide(a.getFactor(), PRECISION));
-            }
-            if (a.isFiat() && b.isFiat()) {
-                if (root.contains(a.getTicker())) {
-                    return amnt.multiply(FILE_HANDLER.hitPolygonForex(a.getTicker(), b.getTicker())).multiply(b.getFactor().divide(a.getFactor(), PRECISION));
-                } else if (root.contains(b.getTicker())) {
-                    return amnt.divide(FILE_HANDLER.hitPolygonForex(b.getTicker(), a.getTicker()), PRECISION).multiply(b.getFactor().divide(a.getFactor(), PRECISION));
+            for (LMarketApi marketApi : MARKET_APIS) {
+                if (marketApi.canConvert(a, b)) {
+                    return marketApi.convert(amount, a, b);
                 }
             }
-            if (a.getClass() == LCurrency.class && b.getClass() == LCurrency.class) {
-                boolean vs = false, f = true;
-                if (!a.isFiat()) {
-                    for (LCurrency cur : VS) {
-                        if (b.equals(cur) || (b.isFiat() == cur.isFiat() && b.getClass() == cur.getClass() && b.getTicker().equals(cur.getTicker()))) {
-                            vs = true;
-                            break;
-                        }
-                    }
+            LMarketApi aa = null, bb = null;
+            for (LMarketApi marketApi : MARKET_APIS) {
+                if (aa == null && marketApi.canConvert(a, main)) {
+                    aa = marketApi;
                 }
-                if (!vs) {
-                    for (LCurrency cur : VS) {
-                        if (a.equals(cur) || (a.isFiat() == cur.isFiat() && a.getClass() == cur.getClass() && a.getTicker().equals(cur.getTicker()))) {
-                            vs = true;
-                            f = false;
-                            break;
-                        }
-                    }
+                if (bb == null && marketApi.canConvert(b, main)) {
+                    bb = marketApi;
                 }
-                if (vs) {
-                    String name;
-                    if (f) {
-                        if (a.getAltName().equals("")) {
-                            name = a.getName().toLowerCase().replace(" ", "-");
-                        } else {
-                            name = a.getAltName();
-                        }
-                        return FILE_HANDLER.hitCoinGecko(name, b.getTicker()).multiply(amnt).multiply(b.getFactor().divide(a.getFactor(), PRECISION));
-                    } else {
-                        if (b.getAltName().equals("")) {
-                            name = b.getName().toLowerCase().replace(" ", "-");
-                        } else {
-                            name = b.getAltName();
-                        }
-                        return amnt.divide(FILE_HANDLER.hitCoinGecko(name, a.getTicker().toLowerCase()), PRECISION).multiply(b.getFactor().divide(a.getFactor(), PRECISION));
-                    }
+            }
+            if (aa == null || bb == null) {
+                if (aa == null && bb == null) {
+                    LOG_HANDLER.error(getClass(), "The following assets are not presently covnertable: " + a + ", " + b);
+                } else if (aa == null) {
+                    LOG_HANDLER.error(getClass(), "The following asset is not presently covnertable: " + a);
                 } else {
-                    return b.reverseTotal(a.getTotal(amnt));
+                    LOG_HANDLER.error(getClass(), "The following asset is not presently covnertable: " + b);
                 }
+                return BigDecimal.ZERO;
             } else {
-                return b.reverseTotal(a.getTotal(amnt));
+                BigDecimal x = aa.getCurrentPrice(a, main).divide(bb.getCurrentPrice(b, main), precision);
+                return amount.multiply(x).multiply(b.getFactor().divide(a.getFactor(), precision));
+            }
+        }
+    }
+
+    public BigDecimal convert(BigDecimal amount, LCurrency a, LCurrency b, LDate date) {
+        if (a.getTicker().equalsIgnoreCase(b.getTicker()) && a.getName().equalsIgnoreCase(b.getName())) {
+            return amount;
+        } else {
+            for (LMarketApi marketApi : MARKET_APIS) {
+                if (marketApi.canConvert(a, b)) {
+                    return marketApi.convert(amount, a, b, date);
+                }
+            }
+            LMarketApi aa = null, bb = null;
+            for (LMarketApi marketApi : MARKET_APIS) {
+                if (aa == null && marketApi.canConvert(a, main)) {
+                    aa = marketApi;
+                }
+                if (bb == null && marketApi.canConvert(b, main)) {
+                    bb = marketApi;
+                }
+            }
+            if (aa == null || bb == null) {
+                if (aa == null && bb == null) {
+                    LOG_HANDLER.error(getClass(), "The following assets are not presently covnertable: " + a + ", " + b);
+                } else if (aa == null) {
+                    LOG_HANDLER.error(getClass(), "The following asset is not presently covnertable: " + a);
+                } else {
+                    LOG_HANDLER.error(getClass(), "The following asset is not presently covnertable: " + b);
+                }
+                return BigDecimal.ZERO;
+            } else {
+                BigDecimal x = aa.getHistoricalPrice(a, main, date).divide(bb.getHistoricalPrice(b, main, date), precision);
+                return amount.multiply(x).multiply(b.getFactor().divide(a.getFactor(), precision));
             }
         }
     }
@@ -513,7 +525,7 @@ public class Instance {
             return BigDecimal.ZERO;
         } else {
             if (flag) {
-                return new BigDecimal(out.toString()).divide(BigDecimal.TEN.pow(2), PRECISION);
+                return new BigDecimal(out.toString()).divide(BigDecimal.TEN.pow(2), precision);
             } else {
                 return new BigDecimal(out.toString());
             }

@@ -64,7 +64,7 @@ public class PositionGui extends RegisterFrame {
         BigDecimal tCost = BigDecimal.ZERO, tVal = BigDecimal.ZERO;
         for (Position p : CURRENT_INSTANCE.DATA_HANDLER.getPositions()) {
             BigDecimal[] analog = p.collapse();
-            if (analog[0].compareTo(BigDecimal.ONE.divide(BigDecimal.TEN.pow(p.ASSET.getPlaces() - 1), CURRENT_INSTANCE.PRECISION)) > 0) {
+            if (analog[0].compareTo(BigDecimal.ONE.divide(BigDecimal.TEN.pow(p.ASSET.getPlaces() - 1), CURRENT_INSTANCE.precision)) > 0) {
                 BigDecimal val = p.ASSET.getTotal(analog[0]);
                 tCost = tCost.add(analog[1]);
                 tVal = tVal.add(val);
@@ -74,7 +74,7 @@ public class PositionGui extends RegisterFrame {
                         CURRENT_INSTANCE.$$(analog[1]),
                         CURRENT_INSTANCE.$$(analog[2]),
                         CURRENT_INSTANCE.$$(val),
-                        CURRENT_INSTANCE.$$(val.divide(analog[0], CURRENT_INSTANCE.PRECISION)),
+                        CURRENT_INSTANCE.$$(val.divide(analog[0], CURRENT_INSTANCE.precision)),
                         CURRENT_INSTANCE.$$(val.add(analog[1]))
                 });
             }

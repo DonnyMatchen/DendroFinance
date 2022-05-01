@@ -15,6 +15,8 @@ import javax.swing.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.io.File;
+import java.math.BigDecimal;
+import java.math.MathContext;
 import java.nio.charset.Charset;
 import java.security.InvalidKeyException;
 import java.security.MessageDigest;
@@ -300,14 +302,8 @@ public class PasswordGui extends JFrame {
                 CURRENT_INSTANCE.day = true;
             }
         }
-        if (config.FIELDS.containsKey("twelve-data-key")) {
-            CURRENT_INSTANCE.twelveDataApiKey = config.getString("twelve-data-key").getString();
-        }
-        if (config.FIELDS.containsKey("polygon-key")) {
-            CURRENT_INSTANCE.polygonApiKey = config.getString("polygon-key").getString();
-        }
-        if (config.FIELDS.containsKey("stock-api")) {
-            CURRENT_INSTANCE.stockAPI = config.getString("stock-api").getString();
+        if(config.FIELDS.containsKey("precision")){
+            CURRENT_INSTANCE.precision = new MathContext(config.getDecimal("precision").decimal.intValue());
         }
         if (config.FIELDS.containsKey("log")) {
             CURRENT_INSTANCE.logLevel = new LogHandler.LogLevel(config.getString("log").getString());
@@ -347,9 +343,7 @@ public class PasswordGui extends JFrame {
             flags += "d";
         }
         config.FIELDS.put("flags", new JsonString(flags));
-        config.FIELDS.put("twelve-data-key", new JsonString(CURRENT_INSTANCE.twelveDataApiKey));
-        config.FIELDS.put("polygon-key", new JsonString(CURRENT_INSTANCE.polygonApiKey));
-        config.FIELDS.put("stock-api", new JsonString(CURRENT_INSTANCE.stockAPI));
+        config.FIELDS.put("precision", new JsonDecimal(BigDecimal.valueOf(CURRENT_INSTANCE.precision.getPrecision())));
         config.FIELDS.put("log", new JsonString(CURRENT_INSTANCE.logLevel.getName()));
         config.FIELDS.put("main", new JsonString(CURRENT_INSTANCE.mainTicker));
         config.FIELDS.put("main__", new JsonString(CURRENT_INSTANCE.main__Ticker));

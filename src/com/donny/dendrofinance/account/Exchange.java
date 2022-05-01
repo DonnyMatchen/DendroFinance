@@ -40,7 +40,7 @@ public class Exchange implements ExportableToJsonObject {
         SUPPORTED = new ArrayList<>(sup);
         STAKING = new ArrayList<>();
         EXPORT = export;
-        curInst.LOG_HANDLER.trace(this.getClass(), "Exchange " + NAME + " Created");
+        curInst.LOG_HANDLER.trace(getClass(), "Exchange " + NAME + " Created");
     }
 
     public Exchange(String name, String alt, ArrayList<String> sup, ArrayList<JsonObject> stak, Instance curInst, boolean export) {
@@ -142,7 +142,7 @@ public class Exchange implements ExportableToJsonObject {
         for (String name : aNames()) {
             Account a = curInst.ACCOUNTS.getElement(name);
             if (a == null) {
-                curInst.LOG_HANDLER.info(this.getClass(), "You might have a missing currency (" + name + ")");
+                curInst.LOG_HANDLER.info(getClass(), "You might have a missing currency (" + name + ")");
             } else {
                 if (a.inUse()) {
                     reduced.add(name);

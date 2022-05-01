@@ -75,7 +75,7 @@ public class PasswordGui extends JFrame {
                         addProfile(obj, false);
                     }
                 } catch (JsonFormattingException e) {
-                    CURRENT_INSTANCE.LOG_HANDLER.fatal(this.getClass(), "Mis-formatted Profiles!\n" + e);
+                    CURRENT_INSTANCE.LOG_HANDLER.fatal(getClass(), "Mis-formatted Profiles!\n" + e);
                     CURRENT_INSTANCE.LOG_HANDLER.save();
                     System.exit(1);
                 }
@@ -154,7 +154,7 @@ public class PasswordGui extends JFrame {
 
             pack();
         }
-        CURRENT_INSTANCE.LOG_HANDLER.trace(this.getClass(), "PasswordGui created");
+        CURRENT_INSTANCE.LOG_HANDLER.trace(getClass(), "PasswordGui created");
     }
 
     /**
@@ -197,7 +197,7 @@ public class PasswordGui extends JFrame {
         bflKey = keys[1];
         PASSWORD.setText("");
         if (aesKey == null || bflKey == null) {
-            CURRENT_INSTANCE.LOG_HANDLER.fatal(this.getClass(), "Password Hashing Failed!");
+            CURRENT_INSTANCE.LOG_HANDLER.fatal(getClass(), "Password Hashing Failed!");
             CURRENT_INSTANCE.LOG_HANDLER.save();
             System.exit(1);
         }
@@ -223,7 +223,7 @@ public class PasswordGui extends JFrame {
                 done = true;
                 setVisible(false);
             } else {
-                CURRENT_INSTANCE.LOG_HANDLER.fatal(this.getClass(), "Password Hashing Failed!");
+                CURRENT_INSTANCE.LOG_HANDLER.fatal(getClass(), "Password Hashing Failed!");
                 CURRENT_INSTANCE.LOG_HANDLER.save();
                 System.exit(1);
             }
@@ -250,7 +250,7 @@ public class PasswordGui extends JFrame {
             bflCipher.init(Cipher.ENCRYPT_MODE, bflKey);
             return Base64.getEncoder().encodeToString(bflCipher.doFinal(aesCipher.doFinal(text.getBytes(Charset.forName("unicode")))));
         } catch (BadPaddingException | IllegalBlockSizeException | InvalidKeyException | NoSuchPaddingException | NoSuchAlgorithmException ex) {
-            CURRENT_INSTANCE.LOG_HANDLER.fatal(this.getClass(), "Incorrect password used.");
+            CURRENT_INSTANCE.LOG_HANDLER.fatal(getClass(), "Incorrect password used.");
             CURRENT_INSTANCE.LOG_HANDLER.save();
             ex.printStackTrace();
             System.exit(1);
@@ -266,7 +266,7 @@ public class PasswordGui extends JFrame {
             bflCipher.init(Cipher.DECRYPT_MODE, bflKey);
             return new String(aesCipher.doFinal(bflCipher.doFinal(Base64.getDecoder().decode(text))), Charset.forName("Unicode"));
         } catch (BadPaddingException | NoSuchPaddingException | NoSuchAlgorithmException | IllegalBlockSizeException | InvalidKeyException ex) {
-            CURRENT_INSTANCE.LOG_HANDLER.fatal(this.getClass(), "Incorrect password used.");
+            CURRENT_INSTANCE.LOG_HANDLER.fatal(getClass(), "Incorrect password used.");
             CURRENT_INSTANCE.LOG_HANDLER.save();
             System.exit(1);
         }
@@ -358,7 +358,7 @@ public class PasswordGui extends JFrame {
         try {
             new ProfileGui(this, getConfig("DEFAULT"), CURRENT_INSTANCE).setVisible(true);
         } catch (JsonFormattingException e) {
-            CURRENT_INSTANCE.LOG_HANDLER.fatal(this.getClass(), "Mis-formatted Profiles!\n" + e);
+            CURRENT_INSTANCE.LOG_HANDLER.fatal(getClass(), "Mis-formatted Profiles!\n" + e);
             CURRENT_INSTANCE.LOG_HANDLER.save();
             System.exit(1);
         }

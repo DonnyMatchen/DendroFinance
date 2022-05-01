@@ -20,7 +20,7 @@ public class ImportHandler {
     public ImportHandler(Instance curInst) {
         CURRENT_INSTANCE = curInst;
         load();
-        CURRENT_INSTANCE.LOG_HANDLER.trace(this.getClass(), "ImportHandler initiated");
+        CURRENT_INSTANCE.LOG_HANDLER.trace(getClass(), "ImportHandler initiated");
     }
 
     public final void load() {
@@ -55,7 +55,7 @@ public class ImportHandler {
                     entry.insertIntoField("meta-data", new LJson((JsonObject) JsonItem.sanitizeDigest(fields[6])));
                 }
             } catch (JsonFormattingException e) {
-                CURRENT_INSTANCE.LOG_HANDLER.error(this.getClass(), "Bad Metadata: " + fields[6]);
+                CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Bad Metadata: " + fields[6]);
             }
             CURRENT_INSTANCE.DATA_HANDLER.addTransaction(entry);
         }
@@ -72,7 +72,7 @@ public class ImportHandler {
                 }
                 imported = true;
             } catch (JsonFormattingException e) {
-                CURRENT_INSTANCE.LOG_HANDLER.error(this.getClass(), "Malformed Import File:\n" + file.getPath());
+                CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Malformed Import File:\n" + file.getPath());
             }
         } else if (file.getName().toLowerCase().contains("budget")) {
             try {
@@ -82,7 +82,7 @@ public class ImportHandler {
                 }
                 imported = true;
             } catch (JsonFormattingException e) {
-                CURRENT_INSTANCE.LOG_HANDLER.error(this.getClass(), "Malformed Import File:\n" + file.getPath());
+                CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Malformed Import File:\n" + file.getPath());
             }
         }
         if (imported) {

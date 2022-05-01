@@ -149,7 +149,7 @@ public class TransactionEntry extends Entry<TransactionHeader> implements Compar
             try {
                 array.ARRAY.add(asset.export());
             } catch (JsonFormattingException e) {
-                CURRENT_INSTANCE.LOG_HANDLER.error(this.getClass(), "The universe has broken\n" + asset.NAME);
+                CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "The universe has broken\n" + asset.NAME);
             }
         }
         getJson("meta-data").OBJECT.FIELDS.put("asset", array);
@@ -174,7 +174,7 @@ public class TransactionEntry extends Entry<TransactionHeader> implements Compar
             try {
                 array.ARRAY.add(asset.export());
             } catch (JsonFormattingException e) {
-                CURRENT_INSTANCE.LOG_HANDLER.error(this.getClass(), "The universe has broken\n" + asset.NAME);
+                CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "The universe has broken\n" + asset.NAME);
             }
         }
         getJson("meta-data").OBJECT.FIELDS.put("asset-change", array);
@@ -199,7 +199,7 @@ public class TransactionEntry extends Entry<TransactionHeader> implements Compar
             try {
                 array.ARRAY.add(loan.export());
             } catch (JsonFormattingException e) {
-                CURRENT_INSTANCE.LOG_HANDLER.error(this.getClass(), "The universe has broken\n" + loan.NAME);
+                CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "The universe has broken\n" + loan.NAME);
             }
         }
         getJson("meta-data").OBJECT.FIELDS.put("loan", array);
@@ -224,7 +224,7 @@ public class TransactionEntry extends Entry<TransactionHeader> implements Compar
             try {
                 array.ARRAY.add(loan.export());
             } catch (JsonFormattingException e) {
-                CURRENT_INSTANCE.LOG_HANDLER.error(this.getClass(), "The universe has broken\n" + loan.NAME);
+                CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "The universe has broken\n" + loan.NAME);
             }
         }
         getJson("meta-data").OBJECT.FIELDS.put("loan-change", array);
@@ -249,7 +249,7 @@ public class TransactionEntry extends Entry<TransactionHeader> implements Compar
             try {
                 array.ARRAY.add(ledger.export());
             } catch (JsonFormattingException e) {
-                CURRENT_INSTANCE.LOG_HANDLER.error(this.getClass(), "The universe has broken\n" + ledger.UUID + ": " + ledger);
+                CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "The universe has broken\n" + ledger.UUID + ": " + ledger);
             }
         }
         getJson("meta-data").OBJECT.FIELDS.put("ledger", array);

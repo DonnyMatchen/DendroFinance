@@ -147,7 +147,7 @@ public class InventoryBTC extends BackingTableCore<LInventory> {
             try {
                 out.ARRAY.add(inv.export());
             } catch (JsonFormattingException ex) {
-                CURRENT_INSTANCE.LOG_HANDLER.error(this.getClass(), "Malformed Inventory: " + inv);
+                CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Malformed Inventory: " + inv);
             }
         }
         return out;

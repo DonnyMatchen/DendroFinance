@@ -16,7 +16,7 @@ public class FileHandler {
 
     public FileHandler(Instance curInst) {
         CURRENT_INSTANCE = curInst;
-        CURRENT_INSTANCE.LOG_HANDLER.trace(this.getClass(), "FileHandler Initiated");
+        CURRENT_INSTANCE.LOG_HANDLER.trace(getClass(), "FileHandler Initiated");
     }
 
     public String read(File file) {
@@ -32,13 +32,13 @@ public class FileHandler {
                     flag = false;
                 }
             }
-            CURRENT_INSTANCE.LOG_HANDLER.debug(this.getClass(), "file read: " + file.getAbsolutePath());
+            CURRENT_INSTANCE.LOG_HANDLER.debug(getClass(), "file read: " + file.getAbsolutePath());
             return output.toString().replace("\r", "");
         } catch (IOException e) {
             if (file.exists()) {
-                CURRENT_INSTANCE.LOG_HANDLER.error(this.getClass(), file.getPath() + " could not be read from");
+                CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), file.getPath() + " could not be read from");
             } else {
-                CURRENT_INSTANCE.LOG_HANDLER.error(this.getClass(), file.getPath() + " does not exist");
+                CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), file.getPath() + " does not exist");
             }
             return "";
         }
@@ -62,10 +62,10 @@ public class FileHandler {
                 }
             }
             reader.close();
-            CURRENT_INSTANCE.LOG_HANDLER.debug(this.getClass(), "file read: " + file.getAbsolutePath());
+            CURRENT_INSTANCE.LOG_HANDLER.debug(getClass(), "file read: " + file.getAbsolutePath());
             return output.toString().replace("\r", "");
         } catch (IOException e) {
-            CURRENT_INSTANCE.LOG_HANDLER.error(this.getClass(), file.getPath() + " could not be read from");
+            CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), file.getPath() + " could not be read from");
             return "";
         }
     }
@@ -88,11 +88,11 @@ public class FileHandler {
     }
 
     public byte[] getResource(String path) {
-        InputStream stream = this.getClass().getResourceAsStream("/com/donny/dendrofinance/resources/" + path);
+        InputStream stream = getClass().getResourceAsStream("/com/donny/dendrofinance/resources/" + path);
         try {
             return stream.readAllBytes();
         } catch (IOException e) {
-            CURRENT_INSTANCE.LOG_HANDLER.error(this.getClass(), "Resource not located: " + path);
+            CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Resource not located: " + path);
             return null;
         }
     }
@@ -102,10 +102,10 @@ public class FileHandler {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(file, Charset.forName("unicode")))) {
             writer.write(output);
             writer.close();
-            CURRENT_INSTANCE.LOG_HANDLER.debug(this.getClass(), "file written: " + file.getAbsolutePath());
+            CURRENT_INSTANCE.LOG_HANDLER.debug(getClass(), "file written: " + file.getAbsolutePath());
         } catch (IOException e) {
-            CURRENT_INSTANCE.LOG_HANDLER.error(this.getClass(), file.getPath() + " could not be written to");
-            CURRENT_INSTANCE.LOG_HANDLER.debug(this.getClass(), output);
+            CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), file.getPath() + " could not be written to");
+            CURRENT_INSTANCE.LOG_HANDLER.debug(getClass(), output);
         }
     }
 
@@ -118,10 +118,10 @@ public class FileHandler {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(file, StandardCharsets.US_ASCII))) {
             writer.write(output);
             writer.close();
-            CURRENT_INSTANCE.LOG_HANDLER.debug(this.getClass(), "file written: " + file.getAbsolutePath());
+            CURRENT_INSTANCE.LOG_HANDLER.debug(getClass(), "file written: " + file.getAbsolutePath());
         } catch (IOException e) {
-            CURRENT_INSTANCE.LOG_HANDLER.error(this.getClass(), file.getPath() + " could not be written to");
-            CURRENT_INSTANCE.LOG_HANDLER.debug(this.getClass(), output);
+            CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), file.getPath() + " could not be written to");
+            CURRENT_INSTANCE.LOG_HANDLER.debug(getClass(), output);
         }
     }
 
@@ -143,10 +143,10 @@ public class FileHandler {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(file, Charset.forName("unicode"), true))) {
             writer.write(output);
             writer.close();
-            CURRENT_INSTANCE.LOG_HANDLER.debug(this.getClass(), "file appended: " + file.getAbsolutePath());
+            CURRENT_INSTANCE.LOG_HANDLER.debug(getClass(), "file appended: " + file.getAbsolutePath());
         } catch (IOException e) {
-            CURRENT_INSTANCE.LOG_HANDLER.error(this.getClass(), file.getPath() + " could not be written to");
-            CURRENT_INSTANCE.LOG_HANDLER.debug(this.getClass(), output);
+            CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), file.getPath() + " could not be written to");
+            CURRENT_INSTANCE.LOG_HANDLER.debug(getClass(), output);
         }
     }
 
@@ -159,10 +159,10 @@ public class FileHandler {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(file, StandardCharsets.US_ASCII, true))) {
             writer.write(output);
             writer.close();
-            CURRENT_INSTANCE.LOG_HANDLER.debug(this.getClass(), "file appended: " + file.getAbsolutePath());
+            CURRENT_INSTANCE.LOG_HANDLER.debug(getClass(), "file appended: " + file.getAbsolutePath());
         } catch (IOException e) {
-            CURRENT_INSTANCE.LOG_HANDLER.error(this.getClass(), file.getPath() + " could not be written to");
-            CURRENT_INSTANCE.LOG_HANDLER.debug(this.getClass(), output);
+            CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), file.getPath() + " could not be written to");
+            CURRENT_INSTANCE.LOG_HANDLER.debug(getClass(), output);
         }
     }
 
@@ -173,7 +173,7 @@ public class FileHandler {
     public void delete(File file) {
         ensure(file.getParentFile());
         file.delete();
-        CURRENT_INSTANCE.LOG_HANDLER.debug(this.getClass(), "file deleted: " + file.getAbsolutePath());
+        CURRENT_INSTANCE.LOG_HANDLER.debug(getClass(), "file deleted: " + file.getAbsolutePath());
     }
 
     public void delete(File dir, String file) {
@@ -205,7 +205,7 @@ public class FileHandler {
                     try {
                         history = (JsonArray) JsonItem.sanitizeDigest(readPlain(f));
                     } catch (JsonFormattingException e) {
-                        CURRENT_INSTANCE.LOG_HANDLER.error(this.getClass(), "Bad Private Stock File: " + f.getPath());
+                        CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Bad Private Stock File: " + f.getPath());
                     }
                 }
             }
@@ -213,7 +213,7 @@ public class FileHandler {
         if (history != null) {
             return history;
         } else {
-            CURRENT_INSTANCE.LOG_HANDLER.error(this.getClass(), "No History File found!: " + name);
+            CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "No History File found!: " + name);
             return null;
         }
     }
@@ -222,7 +222,7 @@ public class FileHandler {
         try {
             return JsonItem.sanitizeDigest(streamRaw(url));
         } catch (JsonFormattingException e) {
-            CURRENT_INSTANCE.LOG_HANDLER.error(this.getClass(), "Bad Json at:" + url + "\n" + e);
+            CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Bad Json at:" + url + "\n" + e);
             return null;
         }
     }
@@ -243,7 +243,7 @@ public class FileHandler {
             stream.close();
             return sb.toString();
         } catch (IOException e) {
-            CURRENT_INSTANCE.LOG_HANDLER.error(this.getClass(), "Could not connect to " + url + "\n" + e);
+            CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Could not connect to " + url + "\n" + e);
             return "";
         }
     }

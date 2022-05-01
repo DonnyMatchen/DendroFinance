@@ -60,7 +60,7 @@ public class LCurrency implements ExportableToJsonObject {
         CURRENT_INSTANCE = curInst;
         String flags = obj.getString("flags").getString();
         if (!obj.FIELDS.containsKey("name")) {
-            CURRENT_INSTANCE.LOG_HANDLER.warn(this.getClass(), "Nameless Currency:\n" + obj);
+            CURRENT_INSTANCE.LOG_HANDLER.warn(getClass(), "Nameless Currency:\n" + obj);
         }
         if (obj.FIELDS.containsKey("factor")) {
             FACTOR = obj.getDecimal("factor").decimal;

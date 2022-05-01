@@ -19,7 +19,7 @@ public class LogHandler {
         CURRENT_INSTANCE = curInst;
         LOG = new StringBuilder();
         TRACE = new StringBuilder();
-        trace(this.getClass(), "Log Handler Initiated");
+        trace(getClass(), "Log Handler Initiated");
     }
 
     public void print(String str, boolean print) {

@@ -33,7 +33,7 @@ public class DataHandler {
         CURRENT_INSTANCE = curInst;
         TRANSACTIONS = new DataSet<>("Transactions", EntryType.TRANSACTION, CURRENT_INSTANCE);
         BUDGETS = new DataSet<>("Budgets", EntryType.BUDGET, CURRENT_INSTANCE);
-        CURRENT_INSTANCE.LOG_HANDLER.trace(this.getClass(), "DataHandler Initiated");
+        CURRENT_INSTANCE.LOG_HANDLER.trace(getClass(), "DataHandler Initiated");
     }
 
     public void init() {
@@ -41,7 +41,7 @@ public class DataHandler {
             TRANSACTIONS.load();
             BUDGETS.load();
         } catch (JsonFormattingException e) {
-            CURRENT_INSTANCE.LOG_HANDLER.error(this.getClass(), "Error loading datasets: " + e);
+            CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Error loading datasets: " + e);
         }
     }
 
@@ -74,7 +74,7 @@ public class DataHandler {
             TRANSACTIONS.read().sort(TransactionEntry::compareTo);
             return TRANSACTIONS.read();
         } catch (JsonFormattingException e) {
-            CURRENT_INSTANCE.LOG_HANDLER.error(this.getClass(), "Error loading datasets: " + e);
+            CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Error loading datasets: " + e);
             return new ArrayList<>();
         }
     }
@@ -83,7 +83,7 @@ public class DataHandler {
         try {
             return BUDGETS.read();
         } catch (JsonFormattingException e) {
-            CURRENT_INSTANCE.LOG_HANDLER.error(this.getClass(), "Error loading datasets: " + e);
+            CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Error loading datasets: " + e);
             return new ArrayList<>();
         }
     }
@@ -120,7 +120,7 @@ public class DataHandler {
     }
 
     public HashMap<LCurrency, BigDecimal> pricesAsOf(int y, int m, int d) {
-        CURRENT_INSTANCE.LOG_HANDLER.trace(this.getClass(), "Price-get started");
+        CURRENT_INSTANCE.LOG_HANDLER.trace(getClass(), "Price-get started");
         HashMap<Account, BigDecimal> acc = accountsAsOf(y, m, d);
         HashMap<LCurrency, BigDecimal> out = new HashMap<>();
         for (Account a : acc.keySet()) {
@@ -139,7 +139,7 @@ public class DataHandler {
                 }
             }
         }
-        CURRENT_INSTANCE.LOG_HANDLER.trace(this.getClass(), "Price get finished");
+        CURRENT_INSTANCE.LOG_HANDLER.trace(getClass(), "Price get finished");
         return out;
     }
 
@@ -954,11 +954,11 @@ public class DataHandler {
                 for (String cur : curAg.keySet()) {
                     if (!ledgAg.containsKey(cur)) {
                         if (curAg.get(cur).compareTo(BigDecimal.ZERO) != 0) {
-                            CURRENT_INSTANCE.LOG_HANDLER.error(this.getClass(), "Damaged or missing ledger metadata for entry: " + entry.getUUID());
+                            CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Damaged or missing ledger metadata for entry: " + entry.getUUID());
                         }
                     } else if (curAg.get(cur).compareTo(ledgAg.get(cur)) != 0) {
-                        CURRENT_INSTANCE.LOG_HANDLER.error(this.getClass(), "Damaged ledger metadata for entry: " + entry.getUUID());
-                        CURRENT_INSTANCE.LOG_HANDLER.error(this.getClass(), "Disparity: " + cur + ": " + curAg.get(cur) + " / " + ledgAg.get(cur));
+                        CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Damaged ledger metadata for entry: " + entry.getUUID());
+                        CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Disparity: " + cur + ": " + curAg.get(cur) + " / " + ledgAg.get(cur));
                     }
                 }
             }
@@ -982,8 +982,8 @@ public class DataHandler {
                             if (map.get(uuid).compareTo(BigDecimal.ZERO) < 0) {
                                 if (wrapper.ACCOUNT.getName().equals("Tax_CapGain") ||
                                         !CURRENT_INSTANCE.$(map.get(uuid).abs()).equals(CURRENT_INSTANCE.$(wrapper.VALUE))) {
-                                    CURRENT_INSTANCE.LOG_HANDLER.error(this.getClass(), "Mismatched Capital Loss: " + uuid);
-                                    CURRENT_INSTANCE.LOG_HANDLER.error(this.getClass(), "Disparity: " + CURRENT_INSTANCE.$(map.get(uuid)) + " : " +
+                                    CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Mismatched Capital Loss: " + uuid);
+                                    CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Disparity: " + CURRENT_INSTANCE.$(map.get(uuid)) + " : " +
                                             (wrapper.ACCOUNT.getName().contains("CapGain") ? CURRENT_INSTANCE.$(wrapper.VALUE) :
                                                     CURRENT_INSTANCE.$(negative))
                                     );
@@ -992,8 +992,8 @@ public class DataHandler {
                                 if (wrapper.ACCOUNT.getName().equals("Tax_CapLoss") ||
                                         !(CURRENT_INSTANCE.$(map.get(uuid).abs()).equals(CURRENT_INSTANCE.$(wrapper.VALUE)))
                                 ) {
-                                    CURRENT_INSTANCE.LOG_HANDLER.error(this.getClass(), "Mismatched Capital Gain: " + uuid);
-                                    CURRENT_INSTANCE.LOG_HANDLER.error(this.getClass(), "Disparity: " + CURRENT_INSTANCE.$(map.get(uuid)) + " : " +
+                                    CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Mismatched Capital Gain: " + uuid);
+                                    CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Disparity: " + CURRENT_INSTANCE.$(map.get(uuid)) + " : " +
                                             (wrapper.ACCOUNT.getName().contains("CapGain") ? CURRENT_INSTANCE.$(wrapper.VALUE) :
                                                     CURRENT_INSTANCE.$(negative))
                                     );
@@ -1004,8 +1004,8 @@ public class DataHandler {
                 }
             }
             if (flag && !entry.equals(getPrior())) {
-                CURRENT_INSTANCE.LOG_HANDLER.error(this.getClass(), "Sale missing Capital Gain/Loss: " + entry.getUUID());
-                CURRENT_INSTANCE.LOG_HANDLER.error(this.getClass(), "Value should be: " + map.get(uuid));
+                CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Sale missing Capital Gain/Loss: " + entry.getUUID());
+                CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Value should be: " + map.get(uuid));
             }
         }
     }

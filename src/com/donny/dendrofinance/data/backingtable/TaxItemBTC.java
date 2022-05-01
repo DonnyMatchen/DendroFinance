@@ -94,7 +94,7 @@ public class TaxItemBTC extends BackingTableCore<TaxItem> {
             try {
                 array.ARRAY.add(item.export());
             } catch (JsonFormattingException ex) {
-                CURRENT_INSTANCE.LOG_HANDLER.error(this.getClass(), "Malformed taxItem: " + item.NAME);
+                CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Malformed taxItem: " + item.NAME);
             }
         }
         return array;

@@ -273,11 +273,11 @@ public class ProfileGui extends JDialog {
             CALLER.addProfile(config, true);
             dispose();
         } catch (JsonFormattingException e) {
-            CURRENT_INSTANCE.LOG_HANDLER.fatal(this.getClass(), "Mis-formatted Profiles!\n" + e);
+            CURRENT_INSTANCE.LOG_HANDLER.fatal(getClass(), "Mis-formatted Profiles!\n" + e);
             CURRENT_INSTANCE.LOG_HANDLER.save();
             System.exit(1);
         } catch (ValidationFailedException e) {
-            CURRENT_INSTANCE.LOG_HANDLER.fatal(this.getClass(), "validation failed!\n" + e);
+            CURRENT_INSTANCE.LOG_HANDLER.fatal(getClass(), "validation failed!\n" + e);
         }
     }
 }

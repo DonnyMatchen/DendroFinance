@@ -110,7 +110,7 @@ public class AssetStatusGui extends RegisterFrame {
                             && (!a.getName().equalsIgnoreCase("Crypto") && !a.getName().equalsIgnoreCase("Stock")
                             && !a.getName().equalsIgnoreCase("Held_Inventory") && !a.getName().equalsIgnoreCase("Other_Cash"))) {
                         if (prices.get(a.getCurrency()) == null) {
-                            CURRENT_INSTANCE.LOG_HANDLER.error(this.getClass(), "Missing prices: " + a.getCurrency());
+                            CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Missing prices: " + a.getCurrency());
                         }
                         TABLE_ACCESS.addRow(new String[]{
                                 a.getName(), a.getCurrency().encode(acc.get(a)), CURRENT_INSTANCE.$(acc.get(a).multiply(prices.get(a.getCurrency())))

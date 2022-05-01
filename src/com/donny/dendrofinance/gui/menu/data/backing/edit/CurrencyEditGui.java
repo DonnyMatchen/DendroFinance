@@ -61,7 +61,7 @@ public class CurrencyEditGui extends BackingEditGui<LCurrency> {
                     ));
                     dispose();
                 } catch (ValidationFailedException ex) {
-                    CURRENT_INSTANCE.LOG_HANDLER.error(this.getClass(), "You did a badness!");
+                    CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "You did a badness!");
                 }
             } else {
                 try {
@@ -79,7 +79,7 @@ public class CurrencyEditGui extends BackingEditGui<LCurrency> {
                     ));
                     dispose();
                 } catch (ValidationFailedException ex) {
-                    CURRENT_INSTANCE.LOG_HANDLER.error(this.getClass(), "You did a badness!");
+                    CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "You did a badness!");
                 }
             }
         });

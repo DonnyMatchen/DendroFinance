@@ -180,7 +180,7 @@ public class CurrencyBTC extends BackingTableCore<LCurrency> {
             try {
                 out.ARRAY.add(cur.export());
             } catch (JsonFormattingException ex) {
-                CURRENT_INSTANCE.LOG_HANDLER.error(this.getClass(), "Malformed LCurrency: " + cur);
+                CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Malformed LCurrency: " + cur);
             }
         }
         return out;

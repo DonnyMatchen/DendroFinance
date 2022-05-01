@@ -12,7 +12,7 @@ public class UuidHandler {
     public UuidHandler(Instance curInst) {
         CURRENT_INSTANCE = curInst;
         UUIDS = new ArrayList<>();
-        CURRENT_INSTANCE.LOG_HANDLER.trace(this.getClass(), "UuidHandler Initiated");
+        CURRENT_INSTANCE.LOG_HANDLER.trace(getClass(), "UuidHandler Initiated");
     }
 
     public long generateUUID() {

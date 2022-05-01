@@ -66,7 +66,7 @@ public class ExchangeEditGui extends BackingEditGui<Exchange> {
                         }
                     }
                     if (!needed.isEmpty()) {
-                        CURRENT_INSTANCE.LOG_HANDLER.error(this.getClass(), "You have removed exchange accounts that are in use:\n" + Arrays.toString(needed.toArray()));
+                        CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "You have removed exchange accounts that are in use:\n" + Arrays.toString(needed.toArray()));
                         sText.setBackground(DendroFactory.WRONG);
                         throw new ValidationFailedException();
                     }
@@ -91,7 +91,7 @@ public class ExchangeEditGui extends BackingEditGui<Exchange> {
                                 obj.FIELDS.put("places", new JsonDecimal(new BigDecimal(parts[1])));
                                 objs.add(obj);
                             } catch (NumberFormatException | ArrayIndexOutOfBoundsException | JsonFormattingException ex) {
-                                CURRENT_INSTANCE.LOG_HANDLER.error(this.getClass(), "Bad Staking List");
+                                CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Bad Staking List");
                                 tText.setBackground(DendroFactory.WRONG);
                                 throw new ValidationFailedException();
                             }
@@ -109,7 +109,7 @@ public class ExchangeEditGui extends BackingEditGui<Exchange> {
                     }
                     dispose();
                 } catch (ValidationFailedException ex) {
-                    CURRENT_INSTANCE.LOG_HANDLER.error(this.getClass(), "You did a badness!");
+                    CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "You did a badness!");
                 }
             } else {
                 try {
@@ -134,7 +134,7 @@ public class ExchangeEditGui extends BackingEditGui<Exchange> {
                                 obj.FIELDS.put("places", new JsonDecimal(new BigDecimal(parts[1])));
                                 objs.add(obj);
                             } catch (NumberFormatException | ArrayIndexOutOfBoundsException | JsonFormattingException ex) {
-                                CURRENT_INSTANCE.LOG_HANDLER.error(this.getClass(), "Bad Staking List");
+                                CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Bad Staking List");
                                 tText.setBackground(DendroFactory.WRONG);
                             }
                         }
@@ -151,7 +151,7 @@ public class ExchangeEditGui extends BackingEditGui<Exchange> {
                     }
                     dispose();
                 } catch (ValidationFailedException ex) {
-                    CURRENT_INSTANCE.LOG_HANDLER.error(this.getClass(), "You did a badness!");
+                    CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "You did a badness!");
                 }
             }
         });

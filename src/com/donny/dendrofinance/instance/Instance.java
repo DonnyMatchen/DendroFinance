@@ -26,6 +26,7 @@ import java.math.MathContext;
 import java.nio.charset.Charset;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
 
 public class Instance {
 
@@ -72,13 +73,17 @@ public class Instance {
         ENCRYPTION_HANDLER = new PasswordGui(args, this);
         UUID_HANDLER = new UuidHandler(this);
         ENCRYPTION_HANDLER.setVisible(true);
-        do {
-            System.out.print("");
-        } while (!ENCRYPTION_HANDLER.done);
+        while (!ENCRYPTION_HANDLER.done){
+            try {
+                TimeUnit.SECONDS.sleep(1);
+            }catch(InterruptedException ex){
+                LOG_HANDLER.warn(getClass(), "The timer was interrupted.  This could cause damage.  Check integrity of data before saving./");
+            }
+        }
         try {
             loadStuff();
         } catch (JsonFormattingException e) {
-            LOG_HANDLER.fatal(this.getClass(), "Mis-formatted data!\n" + e);
+            LOG_HANDLER.fatal(getClass(), "Mis-formatted data!\n" + e);
             LOG_HANDLER.save();
             System.exit(1);
         }
@@ -88,7 +93,7 @@ public class Instance {
         DATA_HANDLER.init();
         for (TransactionEntry entry : DATA_HANDLER.readTransactions()) {
             if (!entry.isBalanced()) {
-                LOG_HANDLER.error(this.getClass(), "Unbalanced entry: " + entry.getUUID());
+                LOG_HANDLER.error(getClass(), "Unbalanced entry: " + entry.getUUID());
             }
         }
         DATA_HANDLER.checkLedgers();
@@ -104,7 +109,7 @@ public class Instance {
     }
 
     public final void loadStuff() throws JsonFormattingException {
-        LOG_HANDLER.trace(this.getClass(), "Instance.loadStuff() run");
+        LOG_HANDLER.trace(getClass(), "Instance.loadStuff() run");
         //establishing data files
         File currencies = new File(data.getPath() + File.separator + "Currencies" + File.separator + "currencies.json"),
                 stocks = new File(data.getPath() + File.separator + "Currencies" + File.separator + "stocks.json"),
@@ -133,43 +138,50 @@ public class Instance {
                     exp.mkdir();
                 }
             }
-            //Currencies
-            {
-                if (!currencies.exists()) {
-                    FILE_HANDLER.write(currencies, new String(FILE_HANDLER.getTemplate("Currencies/currencies.json"), Charset.forName("unicode")));
+            //Hang to prevent File IO problems
+            boolean loaded = false;
+            while(!loaded){
+                loaded = currencies.exists() && stocks.exists() && inventories.exists() && special.exists() &&
+                        exchanges.exists() && accounts.exists() && extran.exists() && accTyp.exists() &&
+                        taxItm.exists() && marApi.exists();
+                //Currencies
+                {
+                    if (!currencies.exists()) {
+                        FILE_HANDLER.write(currencies, new String(FILE_HANDLER.getTemplate("Currencies/currencies.json"), Charset.forName("unicode")));
+                    }
+                    if (!stocks.exists()) {
+                        FILE_HANDLER.write(stocks, new String(FILE_HANDLER.getTemplate("Currencies/stocks.json"), Charset.forName("unicode")));
+                    }
+                    if (!inventories.exists()) {
+                        FILE_HANDLER.write(inventories, new String(FILE_HANDLER.getTemplate("Currencies/inventories.json"), Charset.forName("unicode")));
+                    }
+                    if (!special.exists()) {
+                        FILE_HANDLER.write(special, new String(FILE_HANDLER.getTemplate("Currencies/special.json"), Charset.forName("unicode")));
+                    }
+                    if (!marApi.exists()) {
+                        FILE_HANDLER.write(marApi, new String(FILE_HANDLER.getTemplate("Currencies/market-apis.json"), Charset.forName("unicode")));
+                    }
                 }
-                if (!stocks.exists()) {
-                    FILE_HANDLER.write(stocks, new String(FILE_HANDLER.getTemplate("Currencies/stocks.json"), Charset.forName("unicode")));
-                }
-                if (!inventories.exists()) {
-                    FILE_HANDLER.write(inventories, new String(FILE_HANDLER.getTemplate("Currencies/inventories.json"), Charset.forName("unicode")));
-                }
-                if (!special.exists()) {
-                    FILE_HANDLER.write(special, new String(FILE_HANDLER.getTemplate("Currencies/special.json"), Charset.forName("unicode")));
-                }
-                if (!marApi.exists()) {
-                    FILE_HANDLER.write(marApi, new String(FILE_HANDLER.getTemplate("Currencies/market-apis.json"), Charset.forName("unicode")));
+                //Accounts
+                {
+                    if (!exchanges.exists()) {
+                        FILE_HANDLER.write(exchanges, new String(FILE_HANDLER.getTemplate("Accounts/exchanges.json"), Charset.forName("unicode")));
+                    }
+                    if (!accounts.exists()) {
+                        FILE_HANDLER.write(accounts, new String(FILE_HANDLER.getTemplate("Accounts/accounts.json"), Charset.forName("unicode")));
+                    }
+                    if (!extran.exists()) {
+                        FILE_HANDLER.write(extran, new String(FILE_HANDLER.getTemplate("Accounts/extranious.json"), Charset.forName("unicode")));
+                    }
+                    if (!accTyp.exists()) {
+                        FILE_HANDLER.write(accTyp, new String(FILE_HANDLER.getTemplate("Accounts/account-types.json"), Charset.forName("unicode")));
+                    }
+                    if (!taxItm.exists()) {
+                        FILE_HANDLER.write(taxItm, new String(FILE_HANDLER.getTemplate("Accounts/tax-items.json"), Charset.forName("unicode")));
+                    }
                 }
             }
-            //Accounts
-            {
-                if (!exchanges.exists()) {
-                    FILE_HANDLER.write(exchanges, new String(FILE_HANDLER.getTemplate("Accounts/exchanges.json"), Charset.forName("unicode")));
-                }
-                if (!accounts.exists()) {
-                    FILE_HANDLER.write(accounts, new String(FILE_HANDLER.getTemplate("Accounts/accounts.json"), Charset.forName("unicode")));
-                }
-                if (!extran.exists()) {
-                    FILE_HANDLER.write(extran, new String(FILE_HANDLER.getTemplate("Accounts/extranious.json"), Charset.forName("unicode")));
-                }
-                if (!accTyp.exists()) {
-                    FILE_HANDLER.write(accTyp, new String(FILE_HANDLER.getTemplate("Accounts/account-types.json"), Charset.forName("unicode")));
-                }
-                if (!taxItm.exists()) {
-                    FILE_HANDLER.write(taxItm, new String(FILE_HANDLER.getTemplate("Accounts/tax-items.json"), Charset.forName("unicode")));
-                }
-            }
-            LOG_HANDLER.trace(this.getClass(), "Defaults set where necessary");
+            LOG_HANDLER.trace(getClass(), "Defaults set where necessary");
         }
         //LCurrency
         {
@@ -202,7 +214,7 @@ public class Instance {
                 STOCKS.add(new LStock(obj, this));
             }
             STOCKS.changed = false;
-            LOG_HANDLER.trace(this.getClass(), "Stocks loaded");
+            LOG_HANDLER.trace(getClass(), "Stocks loaded");
         }
         //Inventory
         {
@@ -212,7 +224,7 @@ public class Instance {
                 INVENTORIES.add(new LInventory(obj, this));
             }
             INVENTORIES.changed = false;
-            LOG_HANDLER.trace(this.getClass(), "Inventories loaded");
+            LOG_HANDLER.trace(getClass(), "Inventories loaded");
         }
         //Market APIs
         {
@@ -228,7 +240,7 @@ public class Instance {
                 ACCOUNT_TYPES.add(new AccountType(obj));
             }
             ACCOUNT_TYPES.changed = false;
-            LOG_HANDLER.trace(this.getClass(), "Account Types loaded");
+            LOG_HANDLER.trace(getClass(), "Account Types loaded");
         }
         //Exchanges
         {
@@ -240,7 +252,7 @@ public class Instance {
                 EXCHANGES.add(new Exchange(obj, this, true));
             }
             EXCHANGES.changed = false;
-            LOG_HANDLER.trace(this.getClass(), "Exchanges loaded");
+            LOG_HANDLER.trace(getClass(), "Exchanges loaded");
         }
         //Accounts
         {
@@ -327,7 +339,7 @@ public class Instance {
             }
             ACCOUNTS.sort();
             ACCOUNTS.changed = false;
-            LOG_HANDLER.trace(this.getClass(), "Accounts loaded");
+            LOG_HANDLER.trace(getClass(), "Accounts loaded");
         }
         //Tax
         {

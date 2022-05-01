@@ -28,7 +28,7 @@ public class Account implements ExportableToJsonObject {
         TYPE = type;
         BUDGET = budget;
         EXPORT = export;
-        CURRENT_INSTANCE.LOG_HANDLER.trace(this.getClass(), "Account " + NAME + " Created");
+        CURRENT_INSTANCE.LOG_HANDLER.trace(getClass(), "Account " + NAME + " Created");
     }
 
     public Account(String name, int aid, LCurrency cur, AccountType type, Instance curInst, boolean export) {
@@ -69,7 +69,7 @@ public class Account implements ExportableToJsonObject {
 
     public BroadAccountType getBroadAccountType() {
         if (TYPE == null) {
-            CURRENT_INSTANCE.LOG_HANDLER.error(this.getClass(), "Broken Type: " + NAME);
+            CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Broken Type: " + NAME);
             return null;
         } else {
             return TYPE.TYPE;

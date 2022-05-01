@@ -96,6 +96,68 @@ public class LMarketApi implements ExportableToJsonObject {
         return TYPES.contains("I");
     }
 
+    public void resetParsePath(ArrayList<String> newPath){
+        PARSE_PATH.clear();
+        PARSE_PATH.addAll(newPath);
+    }
+    public void resetParsePathHistory(ArrayList<String> newPath){
+        PARSE_PATH_HISTORY.clear();
+        PARSE_PATH_HISTORY.addAll(newPath);
+    }
+    public void resetNats(ArrayList<String> newPath){
+        NATS.clear();
+        NATS.addAll(newPath);
+    }
+    public void resetExcepts(ArrayList<String> newPath){
+        EXCEPTS.clear();
+        EXCEPTS.addAll(newPath);
+    }
+
+    public String readParsePath(){
+        if(PARSE_PATH.isEmpty()){
+            return "";
+        }else {
+            StringBuilder sb = new StringBuilder();
+            for (String s : PARSE_PATH) {
+                sb.append(", ").append(s);
+            }
+            return sb.substring(2);
+        }
+    }
+    public String readParsePathHistory(){
+        if(PARSE_PATH_HISTORY.isEmpty()){
+            return "";
+        }else {
+            StringBuilder sb = new StringBuilder();
+            for (String s : PARSE_PATH_HISTORY) {
+                sb.append(", ").append(s);
+            }
+            return sb.substring(2);
+        }
+    }
+    public String readNats(){
+        if(NATS.isEmpty()){
+            return "";
+        }else {
+            StringBuilder sb = new StringBuilder();
+            for (String s : NATS) {
+                sb.append(", ").append(s);
+            }
+            return sb.substring(2);
+        }
+    }
+    public String readExcepts(){
+        if(EXCEPTS.isEmpty()){
+            return "";
+        }else {
+            StringBuilder sb = new StringBuilder();
+            for (String s : EXCEPTS) {
+                sb.append(", ").append(s);
+            }
+            return sb.substring(2);
+        }
+    }
+
     public boolean canConvert(LCurrency a, LCurrency b) {
         return (canSearch(a) && hasNat(b)) ||
                 (canSearch(b) && hasNat(a)) ||
@@ -285,6 +347,7 @@ public class LMarketApi implements ExportableToJsonObject {
                 "@search-tic-l@",
                 "@search-name@",
                 "@year@",
+                "@year-2@",
                 "@month@",
                 "@month-str@",
                 "@month-long@",
@@ -329,6 +392,7 @@ public class LMarketApi implements ExportableToJsonObject {
                 case "@search-tic-l@" -> SEARCH.getTicker().toLowerCase();
                 case "@search-name@" -> getAlteredName(SEARCH);
                 case "@year@" -> DATE == null ? "" : "" + DATE.getYear();
+                case "@year-2@" -> DATE == null ? "" : "" + DATE.getYear() % 100;
                 case "@month@" -> DATE == null ? "" : DATE.getMonth() < 10 ? "0" + DATE.getMonth() : "" + DATE.getMonth();
                 case "@month-str@" -> DATE == null ? "" : DATE.getMonthStringShort();
                 case "@month-long@" -> DATE == null ? "" : DATE.getMonthString();

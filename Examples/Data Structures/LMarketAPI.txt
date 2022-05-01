@@ -1,0 +1,46 @@
+{
+  "api-key": string
+  "base-url": string
+  "base-url-hist": string
+  "excepts": array(string)
+  "name": string {unique}
+  "nats": array(string)
+  "parse-path": array(string)
+  "parse-path-hist": array(string)
+  "types": string
+}
+
+* api-key: the access key to the API, if required
+* base-url: the URL for the APi with tokens (for more about tokens, see bellow)
+* base-url-hist: the URL for the API for historical data with tokens
+* excepts: an array of assets that this API does not cover despite being of its types
+* name: the name of the API
+* nats: an array of assets (usually fiat currencies) that act as the "to" in conversion.  Many stock APIs will have only F!USD for this, but some APIs have a whole range of "to" currencies
+* parse-path: an array of strings giving the path through the returned JSON
+* parse-path-hist: an array of strings giving the path through the returned JSON for historical data
+* types: The types of assets the API returns data for
+  * F: forex
+  * I: Commodity (some commodities are counted as forex)
+  * C: Cryptocurrencies
+  * S: Stocks
+
+
+TOKENS:
+@nat-tic@ - The ticker of the "to" currency in upper case
+@nat-tic-l@ - The ticker of the "to" currency in lower case
+@nat-name@ - The name of the "to" currency in lower case and with spaces replaced with hyphens, or the alt-name if present
+@search-tic@ - The ticker of the "from" currency in upper case
+@search-tic-l@ - The ticker of the "from" currency in lower case
+@search-name@ - The name of the "from" currency in lower case and with spaces replaced with hyphens, or the alt-name if present
+@year@ - the year as a four-digit number
+@year-2@ - the year as a two-digit number
+@month@ - the month as a two-digit integer
+@month-str@ - the month as a three character string
+@month-long@ - the month as a full length word
+@day@ - the day as a two-digit string
+@epoch@ - the date as a number of milliseconds since 00:00:00 01/01/1970 UTC +0
+@epoch-second@ - the date as a number of seconds since 00:00:00 01/01/1970 UTC +0
+@epoch-second-m@ - the date as a number of seconds since 00:00:00 01/01/1970 UTC +0, subtracted by 1
+@epoch-day@ - the date as a number of days since 00:00:00 01/01/1970 UTC +0
+@epoch-day-m@ - the date as a number of days since 00:00:00 01/01/1970 UTC +0, subtracted by 1
+@key@ - the API key

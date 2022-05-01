@@ -64,7 +64,7 @@ public class InventoryEditGui extends BackingEditGui<LInventory> {
                     }
                     dispose();
                 } catch (ValidationFailedException ex) {
-                    CURRENT_INSTANCE.LOG_HANDLER.error(this.getClass(), "You did a badness!");
+                    CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "You did a badness!");
                 }
             } else {
                 try {
@@ -90,7 +90,7 @@ public class InventoryEditGui extends BackingEditGui<LInventory> {
                     }
                     dispose();
                 } catch (ValidationFailedException ex) {
-                    CURRENT_INSTANCE.LOG_HANDLER.error(this.getClass(), "You did a badness!");
+                    CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "You did a badness!");
                 }
             }
         });

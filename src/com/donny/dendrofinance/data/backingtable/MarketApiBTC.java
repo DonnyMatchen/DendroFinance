@@ -2,6 +2,7 @@ package com.donny.dendrofinance.data.backingtable;
 
 import com.donny.dendrofinance.currency.LMarketApi;
 import com.donny.dendrofinance.gui.menu.data.backing.BackingTableGui;
+import com.donny.dendrofinance.gui.menu.data.backing.edit.MarketApiEditGui;
 import com.donny.dendrofinance.instance.Instance;
 import com.donny.dendrofinance.json.JsonArray;
 import com.donny.dendrofinance.json.JsonFormattingException;
@@ -25,7 +26,7 @@ public class MarketApiBTC extends BackingTableCore<LMarketApi> {
 
     @Override
     public void getEditDialog(BackingTableGui<LMarketApi> caller, int index) {
-        //TODO MarketApiEditGui
+        new MarketApiEditGui(caller, this, index, CURRENT_INSTANCE);
     }
 
     @Override

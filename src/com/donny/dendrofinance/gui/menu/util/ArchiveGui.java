@@ -227,8 +227,8 @@ public class ArchiveGui extends RegisterFrame {
                             "Archive (" + ARCHIVES.getSelectedItem() + ").json",
                             temp.print());
                 } catch (JsonFormattingException ex) {
-                    CURRENT_INSTANCE.LOG_HANDLER.error(this.getClass(), "Your archive is borked");
-                    CURRENT_INSTANCE.LOG_HANDLER.debug(this.getClass(), ex.getMessage());
+                    CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Your archive is borked");
+                    CURRENT_INSTANCE.LOG_HANDLER.debug(getClass(), ex.getMessage());
                 }
             }
         }

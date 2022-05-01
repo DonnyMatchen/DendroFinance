@@ -34,7 +34,7 @@ public class Position {
             boolean ap = amount.compareTo(BigDecimal.ZERO) > 0, az = amount.compareTo(BigDecimal.ZERO) == 0, an = amount.compareTo(BigDecimal.ZERO) < 0;
             boolean cp = cost.compareTo(BigDecimal.ZERO) > 0, cz = cost.compareTo(BigDecimal.ZERO) == 0;
             if (az) {
-                CURRENT_INSTANCE.LOG_HANDLER.error(this.getClass(), "Somehow, a position with an amount of zero has been entered");
+                CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Somehow, a position with an amount of zero has been entered");
                 return null;
             } else if (an && cz) {
                 if (ELEMENTS.get(0).volume.compareTo(amount.abs()) > 0) {
@@ -54,7 +54,7 @@ public class Position {
                 return blank;
             } else if (an && cp) {
                 if (ELEMENTS.isEmpty()) {
-                    CURRENT_INSTANCE.LOG_HANDLER.error(this.getClass(), "Sell Out of Order: " + uuid);
+                    CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Sell Out of Order: " + uuid);
                 }
                 if (ELEMENTS.get(0).volume.compareTo(amount.abs()) > 0) {
                     ELEMENTS.get(0).volume = ELEMENTS.get(0).volume.add(amount);
@@ -76,7 +76,7 @@ public class Position {
                     return blank;
                 }
             } else {
-                CURRENT_INSTANCE.LOG_HANDLER.error(this.getClass(), "Somehow, a position with a positive amount and cost has been entered");
+                CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Somehow, a position with a positive amount and cost has been entered");
                 return null;
             }
         } else {

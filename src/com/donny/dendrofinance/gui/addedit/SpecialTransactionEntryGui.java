@@ -659,7 +659,7 @@ public class SpecialTransactionEntryGui extends JDialog {
                 BS_CUR.setListBackground(DendroFactory.WRONG);
             }
         } catch (ValidationFailedException ex) {
-            CURRENT_INSTANCE.LOG_HANDLER.warn(this.getClass(), "You did a badness.");
+            CURRENT_INSTANCE.LOG_HANDLER.warn(getClass(), "You did a badness.");
         }
     }
 
@@ -680,7 +680,7 @@ public class SpecialTransactionEntryGui extends JDialog {
                 IP_CUR.setListBackground(DendroFactory.WRONG);
             }
         } catch (ValidationFailedException ex) {
-            CURRENT_INSTANCE.LOG_HANDLER.warn(this.getClass(), "You did a badness.");
+            CURRENT_INSTANCE.LOG_HANDLER.warn(getClass(), "You did a badness.");
         }
     }
 
@@ -703,7 +703,7 @@ public class SpecialTransactionEntryGui extends JDialog {
                 CT_CUR.setListBackground(DendroFactory.WRONG);
             }
         } catch (ValidationFailedException ex) {
-            CURRENT_INSTANCE.LOG_HANDLER.warn(this.getClass(), "You did a badness.");
+            CURRENT_INSTANCE.LOG_HANDLER.warn(getClass(), "You did a badness.");
         }
     }
 
@@ -730,7 +730,7 @@ public class SpecialTransactionEntryGui extends JDialog {
                 TT_F_CUR.setListBackground(DendroFactory.WRONG);
             }
         } catch (ValidationFailedException ex) {
-            CURRENT_INSTANCE.LOG_HANDLER.warn(this.getClass(), "You did a badness.");
+            CURRENT_INSTANCE.LOG_HANDLER.warn(getClass(), "You did a badness.");
         }
     }
 
@@ -753,7 +753,7 @@ public class SpecialTransactionEntryGui extends JDialog {
                 TD_T_CUR.setListBackground(DendroFactory.WRONG);
             }
         } catch (ValidationFailedException ex) {
-            CURRENT_INSTANCE.LOG_HANDLER.warn(this.getClass(), "You did a badness.");
+            CURRENT_INSTANCE.LOG_HANDLER.warn(getClass(), "You did a badness.");
         }
     }
 }

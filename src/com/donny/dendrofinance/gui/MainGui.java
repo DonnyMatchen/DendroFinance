@@ -161,13 +161,14 @@ public class MainGui extends JFrame {
                 stkLst.addActionListener(event -> new BackingTableGui<>(this, CURRENT_INSTANCE.STOCKS, CURRENT_INSTANCE).setVisible(true));
                 JMenuItem invLst = new JMenuItem("Inventories");
                 invLst.addActionListener(event -> new BackingTableGui<>(this, CURRENT_INSTANCE.INVENTORIES, CURRENT_INSTANCE).setVisible(true));
+                JMenuItem mApiLst = new JMenuItem("Market APIs");
+                invLst.addActionListener(event -> new BackingTableGui<>(this, CURRENT_INSTANCE.MARKET_APIS, CURRENT_INSTANCE).setVisible(true));
                 JMenuItem accTypLst = new JMenuItem("Account Types");
                 accTypLst.addActionListener(event -> new BackingTableGui<>(this, CURRENT_INSTANCE.ACCOUNT_TYPES, CURRENT_INSTANCE).setVisible(true));
                 JMenuItem accLst = new JMenuItem("Accounts");
                 accLst.addActionListener(event -> new BackingTableGui<>(this, CURRENT_INSTANCE.ACCOUNTS, CURRENT_INSTANCE).setVisible(true));
                 JMenuItem exchLst = new JMenuItem("Exchanges");
                 exchLst.addActionListener(event -> new BackingTableGui<>(this, CURRENT_INSTANCE.EXCHANGES, CURRENT_INSTANCE).setVisible(true));
-                JMenuItem extran = new JMenuItem("Extranious");
                 JMenuItem stats = new JMenuItem("Statistics");
                 stats.addActionListener(event -> new StatisticsGui(this, CURRENT_INSTANCE).setVisible(true));
                 data.add(imp);
@@ -180,7 +181,7 @@ public class MainGui extends JFrame {
                 data.add(accTypLst);
                 data.add(exchLst);
                 data.add(accLst);
-                data.add(extran);
+                data.add(mApiLst);
                 data.add(new JSeparator());
                 data.add(stats);
 

@@ -10,6 +10,7 @@ v0.4.0
   * added MarketApiBTC
   * removed api-keys from profile and profile gui and from Instance
   * added check for currency -> main
-  X added gui
+  * added gui
   X added gui editing
 X integrated exchanges more heavily with accounts
+* removed stub MenuItem

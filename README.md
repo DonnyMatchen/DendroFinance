@@ -9,7 +9,7 @@ In Linux systems using the Nautilus filesystem interface or derivatives, there s
 With the exception of private stock history JSONs, all JSONs in the data directory are saved and read in Unicode/UTF16.  The application will crash if they are not saved in the correct format.  Edit them through the gui unless you can ensure you will save them correctly.<br>
 <br>
 <h1>KNOWN PROBLEMS</h1><br>
-There is a tendency for the program to crash when relying on creating the template data files.  If this occurs, just restart the application and everything should function correctly.<br>
+There is a tendency for some gui windows not to be sized correctly.  I'm not quite sure why this happens, and there doesn't seem to be a fix for it.<br>
 <br>
 <h1>DOWNLOAD</h1><br>
 <a href="https://github.com/DonnyMatchen/DendroFinance/releases">Download</a><br>

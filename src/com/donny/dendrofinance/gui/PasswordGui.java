@@ -321,32 +321,19 @@ public class PasswordGui extends JFrame {
     public JsonObject getConfig(String name) throws JsonFormattingException {
         JsonObject config = new JsonObject();
         config.FIELDS.put("name", new JsonString(name));
-        String flags = "";
-        if (CURRENT_INSTANCE.log) {
-            flags += "L";
-        } else {
-            flags += "l";
-        }
-        if (CURRENT_INSTANCE.export) {
-            flags += "X";
-        } else {
-            flags += "x";
-        }
-        if (CURRENT_INSTANCE.american) {
-            flags += "A";
-        } else {
-            flags += "a";
-        }
-        if (CURRENT_INSTANCE.day) {
-            flags += "D";
-        } else {
-            flags += "d";
-        }
-        config.FIELDS.put("flags", new JsonString(flags));
-        config.FIELDS.put("precision", new JsonDecimal(BigDecimal.valueOf(CURRENT_INSTANCE.precision.getPrecision())));
-        config.FIELDS.put("log", new JsonString(CURRENT_INSTANCE.logLevel.getName()));
-        config.FIELDS.put("main", new JsonString(CURRENT_INSTANCE.mainTicker));
-        config.FIELDS.put("main__", new JsonString(CURRENT_INSTANCE.main__Ticker));
+        CURRENT_INSTANCE.log = false;
+        CURRENT_INSTANCE.export = false;
+        CURRENT_INSTANCE.american = true;
+        CURRENT_INSTANCE.day = false;
+        config.FIELDS.put("flags", new JsonString("lxAd"));
+        CURRENT_INSTANCE.precision = new MathContext(20);
+        config.FIELDS.put("precision", new JsonDecimal(BigDecimal.valueOf(20)));
+        CURRENT_INSTANCE.logLevel = new LogHandler.LogLevel("info");
+        config.FIELDS.put("log", new JsonString("info"));
+        CURRENT_INSTANCE.mainTicker = "USD";
+        config.FIELDS.put("main", new JsonString("USD"));
+        CURRENT_INSTANCE.main__Ticker = "USD Extra";
+        config.FIELDS.put("main__", new JsonString("USD Extra"));
         return config;
     }
 

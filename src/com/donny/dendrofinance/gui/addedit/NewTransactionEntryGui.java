@@ -50,7 +50,7 @@ public class NewTransactionEntryGui extends JDialog {
     }
 
     public NewTransactionEntryGui(MainGui caller, long uuid, Instance curInst) {
-        super(caller, uuid == 0 ? "Edit" : "New" + " Transaction Entry", true);
+        super(caller, (uuid == 0 ? "New" : "Edit") + " Transaction Entry", true);
         CURRENT_INSTANCE = curInst;
         MAIN = caller;
         UUID = uuid;

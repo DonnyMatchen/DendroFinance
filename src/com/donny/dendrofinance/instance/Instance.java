@@ -50,9 +50,9 @@ public class Instance {
     public File data = new File(System.getProperty("user.dir") + File.separator + "data");
 
     //flags, api keys, and other minor alterable things
-    public MathContext precision = new MathContext(20);
-    public boolean log = false, export = false, american = true, day = false;
-    public String mainTicker = "USD", main__Ticker = "USD Extra";
+    public MathContext precision;
+    public boolean log, export, american, day;
+    public String mainTicker, main__Ticker;
     public LogHandler.LogLevel logLevel;
     public LCurrency main;
     public LCurrency main__;
@@ -403,8 +403,8 @@ public class Instance {
     }
 
     public BigDecimal convert(BigDecimal amount, LCurrency a, LCurrency b) {
-        if (a.getTicker().equalsIgnoreCase(b.getTicker()) && a.getName().equalsIgnoreCase(b.getName())) {
-            return amount;
+        if (a.getTicker().equalsIgnoreCase(b.getTicker()) && a.getClass() == b.getClass() && a.isFiat() == b.isFiat()) {
+            return amount.multiply(b.getFactor().divide(a.getFactor(), precision));
         } else {
             for (LMarketApi marketApi : MARKET_APIS) {
                 if (marketApi.canConvert(a, b)) {

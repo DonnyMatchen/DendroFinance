@@ -52,8 +52,11 @@ public class LMarketApi implements ExportableToJsonObject {
 
     public boolean hasNat(LCurrency currency) {
         for (String nat : NATS) {
-            if (currency.toString().equalsIgnoreCase(nat) || currency.getName().equalsIgnoreCase(nat)) {
-                return true;
+            LCurrency cur = CURRENT_INSTANCE.getLCurrency(nat);
+            if (cur != null) {
+                if (cur.getTicker().equals(currency.getTicker()) && cur.getClass() == currency.getClass() && cur.isFiat() == currency.isFiat()) {
+                    return true;
+                }
             }
         }
         return false;
@@ -62,14 +65,11 @@ public class LMarketApi implements ExportableToJsonObject {
     public boolean canSearch(LCurrency c) {
         if (EXCEPTS.contains(c.toString())) {
             return false;
-        }
-        if (c.toString().contains("!")) {
-            return TYPES.contains(c.toString().split("!")[0]);
         } else {
             if (c instanceof LStock) {
                 return TYPES.contains("S");
             } else if (c instanceof LInventory) {
-                return TYPES.contains("T");
+                return TYPES.contains("I");
             } else {
                 if (c.isFiat()) {
                     return TYPES.contains("F");

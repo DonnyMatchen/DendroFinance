@@ -240,7 +240,7 @@ public class LMarketApi implements ExportableToJsonObject {
                     return new BigDecimal(((JsonString) sup).getString());
                 }
                 case NULL, BOOL -> {
-                    CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "It looks like the api wasn't structured how you thought it was.\n" + bundle.process(BASE_URL));
+                    CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "It looks like the api wasn't structured how you thought it was.\n" + bundle.process(BASE_URL)+"\n"+item.print());
                     return BigDecimal.ZERO;
                 }
             }
@@ -254,12 +254,12 @@ public class LMarketApi implements ExportableToJsonObject {
                     return new BigDecimal(((JsonString) sup).getString());
                 }
                 case ARRAY, BOOL, OBJECT, NULL -> {
-                    CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "It looks like the api wasn't structured how you thought it was.\n" + bundle.process(BASE_URL));
+                    CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "It looks like the api wasn't structured how you thought it was.\n" + bundle.process(BASE_URL)+"\n"+item.print());
                     return BigDecimal.ZERO;
                 }
             }
         }
-        CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "It looks like the api wasn't structured how you thought it was.\n" + bundle.process(BASE_URL));
+        CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "It looks like the api wasn't structured how you thought it was.\n" + bundle.process(BASE_URL)+"\n"+item.print());
         return BigDecimal.ZERO;
     }
 
@@ -282,7 +282,7 @@ public class LMarketApi implements ExportableToJsonObject {
                     return new BigDecimal(((JsonString) sup).getString());
                 }
                 case BOOL, NULL -> {
-                    CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "It looks like the api wasn't structured how you thought it was.\n" + bundle.process(BASE_URL_HISTORY));
+                    CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "It looks like the api wasn't structured how you thought it was.\n" + bundle.process(BASE_URL_HISTORY)+"\n"+item.print());
                     return BigDecimal.ZERO;
                 }
             }
@@ -296,12 +296,12 @@ public class LMarketApi implements ExportableToJsonObject {
                     return new BigDecimal(((JsonString) sup).getString());
                 }
                 case ARRAY, BOOL, OBJECT, NULL -> {
-                    CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "It looks like the api wasn't structured how you thought it was.\n" + bundle.process(BASE_URL));
+                    CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "It looks like the api wasn't structured how you thought it was.\n" + bundle.process(BASE_URL_HISTORY)+"\n"+item.print());
                     return BigDecimal.ZERO;
                 }
             }
         }
-        CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "It looks like the api wasn't structured how you thought it was.\n" + bundle.process(BASE_URL));
+        CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "It looks like the api wasn't structured how you thought it was.\n" + bundle.process(BASE_URL_HISTORY)+"\n"+item.print());
         return BigDecimal.ZERO;
     }
 

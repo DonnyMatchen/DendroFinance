@@ -1,6 +1,11 @@
 TODOs
 X extranious editing
 
+v0.4.2
+* dated conversion fixed
+* minor typo corrections
+* better error printing
+
 v0.4.1
 * conversion fixed
 * Gwei and Wei now have correct names

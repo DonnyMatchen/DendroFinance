@@ -117,7 +117,7 @@ public class Instance {
                 special = new File(data.getPath() + File.separator + "Currencies" + File.separator + "special.json"),
                 exchanges = new File(data.getPath() + File.separator + "Accounts" + File.separator + "exchanges.json"),
                 accounts = new File(data.getPath() + File.separator + "Accounts" + File.separator + "accounts.json"),
-                extran = new File(data.getPath() + File.separator + "Accounts" + File.separator + "extranious.json"),
+                extranious = new File(data.getPath() + File.separator + "Accounts" + File.separator + "extranious.json"),
                 accTyp = new File(data.getPath() + File.separator + "Accounts" + File.separator + "account-types.json"),
                 taxItm = new File(data.getPath() + File.separator + "Accounts" + File.separator + "tax-items.json"),
                 marApi = new File(data.getPath() + File.separator + "Currencies" + File.separator + "market-apis.json");
@@ -126,13 +126,13 @@ public class Instance {
             //Folders
             {
                 File archive = new File(data.getPath() + File.separator + "Archives"),
-                        pstock = new File(data.getPath() + File.separator + "P_Stock"),
+                        pStock = new File(data.getPath() + File.separator + "P_Stock"),
                         exp = new File(data.getPath() + File.separator + "Exports");
                 if (!archive.exists()) {
                     archive.mkdir();
                 }
-                if (!pstock.exists()) {
-                    pstock.mkdir();
+                if (!pStock.exists()) {
+                    pStock.mkdir();
                 }
                 if (!exp.exists()) {
                     exp.mkdir();
@@ -142,7 +142,7 @@ public class Instance {
             boolean loaded = false;
             while (!loaded) {
                 loaded = currencies.exists() && stocks.exists() && inventories.exists() && special.exists() &&
-                        exchanges.exists() && accounts.exists() && extran.exists() && accTyp.exists() &&
+                        exchanges.exists() && accounts.exists() && extranious.exists() && accTyp.exists() &&
                         taxItm.exists() && marApi.exists();
                 //Currencies
                 {
@@ -170,8 +170,8 @@ public class Instance {
                     if (!accounts.exists()) {
                         FILE_HANDLER.write(accounts, new String(FILE_HANDLER.getTemplate("Accounts/accounts.json"), Charset.forName("unicode")));
                     }
-                    if (!extran.exists()) {
-                        FILE_HANDLER.write(extran, new String(FILE_HANDLER.getTemplate("Accounts/extranious.json"), Charset.forName("unicode")));
+                    if (!extranious.exists()) {
+                        FILE_HANDLER.write(extranious, new String(FILE_HANDLER.getTemplate("Accounts/extranious.json"), Charset.forName("unicode")));
                     }
                     if (!accTyp.exists()) {
                         FILE_HANDLER.write(accTyp, new String(FILE_HANDLER.getTemplate("Accounts/account-types.json"), Charset.forName("unicode")));
@@ -273,9 +273,9 @@ public class Instance {
             }
             x++;
             y++;
-            JsonObject extranious = (JsonObject) JsonItem.sanitizeDigest(FILE_HANDLER.read(extran));
-            if (extranious.FIELDS.containsKey("gift-cards")) {
-                for (JsonString item : extranious.getArray("gift-cards").getStringArray()) {
+            JsonObject extraniousObj = (JsonObject) JsonItem.sanitizeDigest(FILE_HANDLER.read(extranious));
+            if (extraniousObj.FIELDS.containsKey("gift-cards")) {
+                for (JsonString item : extraniousObj.getArray("gift-cards").getStringArray()) {
                     ACCOUNTS.add(new Account(item.getString() + "_GC", y, main,
                             ACCOUNT_TYPES.getElement("Gift_Card"), null, this, false));
                     y++;
@@ -330,8 +330,8 @@ public class Instance {
                     }
                 }
             }
-            if (extranious.FIELDS.containsKey("brave-mobile")) {
-                for (JsonString item : extranious.getArray("brave-mobile").getStringArray()) {
+            if (extraniousObj.FIELDS.containsKey("brave-mobile")) {
+                for (JsonString item : extraniousObj.getArray("brave-mobile").getStringArray()) {
                     ACCOUNTS.add(new Account(item.getString() + "_BAT", x, getLCurrency("C!BAT"),
                             ACCOUNT_TYPES.getElement("Tracking"), null, this, false));
                     x++;
@@ -422,11 +422,11 @@ public class Instance {
             }
             if (aa == null || bb == null) {
                 if (aa == null && bb == null) {
-                    LOG_HANDLER.error(getClass(), "The following assets are not presently covnertable: " + a + ", " + b);
+                    LOG_HANDLER.error(getClass(), "The following assets are not presently convertible: " + a + ", " + b);
                 } else if (aa == null) {
-                    LOG_HANDLER.error(getClass(), "The following asset is not presently covnertable: " + a);
+                    LOG_HANDLER.error(getClass(), "The following asset is not presently convertible: " + a);
                 } else {
-                    LOG_HANDLER.error(getClass(), "The following asset is not presently covnertable: " + b);
+                    LOG_HANDLER.error(getClass(), "The following asset is not presently convertible: " + b);
                 }
                 return BigDecimal.ZERO;
             } else {
@@ -437,8 +437,8 @@ public class Instance {
     }
 
     public BigDecimal convert(BigDecimal amount, LCurrency a, LCurrency b, LDate date) {
-        if (a.getTicker().equalsIgnoreCase(b.getTicker()) && a.getName().equalsIgnoreCase(b.getName())) {
-            return amount;
+        if (a.getTicker().equalsIgnoreCase(b.getTicker()) && a.getClass() == b.getClass() && a.isFiat() == b.isFiat()) {
+            return amount.multiply(b.getFactor().divide(a.getFactor(), precision));
         } else {
             for (LMarketApi marketApi : MARKET_APIS) {
                 if (marketApi.canConvert(a, b)) {
@@ -456,11 +456,11 @@ public class Instance {
             }
             if (aa == null || bb == null) {
                 if (aa == null && bb == null) {
-                    LOG_HANDLER.error(getClass(), "The following assets are not presently covnertable: " + a + ", " + b);
+                    LOG_HANDLER.error(getClass(), "The following assets are not presently convertible: " + a + ", " + b);
                 } else if (aa == null) {
-                    LOG_HANDLER.error(getClass(), "The following asset is not presently covnertable: " + a);
+                    LOG_HANDLER.error(getClass(), "The following asset is not presently convertible: " + a);
                 } else {
-                    LOG_HANDLER.error(getClass(), "The following asset is not presently covnertable: " + b);
+                    LOG_HANDLER.error(getClass(), "The following asset is not presently convertible: " + b);
                 }
                 return BigDecimal.ZERO;
             } else {

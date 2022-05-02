@@ -15,7 +15,7 @@ public class ExportHandler {
     public ExportHandler(Instance curInst) {
         CURRENT_INSTANCE = curInst;
         DIR = new File(CURRENT_INSTANCE.data.getPath() + File.separator + "Exports");
-        CURRENT_INSTANCE.LOG_HANDLER.trace(this.getClass(), "ExportHandler initiated");
+        CURRENT_INSTANCE.LOG_HANDLER.trace(getClass(), "ExportHandler initiated");
     }
 
     public void export() {
@@ -28,7 +28,7 @@ public class ExportHandler {
             try {
                 array.ARRAY.add(entry.export());
             } catch (JsonFormattingException ex) {
-                CURRENT_INSTANCE.LOG_HANDLER.error(this.getClass(), "Damaged Transaction Entry: " + entry.getUUID());
+                CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Damaged Transaction Entry: " + entry.getUUID());
             }
         }
         CURRENT_INSTANCE.FILE_HANDLER.write(transactions, array.toString());
@@ -39,7 +39,7 @@ public class ExportHandler {
             try {
                 array.ARRAY.add(entry.export());
             } catch (JsonFormattingException ex) {
-                CURRENT_INSTANCE.LOG_HANDLER.error(this.getClass(), "Damaged Budget Entry: " + entry.getUUID());
+                CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Damaged Budget Entry: " + entry.getUUID());
             }
         }
         CURRENT_INSTANCE.FILE_HANDLER.write(budgets, array.toString());

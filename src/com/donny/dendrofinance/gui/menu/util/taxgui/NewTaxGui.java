@@ -57,7 +57,7 @@ public class NewTaxGui extends JDialog {
                                 curInst.cleanNumber((String) TABLE_ACCESS.getValueAt(i, 1))
                         });
                     } catch (NumberFormatException ex) {
-                        curInst.LOG_HANDLER.error(this.getClass(), "Bad bracket: ["
+                        curInst.LOG_HANDLER.error(getClass(), "Bad bracket: ["
                                 + TABLE_ACCESS.getValueAt(i, 0) + ", "
                                 + TABLE_ACCESS.getValueAt(i, 1) + "]");
                     }

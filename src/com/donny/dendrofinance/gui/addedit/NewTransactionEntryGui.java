@@ -644,7 +644,7 @@ public class NewTransactionEntryGui extends JDialog {
                 }
             }
             case (2) -> {
-                TABLE.setModel(new DefaultTableModel(new Vector<>(Arrays.asList("From", "To", "F Amnt", "To Amnt", "Main Amnt")), 0) {
+                TABLE.setModel(new DefaultTableModel(new Vector<>(Arrays.asList("From", "To", "F Amount", "To Amount", "Main Amnt")), 0) {
                     @Override
                     public boolean isCellEditable(int row, int column) {
                         return false;
@@ -771,9 +771,9 @@ public class NewTransactionEntryGui extends JDialog {
                     new LAccountSet(aArr, CURRENT_INSTANCE)
             );
         } catch (ValidationFailedException ex) {
-            CURRENT_INSTANCE.LOG_HANDLER.warn(this.getClass(), "You did a badness!");
+            CURRENT_INSTANCE.LOG_HANDLER.warn(getClass(), "You did a badness!");
         } catch (JsonFormattingException ex) {
-            CURRENT_INSTANCE.LOG_HANDLER.error(this.getClass(), "Somehow, the strings in account dropdowns are broken.\nThis should not be happening.  What did you do?");
+            CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Somehow, the strings in account dropdowns are broken.\nThis should not be happening.  What did you do?");
         }
         if (UUID == 0) {
             CURRENT_INSTANCE.DATA_HANDLER.addTransaction(entry);
@@ -804,7 +804,7 @@ public class NewTransactionEntryGui extends JDialog {
             MAIN.updateTable();
             dispose();
         } catch (ValidationFailedException ex) {
-            CURRENT_INSTANCE.LOG_HANDLER.warn(this.getClass(), "You did a badness!");
+            CURRENT_INSTANCE.LOG_HANDLER.warn(getClass(), "You did a badness!");
         }
     }
 
@@ -817,7 +817,7 @@ public class NewTransactionEntryGui extends JDialog {
             metaObject = (JsonObject) JsonItem.sanitizeDigest(META_TEXT.getText());
             META.setText(metaObject.toString());
         } catch (JsonFormattingException ex) {
-            CURRENT_INSTANCE.LOG_HANDLER.error(this.getClass(), "Malformed Json on Json tab");
+            CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Malformed Json on Json tab");
         }
     }
 
@@ -849,7 +849,7 @@ public class NewTransactionEntryGui extends JDialog {
                         }
                         metaObject.FIELDS.put("asset", arr);
                     } catch (JsonFormattingException ex) {
-                        CURRENT_INSTANCE.LOG_HANDLER.error(this.getClass(), "Malformed Entry in Meta Table");
+                        CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Malformed Entry in Meta Table");
                     }
                 }
                 case (1) -> {
@@ -876,7 +876,7 @@ public class NewTransactionEntryGui extends JDialog {
                         }
                         metaObject.FIELDS.put("loan", arr);
                     } catch (JsonFormattingException ex) {
-                        CURRENT_INSTANCE.LOG_HANDLER.error(this.getClass(), "Malformed Entry in Meta Table");
+                        CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Malformed Entry in Meta Table");
                     }
                 }
                 case (2) -> {
@@ -905,7 +905,7 @@ public class NewTransactionEntryGui extends JDialog {
                         }
                         metaObject.FIELDS.put("ledger", arr);
                     } catch (JsonFormattingException ex) {
-                        CURRENT_INSTANCE.LOG_HANDLER.error(this.getClass(), "Malformed Entry in Meta Table");
+                        CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Malformed Entry in Meta Table");
                     }
                 }
                 case (3) -> {
@@ -929,7 +929,7 @@ public class NewTransactionEntryGui extends JDialog {
                         }
                         metaObject.FIELDS.put("asset-change", arr);
                     } catch (JsonFormattingException ex) {
-                        CURRENT_INSTANCE.LOG_HANDLER.error(this.getClass(), "Malformed Entry in Meta Table");
+                        CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Malformed Entry in Meta Table");
                     }
                 }
                 case (4) -> {
@@ -949,7 +949,7 @@ public class NewTransactionEntryGui extends JDialog {
                         }
                         metaObject.FIELDS.put("loan", arr);
                     } catch (JsonFormattingException ex) {
-                        CURRENT_INSTANCE.LOG_HANDLER.error(this.getClass(), "Malformed Entry in Meta Table");
+                        CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Malformed Entry in Meta Table");
                     }
                 }
             }

@@ -33,56 +33,26 @@ public class LStock extends LCurrency {
 
     @Override
     public BigDecimal getTotal(BigDecimal amount) {
-        try {
-            if (isDead()) {
-                return BigDecimal.ZERO;
-            } else {
-                if (isPublic()) {
-                    if (CURRENT_INSTANCE.stockAPI.equals("twelve")) {
-                        return amount.multiply(CURRENT_INSTANCE.FILE_HANDLER.hitTwelveData(getTicker()));
-                    } else if (CURRENT_INSTANCE.stockAPI.equals("polygon")) {
-                        return amount.multiply(CURRENT_INSTANCE.FILE_HANDLER.hitPolygon(getTicker()));
-                    } else {
-                        return BigDecimal.ZERO;
-                    }
-                } else {
-                    return amount.multiply(CURRENT_INSTANCE.FILE_HANDLER.getLatestPrivateStock(getName()));
-                }
-            }
-        } catch (NumberFormatException ex) {
-            CURRENT_INSTANCE.LOG_HANDLER.error(this.getClass(), "NumberFormatException for string: " + ex.getMessage());
-            return BigDecimal.ZERO;
+        if (!isPublic()) {
+            return amount.multiply(CURRENT_INSTANCE.FILE_HANDLER.getLatestPrivateStock(getName()));
+        } else {
+            return super.getTotal(amount);
         }
     }
 
     @Override
     public BigDecimal getTotal(BigDecimal amount, LDate date) {
-        try {
-            if (isDead()) {
-                return BigDecimal.ZERO;
-            } else {
-                if (isPublic()) {
-                    if (CURRENT_INSTANCE.stockAPI.equals("twelve")) {
-                        return amount.multiply(CURRENT_INSTANCE.FILE_HANDLER.hitTwelveData(getTicker(), date));
-                    } else if (CURRENT_INSTANCE.stockAPI.equals("polygon")) {
-                        return amount.multiply(CURRENT_INSTANCE.FILE_HANDLER.hitPolygon(getTicker(), date));
-                    } else {
-                        return BigDecimal.ZERO;
-                    }
-                } else {
-                    JsonArray arr = CURRENT_INSTANCE.FILE_HANDLER.getPrivateStock(getName());
-                    BigDecimal ret = BigDecimal.ZERO;
-                    for (JsonObject obj : arr.getObjectArray()) {
-                        if (new LDate(obj.getString("date").getString(), CURRENT_INSTANCE).compare(date) <= 0) {
-                            ret = amount.multiply(obj.getDecimal("price").decimal);
-                        }
-                    }
-                    return ret;
+        if (!isPublic()) {
+            JsonArray arr = CURRENT_INSTANCE.FILE_HANDLER.getPrivateStock(getName());
+            BigDecimal ret = BigDecimal.ZERO;
+            for (JsonObject obj : arr.getObjectArray()) {
+                if (new LDate(obj.getString("date").getString(), CURRENT_INSTANCE).compare(date) <= 0) {
+                    ret = amount.multiply(obj.getDecimal("price").decimal);
                 }
             }
-        } catch (NumberFormatException ex) {
-            CURRENT_INSTANCE.LOG_HANDLER.error(this.getClass(), "NumberFormatException for string: " + ex.getMessage());
-            return BigDecimal.ZERO;
+            return ret;
+        } else {
+            return super.getTotal(amount, date);
         }
     }
 

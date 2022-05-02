@@ -132,7 +132,7 @@ public class AccountBTC extends BackingTableCore<Account> {
                 try {
                     array.ARRAY.add(acc.export());
                 } catch (JsonFormattingException ex) {
-                    CURRENT_INSTANCE.LOG_HANDLER.error(this.getClass(), "Malformed Account: " + acc);
+                    CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Malformed Account: " + acc);
                 }
             }
         }

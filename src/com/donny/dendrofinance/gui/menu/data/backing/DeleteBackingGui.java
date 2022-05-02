@@ -26,7 +26,7 @@ public class DeleteBackingGui<E extends ExportableToJsonObject> extends JDialog 
             try {
                 TEXT.setText(core.getElement(index).export().toString());
             } catch (JsonFormattingException ex) {
-                curInst.LOG_HANDLER.error(this.getClass(), "Malformed object" + core.getElement(index));
+                curInst.LOG_HANDLER.error(getClass(), "Malformed object" + core.getElement(index));
                 dispose();
             }
             CANCEL = DendroFactory.getButton("Cancel");

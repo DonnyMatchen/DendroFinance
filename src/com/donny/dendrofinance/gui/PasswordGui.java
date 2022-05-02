@@ -15,6 +15,8 @@ import javax.swing.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.io.File;
+import java.math.BigDecimal;
+import java.math.MathContext;
 import java.nio.charset.Charset;
 import java.security.InvalidKeyException;
 import java.security.MessageDigest;
@@ -73,7 +75,7 @@ public class PasswordGui extends JFrame {
                         addProfile(obj, false);
                     }
                 } catch (JsonFormattingException e) {
-                    CURRENT_INSTANCE.LOG_HANDLER.fatal(this.getClass(), "Mis-formatted Profiles!\n" + e);
+                    CURRENT_INSTANCE.LOG_HANDLER.fatal(getClass(), "Mis-formatted Profiles!\n" + e);
                     CURRENT_INSTANCE.LOG_HANDLER.save();
                     System.exit(1);
                 }
@@ -152,7 +154,7 @@ public class PasswordGui extends JFrame {
 
             pack();
         }
-        CURRENT_INSTANCE.LOG_HANDLER.trace(this.getClass(), "PasswordGui created");
+        CURRENT_INSTANCE.LOG_HANDLER.trace(getClass(), "PasswordGui created");
     }
 
     /**
@@ -195,7 +197,7 @@ public class PasswordGui extends JFrame {
         bflKey = keys[1];
         PASSWORD.setText("");
         if (aesKey == null || bflKey == null) {
-            CURRENT_INSTANCE.LOG_HANDLER.fatal(this.getClass(), "Password Hashing Failed!");
+            CURRENT_INSTANCE.LOG_HANDLER.fatal(getClass(), "Password Hashing Failed!");
             CURRENT_INSTANCE.LOG_HANDLER.save();
             System.exit(1);
         }
@@ -221,7 +223,7 @@ public class PasswordGui extends JFrame {
                 done = true;
                 setVisible(false);
             } else {
-                CURRENT_INSTANCE.LOG_HANDLER.fatal(this.getClass(), "Password Hashing Failed!");
+                CURRENT_INSTANCE.LOG_HANDLER.fatal(getClass(), "Password Hashing Failed!");
                 CURRENT_INSTANCE.LOG_HANDLER.save();
                 System.exit(1);
             }
@@ -248,7 +250,7 @@ public class PasswordGui extends JFrame {
             bflCipher.init(Cipher.ENCRYPT_MODE, bflKey);
             return Base64.getEncoder().encodeToString(bflCipher.doFinal(aesCipher.doFinal(text.getBytes(Charset.forName("unicode")))));
         } catch (BadPaddingException | IllegalBlockSizeException | InvalidKeyException | NoSuchPaddingException | NoSuchAlgorithmException ex) {
-            CURRENT_INSTANCE.LOG_HANDLER.fatal(this.getClass(), "Incorrect password used.");
+            CURRENT_INSTANCE.LOG_HANDLER.fatal(getClass(), "Incorrect password used.");
             CURRENT_INSTANCE.LOG_HANDLER.save();
             ex.printStackTrace();
             System.exit(1);
@@ -264,7 +266,7 @@ public class PasswordGui extends JFrame {
             bflCipher.init(Cipher.DECRYPT_MODE, bflKey);
             return new String(aesCipher.doFinal(bflCipher.doFinal(Base64.getDecoder().decode(text))), Charset.forName("Unicode"));
         } catch (BadPaddingException | NoSuchPaddingException | NoSuchAlgorithmException | IllegalBlockSizeException | InvalidKeyException ex) {
-            CURRENT_INSTANCE.LOG_HANDLER.fatal(this.getClass(), "Incorrect password used.");
+            CURRENT_INSTANCE.LOG_HANDLER.fatal(getClass(), "Incorrect password used.");
             CURRENT_INSTANCE.LOG_HANDLER.save();
             System.exit(1);
         }
@@ -300,14 +302,8 @@ public class PasswordGui extends JFrame {
                 CURRENT_INSTANCE.day = true;
             }
         }
-        if (config.FIELDS.containsKey("twelve-data-key")) {
-            CURRENT_INSTANCE.twelveDataApiKey = config.getString("twelve-data-key").getString();
-        }
-        if (config.FIELDS.containsKey("polygon-key")) {
-            CURRENT_INSTANCE.polygonApiKey = config.getString("polygon-key").getString();
-        }
-        if (config.FIELDS.containsKey("stock-api")) {
-            CURRENT_INSTANCE.stockAPI = config.getString("stock-api").getString();
+        if (config.FIELDS.containsKey("precision")) {
+            CURRENT_INSTANCE.precision = new MathContext(config.getDecimal("precision").decimal.intValue());
         }
         if (config.FIELDS.containsKey("log")) {
             CURRENT_INSTANCE.logLevel = new LogHandler.LogLevel(config.getString("log").getString());
@@ -347,9 +343,7 @@ public class PasswordGui extends JFrame {
             flags += "d";
         }
         config.FIELDS.put("flags", new JsonString(flags));
-        config.FIELDS.put("twelve-data-key", new JsonString(CURRENT_INSTANCE.twelveDataApiKey));
-        config.FIELDS.put("polygon-key", new JsonString(CURRENT_INSTANCE.polygonApiKey));
-        config.FIELDS.put("stock-api", new JsonString(CURRENT_INSTANCE.stockAPI));
+        config.FIELDS.put("precision", new JsonDecimal(BigDecimal.valueOf(CURRENT_INSTANCE.precision.getPrecision())));
         config.FIELDS.put("log", new JsonString(CURRENT_INSTANCE.logLevel.getName()));
         config.FIELDS.put("main", new JsonString(CURRENT_INSTANCE.mainTicker));
         config.FIELDS.put("main__", new JsonString(CURRENT_INSTANCE.main__Ticker));
@@ -364,7 +358,7 @@ public class PasswordGui extends JFrame {
         try {
             new ProfileGui(this, getConfig("DEFAULT"), CURRENT_INSTANCE).setVisible(true);
         } catch (JsonFormattingException e) {
-            CURRENT_INSTANCE.LOG_HANDLER.fatal(this.getClass(), "Mis-formatted Profiles!\n" + e);
+            CURRENT_INSTANCE.LOG_HANDLER.fatal(getClass(), "Mis-formatted Profiles!\n" + e);
             CURRENT_INSTANCE.LOG_HANDLER.save();
             System.exit(1);
         }

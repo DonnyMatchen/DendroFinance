@@ -150,7 +150,7 @@ public class MainGui extends JFrame {
                     try {
                         CURRENT_INSTANCE.loadStuff();
                     } catch (JsonFormattingException ex) {
-                        CURRENT_INSTANCE.LOG_HANDLER.error(this.getClass(), "Malformed JSON in reload");
+                        CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Malformed JSON in reload");
                     }
                 });
                 JMenuItem exp = new JMenuItem("Export");
@@ -161,13 +161,14 @@ public class MainGui extends JFrame {
                 stkLst.addActionListener(event -> new BackingTableGui<>(this, CURRENT_INSTANCE.STOCKS, CURRENT_INSTANCE).setVisible(true));
                 JMenuItem invLst = new JMenuItem("Inventories");
                 invLst.addActionListener(event -> new BackingTableGui<>(this, CURRENT_INSTANCE.INVENTORIES, CURRENT_INSTANCE).setVisible(true));
+                JMenuItem mApiLst = new JMenuItem("Market APIs");
+                mApiLst.addActionListener(event -> new BackingTableGui<>(this, CURRENT_INSTANCE.MARKET_APIS, CURRENT_INSTANCE).setVisible(true));
                 JMenuItem accTypLst = new JMenuItem("Account Types");
                 accTypLst.addActionListener(event -> new BackingTableGui<>(this, CURRENT_INSTANCE.ACCOUNT_TYPES, CURRENT_INSTANCE).setVisible(true));
                 JMenuItem accLst = new JMenuItem("Accounts");
                 accLst.addActionListener(event -> new BackingTableGui<>(this, CURRENT_INSTANCE.ACCOUNTS, CURRENT_INSTANCE).setVisible(true));
                 JMenuItem exchLst = new JMenuItem("Exchanges");
                 exchLst.addActionListener(event -> new BackingTableGui<>(this, CURRENT_INSTANCE.EXCHANGES, CURRENT_INSTANCE).setVisible(true));
-                JMenuItem extran = new JMenuItem("Extranious");
                 JMenuItem stats = new JMenuItem("Statistics");
                 stats.addActionListener(event -> new StatisticsGui(this, CURRENT_INSTANCE).setVisible(true));
                 data.add(imp);
@@ -180,7 +181,7 @@ public class MainGui extends JFrame {
                 data.add(accTypLst);
                 data.add(exchLst);
                 data.add(accLst);
-                data.add(extran);
+                data.add(mApiLst);
                 data.add(new JSeparator());
                 data.add(stats);
 
@@ -360,7 +361,7 @@ public class MainGui extends JFrame {
         }
 
         updateTable("");
-        CURRENT_INSTANCE.LOG_HANDLER.trace(this.getClass(), "MainGui Created");
+        CURRENT_INSTANCE.LOG_HANDLER.trace(getClass(), "MainGui Created");
     }
 
     public void updateTable() {
@@ -386,13 +387,13 @@ public class MainGui extends JFrame {
 
     public long getUUID(int cursor) {
         if (cursor < 0) {
-            CURRENT_INSTANCE.LOG_HANDLER.error(this.getClass(), "No row was selected");
+            CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "No row was selected");
             return 0;
         } else if (TABLE_ACCESS.getValueAt(cursor, 0).equals("")) {
             if (cursor != 0) {
                 return getUUID(cursor - 1);
             } else {
-                CURRENT_INSTANCE.LOG_HANDLER.error(this.getClass(), "Something has gone catastrophically wrong with the table");
+                CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Something has gone catastrophically wrong with the table");
                 return 0;
             }
         } else {

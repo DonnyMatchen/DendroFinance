@@ -46,7 +46,7 @@ public class AccountReplacementGui extends RegisterFrame {
                 if (!a.inUse()) {
                     OLD.setMaster(CURRENT_INSTANCE.getAccountsInUseAsStrings());
                 } else {
-                    CURRENT_INSTANCE.LOG_HANDLER.error(this.getClass(), "I don't know how you fucked this up.  Account not replaced.");
+                    CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "I don't know how you fucked this up.  Account not replaced.");
                 }
             });
 

@@ -1,8 +1,8 @@
 package com.donny.dendrofinance.data.backingtable;
 
-import com.donny.dendrofinance.account.AccountType;
+import com.donny.dendrofinance.currency.LMarketApi;
 import com.donny.dendrofinance.gui.menu.data.backing.BackingTableGui;
-import com.donny.dendrofinance.gui.menu.data.backing.edit.AccountTypeEditGui;
+import com.donny.dendrofinance.gui.menu.data.backing.edit.MarketApiEditGui;
 import com.donny.dendrofinance.instance.Instance;
 import com.donny.dendrofinance.json.JsonArray;
 import com.donny.dendrofinance.json.JsonFormattingException;
@@ -10,36 +10,36 @@ import com.donny.dendrofinance.json.JsonObject;
 
 import java.util.ArrayList;
 
-public class AccountTypeBTC extends BackingTableCore<AccountType> {
-    public AccountTypeBTC(Instance curInst) {
+public class MarketApiBTC extends BackingTableCore<LMarketApi> {
+    public MarketApiBTC(Instance curInst) {
         super(curInst, false);
     }
 
     @Override
     public String getName(boolean plural) {
         if (plural) {
-            return "Account Types";
+            return "Market Apis";
         } else {
-            return "Account Type";
+            return "Market Api";
         }
     }
 
     @Override
-    public void getEditDialog(BackingTableGui<AccountType> caller, int index) {
-        new AccountTypeEditGui(caller, this, index, CURRENT_INSTANCE);
+    public void getEditDialog(BackingTableGui<LMarketApi> caller, int index) {
+        new MarketApiEditGui(caller, this, index, CURRENT_INSTANCE);
     }
 
     @Override
     public void load(JsonArray array) {
-        for (JsonObject obj : array.getObjectArray()) {
-            TABLE.add(new AccountType(obj));
+        for (JsonObject object : array.getObjectArray()) {
+            TABLE.add(new LMarketApi(object, CURRENT_INSTANCE));
         }
     }
 
     @Override
     public String[] getHeader() {
         return new String[]{
-                "Name", "Broad Type", "In Use"
+                "Name", "Has Key", "Stocks", "Forex", "Cryptocurrencies", "Commodities"
         };
     }
 
@@ -51,13 +51,12 @@ public class AccountTypeBTC extends BackingTableCore<AccountType> {
     @Override
     public ArrayList<String[]> getContents(String search) {
         ArrayList<String[]> out = new ArrayList<>();
-        for (AccountType a : TABLE) {
-            if (a.NAME.toLowerCase().contains(search.toLowerCase())
-                    || a.TYPE.toString().toLowerCase().contains(search.toLowerCase())) {
-                out.add(new String[]{
-                        a.NAME, "" + a.TYPE, a.inUse(CURRENT_INSTANCE) ? "X" : ""
-                });
-            }
+        for (LMarketApi item : TABLE) {
+            out.add(new String[]{
+                    item.NAME, item.KEY.equals("") ? "" : "X", item.stocks() ? "X" : "",
+                    item.fiatCurrencies() ? "X" : "", item.cryptocurrencies() ? "X" : "",
+                    item.inventories() ? "X" : "",
+            });
         }
         return out;
     }
@@ -69,9 +68,9 @@ public class AccountTypeBTC extends BackingTableCore<AccountType> {
 
     @Override
     public int getIndex(String identifier) {
-        for (AccountType accTyp : TABLE) {
-            if (accTyp.NAME.equalsIgnoreCase(identifier)) {
-                return TABLE.indexOf(accTyp);
+        for (int i = 0; i < TABLE.size(); i++) {
+            if (TABLE.get(i).NAME.equalsIgnoreCase(identifier)) {
+                return i;
             }
         }
         return -1;
@@ -84,12 +83,12 @@ public class AccountTypeBTC extends BackingTableCore<AccountType> {
 
     @Override
     public boolean canEdit(String identifier) {
-        return !getElement(identifier).inUse(CURRENT_INSTANCE);
+        return true;
     }
 
     @Override
     public boolean canRemove(String identifier) {
-        return !getElement(identifier).inUse(CURRENT_INSTANCE);
+        return true;
     }
 
     @Override
@@ -99,11 +98,11 @@ public class AccountTypeBTC extends BackingTableCore<AccountType> {
     @Override
     public JsonArray export() {
         JsonArray array = new JsonArray();
-        for (AccountType accTyp : TABLE) {
+        for (LMarketApi item : TABLE) {
             try {
-                array.ARRAY.add(accTyp.export());
+                array.ARRAY.add(item.export());
             } catch (JsonFormattingException ex) {
-                CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Malformed Account Type: " + accTyp);
+                CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Damaged LMarketAPI " + item.NAME);
             }
         }
         return array;

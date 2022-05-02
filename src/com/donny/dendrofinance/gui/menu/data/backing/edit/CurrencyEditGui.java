@@ -45,42 +45,27 @@ public class CurrencyEditGui extends BackingEditGui<LCurrency> {
         cancel.addActionListener(event -> dispose());
         save = DendroFactory.getButton("Save");
         save.addActionListener(event -> {
-            if (INDEX >= 0) {
-                try {
-                    TABLE.replace(INDEX, new LCurrency(
-                            Validation.validateString(name),
-                            Validation.validateString(ticker),
-                            fiat.isSelected(),
-                            Validation.validateString(symbol),
-                            forwards.isSelected(),
-                            Validation.validateInteger(places).intValue(),
-                            Validation.validateString(alt),
-                            token.isSelected(),
-                            extinct.isSelected(),
-                            CURRENT_INSTANCE
-                    ));
-                    dispose();
-                } catch (ValidationFailedException ex) {
-                    CURRENT_INSTANCE.LOG_HANDLER.error(this.getClass(), "You did a badness!");
+            try {
+                LCurrency temp = new LCurrency(
+                        Validation.validateString(name),
+                        Validation.validateString(ticker),
+                        fiat.isSelected(),
+                        Validation.validateString(symbol),
+                        forwards.isSelected(),
+                        Validation.validateInteger(places).intValue(),
+                        Validation.validateString(alt),
+                        token.isSelected(),
+                        extinct.isSelected(),
+                        CURRENT_INSTANCE
+                );
+                if (INDEX >= 0) {
+                    TABLE.replace(INDEX, temp);
+                } else {
+                    TABLE.add(temp);
                 }
-            } else {
-                try {
-                    TABLE.add(new LCurrency(
-                            Validation.validateString(name),
-                            Validation.validateString(ticker),
-                            fiat.isSelected(),
-                            Validation.validateString(symbol),
-                            forwards.isSelected(),
-                            Validation.validateInteger(places).intValue(),
-                            Validation.validateString(alt),
-                            token.isSelected(),
-                            extinct.isSelected(),
-                            CURRENT_INSTANCE
-                    ));
-                    dispose();
-                } catch (ValidationFailedException ex) {
-                    CURRENT_INSTANCE.LOG_HANDLER.error(this.getClass(), "You did a badness!");
-                }
+                dispose();
+            } catch (ValidationFailedException ex) {
+                CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "You did a badness!");
             }
         });
 

@@ -13,7 +13,7 @@ import javax.swing.*;
 
 public class AccountEditGui extends BackingEditGui<Account> {
     private JTextField name, aid, budget;
-    private SearchBox currency, type;
+    private SearchBox currency, type, exchange;
     private JLabel a, b, c;
     private JButton cancel, save;
 
@@ -29,6 +29,7 @@ public class AccountEditGui extends BackingEditGui<Account> {
 
         currency = new SearchBox("Currency", CURRENT_INSTANCE.getAllAssetsAsStrings());
         type = new SearchBox("Account Type", CURRENT_INSTANCE.getAccountTypesAsStrings());
+        exchange = new SearchBox("Exchange", CURRENT_INSTANCE.getExchangesAsStrings());
 
         a = new JLabel("Account Name");
         b = new JLabel("Account ID");
@@ -38,36 +39,25 @@ public class AccountEditGui extends BackingEditGui<Account> {
         cancel.addActionListener(event -> dispose());
         save = DendroFactory.getButton("Save");
         save.addActionListener(event -> {
-            if (INDEX >= 0) {
-                try {
-                    TABLE.replace(INDEX, new Account(
-                            Validation.validateString(name),
-                            Validation.validateInteger(aid).intValue(),
-                            CURRENT_INSTANCE.getLCurrency(currency.getSelectedItem()),
-                            CURRENT_INSTANCE.ACCOUNT_TYPES.getElement(type.getSelectedItem()),
-                            Validation.validateStringAllowEmpty(budget),
-                            CURRENT_INSTANCE,
-                            true
-                    ));
-                    dispose();
-                } catch (ValidationFailedException ex) {
-                    CURRENT_INSTANCE.LOG_HANDLER.error(this.getClass(), "You did a badness!");
+            try {
+                Account temp = new Account(
+                        Validation.validateString(name),
+                        Validation.validateInteger(aid).intValue(),
+                        CURRENT_INSTANCE.getLCurrency(currency.getSelectedItem()),
+                        CURRENT_INSTANCE.ACCOUNT_TYPES.getElement(type.getSelectedItem()),
+                        Validation.validateStringAllowEmpty(budget),
+                        exchange.getSelectedItem() == null ? null : CURRENT_INSTANCE.EXCHANGES.getElement(exchange.getSelectedItem()),
+                        CURRENT_INSTANCE,
+                        true
+                );
+                if (INDEX >= 0) {
+                    TABLE.replace(INDEX, temp);
+                } else {
+                    TABLE.add(temp);
                 }
-            } else {
-                try {
-                    TABLE.add(new Account(
-                            Validation.validateString(name),
-                            Validation.validateInteger(aid).intValue(),
-                            CURRENT_INSTANCE.getLCurrency(currency.getSelectedItem()),
-                            CURRENT_INSTANCE.ACCOUNT_TYPES.getElement(type.getSelectedItem()),
-                            Validation.validateStringAllowEmpty(budget),
-                            CURRENT_INSTANCE,
-                            true
-                    ));
-                    dispose();
-                } catch (ValidationFailedException ex) {
-                    CURRENT_INSTANCE.LOG_HANDLER.error(this.getClass(), "You did a badness!");
-                }
+                dispose();
+            } catch (ValidationFailedException ex) {
+                CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "You did a badness!");
             }
         });
 
@@ -113,6 +103,8 @@ public class AccountEditGui extends BackingEditGui<Account> {
                                     currency, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
                             ).addComponent(
                                     type, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
+                            ).addComponent(
+                                    exchange, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
                             ).addGroup(
                                     main.createSequentialGroup().addComponent(
                                             cancel, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
@@ -149,6 +141,8 @@ public class AccountEditGui extends BackingEditGui<Account> {
                             currency, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                     ).addGap(DendroFactory.SMALL_GAP).addComponent(
                             type, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                    ).addGap(DendroFactory.SMALL_GAP).addComponent(
+                            exchange, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                     ).addGap(DendroFactory.MEDIUM_GAP).addGroup(
                             main.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(
                                     cancel, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE

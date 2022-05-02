@@ -36,7 +36,7 @@ public class LAccountSet extends LType<ArrayList<AccountWrapper>> implements Ite
         for (String acc : raw.replace("{", "").replace("}", "").replace(" ", "").split(",")) {
             AccountWrapper wrapper = new AccountWrapper(acc, CURRENT_INSTANCE);
             if (wrapper.ACCOUNT == null) {
-                CURRENT_INSTANCE.LOG_HANDLER.error(this.getClass(), "Account not found: " + acc);
+                CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Account not found: " + acc);
             } else {
                 REGISTRY.add(wrapper);
             }

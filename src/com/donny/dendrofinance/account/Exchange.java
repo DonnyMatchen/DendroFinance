@@ -40,7 +40,7 @@ public class Exchange implements ExportableToJsonObject {
         SUPPORTED = new ArrayList<>(sup);
         STAKING = new ArrayList<>();
         EXPORT = export;
-        curInst.LOG_HANDLER.trace(this.getClass(), "Exchange " + NAME + " Created");
+        curInst.LOG_HANDLER.trace(getClass(), "Exchange " + NAME + " Created");
     }
 
     public Exchange(String name, String alt, ArrayList<String> sup, ArrayList<JsonObject> stak, Instance curInst, boolean export) {
@@ -121,8 +121,7 @@ public class Exchange implements ExportableToJsonObject {
     public boolean inUse(Instance curInst) {
         for (TransactionEntry entry : curInst.DATA_HANDLER.readTransactions()) {
             for (AccountWrapper aw : entry.getAccounts()) {
-                String accName = aw.ACCOUNT.getName();
-                if (accName.contains(NAME) && accName.split("_").length >= 2) {
+                if (aw.ACCOUNT.EXCHANGE == this) {
                     return true;
                 }
             }
@@ -142,7 +141,7 @@ public class Exchange implements ExportableToJsonObject {
         for (String name : aNames()) {
             Account a = curInst.ACCOUNTS.getElement(name);
             if (a == null) {
-                curInst.LOG_HANDLER.info(this.getClass(), "You might have a missing currency (" + name + ")");
+                curInst.LOG_HANDLER.info(getClass(), "You might have a missing currency (" + name + ")");
             } else {
                 if (a.inUse()) {
                     reduced.add(name);

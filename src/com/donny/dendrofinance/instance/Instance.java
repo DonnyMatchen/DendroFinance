@@ -7,6 +7,7 @@ import com.donny.dendrofinance.account.BroadAccountType;
 import com.donny.dendrofinance.account.Exchange;
 import com.donny.dendrofinance.currency.LCurrency;
 import com.donny.dendrofinance.currency.LInventory;
+import com.donny.dendrofinance.currency.LMarketApi;
 import com.donny.dendrofinance.currency.LStock;
 import com.donny.dendrofinance.data.*;
 import com.donny.dendrofinance.data.backingtable.*;
@@ -16,6 +17,7 @@ import com.donny.dendrofinance.gui.PasswordGui;
 import com.donny.dendrofinance.gui.customswing.DendroFactory;
 import com.donny.dendrofinance.gui.customswing.SearchBox;
 import com.donny.dendrofinance.json.*;
+import com.donny.dendrofinance.types.LDate;
 
 import javax.swing.*;
 import java.io.File;
@@ -24,14 +26,12 @@ import java.math.MathContext;
 import java.nio.charset.Charset;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.concurrent.TimeUnit;
 
 public class Instance {
-    private static final ArrayList<String> root = new ArrayList<>(Arrays.asList("USD", "EUR", "GBP", "CHF", "JPY", "CNY"));
 
     //Major managing objects and handling lists
     public final String IID;
-    public final MathContext PRECISION = new MathContext(20);
     public final LogHandler LOG_HANDLER;
     public final PasswordGui ENCRYPTION_HANDLER;
     public final FileHandler FILE_HANDLER;
@@ -43,15 +43,16 @@ public class Instance {
     public final ExchangeBTC EXCHANGES;
     public final AccountTypeBTC ACCOUNT_TYPES;
     public final TaxItemBTC TAX_ITEMS;
-    public final ArrayList<LCurrency> VS = new ArrayList<>();
+    public final MarketApiBTC MARKET_APIS;
     public final ImportHandler IMPORT_HANDLER;
     public final ExportHandler EXPORT_HANDLER;
     public final DataHandler DATA_HANDLER;
     public File data = new File(System.getProperty("user.dir") + File.separator + "data");
 
     //flags, api keys, and other minor alterable things
+    public MathContext precision = new MathContext(20);
     public boolean log = false, export = false, american = true, day = false;
-    public String twelveDataApiKey = "ADD KEY HERE", polygonApiKey = "ADD KEY HERE", stockAPI = "twelve", mainTicker = "USD", main__Ticker = "USD Extra";
+    public String mainTicker = "USD", main__Ticker = "USD Extra";
     public LogHandler.LogLevel logLevel;
     public LCurrency main;
     public LCurrency main__;
@@ -65,19 +66,24 @@ public class Instance {
         EXCHANGES = new ExchangeBTC(this);
         ACCOUNT_TYPES = new AccountTypeBTC(this);
         TAX_ITEMS = new TaxItemBTC(this);
+        MARKET_APIS = new MarketApiBTC(this);
         LOG_HANDLER = new LogHandler(this);
         FILE_HANDLER = new FileHandler(this);
         DendroFactory.init(this);
         ENCRYPTION_HANDLER = new PasswordGui(args, this);
         UUID_HANDLER = new UuidHandler(this);
         ENCRYPTION_HANDLER.setVisible(true);
-        do {
-            System.out.print("");
-        } while (!ENCRYPTION_HANDLER.done);
+        while (!ENCRYPTION_HANDLER.done) {
+            try {
+                TimeUnit.SECONDS.sleep(1);
+            } catch (InterruptedException ex) {
+                LOG_HANDLER.warn(getClass(), "The timer was interrupted.  This could cause damage.  Check integrity of data before saving./");
+            }
+        }
         try {
             loadStuff();
         } catch (JsonFormattingException e) {
-            LOG_HANDLER.fatal(this.getClass(), "Mis-formatted data!\n" + e);
+            LOG_HANDLER.fatal(getClass(), "Mis-formatted data!\n" + e);
             LOG_HANDLER.save();
             System.exit(1);
         }
@@ -87,11 +93,12 @@ public class Instance {
         DATA_HANDLER.init();
         for (TransactionEntry entry : DATA_HANDLER.readTransactions()) {
             if (!entry.isBalanced()) {
-                LOG_HANDLER.error(this.getClass(), "Unbalanced entry: " + entry.getUUID());
+                LOG_HANDLER.error(getClass(), "Unbalanced entry: " + entry.getUUID());
             }
         }
         DATA_HANDLER.checkLedgers();
         DATA_HANDLER.checkCG();
+        DATA_HANDLER.checkCurToMain();
         IMPORT_HANDLER = new ImportHandler(this);
         EXPORT_HANDLER = new ExportHandler(this);
         new MainGui(this).setVisible(true);
@@ -102,7 +109,7 @@ public class Instance {
     }
 
     public final void loadStuff() throws JsonFormattingException {
-        LOG_HANDLER.trace(this.getClass(), "Instance.loadStuff() run");
+        LOG_HANDLER.trace(getClass(), "Instance.loadStuff() run");
         //establishing data files
         File currencies = new File(data.getPath() + File.separator + "Currencies" + File.separator + "currencies.json"),
                 stocks = new File(data.getPath() + File.separator + "Currencies" + File.separator + "stocks.json"),
@@ -112,7 +119,8 @@ public class Instance {
                 accounts = new File(data.getPath() + File.separator + "Accounts" + File.separator + "accounts.json"),
                 extran = new File(data.getPath() + File.separator + "Accounts" + File.separator + "extranious.json"),
                 accTyp = new File(data.getPath() + File.separator + "Accounts" + File.separator + "account-types.json"),
-                taxItm = new File(data.getPath() + File.separator + "Accounts" + File.separator + "tax-items.json");
+                taxItm = new File(data.getPath() + File.separator + "Accounts" + File.separator + "tax-items.json"),
+                marApi = new File(data.getPath() + File.separator + "Currencies" + File.separator + "market-apis.json");
         //Create Defaults for new profiles
         {
             //Folders
@@ -130,40 +138,50 @@ public class Instance {
                     exp.mkdir();
                 }
             }
-            //Currencies
-            {
-                if (!currencies.exists()) {
-                    FILE_HANDLER.write(currencies, new String(FILE_HANDLER.getTemplate("Currencies/currencies.json"), Charset.forName("unicode")));
+            //Hang to prevent File IO problems
+            boolean loaded = false;
+            while (!loaded) {
+                loaded = currencies.exists() && stocks.exists() && inventories.exists() && special.exists() &&
+                        exchanges.exists() && accounts.exists() && extran.exists() && accTyp.exists() &&
+                        taxItm.exists() && marApi.exists();
+                //Currencies
+                {
+                    if (!currencies.exists()) {
+                        FILE_HANDLER.write(currencies, new String(FILE_HANDLER.getTemplate("Currencies/currencies.json"), Charset.forName("unicode")));
+                    }
+                    if (!stocks.exists()) {
+                        FILE_HANDLER.write(stocks, new String(FILE_HANDLER.getTemplate("Currencies/stocks.json"), Charset.forName("unicode")));
+                    }
+                    if (!inventories.exists()) {
+                        FILE_HANDLER.write(inventories, new String(FILE_HANDLER.getTemplate("Currencies/inventories.json"), Charset.forName("unicode")));
+                    }
+                    if (!special.exists()) {
+                        FILE_HANDLER.write(special, new String(FILE_HANDLER.getTemplate("Currencies/special.json"), Charset.forName("unicode")));
+                    }
+                    if (!marApi.exists()) {
+                        FILE_HANDLER.write(marApi, new String(FILE_HANDLER.getTemplate("Currencies/market-apis.json"), Charset.forName("unicode")));
+                    }
                 }
-                if (!stocks.exists()) {
-                    FILE_HANDLER.write(stocks, new String(FILE_HANDLER.getTemplate("Currencies/stocks.json"), Charset.forName("unicode")));
-                }
-                if (!inventories.exists()) {
-                    FILE_HANDLER.write(inventories, new String(FILE_HANDLER.getTemplate("Currencies/inventories.json"), Charset.forName("unicode")));
-                }
-                if (!special.exists()) {
-                    FILE_HANDLER.write(special, new String(FILE_HANDLER.getTemplate("Currencies/special.json"), Charset.forName("unicode")));
+                //Accounts
+                {
+                    if (!exchanges.exists()) {
+                        FILE_HANDLER.write(exchanges, new String(FILE_HANDLER.getTemplate("Accounts/exchanges.json"), Charset.forName("unicode")));
+                    }
+                    if (!accounts.exists()) {
+                        FILE_HANDLER.write(accounts, new String(FILE_HANDLER.getTemplate("Accounts/accounts.json"), Charset.forName("unicode")));
+                    }
+                    if (!extran.exists()) {
+                        FILE_HANDLER.write(extran, new String(FILE_HANDLER.getTemplate("Accounts/extranious.json"), Charset.forName("unicode")));
+                    }
+                    if (!accTyp.exists()) {
+                        FILE_HANDLER.write(accTyp, new String(FILE_HANDLER.getTemplate("Accounts/account-types.json"), Charset.forName("unicode")));
+                    }
+                    if (!taxItm.exists()) {
+                        FILE_HANDLER.write(taxItm, new String(FILE_HANDLER.getTemplate("Accounts/tax-items.json"), Charset.forName("unicode")));
+                    }
                 }
             }
-            //Accounts
-            {
-                if (!exchanges.exists()) {
-                    FILE_HANDLER.write(exchanges, new String(FILE_HANDLER.getTemplate("Accounts/exchanges.json"), Charset.forName("unicode")));
-                }
-                if (!accounts.exists()) {
-                    FILE_HANDLER.write(accounts, new String(FILE_HANDLER.getTemplate("Accounts/accounts.json"), Charset.forName("unicode")));
-                }
-                if (!extran.exists()) {
-                    FILE_HANDLER.write(extran, new String(FILE_HANDLER.getTemplate("Accounts/extranious.json"), Charset.forName("unicode")));
-                }
-                if (!accTyp.exists()) {
-                    FILE_HANDLER.write(accTyp, new String(FILE_HANDLER.getTemplate("Accounts/account-types.json"), Charset.forName("unicode")));
-                }
-                if (!taxItm.exists()) {
-                    FILE_HANDLER.write(taxItm, new String(FILE_HANDLER.getTemplate("Accounts/tax-items.json"), Charset.forName("unicode")));
-                }
-            }
-            LOG_HANDLER.trace(this.getClass(), "Defaults set where necessary");
+            LOG_HANDLER.trace(getClass(), "Defaults set where necessary");
         }
         //LCurrency
         {
@@ -187,14 +205,6 @@ public class Instance {
                 CURRENCIES.add(__);
             }
             CURRENCIES.changed = false;
-            LOG_HANDLER.trace(this.getClass(), "Currencies loaded");
-            JsonArray tickers = (JsonArray) FILE_HANDLER.hit("https://api.coingecko.com/api/v3/simple/supported_vs_currencies");
-            for (JsonString s : tickers.getStringArray()) {
-                LCurrency cur = getLCurrency(s.getString());
-                if (cur != null) {
-                    VS.add(cur);
-                }
-            }
         }
         //LStock
         {
@@ -204,7 +214,7 @@ public class Instance {
                 STOCKS.add(new LStock(obj, this));
             }
             STOCKS.changed = false;
-            LOG_HANDLER.trace(this.getClass(), "Stocks loaded");
+            LOG_HANDLER.trace(getClass(), "Stocks loaded");
         }
         //Inventory
         {
@@ -214,7 +224,13 @@ public class Instance {
                 INVENTORIES.add(new LInventory(obj, this));
             }
             INVENTORIES.changed = false;
-            LOG_HANDLER.trace(this.getClass(), "Inventories loaded");
+            LOG_HANDLER.trace(getClass(), "Inventories loaded");
+        }
+        //Market APIs
+        {
+            MARKET_APIS.clear();
+            MARKET_APIS.load((JsonArray) JsonItem.sanitizeDigest(FILE_HANDLER.read(marApi)));
+            MARKET_APIS.changed = false;
         }
         //Account Types
         {
@@ -224,7 +240,7 @@ public class Instance {
                 ACCOUNT_TYPES.add(new AccountType(obj));
             }
             ACCOUNT_TYPES.changed = false;
-            LOG_HANDLER.trace(this.getClass(), "Account Types loaded");
+            LOG_HANDLER.trace(getClass(), "Account Types loaded");
         }
         //Exchanges
         {
@@ -236,7 +252,7 @@ public class Instance {
                 EXCHANGES.add(new Exchange(obj, this, true));
             }
             EXCHANGES.changed = false;
-            LOG_HANDLER.trace(this.getClass(), "Exchanges loaded");
+            LOG_HANDLER.trace(getClass(), "Exchanges loaded");
         }
         //Accounts
         {
@@ -261,7 +277,7 @@ public class Instance {
             if (extranious.FIELDS.containsKey("gift-cards")) {
                 for (JsonString item : extranious.getArray("gift-cards").getStringArray()) {
                     ACCOUNTS.add(new Account(item.getString() + "_GC", y, main,
-                            ACCOUNT_TYPES.getElement("Gift_Card"), this, false));
+                            ACCOUNT_TYPES.getElement("Gift_Card"), null, this, false));
                     y++;
                 }
             }
@@ -269,7 +285,7 @@ public class Instance {
                 for (LStock s : STOCKS) {
                     if (e.supports(s)) {
                         ACCOUNTS.add(new Account(e.NAME + "_" + s.getTicker(), x, s,
-                                ACCOUNT_TYPES.getElement("Tracking"), this, false));
+                                ACCOUNT_TYPES.getElement("Tracking"), e, this, false));
                         x++;
                     }
                 }
@@ -278,21 +294,21 @@ public class Instance {
                         if (!e.NAME.equals("Personal") && !e.NAME.equals("Cash")) {
                             if (j.equals(main)) {
                                 ACCOUNTS.add(new Account(e.NAME + "_" + j.getTicker(), y, j,
-                                        ACCOUNT_TYPES.getElement("Portfolio_Cash"), this, false));
+                                        ACCOUNT_TYPES.getElement("Portfolio_Cash"), e, this, false));
                                 y++;
                             } else {
                                 ACCOUNTS.add(new Account(e.NAME + "_" + j.getTicker(), x, j,
-                                        ACCOUNT_TYPES.getElement("Tracking"), this, false));
+                                        ACCOUNT_TYPES.getElement("Tracking"), e, this, false));
                                 x++;
                             }
                         } else {
                             if (!j.equals(getLCurrency("main"))) {
                                 ACCOUNTS.add(new Account(e.NAME + "_" + j.getTicker(), x, j,
-                                        ACCOUNT_TYPES.getElement("Tracking"), this, false));
+                                        ACCOUNT_TYPES.getElement("Tracking"), e, this, false));
                                 x++;
                             } else {
                                 ACCOUNTS.add(new Account(e.NAME + "_" + j.getTicker(), y, main,
-                                        ACCOUNT_TYPES.getElement("Portfolio_Cash"), this, false));
+                                        ACCOUNT_TYPES.getElement("Portfolio_Cash"), e, this, false));
                                 y++;
                             }
                         }
@@ -300,7 +316,7 @@ public class Instance {
                         if (places != -1) {
                             ACCOUNTS.add(new Account(e.NAME + "_" + j.getTicker() + "_S",
                                     x, new LCurrency(j, j.getName(), places - j.getPlaces()),
-                                    ACCOUNT_TYPES.getElement("Tracking"), this, false));
+                                    ACCOUNT_TYPES.getElement("Tracking"), e, this, false));
                             x++;
                         }
                     }
@@ -309,7 +325,7 @@ public class Instance {
                     if (e.supports(i)) {
                         ACCOUNTS.add(new Account(
                                 e.NAME + "_" + i.getTicker().replace(" ", "_"),
-                                x, i, ACCOUNT_TYPES.getElement("Tracking"), this, false));
+                                x, i, ACCOUNT_TYPES.getElement("Tracking"), e, this, false));
                         x++;
                     }
                 }
@@ -317,13 +333,13 @@ public class Instance {
             if (extranious.FIELDS.containsKey("brave-mobile")) {
                 for (JsonString item : extranious.getArray("brave-mobile").getStringArray()) {
                     ACCOUNTS.add(new Account(item.getString() + "_BAT", x, getLCurrency("C!BAT"),
-                            ACCOUNT_TYPES.getElement("Tracking"), this, false));
+                            ACCOUNT_TYPES.getElement("Tracking"), null, this, false));
                     x++;
                 }
             }
             ACCOUNTS.sort();
             ACCOUNTS.changed = false;
-            LOG_HANDLER.trace(this.getClass(), "Accounts loaded");
+            LOG_HANDLER.trace(getClass(), "Accounts loaded");
         }
         //Tax
         {
@@ -386,61 +402,70 @@ public class Instance {
         return main__.encode(d);
     }
 
-    public BigDecimal convert(LCurrency a, BigDecimal amnt, LCurrency b) {
+    public BigDecimal convert(BigDecimal amount, LCurrency a, LCurrency b) {
         if (a.getTicker().equalsIgnoreCase(b.getTicker()) && a.getName().equalsIgnoreCase(b.getName())) {
-            return amnt;
+            return amount;
         } else {
-            if (a.getTicker().equals(b.getTicker()) && a.getClass() == b.getClass() && a.isFiat() == b.isFiat()) {
-                return amnt.multiply(b.getFactor().divide(a.getFactor(), PRECISION));
-            }
-            if (a.isFiat() && b.isFiat()) {
-                if (root.contains(a.getTicker())) {
-                    return amnt.multiply(FILE_HANDLER.hitPolygonForex(a.getTicker(), b.getTicker())).multiply(b.getFactor().divide(a.getFactor(), PRECISION));
-                } else if (root.contains(b.getTicker())) {
-                    return amnt.divide(FILE_HANDLER.hitPolygonForex(b.getTicker(), a.getTicker()), PRECISION).multiply(b.getFactor().divide(a.getFactor(), PRECISION));
+            for (LMarketApi marketApi : MARKET_APIS) {
+                if (marketApi.canConvert(a, b)) {
+                    return marketApi.convert(amount, a, b);
                 }
             }
-            if (a.getClass() == LCurrency.class && b.getClass() == LCurrency.class) {
-                boolean vs = false, f = true;
-                if (!a.isFiat()) {
-                    for (LCurrency cur : VS) {
-                        if (b.equals(cur) || (b.isFiat() == cur.isFiat() && b.getClass() == cur.getClass() && b.getTicker().equals(cur.getTicker()))) {
-                            vs = true;
-                            break;
-                        }
-                    }
+            LMarketApi aa = null, bb = null;
+            for (LMarketApi marketApi : MARKET_APIS) {
+                if (aa == null && marketApi.canConvert(a, main)) {
+                    aa = marketApi;
                 }
-                if (!vs) {
-                    for (LCurrency cur : VS) {
-                        if (a.equals(cur) || (a.isFiat() == cur.isFiat() && a.getClass() == cur.getClass() && a.getTicker().equals(cur.getTicker()))) {
-                            vs = true;
-                            f = false;
-                            break;
-                        }
-                    }
+                if (bb == null && marketApi.canConvert(b, main)) {
+                    bb = marketApi;
                 }
-                if (vs) {
-                    String name;
-                    if (f) {
-                        if (a.getAltName().equals("")) {
-                            name = a.getName().toLowerCase().replace(" ", "-");
-                        } else {
-                            name = a.getAltName();
-                        }
-                        return FILE_HANDLER.hitCoinGecko(name, b.getTicker()).multiply(amnt).multiply(b.getFactor().divide(a.getFactor(), PRECISION));
-                    } else {
-                        if (b.getAltName().equals("")) {
-                            name = b.getName().toLowerCase().replace(" ", "-");
-                        } else {
-                            name = b.getAltName();
-                        }
-                        return amnt.divide(FILE_HANDLER.hitCoinGecko(name, a.getTicker().toLowerCase()), PRECISION).multiply(b.getFactor().divide(a.getFactor(), PRECISION));
-                    }
+            }
+            if (aa == null || bb == null) {
+                if (aa == null && bb == null) {
+                    LOG_HANDLER.error(getClass(), "The following assets are not presently covnertable: " + a + ", " + b);
+                } else if (aa == null) {
+                    LOG_HANDLER.error(getClass(), "The following asset is not presently covnertable: " + a);
                 } else {
-                    return b.reverseTotal(a.getTotal(amnt));
+                    LOG_HANDLER.error(getClass(), "The following asset is not presently covnertable: " + b);
                 }
+                return BigDecimal.ZERO;
             } else {
-                return b.reverseTotal(a.getTotal(amnt));
+                BigDecimal x = aa.getCurrentPrice(a, main).divide(bb.getCurrentPrice(b, main), precision);
+                return amount.multiply(x).multiply(b.getFactor().divide(a.getFactor(), precision));
+            }
+        }
+    }
+
+    public BigDecimal convert(BigDecimal amount, LCurrency a, LCurrency b, LDate date) {
+        if (a.getTicker().equalsIgnoreCase(b.getTicker()) && a.getName().equalsIgnoreCase(b.getName())) {
+            return amount;
+        } else {
+            for (LMarketApi marketApi : MARKET_APIS) {
+                if (marketApi.canConvert(a, b)) {
+                    return marketApi.convert(amount, a, b, date);
+                }
+            }
+            LMarketApi aa = null, bb = null;
+            for (LMarketApi marketApi : MARKET_APIS) {
+                if (aa == null && marketApi.canConvert(a, main)) {
+                    aa = marketApi;
+                }
+                if (bb == null && marketApi.canConvert(b, main)) {
+                    bb = marketApi;
+                }
+            }
+            if (aa == null || bb == null) {
+                if (aa == null && bb == null) {
+                    LOG_HANDLER.error(getClass(), "The following assets are not presently covnertable: " + a + ", " + b);
+                } else if (aa == null) {
+                    LOG_HANDLER.error(getClass(), "The following asset is not presently covnertable: " + a);
+                } else {
+                    LOG_HANDLER.error(getClass(), "The following asset is not presently covnertable: " + b);
+                }
+                return BigDecimal.ZERO;
+            } else {
+                BigDecimal x = aa.getHistoricalPrice(a, main, date).divide(bb.getHistoricalPrice(b, main, date), precision);
+                return amount.multiply(x).multiply(b.getFactor().divide(a.getFactor(), precision));
             }
         }
     }
@@ -513,7 +538,7 @@ public class Instance {
             return BigDecimal.ZERO;
         } else {
             if (flag) {
-                return new BigDecimal(out.toString()).divide(BigDecimal.TEN.pow(2), PRECISION);
+                return new BigDecimal(out.toString()).divide(BigDecimal.TEN.pow(2), precision);
             } else {
                 return new BigDecimal(out.toString());
             }

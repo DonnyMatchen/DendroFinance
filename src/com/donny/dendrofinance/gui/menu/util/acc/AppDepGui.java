@@ -167,16 +167,16 @@ public class AppDepGui extends RegisterFrame {
             SAVE = DendroFactory.getButton("Save");
             SAVE.addActionListener(event -> {
                 BigDecimal x = BigDecimal.ZERO;
-                BigDecimal stck = new BigDecimal(STOCK_APP.getText());
-                BigDecimal cryp = new BigDecimal(CRYPTO_APP.getText());
-                BigDecimal inv = new BigDecimal(INV_APP.getText());
+                BigDecimal stock = new BigDecimal(STOCK_APP.getText());
+                BigDecimal crypto = new BigDecimal(CRYPTO_APP.getText());
+                BigDecimal inventory = new BigDecimal(INV_APP.getText());
                 BigDecimal fiat = new BigDecimal(FIAT_APP.getText());
-                x = x.add(stck).add(cryp).add(inv).add(fiat);
+                x = x.add(stock).add(crypto).add(inventory).add(fiat);
                 LDate date = new LDate(DATE.getText(), CURRENT_INSTANCE);
                 TransactionEntry entry = new TransactionEntry(CURRENT_INSTANCE);
-                String accs = (stck.compareTo(BigDecimal.ZERO) == 0 ? "" : stck.compareTo(BigDecimal.ZERO) > 0 ? "D!Stock(" + stck + "), " : "C!Stock(" + stck.abs() + "), ")
-                        + (cryp.compareTo(BigDecimal.ZERO) == 0 ? "" : cryp.compareTo(BigDecimal.ZERO) > 0 ? "D!Crypto(" + cryp + "), " : "C!Crypto(" + cryp.abs() + "), ")
-                        + (inv.compareTo(BigDecimal.ZERO) == 0 ? "" : inv.compareTo(BigDecimal.ZERO) > 0 ? "D!Held_Inventory(" + inv + "), " : "C!Held_Inventory(" + inv.abs() + "), ")
+                String accs = (stock.compareTo(BigDecimal.ZERO) == 0 ? "" : stock.compareTo(BigDecimal.ZERO) > 0 ? "D!Stock(" + stock + "), " : "C!Stock(" + stock.abs() + "), ")
+                        + (crypto.compareTo(BigDecimal.ZERO) == 0 ? "" : crypto.compareTo(BigDecimal.ZERO) > 0 ? "D!Crypto(" + crypto + "), " : "C!Crypto(" + crypto.abs() + "), ")
+                        + (inventory.compareTo(BigDecimal.ZERO) == 0 ? "" : inventory.compareTo(BigDecimal.ZERO) > 0 ? "D!Held_Inventory(" + inventory + "), " : "C!Held_Inventory(" + inventory.abs() + "), ")
                         + (fiat.compareTo(BigDecimal.ZERO) == 0 ? "" : fiat.compareTo(BigDecimal.ZERO) > 0 ? "D!Other_Cash(" + fiat + "), " : "C!Other_Cash(" + fiat.abs() + "), ");
                 if (x.compareTo(BigDecimal.ZERO) >= 0) {
                     entry.insert(

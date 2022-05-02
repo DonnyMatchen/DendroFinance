@@ -48,7 +48,7 @@ public class DataSet<E extends Entry> {
                 }
                 CURRENT_INSTANCE.FILE_HANDLER.writeEncrypt(ARCHIVE, "passwd" + array);
             } catch (JsonFormattingException ex) {
-                CURRENT_INSTANCE.LOG_HANDLER.error(this.getClass(), "Entry " + uuid + " Failed formatting!");
+                CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Entry " + uuid + " Failed formatting!");
             }
         } else {
             if (ARCHIVE.exists()) {

@@ -1,0 +1,25 @@
+TODOs
+X extranious editing
+
+v0.4.0
+* began keeping a permanent changelog
+* removed all instances of "amnt", "cst", "xchg", and "cncl" as a variable name and in code
+* removed all instances of "this.getClass()"
+* added loop to ensure File IO works properly for defaults
+* changed hang to allow password to be entered to something less processor intense
+* overhauled Instance.convert()
+  * added date to conversion gui
+  * added check for "today" in AssetStatusGui
+* modularized market price APIs
+  * added LMarketApi and market-apis.json
+  * added MarketApiBTC
+  * removed api-keys from profile and profile gui and from Instance
+  * added check for currency -> main
+  * added gui
+  * added gui editing
+  * added data structure to Examples
+* integrated exchanges more closely with accounts
+  * updated account in data structures
+  * added exchange to account from gui
+* removed stub MenuItem
+* simplified editGui code

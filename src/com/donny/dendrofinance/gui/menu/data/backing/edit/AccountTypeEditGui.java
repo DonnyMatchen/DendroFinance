@@ -36,26 +36,19 @@ public class AccountTypeEditGui extends BackingEditGui<AccountType> {
         cancel.addActionListener(event -> dispose());
         save = DendroFactory.getButton("Save");
         save.addActionListener(event -> {
-            if (INDEX >= 0) {
-                try {
-                    TABLE.replace(INDEX, new AccountType(
-                            Validation.validateString(name),
-                            (String) type.getSelectedItem()
-                    ));
-                    dispose();
-                } catch (ValidationFailedException ex) {
-                    CURRENT_INSTANCE.LOG_HANDLER.error(this.getClass(), "You did a badness!");
+            try {
+                AccountType temp = new AccountType(
+                        Validation.validateString(name),
+                        (String) type.getSelectedItem()
+                );
+                if (INDEX >= 0) {
+                    TABLE.replace(INDEX, temp);
+                } else {
+                    TABLE.add(temp);
                 }
-            } else {
-                try {
-                    TABLE.add(new AccountType(
-                            Validation.validateString(name),
-                            (String) type.getSelectedItem()
-                    ));
-                    dispose();
-                } catch (ValidationFailedException ex) {
-                    CURRENT_INSTANCE.LOG_HANDLER.error(this.getClass(), "You did a badness!");
-                }
+                dispose();
+            } catch (ValidationFailedException ex) {
+                CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "You did a badness!");
             }
         });
 

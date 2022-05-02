@@ -9,8 +9,8 @@ import java.util.Arrays;
 
 public class ToolBox {
 
-    public static void convert(LCurrency a, BigDecimal amnt, LCurrency b, Instance curInst) {
-        System.out.println(a.encode(amnt) + " => " + b.encode(curInst.convert(a, amnt, b)));
+    public static void convert(LCurrency a, BigDecimal amount, LCurrency b, Instance curInst) {
+        System.out.println(a.encode(amount) + " => " + b.encode(curInst.convert(amount, a, b)));
     }
 
     public static BigDecimal cryptoOther(String cur, int y, int m, int d, Instance curInst) {

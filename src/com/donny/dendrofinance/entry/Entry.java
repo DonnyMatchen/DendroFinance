@@ -32,7 +32,7 @@ public class Entry<T extends Header> {
         if (obj.FIELDS.containsKey("_uuid")) {
             long candidate = obj.getDecimal("_uuid").decimal.longValue();
             if (CURRENT_INSTANCE.UUID_HANDLER.UUIDS.contains(candidate)) {
-                CURRENT_INSTANCE.LOG_HANDLER.warn(this.getClass(), "Clashing UUID: " + candidate);
+                CURRENT_INSTANCE.LOG_HANDLER.warn(getClass(), "Clashing UUID: " + candidate);
                 UUID = CURRENT_INSTANCE.UUID_HANDLER.generateUUID();
             } else {
                 UUID = candidate;
@@ -65,7 +65,7 @@ public class Entry<T extends Header> {
         if (HEADER.getBlank().containsKey(fieldName)) {
             return HEADER.getBlank().get(fieldName).getValue();
         }
-        CURRENT_INSTANCE.LOG_HANDLER.error(this.getClass(), "(Get) Field \"" + fieldName + "\" not found in: " + UUID);
+        CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "(Get) Field \"" + fieldName + "\" not found in: " + UUID);
         return null;
     }
 
@@ -107,7 +107,7 @@ public class Entry<T extends Header> {
                 VALUES.get(name).setValue(value);
             }
         } else {
-            CURRENT_INSTANCE.LOG_HANDLER.error(this.getClass(), "(Insert) Field \"" + name + "\" not found in: " + UUID);
+            CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "(Insert) Field \"" + name + "\" not found in: " + UUID);
         }
     }
 

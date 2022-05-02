@@ -63,13 +63,7 @@ public class LInventory extends LCurrency {
     @Override
     public BigDecimal getTotal(BigDecimal amount) {
         if (COMMODITY) {
-            if (CURRENT_INSTANCE.stockAPI.equals("polygon")) {
-                return amount.multiply(CURRENT_INSTANCE.FILE_HANDLER.hitPolygonForex(getTicker()));
-            } else if (CURRENT_INSTANCE.stockAPI.equals("twelve")) {
-                return amount.multiply(CURRENT_INSTANCE.FILE_HANDLER.hitTwelveDataForex(getTicker()));
-            } else {
-                return BigDecimal.ZERO;
-            }
+            return super.getTotal(amount);
         } else if (MERCHANDISE) {
             Position p = CURRENT_INSTANCE.DATA_HANDLER.getPosition(this);
             if (p == null) {
@@ -85,13 +79,7 @@ public class LInventory extends LCurrency {
     @Override
     public BigDecimal getTotal(BigDecimal amount, LDate date) {
         if (COMMODITY) {
-            if (CURRENT_INSTANCE.stockAPI.equals("twelve")) {
-                return amount.multiply(CURRENT_INSTANCE.FILE_HANDLER.hitTwelveDataForex(getTicker(), date));
-            } else if (CURRENT_INSTANCE.stockAPI.equals("polygon")) {
-                return amount.multiply(CURRENT_INSTANCE.FILE_HANDLER.hitPolygonForex(getTicker(), date));
-            } else {
-                return BigDecimal.ZERO;
-            }
+            return super.getTotal(amount, date);
         } else if (MERCHANDISE) {
             Position p = CURRENT_INSTANCE.DATA_HANDLER.getPosition(this, date);
             if (p == null) {

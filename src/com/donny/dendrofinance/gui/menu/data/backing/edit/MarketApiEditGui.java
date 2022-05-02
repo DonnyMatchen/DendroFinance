@@ -32,19 +32,19 @@ public class MarketApiEditGui extends BackingEditGui<LMarketApi> {
         name = new JTextField();
 
         url = DendroFactory.getLongField();
-        url_ = (JTextArea)url.getViewport().getView();
+        url_ = (JTextArea) url.getViewport().getView();
         urlH = DendroFactory.getLongField();
-        urlH_ = (JTextArea)urlH.getViewport().getView();
+        urlH_ = (JTextArea) urlH.getViewport().getView();
         key = DendroFactory.getLongField();
-        key_ = (JTextArea)key.getViewport().getView();
-        path  = DendroFactory.getLongField();
-        path_ = (JTextArea)path.getViewport().getView();
+        key_ = (JTextArea) key.getViewport().getView();
+        path = DendroFactory.getLongField();
+        path_ = (JTextArea) path.getViewport().getView();
         pathH = DendroFactory.getLongField();
-        pathH_ = (JTextArea)pathH.getViewport().getView();
+        pathH_ = (JTextArea) pathH.getViewport().getView();
         nats = DendroFactory.getLongField();
-        nats_ = (JTextArea)nats.getViewport().getView();
+        nats_ = (JTextArea) nats.getViewport().getView();
         excepts = DendroFactory.getLongField();
-        excepts_ = (JTextArea)excepts.getViewport().getView();
+        excepts_ = (JTextArea) excepts.getViewport().getView();
 
         fiat = new JCheckBox("Forex");
         crypto = new JCheckBox("Cryptocurrencies");
@@ -67,16 +67,16 @@ public class MarketApiEditGui extends BackingEditGui<LMarketApi> {
         save.addActionListener(event -> {
             try {
                 String type = "";
-                if(fiat.isSelected()){
+                if (fiat.isSelected()) {
                     type += "F";
                 }
-                if(stock.isSelected()){
+                if (stock.isSelected()) {
                     type += "S";
                 }
-                if(crypto.isSelected()){
+                if (crypto.isSelected()) {
                     type += "C";
                 }
-                if(inventory.isSelected()){
+                if (inventory.isSelected()) {
                     type += "I";
                 }
                 LMarketApi temp = new LMarketApi(
@@ -87,16 +87,16 @@ public class MarketApiEditGui extends BackingEditGui<LMarketApi> {
                         Validation.validateString(key_),
                         CURRENT_INSTANCE
                 );
-                if(!path_.getText().equals("")) {
+                if (!path_.getText().equals("")) {
                     temp.resetParsePath(new ArrayList<>(Arrays.asList(Validation.validateString(path_).replace(" ", "").split(","))));
                 }
-                if(!pathH_.getText().equals("")) {
+                if (!pathH_.getText().equals("")) {
                     temp.resetParsePathHistory(new ArrayList<>(Arrays.asList(Validation.validateString(pathH_).replace(" ", "").split(","))));
                 }
-                if(!nats_.getText().equals("")) {
+                if (!nats_.getText().equals("")) {
                     temp.resetNats(new ArrayList<>(Arrays.asList(Validation.validateString(nats_).replace(" ", "").split(","))));
                 }
-                if(!excepts_.getText().equals("")) {
+                if (!excepts_.getText().equals("")) {
                     temp.resetExcepts(new ArrayList<>(Arrays.asList(Validation.validateString(excepts_).replace(" ", "").split(","))));
                 }
                 if (INDEX >= 0) {
@@ -111,7 +111,7 @@ public class MarketApiEditGui extends BackingEditGui<LMarketApi> {
             }
         });
 
-        if(INDEX>=0){
+        if (INDEX >= 0) {
             LMarketApi root = TABLE.getElement(INDEX);
             name.setText(root.NAME);
             url_.setText(root.BASE_URL);

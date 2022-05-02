@@ -73,10 +73,10 @@ public class Instance {
         ENCRYPTION_HANDLER = new PasswordGui(args, this);
         UUID_HANDLER = new UuidHandler(this);
         ENCRYPTION_HANDLER.setVisible(true);
-        while (!ENCRYPTION_HANDLER.done){
+        while (!ENCRYPTION_HANDLER.done) {
             try {
                 TimeUnit.SECONDS.sleep(1);
-            }catch(InterruptedException ex){
+            } catch (InterruptedException ex) {
                 LOG_HANDLER.warn(getClass(), "The timer was interrupted.  This could cause damage.  Check integrity of data before saving./");
             }
         }
@@ -140,7 +140,7 @@ public class Instance {
             }
             //Hang to prevent File IO problems
             boolean loaded = false;
-            while(!loaded){
+            while (!loaded) {
                 loaded = currencies.exists() && stocks.exists() && inventories.exists() && special.exists() &&
                         exchanges.exists() && accounts.exists() && extran.exists() && accTyp.exists() &&
                         taxItm.exists() && marApi.exists();
@@ -277,7 +277,7 @@ public class Instance {
             if (extranious.FIELDS.containsKey("gift-cards")) {
                 for (JsonString item : extranious.getArray("gift-cards").getStringArray()) {
                     ACCOUNTS.add(new Account(item.getString() + "_GC", y, main,
-                            ACCOUNT_TYPES.getElement("Gift_Card"), this, false));
+                            ACCOUNT_TYPES.getElement("Gift_Card"), null, this, false));
                     y++;
                 }
             }
@@ -285,7 +285,7 @@ public class Instance {
                 for (LStock s : STOCKS) {
                     if (e.supports(s)) {
                         ACCOUNTS.add(new Account(e.NAME + "_" + s.getTicker(), x, s,
-                                ACCOUNT_TYPES.getElement("Tracking"), this, false));
+                                ACCOUNT_TYPES.getElement("Tracking"), e, this, false));
                         x++;
                     }
                 }
@@ -294,21 +294,21 @@ public class Instance {
                         if (!e.NAME.equals("Personal") && !e.NAME.equals("Cash")) {
                             if (j.equals(main)) {
                                 ACCOUNTS.add(new Account(e.NAME + "_" + j.getTicker(), y, j,
-                                        ACCOUNT_TYPES.getElement("Portfolio_Cash"), this, false));
+                                        ACCOUNT_TYPES.getElement("Portfolio_Cash"), e, this, false));
                                 y++;
                             } else {
                                 ACCOUNTS.add(new Account(e.NAME + "_" + j.getTicker(), x, j,
-                                        ACCOUNT_TYPES.getElement("Tracking"), this, false));
+                                        ACCOUNT_TYPES.getElement("Tracking"), e, this, false));
                                 x++;
                             }
                         } else {
                             if (!j.equals(getLCurrency("main"))) {
                                 ACCOUNTS.add(new Account(e.NAME + "_" + j.getTicker(), x, j,
-                                        ACCOUNT_TYPES.getElement("Tracking"), this, false));
+                                        ACCOUNT_TYPES.getElement("Tracking"), e, this, false));
                                 x++;
                             } else {
                                 ACCOUNTS.add(new Account(e.NAME + "_" + j.getTicker(), y, main,
-                                        ACCOUNT_TYPES.getElement("Portfolio_Cash"), this, false));
+                                        ACCOUNT_TYPES.getElement("Portfolio_Cash"), e, this, false));
                                 y++;
                             }
                         }
@@ -316,7 +316,7 @@ public class Instance {
                         if (places != -1) {
                             ACCOUNTS.add(new Account(e.NAME + "_" + j.getTicker() + "_S",
                                     x, new LCurrency(j, j.getName(), places - j.getPlaces()),
-                                    ACCOUNT_TYPES.getElement("Tracking"), this, false));
+                                    ACCOUNT_TYPES.getElement("Tracking"), e, this, false));
                             x++;
                         }
                     }
@@ -325,7 +325,7 @@ public class Instance {
                     if (e.supports(i)) {
                         ACCOUNTS.add(new Account(
                                 e.NAME + "_" + i.getTicker().replace(" ", "_"),
-                                x, i, ACCOUNT_TYPES.getElement("Tracking"), this, false));
+                                x, i, ACCOUNT_TYPES.getElement("Tracking"), e, this, false));
                         x++;
                     }
                 }
@@ -333,7 +333,7 @@ public class Instance {
             if (extranious.FIELDS.containsKey("brave-mobile")) {
                 for (JsonString item : extranious.getArray("brave-mobile").getStringArray()) {
                     ACCOUNTS.add(new Account(item.getString() + "_BAT", x, getLCurrency("C!BAT"),
-                            ACCOUNT_TYPES.getElement("Tracking"), this, false));
+                            ACCOUNT_TYPES.getElement("Tracking"), null, this, false));
                     x++;
                 }
             }

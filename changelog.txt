@@ -1,5 +1,5 @@
 TODOs
-* extranious editing
+X extranious editing
 
 v0.4.0
 * began keeping a permanent changelog
@@ -18,5 +18,8 @@ v0.4.0
   * added gui
   * added gui editing
   * added data structure to Examples
-X integrated exchanges more heavily with accounts
+* integrated exchanges more closely with accounts
+  * updated account in data structures
+  * added exchange to account from gui
 * removed stub MenuItem
+* simplified editGui code

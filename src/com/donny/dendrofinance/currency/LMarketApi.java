@@ -96,27 +96,30 @@ public class LMarketApi implements ExportableToJsonObject {
         return TYPES.contains("I");
     }
 
-    public void resetParsePath(ArrayList<String> newPath){
+    public void resetParsePath(ArrayList<String> newPath) {
         PARSE_PATH.clear();
         PARSE_PATH.addAll(newPath);
     }
-    public void resetParsePathHistory(ArrayList<String> newPath){
+
+    public void resetParsePathHistory(ArrayList<String> newPath) {
         PARSE_PATH_HISTORY.clear();
         PARSE_PATH_HISTORY.addAll(newPath);
     }
-    public void resetNats(ArrayList<String> newPath){
+
+    public void resetNats(ArrayList<String> newPath) {
         NATS.clear();
         NATS.addAll(newPath);
     }
-    public void resetExcepts(ArrayList<String> newPath){
+
+    public void resetExcepts(ArrayList<String> newPath) {
         EXCEPTS.clear();
         EXCEPTS.addAll(newPath);
     }
 
-    public String readParsePath(){
-        if(PARSE_PATH.isEmpty()){
+    public String readParsePath() {
+        if (PARSE_PATH.isEmpty()) {
             return "";
-        }else {
+        } else {
             StringBuilder sb = new StringBuilder();
             for (String s : PARSE_PATH) {
                 sb.append(", ").append(s);
@@ -124,10 +127,11 @@ public class LMarketApi implements ExportableToJsonObject {
             return sb.substring(2);
         }
     }
-    public String readParsePathHistory(){
-        if(PARSE_PATH_HISTORY.isEmpty()){
+
+    public String readParsePathHistory() {
+        if (PARSE_PATH_HISTORY.isEmpty()) {
             return "";
-        }else {
+        } else {
             StringBuilder sb = new StringBuilder();
             for (String s : PARSE_PATH_HISTORY) {
                 sb.append(", ").append(s);
@@ -135,10 +139,11 @@ public class LMarketApi implements ExportableToJsonObject {
             return sb.substring(2);
         }
     }
-    public String readNats(){
-        if(NATS.isEmpty()){
+
+    public String readNats() {
+        if (NATS.isEmpty()) {
             return "";
-        }else {
+        } else {
             StringBuilder sb = new StringBuilder();
             for (String s : NATS) {
                 sb.append(", ").append(s);
@@ -146,10 +151,11 @@ public class LMarketApi implements ExportableToJsonObject {
             return sb.substring(2);
         }
     }
-    public String readExcepts(){
-        if(EXCEPTS.isEmpty()){
+
+    public String readExcepts() {
+        if (EXCEPTS.isEmpty()) {
             return "";
-        }else {
+        } else {
             StringBuilder sb = new StringBuilder();
             for (String s : EXCEPTS) {
                 sb.append(", ").append(s);
@@ -225,12 +231,8 @@ public class LMarketApi implements ExportableToJsonObject {
                 sup = item;
             }
             switch (sup.getType()) {
-                case ARRAY -> {
-                    sup = ((JsonArray) sup).get(Integer.parseInt(token));
-                }
-                case OBJECT -> {
-                    sup = ((JsonObject) sup).get(token);
-                }
+                case ARRAY -> sup = ((JsonArray) sup).get(Integer.parseInt(token));
+                case OBJECT -> sup = ((JsonObject) sup).get(token);
                 case DECIMAL -> {
                     return ((JsonDecimal) sup).decimal;
                 }
@@ -271,12 +273,8 @@ public class LMarketApi implements ExportableToJsonObject {
                 sup = item;
             }
             switch (sup.getType()) {
-                case ARRAY -> {
-                    sup = ((JsonArray) sup).get(Integer.parseInt(token));
-                }
-                case OBJECT -> {
-                    sup = ((JsonObject) sup).get(token);
-                }
+                case ARRAY -> sup = ((JsonArray) sup).get(Integer.parseInt(token));
+                case OBJECT -> sup = ((JsonObject) sup).get(token);
                 case DECIMAL -> {
                     return ((JsonDecimal) sup).decimal;
                 }

@@ -13,6 +13,7 @@ import java.math.BigDecimal;
 
 public class Account implements ExportableToJsonObject {
     public final boolean EXPORT;
+    public final Exchange EXCHANGE;
     private final Instance CURRENT_INSTANCE;
     private final String NAME;
     private final int AID;
@@ -20,7 +21,7 @@ public class Account implements ExportableToJsonObject {
     private final AccountType TYPE;
     private final String BUDGET;
 
-    public Account(String name, int aid, LCurrency cur, AccountType type, String budget, Instance curInst, boolean export) {
+    public Account(String name, int aid, LCurrency cur, AccountType type, String budget, Exchange exchange, Instance curInst, boolean export) {
         CURRENT_INSTANCE = curInst;
         NAME = name;
         AID = aid;
@@ -28,11 +29,12 @@ public class Account implements ExportableToJsonObject {
         TYPE = type;
         BUDGET = budget;
         EXPORT = export;
+        EXCHANGE = exchange;
         CURRENT_INSTANCE.LOG_HANDLER.trace(getClass(), "Account " + NAME + " Created");
     }
 
-    public Account(String name, int aid, LCurrency cur, AccountType type, Instance curInst, boolean export) {
-        this(name, aid, cur, type, "", curInst, export);
+    public Account(String name, int aid, LCurrency cur, AccountType type, Exchange exchange, Instance curInst, boolean export) {
+        this(name, aid, cur, type, "", exchange, curInst, export);
     }
 
     public Account(JsonObject obj, Instance curInst) {
@@ -42,6 +44,11 @@ public class Account implements ExportableToJsonObject {
         CUR = curInst.getLCurrency(obj.getString("currency").getString());
         TYPE = curInst.ACCOUNT_TYPES.getElement(obj.getString("type").getString());
         EXPORT = true;
+        if (obj.FIELDS.containsKey("exchange")) {
+            EXCHANGE = CURRENT_INSTANCE.EXCHANGES.getElement(obj.getString("exchange").getString());
+        } else {
+            EXCHANGE = null;
+        }
         if (obj.FIELDS.containsKey("budget")) {
             BUDGET = obj.getString("budget").getString();
         } else {
@@ -120,13 +127,14 @@ public class Account implements ExportableToJsonObject {
         JsonObject obj = new JsonObject();
         obj.FIELDS.put("name", new JsonString(NAME));
         obj.FIELDS.put("id", new JsonDecimal(BigDecimal.valueOf(AID)));
-        if (CUR.getName().equals(CURRENT_INSTANCE.getLCurrency(CUR.toString()).getName())) {
-            obj.FIELDS.put("currency", new JsonString(CUR.toString()));
-        } else {
-            obj.FIELDS.put("currency", new JsonString(CUR.getName()));
-        }
+        obj.FIELDS.put("currency", new JsonString(CUR.toString()));
         obj.FIELDS.put("type", new JsonString(TYPE.NAME));
-        obj.FIELDS.put("budget", new JsonString(BUDGET));
+        if (EXCHANGE != null) {
+            obj.FIELDS.put("exchange", new JsonString(EXCHANGE.NAME));
+        }
+        if (!BUDGET.equals("")) {
+            obj.FIELDS.put("budget", new JsonString(BUDGET));
+        }
         return obj;
     }
 

@@ -121,8 +121,7 @@ public class Exchange implements ExportableToJsonObject {
     public boolean inUse(Instance curInst) {
         for (TransactionEntry entry : curInst.DATA_HANDLER.readTransactions()) {
             for (AccountWrapper aw : entry.getAccounts()) {
-                String accName = aw.ACCOUNT.getName();
-                if (accName.contains(NAME) && accName.split("_").length >= 2) {
+                if (aw.ACCOUNT.EXCHANGE == this) {
                     return true;
                 }
             }

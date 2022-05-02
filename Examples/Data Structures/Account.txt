@@ -14,6 +14,7 @@ the prefixes are used to state the first index belonging to the specified broad 
 Account{
   "budget": string {optional}
   "currency": string
+  "exchange": string {optional}
   "id": integer
   "name": string {unique}
   "type": string
@@ -21,6 +22,7 @@ Account{
 
 * budget: the budget ticker.  Reserved for revenue and expenses primarily.
 * currency: the currency the account is in.  Unless it's a tracking account, this should probably be main.
+* exchange: the exchange the account belongs to, if applicable
 * id: the account ID.
 * name: the unique account identifier
 * type: the AccountType that the account belongs under.

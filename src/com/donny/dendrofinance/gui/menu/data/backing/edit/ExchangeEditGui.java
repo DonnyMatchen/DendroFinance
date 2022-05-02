@@ -48,111 +48,72 @@ public class ExchangeEditGui extends BackingEditGui<Exchange> {
         save.addActionListener(event -> {
             sText.setBackground(DendroFactory.CONTENT);
             tText.setBackground(DendroFactory.CONTENT);
-            if (INDEX >= 0) {
-                try {
-                    ArrayList<String> needed = TABLE.getElement(INDEX).aNamesInUse(CURRENT_INSTANCE);
+            try {
+                ArrayList<String> needed = TABLE.getElement(INDEX).aNamesInUse(CURRENT_INSTANCE);
+                for (String s : Validation.validateStringAllowEmpty(sText).replace(",", "").split(" ")) {
+                    String str = "";
+                    if (!sText.getText().equals("")) {
+                        for (String n : needed) {
+                            if (n.contains(s.split("!")[1])) {
+                                str = n;
+                                break;
+                            }
+                        }
+                    }
+                    if (!str.equals("")) {
+                        needed.remove(str);
+                    }
+                }
+                if (!needed.isEmpty()) {
+                    CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "You have removed exchange accounts that are in use:\n" + Arrays.toString(needed.toArray()));
+                    sText.setBackground(DendroFactory.WRONG);
+                    throw new ValidationFailedException();
+                }
+                Exchange exchange;
+                if (tText.getText().equals("")) {
+                    exchange = new Exchange(
+                            Validation.validateString(name),
+                            Validation.validateStringAllowEmpty(alt),
+                            new ArrayList<>(Arrays.asList(
+                                    Validation.validateString(sText).replace(",", "").split(" ")
+                            )),
+                            CURRENT_INSTANCE,
+                            true
+                    );
+                } else {
+                    ArrayList<JsonObject> objs = new ArrayList<>();
                     for (String s : Validation.validateStringAllowEmpty(sText).replace(",", "").split(" ")) {
-                        String str = "";
-                        if (!sText.getText().equals("")) {
-                            for (String n : needed) {
-                                if (n.contains(s.split("!")[1])) {
-                                    str = n;
-                                    break;
-                                }
-                            }
-                        }
-                        if (!str.equals("")) {
-                            needed.remove(str);
+                        try {
+                            String[] parts = s.split("_");
+                            JsonObject obj = new JsonObject();
+                            obj.FIELDS.put("cur", new JsonString(parts[0]));
+                            obj.FIELDS.put("places", new JsonDecimal(new BigDecimal(parts[1])));
+                            objs.add(obj);
+                        } catch (NumberFormatException | ArrayIndexOutOfBoundsException | JsonFormattingException ex) {
+                            CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Bad Staking List");
+                            tText.setBackground(DendroFactory.WRONG);
+                            throw new ValidationFailedException();
                         }
                     }
-                    if (!needed.isEmpty()) {
-                        CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "You have removed exchange accounts that are in use:\n" + Arrays.toString(needed.toArray()));
-                        sText.setBackground(DendroFactory.WRONG);
-                        throw new ValidationFailedException();
-                    }
-
-                    if (tText.getText().equals("")) {
-                        TABLE.replace(INDEX, new Exchange(
-                                Validation.validateString(name),
-                                Validation.validateStringAllowEmpty(alt),
-                                new ArrayList<>(Arrays.asList(
-                                        Validation.validateString(sText).replace(",", "").split(" ")
-                                )),
-                                CURRENT_INSTANCE,
-                                true
-                        ));
-                    } else {
-                        ArrayList<JsonObject> objs = new ArrayList<>();
-                        for (String s : Validation.validateStringAllowEmpty(sText).replace(",", "").split(" ")) {
-                            try {
-                                String[] parts = s.split("_");
-                                JsonObject obj = new JsonObject();
-                                obj.FIELDS.put("cur", new JsonString(parts[0]));
-                                obj.FIELDS.put("places", new JsonDecimal(new BigDecimal(parts[1])));
-                                objs.add(obj);
-                            } catch (NumberFormatException | ArrayIndexOutOfBoundsException | JsonFormattingException ex) {
-                                CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Bad Staking List");
-                                tText.setBackground(DendroFactory.WRONG);
-                                throw new ValidationFailedException();
-                            }
-                        }
-                        TABLE.replace(INDEX, new Exchange(
-                                Validation.validateString(name),
-                                Validation.validateStringAllowEmpty(alt),
-                                new ArrayList<>(Arrays.asList(
-                                        Validation.validateString(sText).replace(",", "").split(" ")
-                                )),
-                                objs,
-                                CURRENT_INSTANCE,
-                                true
-                        ));
-                    }
-                    dispose();
-                } catch (ValidationFailedException ex) {
-                    CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "You did a badness!");
+                    exchange = new Exchange(
+                            Validation.validateString(name),
+                            Validation.validateStringAllowEmpty(alt),
+                            new ArrayList<>(Arrays.asList(
+                                    Validation.validateString(sText).replace(",", "").split(" ")
+                            )),
+                            objs,
+                            CURRENT_INSTANCE,
+                            true
+                    );
                 }
-            } else {
-                try {
-                    if (tText.getText().equals("")) {
-                        TABLE.add(new Exchange(
-                                Validation.validateString(name),
-                                Validation.validateStringAllowEmpty(alt),
-                                new ArrayList<>(Arrays.asList(
-                                        Validation.validateString(sText).replace(",", "").split(" ")
-                                )),
-                                CURRENT_INSTANCE,
-                                true
-                        ));
-                    } else {
-                        tText.setBackground(DendroFactory.CONTENT);
-                        ArrayList<JsonObject> objs = new ArrayList<>();
-                        for (String s : Validation.validateStringAllowEmpty(sText).replace(",", "").split(" ")) {
-                            try {
-                                String[] parts = s.split("_");
-                                JsonObject obj = new JsonObject();
-                                obj.FIELDS.put("cur", new JsonString(parts[0]));
-                                obj.FIELDS.put("places", new JsonDecimal(new BigDecimal(parts[1])));
-                                objs.add(obj);
-                            } catch (NumberFormatException | ArrayIndexOutOfBoundsException | JsonFormattingException ex) {
-                                CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Bad Staking List");
-                                tText.setBackground(DendroFactory.WRONG);
-                            }
-                        }
-                        TABLE.add(new Exchange(
-                                Validation.validateString(name),
-                                Validation.validateStringAllowEmpty(alt),
-                                new ArrayList<>(Arrays.asList(
-                                        Validation.validateStringAllowEmpty(sText).replace(",", "").split(" ")
-                                )),
-                                objs,
-                                CURRENT_INSTANCE,
-                                true
-                        ));
-                    }
-                    dispose();
-                } catch (ValidationFailedException ex) {
-                    CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "You did a badness!");
+                if (INDEX >= 0) {
+                    TABLE.replace(INDEX, exchange);
+                } else {
+                    TABLE.add(exchange);
                 }
+                dispose();
+            } catch (ValidationFailedException ex) {
+                CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "You did a badness!");
             }
         });
 

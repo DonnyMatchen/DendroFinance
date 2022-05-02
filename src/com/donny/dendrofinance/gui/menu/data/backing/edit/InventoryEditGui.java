@@ -40,58 +40,36 @@ public class InventoryEditGui extends BackingEditGui<LInventory> {
         cancel.addActionListener(event -> dispose());
         save = DendroFactory.getButton("Save");
         save.addActionListener(event -> {
-            if (INDEX >= 0) {
-                try {
-                    if (comod.isSelected()) {
-                        TABLE.replace(INDEX, new LInventory(
-                                Validation.validateString(name),
-                                Validation.validateString(ticker),
-                                Validation.validateString(symbol),
-                                Validation.validateInteger(places).intValue(),
-                                merch.isSelected(),
-                                CURRENT_INSTANCE
-                        ));
-                    } else {
-                        TABLE.replace(INDEX, new LInventory(
-                                Validation.validateString(name),
-                                Validation.validateString(ticker),
-                                Validation.validateString(symbol),
-                                Validation.validateInteger(places).intValue(),
-                                Validation.validateDecimal(val),
-                                merch.isSelected(),
-                                CURRENT_INSTANCE
-                        ));
-                    }
-                    dispose();
-                } catch (ValidationFailedException ex) {
-                    CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "You did a badness!");
+            try {
+                LInventory inventory;
+                if (comod.isSelected()) {
+                    inventory = new LInventory(
+                            Validation.validateString(name),
+                            Validation.validateString(ticker),
+                            Validation.validateString(symbol),
+                            Validation.validateInteger(places).intValue(),
+                            merch.isSelected(),
+                            CURRENT_INSTANCE
+                    );
+                } else {
+                    inventory = new LInventory(
+                            Validation.validateString(name),
+                            Validation.validateString(ticker),
+                            Validation.validateString(symbol),
+                            Validation.validateInteger(places).intValue(),
+                            Validation.validateDecimal(val),
+                            merch.isSelected(),
+                            CURRENT_INSTANCE
+                    );
                 }
-            } else {
-                try {
-                    if (comod.isSelected()) {
-                        TABLE.add(new LInventory(
-                                Validation.validateString(name),
-                                Validation.validateString(ticker),
-                                Validation.validateString(symbol),
-                                Validation.validateInteger(places).intValue(),
-                                merch.isSelected(),
-                                CURRENT_INSTANCE
-                        ));
-                    } else {
-                        TABLE.add(new LInventory(
-                                Validation.validateString(name),
-                                Validation.validateString(ticker),
-                                Validation.validateString(symbol),
-                                Validation.validateInteger(places).intValue(),
-                                Validation.validateDecimal(val),
-                                merch.isSelected(),
-                                CURRENT_INSTANCE
-                        ));
-                    }
-                    dispose();
-                } catch (ValidationFailedException ex) {
-                    CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "You did a badness!");
+                if (INDEX >= 0) {
+                    TABLE.replace(INDEX, inventory);
+                } else {
+                    TABLE.add(inventory);
                 }
+                dispose();
+            } catch (ValidationFailedException ex) {
+                CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "You did a badness!");
             }
         });
 

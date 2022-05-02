@@ -32,6 +32,29 @@ public class AppDepGui extends RegisterFrame {
             D = new JLabel("Inventories");
             E = new JLabel("Non-main Fiat");
             DATE = new JTextField();
+            DATE.getDocument().addDocumentListener(new DocumentListener() {
+                @Override
+                public void insertUpdate(DocumentEvent documentEvent) {
+                    try {
+                        LDate date = new LDate(DATE.getText(), CURRENT_INSTANCE);
+                        STOCK_CURRENT.setText(CURRENT_INSTANCE.DATA_HANDLER.accountAsOf("Stock", date).toString());
+                        CRYPTO_CURRENT.setText(CURRENT_INSTANCE.DATA_HANDLER.accountAsOf("Crypto", date).toString());
+                        INV_CURRENT.setText(CURRENT_INSTANCE.DATA_HANDLER.accountAsOf("Held_Inventory", date).toString());
+                        FIAT_CURRENT.setText(CURRENT_INSTANCE.DATA_HANDLER.accountAsOf("Other_Cash", date).toString());
+                    } catch (ArrayIndexOutOfBoundsException | NumberFormatException ex) {
+                    }
+                }
+
+                @Override
+                public void removeUpdate(DocumentEvent documentEvent) {
+
+                }
+
+                @Override
+                public void changedUpdate(DocumentEvent documentEvent) {
+
+                }
+            });
             STOCK = new JTextField();
             STOCK.getDocument().addDocumentListener(new DocumentListener() {
                 @Override
@@ -315,12 +338,8 @@ public class AppDepGui extends RegisterFrame {
             }
 
             LDate date = LDate.now(CURRENT_INSTANCE);
-            date = new LDate(date.getYear(), date.getMonth(), LDate.lastDay(date.getYear(), date.getMonth(), CURRENT_INSTANCE), 23, 59, 59, CURRENT_INSTANCE);
+            date = new LDate(date.getYear(), date.lastMonth(), LDate.lastDay(date.getYear(), date.lastMonth(), CURRENT_INSTANCE), 23, 59, 59, CURRENT_INSTANCE);
             DATE.setText(date.toString());
-            STOCK_CURRENT.setText(CURRENT_INSTANCE.DATA_HANDLER.accountAsOf("Stock", date).toString());
-            CRYPTO_CURRENT.setText(CURRENT_INSTANCE.DATA_HANDLER.accountAsOf("Crypto", date).toString());
-            INV_CURRENT.setText(CURRENT_INSTANCE.DATA_HANDLER.accountAsOf("Held_Inventory", date).toString());
-            FIAT_CURRENT.setText(CURRENT_INSTANCE.DATA_HANDLER.accountAsOf("Other_Cash", date).toString());
 
             pack();
         }

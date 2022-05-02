@@ -1,6 +1,14 @@
 TODOs
 X extranious editing
 
+v0.4.1
+* conversion fixed
+* Gwei and Wei now have correct names
+* fixed title for NewTransactionEntryGui
+* fixed profile gui
+* fixed AppDepGui
+* started including more in release files
+
 v0.4.0
 * began keeping a permanent changelog
 * removed all instances of "amnt", "cst", "xchg", and "cncl" as a variable name and in code

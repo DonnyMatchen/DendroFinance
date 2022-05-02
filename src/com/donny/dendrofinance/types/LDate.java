@@ -136,6 +136,10 @@ public class LDate extends LType<LDate> {
         }
     }
 
+    public int lastMonth() {
+        return (getMonth() - 1) % 12 == 0 ? 12 : (getMonth() - 1) % 12;
+    }
+
     public long getTime() {
         return DATE.getTime();
     }

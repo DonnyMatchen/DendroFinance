@@ -219,7 +219,7 @@ public class ProfileGui extends JDialog {
             }
         }
         if (config.FIELDS.containsKey("precision")) {
-            PRECISION.setText(config.getString("precision").getString());
+            PRECISION.setText("" + config.getDecimal("precision").decimal);
         }
         if (config.FIELDS.containsKey("log")) {
             LOG_LEVEL.setText(config.getString("log").getString());

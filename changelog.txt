@@ -1,5 +1,13 @@
 TODOs
 X extranious editing
+X loading and saving of entries and backing elements
+
+v0.4.2
+* dated conversion fixed
+* minor typo corrections
+* better error printing
+* fixed bug in menu
+* made MainGui more readable
 
 v0.4.1
 * conversion fixed

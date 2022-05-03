@@ -146,7 +146,7 @@ public class MainGui extends JFrame {
                 JMenuItem imp = new JMenuItem("Import");
                 imp.addActionListener(event -> CURRENT_INSTANCE.IMPORT_HANDLER.load());
                 JMenuItem rel = new JMenuItem("Reload");
-                imp.addActionListener(event -> {
+                rel.addActionListener(event -> {
                     try {
                         CURRENT_INSTANCE.loadStuff();
                     } catch (JsonFormattingException ex) {
@@ -257,105 +257,108 @@ public class MainGui extends JFrame {
                 setJMenuBar(bar);
             }
 
-            //tablePanel
+            //group layout
             {
-                GroupLayout tableLayout = new GroupLayout(TABLE_PANEL);
-                TABLE_PANEL.setLayout(tableLayout);
-                tableLayout.setHorizontalGroup(
-                        tableLayout.createSequentialGroup().addContainerGap().addGroup(
-                                tableLayout.createParallelGroup(GroupLayout.Alignment.LEADING).addComponent(
-                                        A, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
-                                ).addGroup(
-                                        tableLayout.createSequentialGroup().addComponent(
-                                                GEN_INSERT, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
-                                        ).addGap(
-                                                DendroFactory.SMALL_GAP, DendroFactory.SMALL_GAP, Short.MAX_VALUE
-                                        ).addComponent(
-                                                SPEC_INSERT, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
-                                        ).addGap(
-                                                DendroFactory.SMALL_GAP, DendroFactory.SMALL_GAP, Short.MAX_VALUE
-                                        ).addComponent(
-                                                EDIT, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
-                                        ).addGap(
-                                                DendroFactory.SMALL_GAP, DendroFactory.SMALL_GAP, Short.MAX_VALUE
-                                        ).addComponent(
-                                                DELETE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
-                                        )
-                                ).addGroup(
-                                        tableLayout.createSequentialGroup().addComponent(
-                                                C, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
-                                        ).addGap(DendroFactory.SMALL_GAP).addComponent(
-                                                SEARCH, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
-                                        )
-                                ).addComponent(
-                                        TABLE_PANE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
-                                )
-                        ).addContainerGap()
-                );
-                tableLayout.setVerticalGroup(
-                        tableLayout.createSequentialGroup().addComponent(
-                                A, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
-                        ).addGap(DendroFactory.MEDIUM_GAP).addGroup(
-                                tableLayout.createParallelGroup(GroupLayout.Alignment.LEADING).addComponent(
-                                        GEN_INSERT, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
-                                ).addComponent(
-                                        SPEC_INSERT, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
-                                ).addComponent(
-                                        EDIT, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
-                                ).addComponent(
-                                        DELETE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
-                                )
-                        ).addGap(DendroFactory.MEDIUM_GAP).addGroup(
-                                tableLayout.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(
-                                        C, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
-                                ).addComponent(
-                                        SEARCH, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
-                                )
+                //tablePanel
+                {
+                    GroupLayout tableLayout = new GroupLayout(TABLE_PANEL);
+                    TABLE_PANEL.setLayout(tableLayout);
+                    tableLayout.setHorizontalGroup(
+                            tableLayout.createSequentialGroup().addContainerGap().addGroup(
+                                    tableLayout.createParallelGroup(GroupLayout.Alignment.LEADING).addComponent(
+                                            A, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                    ).addGroup(
+                                            tableLayout.createSequentialGroup().addComponent(
+                                                    GEN_INSERT, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                            ).addGap(
+                                                    DendroFactory.SMALL_GAP, DendroFactory.SMALL_GAP, Short.MAX_VALUE
+                                            ).addComponent(
+                                                    SPEC_INSERT, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                            ).addGap(
+                                                    DendroFactory.SMALL_GAP, DendroFactory.SMALL_GAP, Short.MAX_VALUE
+                                            ).addComponent(
+                                                    EDIT, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                            ).addGap(
+                                                    DendroFactory.SMALL_GAP, DendroFactory.SMALL_GAP, Short.MAX_VALUE
+                                            ).addComponent(
+                                                    DELETE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                            )
+                                    ).addGroup(
+                                            tableLayout.createSequentialGroup().addComponent(
+                                                    C, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                            ).addGap(DendroFactory.SMALL_GAP).addComponent(
+                                                    SEARCH, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
+                                            )
+                                    ).addComponent(
+                                            TABLE_PANE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
+                                    )
+                            ).addContainerGap()
+                    );
+                    tableLayout.setVerticalGroup(
+                            tableLayout.createSequentialGroup().addComponent(
+                                    A, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                            ).addGap(DendroFactory.MEDIUM_GAP).addGroup(
+                                    tableLayout.createParallelGroup(GroupLayout.Alignment.LEADING).addComponent(
+                                            GEN_INSERT, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                    ).addComponent(
+                                            SPEC_INSERT, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                    ).addComponent(
+                                            EDIT, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                    ).addComponent(
+                                            DELETE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                    )
+                            ).addGap(DendroFactory.MEDIUM_GAP).addGroup(
+                                    tableLayout.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(
+                                            C, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                    ).addComponent(
+                                            SEARCH, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                    )
+                            ).addGap(DendroFactory.SMALL_GAP).addComponent(
+                                    TABLE_PANE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
+                            ).addContainerGap()
+                    );
+                }
+                //metaPanel
+                {
+                    GroupLayout metaLayout = new GroupLayout(DISPLAY_PANEL);
+                    DISPLAY_PANEL.setLayout(metaLayout);
+                    metaLayout.setHorizontalGroup(
+                            metaLayout.createSequentialGroup().addContainerGap().addGroup(
+                                    metaLayout.createParallelGroup(GroupLayout.Alignment.LEADING).addComponent(
+                                            B, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                    ).addComponent(
+                                            DISPLAY_PANE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
+                                    )
+                            ).addContainerGap()
+                    );
+                    metaLayout.setVerticalGroup(
+                            metaLayout.createSequentialGroup().addComponent(
+                                    B, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                            ).addGap(DendroFactory.MEDIUM_GAP).addComponent(
+                                    DISPLAY_PANE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
+                            ).addContainerGap()
+                    );
+                }
+                //back
+                GroupLayout main = new GroupLayout(getContentPane());
+                getContentPane().setLayout(main);
+                main.setHorizontalGroup(
+                        main.createSequentialGroup().addContainerGap().addComponent(
+                                TABLE_PANEL, GroupLayout.PREFERRED_SIZE, 800, Short.MAX_VALUE
                         ).addGap(DendroFactory.SMALL_GAP).addComponent(
-                                TABLE_PANE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
+                                DISPLAY_PANEL, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
                         ).addContainerGap()
                 );
-            }
-            //metaPanel
-            {
-                GroupLayout metaLayout = new GroupLayout(DISPLAY_PANEL);
-                DISPLAY_PANEL.setLayout(metaLayout);
-                metaLayout.setHorizontalGroup(
-                        metaLayout.createSequentialGroup().addContainerGap().addGroup(
-                                metaLayout.createParallelGroup(GroupLayout.Alignment.LEADING).addComponent(
-                                        B, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                main.setVerticalGroup(
+                        main.createSequentialGroup().addContainerGap().addGroup(
+                                main.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(
+                                        TABLE_PANEL, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
                                 ).addComponent(
-                                        DISPLAY_PANE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
+                                        DISPLAY_PANEL, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
                                 )
                         ).addContainerGap()
                 );
-                metaLayout.setVerticalGroup(
-                        metaLayout.createSequentialGroup().addComponent(
-                                B, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
-                        ).addGap(DendroFactory.MEDIUM_GAP).addComponent(
-                                DISPLAY_PANE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
-                        ).addContainerGap()
-                );
             }
-            //back
-            GroupLayout main = new GroupLayout(getContentPane());
-            getContentPane().setLayout(main);
-            main.setHorizontalGroup(
-                    main.createSequentialGroup().addContainerGap().addComponent(
-                            TABLE_PANEL, GroupLayout.PREFERRED_SIZE, 800, Short.MAX_VALUE
-                    ).addGap(DendroFactory.SMALL_GAP).addComponent(
-                            DISPLAY_PANEL, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
-                    ).addContainerGap()
-            );
-            main.setVerticalGroup(
-                    main.createSequentialGroup().addContainerGap().addGroup(
-                            main.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(
-                                    TABLE_PANEL, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
-                            ).addComponent(
-                                    DISPLAY_PANEL, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
-                            )
-                    ).addContainerGap()
-            );
 
             pack();
         }

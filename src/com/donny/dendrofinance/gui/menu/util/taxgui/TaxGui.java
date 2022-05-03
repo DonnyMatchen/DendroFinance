@@ -40,9 +40,9 @@ public class TaxGui extends RegisterFrame {
             CALCULATE = DendroFactory.getButton("Calculate");
             CALCULATE.addActionListener(event -> {
                 if (EXEMPT.getText().equals("")) {
-                    RESULT.setText(CURRENT_INSTANCE.main.encode(CURRENT_INSTANCE.TAX_ITEMS.getElement((String) ITEMS.getSelectedItem()).process(CURRENT_INSTANCE.cleanNumber(VALUE.getText()))));
+                    RESULT.setText(CURRENT_INSTANCE.$(CURRENT_INSTANCE.TAX_ITEMS.getElement((String) ITEMS.getSelectedItem()).process(CURRENT_INSTANCE.cleanNumber(VALUE.getText()))));
                 } else {
-                    RESULT.setText(CURRENT_INSTANCE.main.encode(CURRENT_INSTANCE.TAX_ITEMS.getElement((String) ITEMS.getSelectedItem()).process(CURRENT_INSTANCE.cleanNumber(VALUE.getText()), CURRENT_INSTANCE.cleanNumber(EXEMPT.getText()))));
+                    RESULT.setText(CURRENT_INSTANCE.$(CURRENT_INSTANCE.TAX_ITEMS.getElement((String) ITEMS.getSelectedItem()).process(CURRENT_INSTANCE.cleanNumber(VALUE.getText()), CURRENT_INSTANCE.cleanNumber(EXEMPT.getText()))));
                 }
             });
             NEW = DendroFactory.getButton("New Tax Item");

@@ -49,7 +49,7 @@ public class Account implements ExportableToJsonObject {
         } else {
             EXCHANGE = null;
         }
-        if (obj.FIELDS.containsKey("budget")) {
+        if (obj.FIELDS.containsKey("budget") && (TYPE.TYPE == BroadAccountType.REVENUE || TYPE.TYPE == BroadAccountType.EXPENSE)) {
             BUDGET = obj.getString("budget").getString();
         } else {
             BUDGET = "";

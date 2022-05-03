@@ -45,12 +45,12 @@ public class DataHandler {
         }
     }
 
-    public void addTransaction(TransactionEntry entry) {
-        readTransactions().add(entry);
+    public boolean addTransaction(TransactionEntry entry) {
+        return TRANSACTIONS.add(entry);
     }
 
-    public void addBudget(BudgetEntry entry) {
-        readBudgets().add(entry);
+    public boolean addBudget(BudgetEntry entry) {
+        return BUDGETS.add(entry);
     }
 
     public boolean deleteTransaction(long uuid) {
@@ -64,8 +64,22 @@ public class DataHandler {
         if (cand == null) {
             return false;
         } else {
-            readTransactions().remove(cand);
-            return true;
+            return TRANSACTIONS.remove(cand);
+        }
+    }
+
+    public boolean deleteBudget(long uuid) {
+        BudgetEntry cand = null;
+        for (BudgetEntry entry : readBudgets()) {
+            if (entry.getUUID() == uuid) {
+                cand = entry;
+                break;
+            }
+        }
+        if (cand == null) {
+            return false;
+        } else {
+            return BUDGETS.remove(cand);
         }
     }
 

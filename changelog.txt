@@ -1,9 +1,15 @@
 v0.5.0
+* minor bug fixes and optimizations
+  * replaced calls to "Instance.main.encode" with "Instance.$"
 * removal of extra data files
   * removed special, it's no longer needed
   * moved contents of extranious to accounts
--> editing accounts metadata
-X loading and saving of entries and backing elements
+* reworked of budgets
+  * restructured budget entry
+  * reworked budget guis
+-> reworked loading and saving of entries and backing elements
+  * handled empty due to deletion
+X editing accounts metadata in gui
 
 v0.4.2
 * dated conversion fixed

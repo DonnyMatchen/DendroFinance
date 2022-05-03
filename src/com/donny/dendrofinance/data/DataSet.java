@@ -16,6 +16,7 @@ public class DataSet<E extends Entry> {
     private final EntryType TYPE;
     private final File ARCHIVE;
     private final ArrayList<E> TABLE;
+    private boolean emptyDueToDeletion = false;
 
     public DataSet(String name, EntryType type, Instance curInst) {
         CURRENT_INSTANCE = curInst;
@@ -57,10 +58,23 @@ public class DataSet<E extends Entry> {
         }
     }
 
-    public ArrayList<E> read() throws JsonFormattingException {
+    public boolean add(E element) {
+        emptyDueToDeletion = false;
+        return TABLE.add(element);
+    }
+
+    public boolean remove(E element) {
+        boolean removed = TABLE.remove(element);
         if (TABLE.isEmpty()) {
+            emptyDueToDeletion = true;
+        }
+        return removed;
+    }
+
+    public ArrayList<E> read() throws JsonFormattingException {
+        if (TABLE.isEmpty() && !emptyDueToDeletion) {
             load();
         }
-        return TABLE;
+        return new ArrayList<>(TABLE);
     }
 }

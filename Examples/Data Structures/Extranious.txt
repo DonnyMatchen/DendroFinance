@@ -1,7 +1,0 @@
-Extranious{
-  "gift-cards": array(string)
-  "brave-mobile": array(string)
-}
-
-* gift-cards: an array of gift card providers for {provider}_GC asset accounts.
-* brave-mobile: a list of computers or containers that have a brave rewards account associated with them.

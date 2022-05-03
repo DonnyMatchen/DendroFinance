@@ -20,7 +20,6 @@ public class LCurrency implements ExportableToJsonObject {
     private final int PLACES;
     private final BigDecimal FACTOR;
     private final boolean FIAT, EXTINCT, TOKEN, FORWARDS;
-    private String altApi = "";
 
     public LCurrency(String name, String tic, boolean fiat, String symbol, boolean forwards, int places,
                      BigDecimal factor, String alt, boolean token, boolean dead, Instance curInst) {
@@ -139,10 +138,6 @@ public class LCurrency implements ExportableToJsonObject {
 
     public String getAltName() {
         return ALT_NAME;
-    }
-
-    public void setAltApi(String alt) {
-        altApi = alt;
     }
 
     public BigDecimal reverseTotal(BigDecimal amount) {

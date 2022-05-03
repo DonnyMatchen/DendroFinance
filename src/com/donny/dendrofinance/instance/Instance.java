@@ -114,7 +114,6 @@ public class Instance {
         File currencies = new File(data.getPath() + File.separator + "Currencies" + File.separator + "currencies.json"),
                 stocks = new File(data.getPath() + File.separator + "Currencies" + File.separator + "stocks.json"),
                 inventories = new File(data.getPath() + File.separator + "Currencies" + File.separator + "inventories.json"),
-                special = new File(data.getPath() + File.separator + "Currencies" + File.separator + "special.json"),
                 exchanges = new File(data.getPath() + File.separator + "Accounts" + File.separator + "exchanges.json"),
                 accounts = new File(data.getPath() + File.separator + "Accounts" + File.separator + "accounts.json"),
                 extranious = new File(data.getPath() + File.separator + "Accounts" + File.separator + "extranious.json"),
@@ -141,9 +140,8 @@ public class Instance {
             //Hang to prevent File IO problems
             boolean loaded = false;
             while (!loaded) {
-                loaded = currencies.exists() && stocks.exists() && inventories.exists() && special.exists() &&
-                        exchanges.exists() && accounts.exists() && extranious.exists() && accTyp.exists() &&
-                        taxItm.exists() && marApi.exists();
+                loaded = currencies.exists() && stocks.exists() && inventories.exists() && exchanges.exists() &&
+                        accounts.exists() && extranious.exists() && accTyp.exists() && taxItm.exists() && marApi.exists();
                 //Currencies
                 {
                     if (!currencies.exists()) {
@@ -154,9 +152,6 @@ public class Instance {
                     }
                     if (!inventories.exists()) {
                         FILE_HANDLER.write(inventories, new String(FILE_HANDLER.getTemplate("Currencies/inventories.json"), Charset.forName("unicode")));
-                    }
-                    if (!special.exists()) {
-                        FILE_HANDLER.write(special, new String(FILE_HANDLER.getTemplate("Currencies/special.json"), Charset.forName("unicode")));
                     }
                     if (!marApi.exists()) {
                         FILE_HANDLER.write(marApi, new String(FILE_HANDLER.getTemplate("Currencies/market-apis.json"), Charset.forName("unicode")));
@@ -187,14 +182,8 @@ public class Instance {
         {
             CURRENCIES.clear();
             JsonArray array = (JsonArray) JsonItem.sanitizeDigest(FILE_HANDLER.read(currencies));
-            JsonArray spec = (JsonArray) JsonItem.sanitizeDigest(FILE_HANDLER.read(special));
             for (JsonObject obj : array.getObjectArray()) {
                 LCurrency cur = new LCurrency(obj, this);
-                for (JsonObject obk : spec.getObjectArray()) {
-                    if (obk.getString("asset").getString().equals(cur.toString())) {
-                        cur.setAltApi(obk.getString("api").getString());
-                    }
-                }
                 CURRENCIES.add(cur);
             }
             main = getLCurrency(mainTicker);

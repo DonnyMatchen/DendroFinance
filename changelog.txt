@@ -1,4 +1,7 @@
-TODOs
+v0.5.0
+-> removal of extra data files
+  * removed special, it's no longer needed
+  -> moved contents of extranious to accounts
 X extranious editing
 X loading and saving of entries and backing elements
 

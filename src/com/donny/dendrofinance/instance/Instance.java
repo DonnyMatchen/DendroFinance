@@ -116,7 +116,6 @@ public class Instance {
                 inventories = new File(data.getPath() + File.separator + "Currencies" + File.separator + "inventories.json"),
                 exchanges = new File(data.getPath() + File.separator + "Accounts" + File.separator + "exchanges.json"),
                 accounts = new File(data.getPath() + File.separator + "Accounts" + File.separator + "accounts.json"),
-                extranious = new File(data.getPath() + File.separator + "Accounts" + File.separator + "extranious.json"),
                 accTyp = new File(data.getPath() + File.separator + "Accounts" + File.separator + "account-types.json"),
                 taxItm = new File(data.getPath() + File.separator + "Accounts" + File.separator + "tax-items.json"),
                 marApi = new File(data.getPath() + File.separator + "Currencies" + File.separator + "market-apis.json");
@@ -141,7 +140,7 @@ public class Instance {
             boolean loaded = false;
             while (!loaded) {
                 loaded = currencies.exists() && stocks.exists() && inventories.exists() && exchanges.exists() &&
-                        accounts.exists() && extranious.exists() && accTyp.exists() && taxItm.exists() && marApi.exists();
+                        accounts.exists() && accTyp.exists() && taxItm.exists() && marApi.exists();
                 //Currencies
                 {
                     if (!currencies.exists()) {
@@ -164,9 +163,6 @@ public class Instance {
                     }
                     if (!accounts.exists()) {
                         FILE_HANDLER.write(accounts, new String(FILE_HANDLER.getTemplate("Accounts/accounts.json"), Charset.forName("unicode")));
-                    }
-                    if (!extranious.exists()) {
-                        FILE_HANDLER.write(extranious, new String(FILE_HANDLER.getTemplate("Accounts/extranious.json"), Charset.forName("unicode")));
                     }
                     if (!accTyp.exists()) {
                         FILE_HANDLER.write(accTyp, new String(FILE_HANDLER.getTemplate("Accounts/account-types.json"), Charset.forName("unicode")));
@@ -262,10 +258,9 @@ public class Instance {
             }
             x++;
             y++;
-            JsonObject extraniousObj = (JsonObject) JsonItem.sanitizeDigest(FILE_HANDLER.read(extranious));
-            if (extraniousObj.FIELDS.containsKey("gift-cards")) {
-                for (JsonString item : extraniousObj.getArray("gift-cards").getStringArray()) {
-                    ACCOUNTS.add(new Account(item.getString() + "_GC", y, main,
+            if (accountObj.FIELDS.containsKey("gift-cards")) {
+                for (JsonString card : accountObj.getArray("gift-cards").getStringArray()) {
+                    ACCOUNTS.add(new Account(card.getString() + "_GC", y, main,
                             ACCOUNT_TYPES.getElement("Gift_Card"), null, this, false));
                     y++;
                 }
@@ -319,9 +314,9 @@ public class Instance {
                     }
                 }
             }
-            if (extraniousObj.FIELDS.containsKey("brave-mobile")) {
-                for (JsonString item : extraniousObj.getArray("brave-mobile").getStringArray()) {
-                    ACCOUNTS.add(new Account(item.getString() + "_BAT", x, getLCurrency("C!BAT"),
+            if (accountObj.FIELDS.containsKey("brave-mobile")) {
+                for (JsonString device : accountObj.getArray("brave-mobile").getStringArray()) {
+                    ACCOUNTS.add(new Account(device.getString() + "_BAT", x, getLCurrency("C!BAT"),
                             ACCOUNT_TYPES.getElement("Tracking"), null, this, false));
                     x++;
                 }

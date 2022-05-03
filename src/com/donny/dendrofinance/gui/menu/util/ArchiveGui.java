@@ -188,7 +188,7 @@ public class ArchiveGui extends RegisterFrame {
                     max = entry.getDate();
                 }
                 try {
-                    arr.ARRAY.add(entry.export());
+                    arr.add(entry.export());
                 } catch (JsonFormattingException ex) {
                     ex.printStackTrace();
                 }

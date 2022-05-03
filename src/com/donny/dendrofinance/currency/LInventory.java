@@ -95,10 +95,10 @@ public class LInventory extends LCurrency {
     @Override
     public JsonObject export() throws JsonFormattingException {
         JsonObject obj = new JsonObject();
-        obj.FIELDS.put("name", new JsonString(getName()));
-        obj.FIELDS.put("tic", new JsonString(getTicker()));
-        obj.FIELDS.put("symbol", new JsonString(getSymbol().replace("§", "")));
-        obj.FIELDS.put("places", new JsonDecimal(BigDecimal.valueOf(getPlaces())));
+        obj.put("name", new JsonString(getName()));
+        obj.put("tic", new JsonString(getTicker()));
+        obj.put("symbol", new JsonString(getSymbol().replace("§", "")));
+        obj.put("places", new JsonDecimal(BigDecimal.valueOf(getPlaces())));
         if (COMMODITY || MERCHANDISE) {
             String q = "";
             if (COMMODITY) {
@@ -107,10 +107,10 @@ public class LInventory extends LCurrency {
             if (MERCHANDISE) {
                 q += "M";
             }
-            obj.FIELDS.put("flags", new JsonString(q));
+            obj.put("flags", new JsonString(q));
         } else {
-            obj.FIELDS.put("flags", new JsonString("c"));
-            obj.FIELDS.put("value", new JsonDecimal(STATIC_VALUE));
+            obj.put("flags", new JsonString("c"));
+            obj.put("value", new JsonDecimal(STATIC_VALUE));
         }
         return obj;
     }

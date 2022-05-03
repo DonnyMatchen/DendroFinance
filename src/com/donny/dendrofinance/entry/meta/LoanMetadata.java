@@ -36,7 +36,7 @@ public class LoanMetadata {
     public LoanMetadata(long uuid, LDate date, JsonObject obj, Instance curInst) {
         this(
                 uuid,
-                obj.FIELDS.containsKey("date") ? new LDate(obj.getDecimal("date"), curInst) : date,
+                obj.containsKey("date") ? new LDate(obj.getDecimal("date"), curInst) : date,
                 obj.getString("name").getString(),
                 obj.getString("desc").toString(),
                 curInst.getLCurrency(obj.getString("cur").getString()),
@@ -77,12 +77,12 @@ public class LoanMetadata {
 
     public JsonObject export() throws JsonFormattingException {
         JsonObject obj = new JsonObject();
-        obj.FIELDS.put("date", new JsonDecimal(BigDecimal.valueOf(DATE.getTime())));
-        obj.FIELDS.put("name", new JsonString(NAME));
-        obj.FIELDS.put("desc", new JsonString(DESC));
-        obj.FIELDS.put("cur", new JsonString(CUR.toString()));
-        obj.FIELDS.put("princ", new JsonDecimal(PRINC));
-        obj.FIELDS.put("rate", new JsonDecimal(RATE));
+        obj.put("date", new JsonDecimal(BigDecimal.valueOf(DATE.getTime())));
+        obj.put("name", new JsonString(NAME));
+        obj.put("desc", new JsonString(DESC));
+        obj.put("cur", new JsonString(CUR.toString()));
+        obj.put("princ", new JsonDecimal(PRINC));
+        obj.put("rate", new JsonDecimal(RATE));
         return obj;
     }
 

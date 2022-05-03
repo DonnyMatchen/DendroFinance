@@ -23,7 +23,7 @@ public class BudgetEntry extends Entry<BudgetHeader> {
         JsonObject obj = new JsonObject();
         for (Account account : curInst.ACCOUNTS) {
             if (!account.getBudgetType().equals("")) {
-                obj.FIELDS.put(account.getName(), new JsonDecimal(BigDecimal.ZERO));
+                obj.put(account.getName(), new JsonDecimal(BigDecimal.ZERO));
             }
         }
         BudgetEntry entry = new BudgetEntry(curInst);

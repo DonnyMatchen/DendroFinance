@@ -29,7 +29,7 @@ public class Entry<T extends Header> {
         HEADER = (T) Header.getHeader(obj.getString("_header").getString(), curInst);
         VALUES = HEADER.getBlank();
         JsonObject types = obj.getObject("_types");
-        if (obj.FIELDS.containsKey("_uuid")) {
+        if (obj.containsKey("_uuid")) {
             long candidate = obj.getDecimal("_uuid").decimal.longValue();
             if (CURRENT_INSTANCE.UUID_HANDLER.UUIDS.contains(candidate)) {
                 CURRENT_INSTANCE.LOG_HANDLER.warn(getClass(), "Clashing UUID: " + candidate);
@@ -41,8 +41,8 @@ public class Entry<T extends Header> {
         } else {
             UUID = curInst.UUID_HANDLER.generateUUID();
         }
-        for (String key : types.FIELDS.keySet()) {
-            insertIntoField(key, new Field(key, types.getString(key), obj.FIELDS.get(key), curInst));
+        for (String key : types.getFields()) {
+            insertIntoField(key, new Field(key, types.getString(key), obj.get(key), curInst));
         }
 
     }
@@ -127,13 +127,13 @@ public class Entry<T extends Header> {
 
     public JsonObject export() throws JsonFormattingException {
         JsonObject obj = new JsonObject();
-        obj.FIELDS.put("_header", new JsonString(HEADER.getName()));
-        obj.FIELDS.put("_uuid", new JsonDecimal(BigDecimal.valueOf(UUID)));
-        obj.FIELDS.put("_types", new JsonObject());
+        obj.put("_header", new JsonString(HEADER.getName()));
+        obj.put("_uuid", new JsonDecimal(BigDecimal.valueOf(UUID)));
+        obj.put("_types", new JsonObject());
         for (String key : VALUES.keySet()) {
             Field f = VALUES.get(key);
-            obj.getObject("_types").FIELDS.put(key, new JsonString(f.getType().toString()));
-            obj.FIELDS.put(key, f.getValue().export());
+            obj.getObject("_types").put(key, new JsonString(f.getType().toString()));
+            obj.put(key, f.getValue().export());
         }
         return obj;
     }

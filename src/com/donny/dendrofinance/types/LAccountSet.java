@@ -25,7 +25,7 @@ public class LAccountSet extends LType<ArrayList<AccountWrapper>> implements Ite
     public LAccountSet(JsonArray array, Instance curInst) {
         this(curInst);
         for (JsonObject obj : array.getObjectArray()) {
-            if (obj.FIELDS.containsKey("acc") && obj.FIELDS.containsKey("col") && obj.FIELDS.containsKey("val")) {
+            if (obj.containsKey("acc") && obj.containsKey("col") && obj.containsKey("val")) {
                 REGISTRY.add(new AccountWrapper(obj, CURRENT_INSTANCE));
             }
         }
@@ -89,7 +89,7 @@ public class LAccountSet extends LType<ArrayList<AccountWrapper>> implements Ite
     public JsonItem export() throws JsonFormattingException {
         JsonArray arr = new JsonArray();
         for (AccountWrapper a : REGISTRY) {
-            arr.ARRAY.add(a.export());
+            arr.add(a.export());
         }
         return arr;
     }

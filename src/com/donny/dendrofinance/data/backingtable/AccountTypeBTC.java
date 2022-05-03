@@ -101,7 +101,7 @@ public class AccountTypeBTC extends BackingTableCore<AccountType> {
         JsonArray array = new JsonArray();
         for (AccountType accTyp : TABLE) {
             try {
-                array.ARRAY.add(accTyp.export());
+                array.add(accTyp.export());
             } catch (JsonFormattingException ex) {
                 CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Malformed Account Type: " + accTyp);
             }

@@ -28,7 +28,7 @@ public class AssetChangeMetadata {
 
     public AssetChangeMetadata(long uuid, LDate date, JsonObject obj, Instance curInst) {
         this(uuid,
-                obj.FIELDS.containsKey("date") ? new LDate(obj.getDecimal("date"), curInst) : date,
+                obj.containsKey("date") ? new LDate(obj.getDecimal("date"), curInst) : date,
                 obj.getString("name").getString(),
                 curInst.getLCurrency(obj.getString("currency").getString()),
                 obj.getDecimal("change").decimal,
@@ -38,11 +38,11 @@ public class AssetChangeMetadata {
 
     public JsonObject export() throws JsonFormattingException {
         JsonObject obj = new JsonObject();
-        obj.FIELDS.put("date", new JsonDecimal(BigDecimal.valueOf(DATE.getTime())));
-        obj.FIELDS.put("name", new JsonString(NAME));
-        obj.FIELDS.put("currency", new JsonString(CURRENCY.getTicker()));
-        obj.FIELDS.put("change", new JsonDecimal(CHANGE));
-        obj.FIELDS.put("count", new JsonDecimal(COUNT));
+        obj.put("date", new JsonDecimal(BigDecimal.valueOf(DATE.getTime())));
+        obj.put("name", new JsonString(NAME));
+        obj.put("currency", new JsonString(CURRENCY.getTicker()));
+        obj.put("change", new JsonDecimal(CHANGE));
+        obj.put("count", new JsonDecimal(COUNT));
         return obj;
     }
 

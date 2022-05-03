@@ -263,7 +263,7 @@ public class Instance {
             }
             x++;
             y++;
-            if (accountObj.FIELDS.containsKey("gift-cards")) {
+            if (accountObj.containsKey("gift-cards")) {
                 for (JsonString card : accountObj.getArray("gift-cards").getStringArray()) {
                     ACCOUNTS.add(new Account(card.getString() + "_GC", y, main,
                             ACCOUNT_TYPES.getElement("Gift_Card"), null, this, false));
@@ -319,7 +319,7 @@ public class Instance {
                     }
                 }
             }
-            if (accountObj.FIELDS.containsKey("brave-mobile")) {
+            if (accountObj.containsKey("brave-mobile")) {
                 for (JsonString device : accountObj.getArray("brave-mobile").getStringArray()) {
                     ACCOUNTS.add(new Account(device.getString() + "_BAT", x, getLCurrency("C!BAT"),
                             ACCOUNT_TYPES.getElement("Tracking"), null, this, false));

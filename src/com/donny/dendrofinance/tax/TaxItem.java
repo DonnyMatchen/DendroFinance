@@ -84,14 +84,14 @@ public class TaxItem implements ExportableToJsonObject {
     @Override
     public JsonObject export() throws JsonFormattingException {
         JsonObject obj = new JsonObject();
-        obj.FIELDS.put("name", new JsonString(NAME));
-        obj.FIELDS.put("bound", new JsonDecimal(BOUND));
+        obj.put("name", new JsonString(NAME));
+        obj.put("bound", new JsonDecimal(BOUND));
         JsonArray arr = new JsonArray();
         for (BracketItem item : BRACKETS) {
-            arr.ARRAY.add(item.export());
+            arr.add(item.export());
         }
-        obj.FIELDS.put("brackets", arr);
-        obj.FIELDS.put("exempt", new JsonDecimal(EXEMPTION));
+        obj.put("brackets", arr);
+        obj.put("exempt", new JsonDecimal(EXEMPTION));
         return obj;
     }
 
@@ -113,8 +113,8 @@ public class TaxItem implements ExportableToJsonObject {
         @Override
         public JsonObject export() {
             JsonObject obj = new JsonObject();
-            obj.FIELDS.put("bound", new JsonDecimal(LOWER_BOUND));
-            obj.FIELDS.put("rate", new JsonDecimal(RATE));
+            obj.put("bound", new JsonDecimal(LOWER_BOUND));
+            obj.put("rate", new JsonDecimal(RATE));
             return obj;
         }
     }

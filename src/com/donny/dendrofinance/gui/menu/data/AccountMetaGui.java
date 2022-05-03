@@ -34,8 +34,8 @@ public class AccountMetaGui extends RegisterFrame {
             SAVE = DendroFactory.getButton("Save");
             SAVE.addActionListener(event -> {
                 try {
-                    accountObject.FIELDS.put("gift-cards", JsonItem.sanitizeDigest(GIFT.getText()));
-                    accountObject.FIELDS.put("brave-mobile", JsonItem.sanitizeDigest(BRAVE.getText()));
+                    accountObject.put("gift-cards", JsonItem.sanitizeDigest(GIFT.getText()));
+                    accountObject.put("brave-mobile", JsonItem.sanitizeDigest(BRAVE.getText()));
                     CURRENT_INSTANCE.FILE_HANDLER.write(accounts, accountObject.print());
                     dispose();
                 } catch (JsonFormattingException ex) {

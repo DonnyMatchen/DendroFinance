@@ -308,31 +308,31 @@ public class LMarketApi implements ExportableToJsonObject {
     @Override
     public JsonObject export() throws JsonFormattingException {
         JsonObject object = new JsonObject();
-        object.FIELDS.put("name", new JsonString(NAME));
-        object.FIELDS.put("api-key", new JsonString(KEY));
-        object.FIELDS.put("base-url", new JsonString(BASE_URL));
-        object.FIELDS.put("base-url-hist", new JsonString(BASE_URL_HISTORY));
-        object.FIELDS.put("types", new JsonString(TYPES));
+        object.put("name", new JsonString(NAME));
+        object.put("api-key", new JsonString(KEY));
+        object.put("base-url", new JsonString(BASE_URL));
+        object.put("base-url-hist", new JsonString(BASE_URL_HISTORY));
+        object.put("types", new JsonString(TYPES));
         JsonArray array = new JsonArray();
         for (String nat : NATS) {
-            array.ARRAY.add(new JsonString(nat));
+            array.add(new JsonString(nat));
         }
-        object.FIELDS.put("nats", array);
+        object.put("nats", array);
         array = new JsonArray();
         for (String except : EXCEPTS) {
-            array.ARRAY.add(new JsonString(except));
+            array.add(new JsonString(except));
         }
-        object.FIELDS.put("excepts", array);
+        object.put("excepts", array);
         array = new JsonArray();
         for (String s : PARSE_PATH) {
-            array.ARRAY.add(new JsonString(s));
+            array.add(new JsonString(s));
         }
-        object.FIELDS.put("parse-path", array);
+        object.put("parse-path", array);
         array = new JsonArray();
         for (String s : PARSE_PATH_HISTORY) {
-            array.ARRAY.add(new JsonString(s));
+            array.add(new JsonString(s));
         }
-        object.FIELDS.put("parse-path-hist", array);
+        object.put("parse-path-hist", array);
         return object;
     }
 

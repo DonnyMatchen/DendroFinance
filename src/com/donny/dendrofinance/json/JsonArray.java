@@ -1,9 +1,10 @@
 package com.donny.dendrofinance.json;
 
 import java.util.ArrayList;
+import java.util.Collection;
 
 public class JsonArray extends JsonItem {
-    public final ArrayList<JsonItem> ARRAY;
+    private final ArrayList<JsonItem> ARRAY;
 
     public JsonArray(String raw) throws JsonFormattingException {
         this();
@@ -102,6 +103,10 @@ public class JsonArray extends JsonItem {
         ARRAY.addAll(list);
     }
 
+    public ArrayList<JsonItem> getArray(){
+        return new ArrayList<>(ARRAY);
+    }
+
     public ArrayList<JsonString> getStringArray() {
         ArrayList<JsonString> out = new ArrayList<>();
         for (JsonItem item : ARRAY) {
@@ -164,6 +169,26 @@ public class JsonArray extends JsonItem {
 
     public JsonObject getObject(int index) {
         return (JsonObject) get(index);
+    }
+
+    public boolean add(JsonItem item){
+        return ARRAY.add(item);
+    }
+
+    public boolean addAll(Collection<? extends JsonItem> collection){
+        return ARRAY.addAll(collection);
+    }
+
+    public boolean remove(int index){
+        return remove(index);
+    }
+
+    public boolean remove(JsonItem item){
+        return remove(item);
+    }
+
+    public int size(){
+        return ARRAY.size();
     }
 
     @Override

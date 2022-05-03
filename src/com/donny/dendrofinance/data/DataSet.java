@@ -46,7 +46,7 @@ public class DataSet<E extends Entry> {
                 JsonArray array = new JsonArray();
                 for (E entry : TABLE) {
                     uuid = entry.getUUID();
-                    array.ARRAY.add(entry.export());
+                    array.add(entry.export());
                 }
                 CURRENT_INSTANCE.FILE_HANDLER.writeEncrypt(ARCHIVE, "passwd" + array);
             } catch (JsonFormattingException ex) {

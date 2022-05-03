@@ -188,10 +188,10 @@ public class ProfileGui extends JDialog {
 
             pack();
         }
-        if (config.FIELDS.containsKey("name")) {
+        if (config.containsKey("name")) {
             NAME.setText(config.getString("name").getString());
         }
-        if (config.FIELDS.containsKey("flags")) {
+        if (config.containsKey("flags")) {
             String flags = config.getString("flags").getString();
             if (flags.contains("l")) {
                 LOG.setSelected(false);
@@ -218,23 +218,23 @@ public class ProfileGui extends JDialog {
                 DAY.setSelected(true);
             }
         }
-        if (config.FIELDS.containsKey("precision")) {
+        if (config.containsKey("precision")) {
             PRECISION.setText("" + config.getDecimal("precision").decimal);
         }
-        if (config.FIELDS.containsKey("log")) {
+        if (config.containsKey("log")) {
             LOG_LEVEL.setText(config.getString("log").getString());
         }
-        if (config.FIELDS.containsKey("main")) {
+        if (config.containsKey("main")) {
             CUR.setText(config.getString("main").getString());
         }
-        if (config.FIELDS.containsKey("main__")) {
+        if (config.containsKey("main__")) {
             CUR2.setText(config.getString("main__").getString());
         }
     }
 
     public void save() {
         for (int i = 0; i < CALLER.PROFILES.size(); i++) {
-            if (CALLER.PROFILES.get(i).FIELDS.containsKey("name")) {
+            if (CALLER.PROFILES.get(i).containsKey("name")) {
                 if (CALLER.PROFILES.get(i).getString("name").getString().equals(NAME.getText())) {
                     CALLER.PROFILES.remove(i);
                     break;
@@ -243,7 +243,7 @@ public class ProfileGui extends JDialog {
         }
         try {
             JsonObject config = new JsonObject();
-            config.FIELDS.put("name", new JsonString(Validation.validateString(NAME)));
+            config.put("name", new JsonString(Validation.validateString(NAME)));
             String flagsS = "";
             if (LOG.isSelected()) {
                 flagsS += "L";
@@ -265,11 +265,11 @@ public class ProfileGui extends JDialog {
             } else {
                 flagsS += "d";
             }
-            config.FIELDS.put("flags", new JsonString(flagsS));
-            config.FIELDS.put("precision", new JsonDecimal(new BigDecimal(Validation.validateInteger(PRECISION))));
-            config.FIELDS.put("log", new JsonString(Validation.validateString(LOG_LEVEL)));
-            config.FIELDS.put("main", new JsonString(Validation.validateString(CUR)));
-            config.FIELDS.put("main__", new JsonString(Validation.validateString(CUR2)));
+            config.put("flags", new JsonString(flagsS));
+            config.put("precision", new JsonDecimal(new BigDecimal(Validation.validateInteger(PRECISION))));
+            config.put("log", new JsonString(Validation.validateString(LOG_LEVEL)));
+            config.put("main", new JsonString(Validation.validateString(CUR)));
+            config.put("main__", new JsonString(Validation.validateString(CUR2)));
             CALLER.addProfile(config, true);
             dispose();
         } catch (JsonFormattingException e) {

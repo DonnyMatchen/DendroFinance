@@ -12,9 +12,9 @@ public class LJson extends LType<JsonObject> {
 
     @Override
     public boolean sameAs(JsonObject b) {
-        for (String key : OBJECT.FIELDS.keySet()) {
-            if (b.FIELDS.containsKey(key)) {
-                if (!OBJECT.FIELDS.get(key).toString().equals(b.FIELDS.get(key).toString())) {
+        for (String key : OBJECT.getFields()) {
+            if (b.containsKey(key)) {
+                if (!OBJECT.get(key).toString().equals(b.get(key).toString())) {
                     return false;
                 }
             } else {
@@ -26,7 +26,7 @@ public class LJson extends LType<JsonObject> {
 
     @Override
     public int compare(JsonObject b) {
-        return Integer.compare(OBJECT.FIELDS.keySet().size(), b.FIELDS.keySet().size());
+        return Integer.compare(OBJECT.getFields().size(), b.getFields().size());
     }
 
     @Override
@@ -36,6 +36,6 @@ public class LJson extends LType<JsonObject> {
 
     @Override
     public boolean isDefault() {
-        return OBJECT.FIELDS.keySet().isEmpty();
+        return OBJECT.getFields().isEmpty();
     }
 }

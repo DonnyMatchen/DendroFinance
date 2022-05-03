@@ -5,7 +5,8 @@ import java.util.Comparator;
 import java.util.HashMap;
 
 public class JsonObject extends JsonItem {
-    public final HashMap<String, JsonItem> FIELDS;
+    private final HashMap<String, JsonItem> CONTENTS;
+    private final ArrayList<String> FIELDS;
 
     public JsonObject(String raw) throws JsonFormattingException {
         this();
@@ -92,19 +93,21 @@ public class JsonObject extends JsonItem {
                 }
             }
             rawValues.add(sb.toString());
+            FIELDS.addAll(keys);
             for (int i = 0; i < keys.size(); i++) {
-                FIELDS.put(keys.get(i), JsonItem.digest(rawValues.get(i)));
+                CONTENTS.put(keys.get(i), JsonItem.digest(rawValues.get(i)));
             }
         }
     }
 
     public JsonObject() {
         super(JsonType.OBJECT);
-        FIELDS = new HashMap<>();
+        CONTENTS = new HashMap<>();
+        FIELDS = new ArrayList<>();
     }
 
     public JsonItem get(String key) {
-        return FIELDS.get(key);
+        return CONTENTS.get(key);
     }
 
     public JsonString getString(String key) {
@@ -127,14 +130,32 @@ public class JsonObject extends JsonItem {
         return (JsonObject) get(key);
     }
 
+    public void put(String key, JsonItem item){
+        if(!FIELDS.contains(key)){
+            FIELDS.add(key);
+        }
+        CONTENTS.put(key, item);
+    }
+
+    public void remove(String key){
+        FIELDS.remove(key);
+        CONTENTS.remove(key);
+    }
+
+    public boolean containsKey(String key){
+        return FIELDS.contains(key) && CONTENTS.containsKey(key);
+    }
+
+    public ArrayList<String> getFields(){
+        return new ArrayList<>(FIELDS);
+    }
+
     @Override
     public String toString() {
-        ArrayList<String> keys = new ArrayList<>(FIELDS.keySet());
-        if (!keys.isEmpty()) {
-            keys.sort(Comparator.naturalOrder());
+        if (!FIELDS.isEmpty()) {
             StringBuilder sb = new StringBuilder("{");
-            for (String key : keys) {
-                sb.append("\"").append(key).append("\":").append(FIELDS.get(key)).append(",");
+            for (String key : FIELDS) {
+                sb.append("\"").append(key).append("\":").append(CONTENTS.get(key)).append(",");
             }
             sb.deleteCharAt(sb.length() - 1);
             return sb.append("}").toString();
@@ -146,14 +167,12 @@ public class JsonObject extends JsonItem {
     @Override
     public String print(int scope) {
         int internal = scope + 1;
-        ArrayList<String> keys = new ArrayList<>(FIELDS.keySet());
-        if (keys.isEmpty()) {
+        if (FIELDS.isEmpty()) {
             return "{}";
         } else {
-            keys.sort(Comparator.naturalOrder());
             StringBuilder sb = new StringBuilder("{");
-            for (String key : keys) {
-                sb.append("\n").append(indent(internal)).append("\"").append(key).append("\": ").append(FIELDS.get(key).print(internal)).append(",");
+            for (String key : FIELDS) {
+                sb.append("\n").append(indent(internal)).append("\"").append(key).append("\": ").append(CONTENTS.get(key).print(internal)).append(",");
             }
             return sb.deleteCharAt(sb.length() - 1).append("\n").append(indent(scope)).append("}").toString();
         }

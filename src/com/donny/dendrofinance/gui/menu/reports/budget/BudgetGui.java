@@ -465,7 +465,7 @@ public class BudgetGui extends RegisterFrame {
                 String a = (String) EDIT_TABLE_ACCESS.getValueAt(i, 0);
                 String b = (String) EDIT_TABLE_ACCESS.getValueAt(i, 1);
                 if (entry != null) {
-                    entry.getBudget().FIELDS.put(a, new JsonDecimal(CURRENT_INSTANCE.cleanNumber(b)));
+                    entry.getBudget().put(a, new JsonDecimal(CURRENT_INSTANCE.cleanNumber(b)));
                 }
             }
             updateBudget();

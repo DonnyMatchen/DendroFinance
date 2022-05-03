@@ -14,7 +14,9 @@ v0.5.0
   * made reload more extensive and added save
 * removed obnoxious trace statements
 * editing accounts metadata in gui
-X rework JsonObject
+* reworked Json
+  * reworked JsonObject
+  * reworked JsonArray
 
 v0.4.2
 * dated conversion fixed

@@ -26,7 +26,7 @@ public class ExportHandler {
         JsonArray array = new JsonArray();
         for (TransactionEntry entry : CURRENT_INSTANCE.DATA_HANDLER.readTransactions()) {
             try {
-                array.ARRAY.add(entry.export());
+                array.add(entry.export());
             } catch (JsonFormattingException ex) {
                 CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Damaged Transaction Entry: " + entry.getUUID());
             }
@@ -37,7 +37,7 @@ public class ExportHandler {
         array = new JsonArray();
         for (BudgetEntry entry : CURRENT_INSTANCE.DATA_HANDLER.readBudgets()) {
             try {
-                array.ARRAY.add(entry.export());
+                array.add(entry.export());
             } catch (JsonFormattingException ex) {
                 CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Damaged Budget Entry: " + entry.getUUID());
             }

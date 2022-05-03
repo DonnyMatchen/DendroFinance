@@ -33,7 +33,7 @@ public class LedgerMetadata {
 
     public LedgerMetadata(long uuid, LDate date, JsonObject obj, Instance curInst) {
         this(uuid,
-                obj.FIELDS.containsKey("date") ? new LDate(obj.getDecimal("date"), curInst) : date,
+                obj.containsKey("date") ? new LDate(obj.getDecimal("date"), curInst) : date,
                 curInst.getLCurrency(obj.getString("from-cur").getString()),
                 curInst.getLCurrency(obj.getString("to-cur").getString()),
                 obj.getDecimal("from-amnt").decimal,
@@ -64,12 +64,12 @@ public class LedgerMetadata {
 
     public JsonObject export() throws JsonFormattingException {
         JsonObject obj = new JsonObject();
-        obj.FIELDS.put("date", new JsonDecimal(BigDecimal.valueOf(DATE.getTime())));
-        obj.FIELDS.put("from-cur", new JsonString(FROM.toString()));
-        obj.FIELDS.put("to-cur", new JsonString(TO.toString()));
-        obj.FIELDS.put("from-amnt", new JsonDecimal(FROM_AMNT));
-        obj.FIELDS.put("to-amnt", new JsonDecimal(TO_AMNT));
-        obj.FIELDS.put("main-amnt", new JsonDecimal(MAIN_VALUE));
+        obj.put("date", new JsonDecimal(BigDecimal.valueOf(DATE.getTime())));
+        obj.put("from-cur", new JsonString(FROM.toString()));
+        obj.put("to-cur", new JsonString(TO.toString()));
+        obj.put("from-amnt", new JsonDecimal(FROM_AMNT));
+        obj.put("to-amnt", new JsonDecimal(TO_AMNT));
+        obj.put("main-amnt", new JsonDecimal(MAIN_VALUE));
         return obj;
     }
 

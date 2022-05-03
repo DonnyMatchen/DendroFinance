@@ -86,8 +86,8 @@ public class ExchangeEditGui extends BackingEditGui<Exchange> {
                         try {
                             String[] parts = s.split("_");
                             JsonObject obj = new JsonObject();
-                            obj.FIELDS.put("cur", new JsonString(parts[0]));
-                            obj.FIELDS.put("places", new JsonDecimal(new BigDecimal(parts[1])));
+                            obj.put("cur", new JsonString(parts[0]));
+                            obj.put("places", new JsonDecimal(new BigDecimal(parts[1])));
                             objs.add(obj);
                         } catch (NumberFormatException | ArrayIndexOutOfBoundsException | JsonFormattingException ex) {
                             CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Bad Staking List");

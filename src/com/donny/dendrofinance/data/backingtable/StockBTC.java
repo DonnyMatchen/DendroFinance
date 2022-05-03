@@ -144,7 +144,7 @@ public class StockBTC extends BackingTableCore<LStock> {
         JsonArray out = new JsonArray();
         for (LStock stk : TABLE) {
             try {
-                out.ARRAY.add(stk.export());
+                out.add(stk.export());
             } catch (JsonFormattingException ex) {
                 CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Malformed LStock: " + stk);
             }

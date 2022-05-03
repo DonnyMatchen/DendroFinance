@@ -99,7 +99,7 @@ public class ExchangeBTC extends BackingTableCore<Exchange> {
         JsonArray array = new JsonArray();
         for (Exchange exch : TABLE) {
             try {
-                array.ARRAY.add(exch.export());
+                array.add(exch.export());
             } catch (JsonFormattingException ex) {
                 CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Malformed Exchange: " + exch);
             }

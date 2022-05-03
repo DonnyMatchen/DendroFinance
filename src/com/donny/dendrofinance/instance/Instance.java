@@ -80,7 +80,7 @@ public class Instance {
                 LOG_HANDLER.warn(getClass(), "The timer was interrupted.  This could cause damage.  Check integrity of data before saving./");
             }
         }
-        
+
         //ensure folders and data files are set up
         ensureFolders();
         ensureBackingFiles();
@@ -105,7 +105,7 @@ public class Instance {
         this(DendroFinance.newIid(), args);
     }
 
-    public void ensureFolders(){
+    public void ensureFolders() {
         File archive = new File(data.getPath() + File.separator + "Archives"),
                 pStock = new File(data.getPath() + File.separator + "P_Stock"),
                 exp = new File(data.getPath() + File.separator + "Exports");
@@ -119,8 +119,8 @@ public class Instance {
             exp.mkdir();
         }
     }
-    
-    public void ensureBackingFiles(){
+
+    public void ensureBackingFiles() {
         File currencies = new File(data.getPath() + File.separator + "Currencies" + File.separator + "currencies.json"),
                 stocks = new File(data.getPath() + File.separator + "Currencies" + File.separator + "stocks.json"),
                 inventories = new File(data.getPath() + File.separator + "Currencies" + File.separator + "inventories.json"),
@@ -167,7 +167,7 @@ public class Instance {
         }
         LOG_HANDLER.trace(getClass(), "Defaults set where necessary");
     }
-    
+
     public void reloadBackingElements() throws JsonFormattingException {
         //establishing data files
         File currencies = new File(data.getPath() + File.separator + "Currencies" + File.separator + "currencies.json"),
@@ -337,8 +337,8 @@ public class Instance {
             TAX_ITEMS.load(taxArray);
         }
     }
-    
-    public void reloadEntries(){
+
+    public void reloadEntries() {
         DATA_HANDLER.reload();
         for (TransactionEntry entry : DATA_HANDLER.readTransactions()) {
             if (!entry.isBalanced()) {
@@ -348,8 +348,8 @@ public class Instance {
         DATA_HANDLER.checkLedgers();
         DATA_HANDLER.checkCG();
     }
-    
-    public void checkCurToMain(){
+
+    public void checkCurToMain() {
         for (LCurrency currency : CURRENCIES) {
             boolean flag = true;
             for (LMarketApi marketApi : MARKET_APIS) {
@@ -390,7 +390,7 @@ public class Instance {
         }
     }
 
-    public void save(){
+    public void save() {
         DATA_HANDLER.save();
         File currencies = new File(data.getPath() + File.separator + "Currencies" + File.separator + "currencies.json"),
                 stocks = new File(data.getPath() + File.separator + "Currencies" + File.separator + "stocks.json"),

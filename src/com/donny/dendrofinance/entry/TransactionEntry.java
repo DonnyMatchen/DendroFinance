@@ -49,15 +49,15 @@ public class TransactionEntry extends Entry<TransactionHeader> implements Compar
     }
 
     public ArrayList<String> metaList() {
-        return new ArrayList<>(getJson("meta-data").OBJECT.FIELDS.keySet());
+        return new ArrayList<>(getJson("meta-data").OBJECT.getFields());
     }
 
     public boolean hasMeta() {
-        return !getJson("meta-data").OBJECT.FIELDS.keySet().isEmpty();
+        return !getJson("meta-data").OBJECT.getFields().isEmpty();
     }
 
     public boolean hasMeta(String key) {
-        return getJson("meta-data").OBJECT.FIELDS.containsKey(key);
+        return getJson("meta-data").OBJECT.containsKey(key);
     }
 
     public void addAssetChangeMeta(long uuid, LDate date, String name, LCurrency cur, BigDecimal change, BigDecimal count) {
@@ -147,12 +147,12 @@ public class TransactionEntry extends Entry<TransactionHeader> implements Compar
         JsonArray array = new JsonArray();
         for (AssetMetadata asset : list) {
             try {
-                array.ARRAY.add(asset.export());
+                array.add(asset.export());
             } catch (JsonFormattingException e) {
                 CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "The universe has broken\n" + asset.NAME);
             }
         }
-        getJson("meta-data").OBJECT.FIELDS.put("asset", array);
+        getJson("meta-data").OBJECT.put("asset", array);
     }
 
     public ArrayList<AssetChangeMetadata> getAssetChangeMeta() {
@@ -172,12 +172,12 @@ public class TransactionEntry extends Entry<TransactionHeader> implements Compar
         JsonArray array = new JsonArray();
         for (AssetChangeMetadata asset : list) {
             try {
-                array.ARRAY.add(asset.export());
+                array.add(asset.export());
             } catch (JsonFormattingException e) {
                 CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "The universe has broken\n" + asset.NAME);
             }
         }
-        getJson("meta-data").OBJECT.FIELDS.put("asset-change", array);
+        getJson("meta-data").OBJECT.put("asset-change", array);
     }
 
     public ArrayList<LoanMetadata> getLoanMeta() {
@@ -197,12 +197,12 @@ public class TransactionEntry extends Entry<TransactionHeader> implements Compar
         JsonArray array = new JsonArray();
         for (LoanMetadata loan : list) {
             try {
-                array.ARRAY.add(loan.export());
+                array.add(loan.export());
             } catch (JsonFormattingException e) {
                 CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "The universe has broken\n" + loan.NAME);
             }
         }
-        getJson("meta-data").OBJECT.FIELDS.put("loan", array);
+        getJson("meta-data").OBJECT.put("loan", array);
     }
 
     public ArrayList<LoanChangeMetadata> getLoanChangeMeta() {
@@ -222,12 +222,12 @@ public class TransactionEntry extends Entry<TransactionHeader> implements Compar
         JsonArray array = new JsonArray();
         for (LoanChangeMetadata loan : list) {
             try {
-                array.ARRAY.add(loan.export());
+                array.add(loan.export());
             } catch (JsonFormattingException e) {
                 CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "The universe has broken\n" + loan.NAME);
             }
         }
-        getJson("meta-data").OBJECT.FIELDS.put("loan-change", array);
+        getJson("meta-data").OBJECT.put("loan-change", array);
     }
 
     public ArrayList<LedgerMetadata> getLedgerMeta() {
@@ -247,12 +247,12 @@ public class TransactionEntry extends Entry<TransactionHeader> implements Compar
         JsonArray array = new JsonArray();
         for (LedgerMetadata ledger : list) {
             try {
-                array.ARRAY.add(ledger.export());
+                array.add(ledger.export());
             } catch (JsonFormattingException e) {
                 CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "The universe has broken\n" + ledger.UUID + ": " + ledger);
             }
         }
-        getJson("meta-data").OBJECT.FIELDS.put("ledger", array);
+        getJson("meta-data").OBJECT.put("ledger", array);
     }
 
     public LDate getDate() {

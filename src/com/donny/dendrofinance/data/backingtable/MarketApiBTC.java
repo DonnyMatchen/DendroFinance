@@ -100,7 +100,7 @@ public class MarketApiBTC extends BackingTableCore<LMarketApi> {
         JsonArray array = new JsonArray();
         for (LMarketApi item : TABLE) {
             try {
-                array.ARRAY.add(item.export());
+                array.add(item.export());
             } catch (JsonFormattingException ex) {
                 CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Damaged LMarketAPI " + item.NAME);
             }

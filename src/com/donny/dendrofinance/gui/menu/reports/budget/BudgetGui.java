@@ -1,6 +1,7 @@
 package com.donny.dendrofinance.gui.menu.reports.budget;
 
 import com.donny.dendrofinance.account.AWColumn;
+import com.donny.dendrofinance.account.Account;
 import com.donny.dendrofinance.account.AccountWrapper;
 import com.donny.dendrofinance.account.BroadAccountType;
 import com.donny.dendrofinance.entry.BudgetEntry;
@@ -23,6 +24,8 @@ public class BudgetGui extends RegisterFrame {
     private final JTabbedPane BACK;
     private final JPanel VIEW, EDIT;
     private final JLabel A, B;
+    private final JRadioButton EXPANDED, COLLAPSED;
+    private final ButtonGroup RADIO_GROUP;
     private final JComboBox<String> EDIT_B, BUDGET, YEAR, PERIOD;
     private final JButton ADD, REMOVE, SAVE, RESET;
     private final JScrollPane VIEW_PANE, EDIT_PANE;
@@ -40,7 +43,7 @@ public class BudgetGui extends RegisterFrame {
                 VIEW = new JPanel();
                 VIEW.setBorder(null);
                 VIEW_PANE = DendroFactory.getTable(new String[]{
-                        "Line Item", "Value", "Budgeted", "Remaining"
+                        "Line Item", "Value", "Budgeted", "Balance"
                 }, new Object[][]{}, false);
                 VIEW_TABLE = (JTable) VIEW_PANE.getViewport().getView();
                 VIEW_TABLE_ACCESS = (DefaultTableModel) VIEW_TABLE.getModel();
@@ -49,6 +52,14 @@ public class BudgetGui extends RegisterFrame {
                 YEAR = new JComboBox<>();
                 A = new JLabel("Budget");
                 B = new JLabel("Period");
+                EXPANDED = new JRadioButton("By Account");
+                COLLAPSED = new JRadioButton("By Type");
+                RADIO_GROUP = new ButtonGroup();
+                RADIO_GROUP.add(EXPANDED);
+                RADIO_GROUP.add(COLLAPSED);
+                COLLAPSED.setSelected(true);
+                EXPANDED.addActionListener(event -> updateView());
+                COLLAPSED.addActionListener(event -> updateView());
                 Curation<Integer> years = new Curation<>();
                 for (TransactionEntry entry : curInst.DATA_HANDLER.readTransactions()) {
                     if (!entry.getEntity().equals("PRIOR")) {
@@ -86,6 +97,12 @@ public class BudgetGui extends RegisterFrame {
                                             ).addGap(
                                                     DendroFactory.SMALL_GAP, DendroFactory.SMALL_GAP, Short.MAX_VALUE
                                             )
+                                    ).addGroup(
+                                            main.createSequentialGroup().addComponent(
+                                                    COLLAPSED, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                            ).addGap(DendroFactory.SMALL_GAP).addComponent(
+                                                    EXPANDED, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                            )
                                     ).addComponent(
                                             VIEW_PANE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
                                     )
@@ -96,7 +113,7 @@ public class BudgetGui extends RegisterFrame {
                                     main.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(
                                             A, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                     ).addComponent(
-                                            BUDGET, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
+                                            BUDGET, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                     )
                             ).addGap(DendroFactory.SMALL_GAP).addGroup(
                                     main.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(
@@ -105,6 +122,12 @@ public class BudgetGui extends RegisterFrame {
                                             YEAR, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                     ).addComponent(
                                             PERIOD, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                    )
+                            ).addGap(DendroFactory.SMALL_GAP).addGroup(
+                                    main.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(
+                                            COLLAPSED, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                    ).addComponent(
+                                            EXPANDED, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                     )
                             ).addGap(DendroFactory.SMALL_GAP).addComponent(
                                     VIEW_PANE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
@@ -213,112 +236,214 @@ public class BudgetGui extends RegisterFrame {
     }
 
     private void updateView() {
-        Aggregation<String> budgets = new Aggregation<>();
         BigDecimal total = BigDecimal.ZERO, bTotal = BigDecimal.ZERO;
-        BigDecimal alpha = BigDecimal.ONE;
-        String per = Objects.requireNonNullElse((String) PERIOD.getSelectedItem(), "Year");
-        if (per.length() == 2) {
-            if (per.contains("S")) {
-                alpha = new BigDecimal("0.5");
+        BigDecimal beta = BigDecimal.ONE;
+        String period = Objects.requireNonNullElse((String) PERIOD.getSelectedItem(), "Year");
+        if (period.length() == 2) {
+            if (period.contains("S")) {
+                beta = new BigDecimal("0.5");
             } else {
-                alpha = new BigDecimal("0.25");
+                beta = new BigDecimal("0.25");
             }
-        } else if (!per.equals("Year")) {
-            alpha = new BigDecimal("0.0833333333333333");
+        } else if (!period.equals("Year")) {
+            beta = new BigDecimal("0.08" + ("0".repeat(CURRENT_INSTANCE.precision.getPrecision() - 2)));
         }
-        for (TransactionEntry entry : CURRENT_INSTANCE.DATA_HANDLER.readTransactions()) {
-            if (!entry.getDescription().contains("Net Income")) {
-                if (entry.getDate().getYear() == Integer.parseInt((String) YEAR.getSelectedItem())) {
-                    boolean flag;
-                    if (per.equals("Year")) {
-                        flag = true;
-                    } else if (per.length() == 2) {
-                        if (per.contains("S")) {
-                            flag = per.equals(entry.getDate().getSemi());
+        if (COLLAPSED.isSelected()) {
+            Aggregation<String> budgets = new Aggregation<>();
+            for (TransactionEntry entry : CURRENT_INSTANCE.DATA_HANDLER.readTransactions()) {
+                if (!entry.getDescription().contains("Net Income")) {
+                    if (entry.getDate().getYear() == Integer.parseInt((String) YEAR.getSelectedItem())) {
+                        boolean flag;
+                        if (period.equals("Year")) {
+                            flag = true;
+                        } else if (period.length() == 2) {
+                            if (period.contains("S")) {
+                                flag = period.equals(entry.getDate().getSemi());
+                            } else {
+                                flag = period.equals(entry.getDate().getQuarter());
+                            }
                         } else {
-                            flag = per.equals(entry.getDate().getQuarter());
+                            flag = period.equals(entry.getDate().getMonthString());
                         }
-                    } else {
-                        flag = per.equals(entry.getDate().getMonthString());
-                    }
-                    if (flag) {
-                        for (int i = 0; i < entry.getAccounts().getSize(); i++) {
-                            AccountWrapper a = entry.getAccounts().get(i);
-                            if (a.ACCOUNT.getBroadAccountType() == BroadAccountType.REVENUE || a.ACCOUNT.getBroadAccountType() == BroadAccountType.EXPENSE) {
-                                BigDecimal val = a.VALUE;
-                                if (a.COLUMN == AWColumn.DEBIT) {
-                                    val = val.multiply(BigDecimal.valueOf(-1));
+                        if (flag) {
+                            for (AccountWrapper wrapper : entry.getAccounts()) {
+                                if (!wrapper.ACCOUNT.getBudgetType().equals("")) {
+                                    BigDecimal val = wrapper.VALUE;
+                                    if (wrapper.COLUMN == AWColumn.DEBIT) {
+                                        val = val.multiply(BigDecimal.valueOf(-1));
+                                    }
+                                    budgets.add(wrapper.ACCOUNT.getBudgetType(), val);
                                 }
-                                budgets.add(a.ACCOUNT.getBudgetType(), val);
                             }
                         }
                     }
                 }
             }
-        }
-        while (VIEW_TABLE_ACCESS.getRowCount() > 0) {
-            VIEW_TABLE_ACCESS.removeRow(0);
-        }
-        String budgetName = (String) BUDGET.getSelectedItem();
-        if (budgetName != null) {
-            boolean flag = true;
-            if (!budgetName.equals("<none>")) {
-                for (BudgetEntry entry : CURRENT_INSTANCE.DATA_HANDLER.readBudgets()) {
-                    if (entry.getName().equals(budgetName)) {
-                        flag = false;
-                        for (String budg : CURRENT_INSTANCE.DATA_HANDLER.getBudgetTypes()) {
+            while (VIEW_TABLE_ACCESS.getRowCount() > 0) {
+                VIEW_TABLE_ACCESS.removeRow(0);
+            }
+            String budgetName = (String) BUDGET.getSelectedItem();
+            if (budgetName != null) {
+                boolean flag = true;
+                if (!budgetName.equals("<none>")) {
+                    for (BudgetEntry entry : CURRENT_INSTANCE.DATA_HANDLER.readBudgets()) {
+                        if (entry.getName().equals(budgetName)) {
+                            flag = false;
+                            for (String budgetType : CURRENT_INSTANCE.DATA_HANDLER.getBudgetTypes()) {
+                                BigDecimal budgeted = BigDecimal.ZERO;
+                                for (Account account : CURRENT_INSTANCE.ACCOUNTS) {
+                                    if (account.getBudgetType().equals(budgetType)) {
+                                        budgeted = budgeted.add(entry.getBudget().getDecimal(account.getName()).decimal);
+                                    }
+                                }
+                                if (budgets.get(budgetType).abs().add(budgeted.abs()).compareTo(BigDecimal.ZERO) > 0) {
+                                    VIEW_TABLE_ACCESS.addRow(new String[]{
+                                            budgetType,
+                                            CURRENT_INSTANCE.$(budgets.get(budgetType)),
+                                            CURRENT_INSTANCE.$(budgeted.multiply(beta)),
+                                            CURRENT_INSTANCE.$(budgets.get(budgetType).subtract(budgeted.multiply(beta)))
+                                    });
+                                    total = total.add(budgets.get(budgetType));
+                                    bTotal = bTotal.add(budgeted.multiply(beta));
+                                }
+                            }
                             VIEW_TABLE_ACCESS.addRow(new String[]{
-                                    budg,
-                                    CURRENT_INSTANCE.$(budgets.get(budg)),
-                                    CURRENT_INSTANCE.$(entry.getBudget().getDecimal(budg).decimal.multiply(alpha)),
-                                    CURRENT_INSTANCE.$(budgets.get(budg).subtract(entry.getBudget().getDecimal(budg).decimal.multiply(alpha)))
+                                    "", "", "", ""
                             });
-                            total = total.add(budgets.get(budg));
-                            bTotal = bTotal.add(entry.getBudget().getDecimal(budg).decimal.multiply(alpha));
+                            VIEW_TABLE_ACCESS.addRow(new String[]{
+                                    "Balance", CURRENT_INSTANCE.$(total), CURRENT_INSTANCE.$(bTotal), ""
+                            });
+                            break;
                         }
-                        VIEW_TABLE_ACCESS.addRow(new String[]{
-                                "", "", "", ""
-                        });
-                        VIEW_TABLE_ACCESS.addRow(new String[]{
-                                "Balance", CURRENT_INSTANCE.$(total), CURRENT_INSTANCE.$(bTotal), ""
-                        });
-                        break;
+                    }
+                }
+                if (flag) {
+                    for (String budgetType : CURRENT_INSTANCE.DATA_HANDLER.getBudgetTypes()) {
+                        if (budgets.get(budgetType).compareTo(BigDecimal.ZERO) != 0) {
+                            VIEW_TABLE_ACCESS.addRow(new String[]{
+                                    budgetType,
+                                    CURRENT_INSTANCE.$(budgets.get(budgetType)),
+                                    "",
+                                    ""
+                            });
+                        }
+                        total = total.add(budgets.get(budgetType));
+                    }
+                    VIEW_TABLE_ACCESS.addRow(new String[]{
+                            "", "", "", ""
+                    });
+                    VIEW_TABLE_ACCESS.addRow(new String[]{
+                            "Balance", CURRENT_INSTANCE.$(total), "", ""
+                    });
+                }
+            }
+        } else if (EXPANDED.isSelected()) {
+            Aggregation<Account> accRevExp = new Aggregation<>();
+            for (TransactionEntry entry : CURRENT_INSTANCE.DATA_HANDLER.readTransactions()) {
+                if (!entry.getDescription().contains("Net Income")) {
+                    if (entry.getDate().getYear() == Integer.parseInt((String) YEAR.getSelectedItem())) {
+                        boolean flag;
+                        if (period.equals("Year")) {
+                            flag = true;
+                        } else if (period.length() == 2) {
+                            if (period.contains("S")) {
+                                flag = period.equals(entry.getDate().getSemi());
+                            } else {
+                                flag = period.equals(entry.getDate().getQuarter());
+                            }
+                        } else {
+                            flag = period.equals(entry.getDate().getMonthString());
+                        }
+                        if (flag) {
+                            for (AccountWrapper wrapper : entry.getAccounts()) {
+                                if (wrapper.ACCOUNT.getBroadAccountType() == BroadAccountType.REVENUE || wrapper.ACCOUNT.getBroadAccountType() == BroadAccountType.EXPENSE) {
+                                    BigDecimal val = wrapper.VALUE;
+                                    if (wrapper.COLUMN == AWColumn.DEBIT) {
+                                        val = val.multiply(BigDecimal.valueOf(-1));
+                                    }
+                                    accRevExp.add(wrapper.ACCOUNT, val);
+                                }
+                            }
+                        }
                     }
                 }
             }
-            if (flag) {
-                for (String budg : CURRENT_INSTANCE.DATA_HANDLER.getBudgetTypes()) {
-                    VIEW_TABLE_ACCESS.addRow(new String[]{
-                            budg,
-                            CURRENT_INSTANCE.$(budgets.get(budg)),
-                            "",
-                            ""
-                    });
-                    total = total.add(budgets.get(budg));
-                }
-                VIEW_TABLE_ACCESS.addRow(new String[]{
-                        "", "", "", ""
-                });
-                VIEW_TABLE_ACCESS.addRow(new String[]{
-                        "Balance", CURRENT_INSTANCE.$(total), "", ""
-                });
+            while (VIEW_TABLE_ACCESS.getRowCount() > 0) {
+                VIEW_TABLE_ACCESS.removeRow(0);
             }
+            String budgetName = (String) BUDGET.getSelectedItem();
+            if (budgetName != null) {
+                boolean flag = true;
+                if (!budgetName.equals("<none>")) {
+                    for (BudgetEntry entry : CURRENT_INSTANCE.DATA_HANDLER.readBudgets()) {
+                        if (entry.getName().equals(budgetName)) {
+                            flag = false;
+                            for (Account account : CURRENT_INSTANCE.ACCOUNTS) {
+                                if (!account.getBudgetType().equals("")) {
+                                    if (accRevExp.get(account).abs().add(entry.getBudget().getDecimal(account.getName()).decimal.abs()).compareTo(BigDecimal.ZERO) > 0) {
+                                        VIEW_TABLE_ACCESS.addRow(new String[]{
+                                                account.getName(),
+                                                CURRENT_INSTANCE.$(accRevExp.get(account)),
+                                                CURRENT_INSTANCE.$(entry.getBudget().getDecimal(account.getName()).decimal.multiply(beta)),
+                                                CURRENT_INSTANCE.$(accRevExp.get(account).subtract(entry.getBudget().getDecimal(account.getName()).decimal.multiply(beta)))
+                                        });
+                                        total = total.add(accRevExp.get(account));
+                                        bTotal = bTotal.add(entry.getBudget().getDecimal(account.getName()).decimal.multiply(beta));
+                                    }
+                                }
+                            }
+                            VIEW_TABLE_ACCESS.addRow(new String[]{
+                                    "", "", "", ""
+                            });
+                            VIEW_TABLE_ACCESS.addRow(new String[]{
+                                    "Balance", CURRENT_INSTANCE.$(total), CURRENT_INSTANCE.$(bTotal), ""
+                            });
+                            break;
+                        }
+                    }
+                }
+                if (flag) {
+                    for (Account account : CURRENT_INSTANCE.ACCOUNTS) {
+                        if (!account.getBudgetType().equals("")) {
+                            if (accRevExp.get(account).compareTo(BigDecimal.ZERO) != 0) {
+                                VIEW_TABLE_ACCESS.addRow(new String[]{
+                                        account.getName(),
+                                        CURRENT_INSTANCE.$(accRevExp.get(account)),
+                                        "",
+                                        ""
+                                });
+                                total = total.add(accRevExp.get(account));
+                            }
+                        }
+                    }
+                    VIEW_TABLE_ACCESS.addRow(new String[]{
+                            "", "", "", ""
+                    });
+                    VIEW_TABLE_ACCESS.addRow(new String[]{
+                            "Balance", CURRENT_INSTANCE.$(total), "", ""
+                    });
+                }
+            }
+        } else {
+            CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "I don't know hwo you did this, but neither radio button is selected.");
         }
     }
 
     private void updateEdit() {
+        while (EDIT_TABLE_ACCESS.getRowCount() > 0) {
+            EDIT_TABLE_ACCESS.removeRow(0);
+        }
         String pick = (String) EDIT_B.getSelectedItem();
         if (pick != null) {
-            while (EDIT_TABLE_ACCESS.getRowCount() > 0) {
-                EDIT_TABLE_ACCESS.removeRow(0);
-            }
             for (BudgetEntry entry : CURRENT_INSTANCE.DATA_HANDLER.readBudgets()) {
                 if (entry.getName().equals(pick)) {
-                    for (String b : CURRENT_INSTANCE.DATA_HANDLER.getBudgetTypes()) {
-                        EDIT_TABLE_ACCESS.addRow(new String[]{
-                                b,
-                                CURRENT_INSTANCE.$(entry.getBudget().getDecimal(b).decimal)
-                        });
+                    for (Account account : CURRENT_INSTANCE.ACCOUNTS) {
+                        if (!account.getBudgetType().equals("")) {
+                            EDIT_TABLE_ACCESS.addRow(new String[]{
+                                    account.getName(),
+                                    CURRENT_INSTANCE.$(entry.getBudget().getDecimal(account.getName()).decimal)
+                            });
+                        }
                     }
                     break;
                 }
@@ -340,10 +465,7 @@ public class BudgetGui extends RegisterFrame {
                 String a = (String) EDIT_TABLE_ACCESS.getValueAt(i, 0);
                 String b = (String) EDIT_TABLE_ACCESS.getValueAt(i, 1);
                 if (entry != null) {
-                    entry.getBudget().FIELDS.put(a, new JsonDecimal(new BigDecimal(
-                            b.replace("$", "").replace(",", "")
-                                    .replace(")", "").replace("(", "-")
-                    )));
+                    entry.getBudget().put(a, new JsonDecimal(CURRENT_INSTANCE.cleanNumber(b)));
                 }
             }
             updateBudget();

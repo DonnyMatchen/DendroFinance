@@ -69,9 +69,9 @@ public class AccountWrapper implements ExportableToJsonObject {
     @Override
     public JsonObject export() throws JsonFormattingException {
         JsonObject object = new JsonObject();
-        object.FIELDS.put("acc", new JsonString(ACCOUNT.toString()));
-        object.FIELDS.put("col", new JsonString(COLUMN.toString()));
-        object.FIELDS.put("val", new JsonDecimal(VALUE));
+        object.put("acc", new JsonString(ACCOUNT.toString()));
+        object.put("col", new JsonString(COLUMN.toString()));
+        object.put("val", new JsonDecimal(VALUE));
         return object;
     }
 

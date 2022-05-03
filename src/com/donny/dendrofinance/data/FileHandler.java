@@ -192,7 +192,7 @@ public class FileHandler {
 
     public BigDecimal getLatestPrivateStock(String name) {
         JsonArray brackets = getPrivateStock(name);
-        return brackets.getObject(brackets.ARRAY.size() - 1).getDecimal("price").decimal;
+        return brackets.getObject(brackets.size() - 1).getDecimal("price").decimal;
     }
 
     public JsonArray getPrivateStock(String name) {

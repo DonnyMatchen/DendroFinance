@@ -24,7 +24,7 @@ public class LoanChangeMetadata {
 
     public LoanChangeMetadata(long uuid, LDate date, JsonObject obj, Instance curInst) {
         this(uuid,
-                obj.FIELDS.containsKey("date") ? new LDate(obj.getDecimal("date"), curInst) : date,
+                obj.containsKey("date") ? new LDate(obj.getDecimal("date"), curInst) : date,
                 obj.getString("name").getString(),
                 obj.getDecimal("change").decimal
         );
@@ -33,9 +33,9 @@ public class LoanChangeMetadata {
 
     public JsonObject export() throws JsonFormattingException {
         JsonObject obj = new JsonObject();
-        obj.FIELDS.put("date", new JsonDecimal(BigDecimal.valueOf(DATE.getTime())));
-        obj.FIELDS.put("name", new JsonString(NAME));
-        obj.FIELDS.put("change", new JsonDecimal(CHANGE));
+        obj.put("date", new JsonDecimal(BigDecimal.valueOf(DATE.getTime())));
+        obj.put("name", new JsonString(NAME));
+        obj.put("change", new JsonDecimal(CHANGE));
         return obj;
     }
 

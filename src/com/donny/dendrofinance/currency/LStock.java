@@ -59,8 +59,8 @@ public class LStock extends LCurrency {
     @Override
     public JsonObject export() throws JsonFormattingException {
         JsonObject obj = new JsonObject();
-        obj.FIELDS.put("name", new JsonString(getName()));
-        obj.FIELDS.put("tic", new JsonString(getTicker()));
+        obj.put("name", new JsonString(getName()));
+        obj.put("tic", new JsonString(getTicker()));
         String flags = "";
         if (isDead()) {
             flags += "D";
@@ -68,7 +68,7 @@ public class LStock extends LCurrency {
         if (!PUBLIC) {
             flags += "P";
         }
-        obj.FIELDS.put("flags", new JsonString(flags));
+        obj.put("flags", new JsonString(flags));
         return obj;
     }
 

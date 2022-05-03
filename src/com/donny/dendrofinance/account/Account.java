@@ -30,7 +30,6 @@ public class Account implements ExportableToJsonObject {
         BUDGET = budget;
         EXPORT = export;
         EXCHANGE = exchange;
-        CURRENT_INSTANCE.LOG_HANDLER.trace(getClass(), "Account " + NAME + " Created");
     }
 
     public Account(String name, int aid, LCurrency cur, AccountType type, Exchange exchange, Instance curInst, boolean export) {
@@ -44,12 +43,12 @@ public class Account implements ExportableToJsonObject {
         CUR = curInst.getLCurrency(obj.getString("currency").getString());
         TYPE = curInst.ACCOUNT_TYPES.getElement(obj.getString("type").getString());
         EXPORT = true;
-        if (obj.FIELDS.containsKey("exchange")) {
+        if (obj.containsKey("exchange")) {
             EXCHANGE = CURRENT_INSTANCE.EXCHANGES.getElement(obj.getString("exchange").getString());
         } else {
             EXCHANGE = null;
         }
-        if (obj.FIELDS.containsKey("budget")) {
+        if (obj.containsKey("budget") && (TYPE.TYPE == BroadAccountType.REVENUE || TYPE.TYPE == BroadAccountType.EXPENSE)) {
             BUDGET = obj.getString("budget").getString();
         } else {
             BUDGET = "";
@@ -125,15 +124,15 @@ public class Account implements ExportableToJsonObject {
     @Override
     public JsonObject export() throws JsonFormattingException {
         JsonObject obj = new JsonObject();
-        obj.FIELDS.put("name", new JsonString(NAME));
-        obj.FIELDS.put("id", new JsonDecimal(BigDecimal.valueOf(AID)));
-        obj.FIELDS.put("currency", new JsonString(CUR.toString()));
-        obj.FIELDS.put("type", new JsonString(TYPE.NAME));
+        obj.put("name", new JsonString(NAME));
+        obj.put("id", new JsonDecimal(BigDecimal.valueOf(AID)));
+        obj.put("currency", new JsonString(CUR.toString()));
+        obj.put("type", new JsonString(TYPE.NAME));
         if (EXCHANGE != null) {
-            obj.FIELDS.put("exchange", new JsonString(EXCHANGE.NAME));
+            obj.put("exchange", new JsonString(EXCHANGE.NAME));
         }
         if (!BUDGET.equals("")) {
-            obj.FIELDS.put("budget", new JsonString(BUDGET));
+            obj.put("budget", new JsonString(BUDGET));
         }
         return obj;
     }

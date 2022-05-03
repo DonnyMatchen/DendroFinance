@@ -1,5 +1,6 @@
 package com.donny.dendrofinance.entry;
 
+import com.donny.dendrofinance.account.Account;
 import com.donny.dendrofinance.header.BudgetHeader;
 import com.donny.dendrofinance.instance.Instance;
 import com.donny.dendrofinance.json.JsonDecimal;
@@ -18,11 +19,11 @@ public class BudgetEntry extends Entry<BudgetHeader> {
         super(obj, curInst);
     }
 
-    public static BudgetEntry defaultBudget(String name, Instance curInst) {
+    public static BudgetEntry getEmptyBudget(String name, Instance curInst) {
         JsonObject obj = new JsonObject();
-        if (!curInst.DATA_HANDLER.getBudgetTypes().isEmpty()) {
-            for (String s : curInst.DATA_HANDLER.getBudgetTypes()) {
-                obj.FIELDS.put(s, new JsonDecimal(BigDecimal.ZERO));
+        for (Account account : curInst.ACCOUNTS) {
+            if (!account.getBudgetType().equals("")) {
+                obj.put(account.getName(), new JsonDecimal(BigDecimal.ZERO));
             }
         }
         BudgetEntry entry = new BudgetEntry(curInst);

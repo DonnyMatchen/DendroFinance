@@ -3,7 +3,6 @@ package com.donny.dendrofinance.data;
 import com.donny.dendrofinance.account.*;
 import com.donny.dendrofinance.currency.LCurrency;
 import com.donny.dendrofinance.currency.LInventory;
-import com.donny.dendrofinance.currency.LMarketApi;
 import com.donny.dendrofinance.currency.LStock;
 import com.donny.dendrofinance.entry.BudgetEntry;
 import com.donny.dendrofinance.entry.EntryType;
@@ -36,21 +35,22 @@ public class DataHandler {
         CURRENT_INSTANCE.LOG_HANDLER.trace(getClass(), "DataHandler Initiated");
     }
 
-    public void init() {
+    public void reload() {
+        CURRENT_INSTANCE.UUID_HANDLER.UUIDS.clear();
         try {
-            TRANSACTIONS.load();
-            BUDGETS.load();
+            TRANSACTIONS.reload();
+            BUDGETS.reload();
         } catch (JsonFormattingException e) {
             CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Error loading datasets: " + e);
         }
     }
 
-    public void addTransaction(TransactionEntry entry) {
-        readTransactions().add(entry);
+    public boolean addTransaction(TransactionEntry entry) {
+        return TRANSACTIONS.add(entry);
     }
 
-    public void addBudget(BudgetEntry entry) {
-        readBudgets().add(entry);
+    public boolean addBudget(BudgetEntry entry) {
+        return BUDGETS.add(entry);
     }
 
     public boolean deleteTransaction(long uuid) {
@@ -64,8 +64,22 @@ public class DataHandler {
         if (cand == null) {
             return false;
         } else {
-            readTransactions().remove(cand);
-            return true;
+            return TRANSACTIONS.remove(cand);
+        }
+    }
+
+    public boolean deleteBudget(long uuid) {
+        BudgetEntry cand = null;
+        for (BudgetEntry entry : readBudgets()) {
+            if (entry.getUUID() == uuid) {
+                cand = entry;
+                break;
+            }
+        }
+        if (cand == null) {
+            return false;
+        } else {
+            return BUDGETS.remove(cand);
         }
     }
 
@@ -1006,47 +1020,6 @@ public class DataHandler {
             if (flag && !entry.equals(getPrior())) {
                 CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Sale missing Capital Gain/Loss: " + entry.getUUID());
                 CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Value should be: " + map.get(uuid));
-            }
-        }
-    }
-
-    public void checkCurToMain() {
-        for (LCurrency currency : CURRENT_INSTANCE.CURRENCIES) {
-            boolean flag = true;
-            for (LMarketApi marketApi : CURRENT_INSTANCE.MARKET_APIS) {
-                if (marketApi.canConvert(currency, CURRENT_INSTANCE.main)) {
-                    flag = false;
-                    break;
-                }
-            }
-            if (flag) {
-                CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Currency can't be converted to main: " + currency);
-            }
-        }
-        for (LStock stock : CURRENT_INSTANCE.STOCKS) {
-            boolean flag = true;
-            for (LMarketApi marketApi : CURRENT_INSTANCE.MARKET_APIS) {
-                if (marketApi.canConvert(stock, CURRENT_INSTANCE.main)) {
-                    flag = false;
-                    break;
-                }
-            }
-            if (flag) {
-                CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Stock can't be converted to main: " + stock);
-            }
-        }
-        for (LInventory inventory : CURRENT_INSTANCE.INVENTORIES) {
-            if (inventory.isCommodity()) {
-                boolean flag = true;
-                for (LMarketApi marketApi : CURRENT_INSTANCE.MARKET_APIS) {
-                    if (marketApi.canConvert(inventory, CURRENT_INSTANCE.main)) {
-                        flag = false;
-                        break;
-                    }
-                }
-                if (flag) {
-                    CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Commodity can't be converted to main: " + inventory);
-                }
             }
         }
     }

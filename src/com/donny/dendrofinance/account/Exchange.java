@@ -25,7 +25,7 @@ public class Exchange implements ExportableToJsonObject {
         for (JsonString string : obj.getArray("supported").getStringArray()) {
             SUPPORTED.add(string.getString());
         }
-        if (obj.FIELDS.containsKey("staking")) {
+        if (obj.containsKey("staking")) {
             STAKING.addAll(obj.getArray("staking").getObjectArray());
         }
     }
@@ -40,7 +40,6 @@ public class Exchange implements ExportableToJsonObject {
         SUPPORTED = new ArrayList<>(sup);
         STAKING = new ArrayList<>();
         EXPORT = export;
-        curInst.LOG_HANDLER.trace(getClass(), "Exchange " + NAME + " Created");
     }
 
     public Exchange(String name, String alt, ArrayList<String> sup, ArrayList<JsonObject> stak, Instance curInst, boolean export) {
@@ -154,16 +153,16 @@ public class Exchange implements ExportableToJsonObject {
     @Override
     public JsonObject export() throws JsonFormattingException {
         JsonObject obj = new JsonObject();
-        obj.FIELDS.put("name", new JsonString(NAME));
-        obj.FIELDS.put("alt", new JsonString(ALT));
+        obj.put("name", new JsonString(NAME));
+        obj.put("alt", new JsonString(ALT));
         JsonArray array = new JsonArray();
         SUPPORTED.sort(Comparator.naturalOrder());
         for (String ticker : SUPPORTED) {
-            array.ARRAY.add(new JsonString(ticker));
+            array.add(new JsonString(ticker));
         }
-        obj.FIELDS.put("supported", array);
+        obj.put("supported", array);
         if (!STAKING.isEmpty()) {
-            obj.FIELDS.put("staking", new JsonArray(STAKING));
+            obj.put("staking", new JsonArray(STAKING));
         }
         return obj;
     }

@@ -25,7 +25,7 @@ public class NewBudgetGui extends JDialog {
             CANCEL.addActionListener(event -> dispose());
             OK = DendroFactory.getButton("Ok");
             OK.addActionListener(event -> {
-                CURRENT_INSTANCE.DATA_HANDLER.addBudget(BudgetEntry.defaultBudget(NAME.getText(), CURRENT_INSTANCE));
+                CURRENT_INSTANCE.DATA_HANDLER.addBudget(BudgetEntry.getEmptyBudget(NAME.getText(), CURRENT_INSTANCE));
                 CALLER.updateBudget();
                 dispose();
             });

@@ -20,7 +20,6 @@ public class LCurrency implements ExportableToJsonObject {
     private final int PLACES;
     private final BigDecimal FACTOR;
     private final boolean FIAT, EXTINCT, TOKEN, FORWARDS;
-    private String altApi = "";
 
     public LCurrency(String name, String tic, boolean fiat, String symbol, boolean forwards, int places,
                      BigDecimal factor, String alt, boolean token, boolean dead, Instance curInst) {
@@ -59,10 +58,10 @@ public class LCurrency implements ExportableToJsonObject {
     public LCurrency(JsonObject obj, Instance curInst) {
         CURRENT_INSTANCE = curInst;
         String flags = obj.getString("flags").getString();
-        if (!obj.FIELDS.containsKey("name")) {
+        if (!obj.containsKey("name")) {
             CURRENT_INSTANCE.LOG_HANDLER.warn(getClass(), "Nameless Currency:\n" + obj);
         }
-        if (obj.FIELDS.containsKey("factor")) {
+        if (obj.containsKey("factor")) {
             FACTOR = obj.getDecimal("factor").decimal;
         } else {
             FACTOR = BigDecimal.ONE;
@@ -141,10 +140,6 @@ public class LCurrency implements ExportableToJsonObject {
         return ALT_NAME;
     }
 
-    public void setAltApi(String alt) {
-        altApi = alt;
-    }
-
     public BigDecimal reverseTotal(BigDecimal amount) {
         BigDecimal temp = getTotal(BigDecimal.ONE);
         return !temp.equals(BigDecimal.ZERO) ? amount.divide(temp, CURRENT_INSTANCE.precision) : BigDecimal.ZERO;
@@ -191,11 +186,11 @@ public class LCurrency implements ExportableToJsonObject {
     @Override
     public JsonObject export() throws JsonFormattingException {
         JsonObject obj = new JsonObject();
-        obj.FIELDS.put("name", new JsonString(NAME));
-        obj.FIELDS.put("tic", new JsonString(TIC));
-        obj.FIELDS.put("symbol", new JsonString(SYMBOL));
-        obj.FIELDS.put("places", new JsonDecimal(BigDecimal.valueOf(PLACES)));
-        obj.FIELDS.put("alt", new JsonString(ALT_NAME));
+        obj.put("name", new JsonString(NAME));
+        obj.put("tic", new JsonString(TIC));
+        obj.put("symbol", new JsonString(SYMBOL));
+        obj.put("places", new JsonDecimal(BigDecimal.valueOf(PLACES)));
+        obj.put("alt", new JsonString(ALT_NAME));
         String flags = "";
         if (FIAT) {
             flags += "F";
@@ -209,7 +204,7 @@ public class LCurrency implements ExportableToJsonObject {
         if (!FORWARDS) {
             flags += ">";
         }
-        obj.FIELDS.put("flags", new JsonString(flags));
+        obj.put("flags", new JsonString(flags));
         return obj;
     }
 

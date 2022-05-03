@@ -275,7 +275,7 @@ public class PasswordGui extends JFrame {
 
     public void loadConfig(JsonObject config) {
         CURRENT_INSTANCE.data = new File(CURRENT_INSTANCE.data.getPath() + File.separator + config.getString("name").getString());
-        if (config.FIELDS.containsKey("flags")) {
+        if (config.containsKey("flags")) {
             String flags = config.getString("flags").getString();
             if (flags.contains("l")) {
                 CURRENT_INSTANCE.log = false;
@@ -302,15 +302,15 @@ public class PasswordGui extends JFrame {
                 CURRENT_INSTANCE.day = true;
             }
         }
-        if (config.FIELDS.containsKey("precision")) {
+        if (config.containsKey("precision")) {
             CURRENT_INSTANCE.precision = new MathContext(config.getDecimal("precision").decimal.intValue());
         }
-        if (config.FIELDS.containsKey("log")) {
+        if (config.containsKey("log")) {
             CURRENT_INSTANCE.logLevel = new LogHandler.LogLevel(config.getString("log").getString());
         }
-        if (config.FIELDS.containsKey("main")) {
+        if (config.containsKey("main")) {
             CURRENT_INSTANCE.mainTicker = (config.getString("main").getString());
-            if (config.FIELDS.containsKey("main__")) {
+            if (config.containsKey("main__")) {
                 CURRENT_INSTANCE.main__Ticker = (config.getString("main__").getString());
             } else {
                 CURRENT_INSTANCE.main__Ticker = CURRENT_INSTANCE.mainTicker + " Extra";
@@ -320,20 +320,20 @@ public class PasswordGui extends JFrame {
 
     public JsonObject getConfig(String name) throws JsonFormattingException {
         JsonObject config = new JsonObject();
-        config.FIELDS.put("name", new JsonString(name));
+        config.put("name", new JsonString(name));
         CURRENT_INSTANCE.log = false;
         CURRENT_INSTANCE.export = false;
         CURRENT_INSTANCE.american = true;
         CURRENT_INSTANCE.day = false;
-        config.FIELDS.put("flags", new JsonString("lxAd"));
+        config.put("flags", new JsonString("lxAd"));
         CURRENT_INSTANCE.precision = new MathContext(20);
-        config.FIELDS.put("precision", new JsonDecimal(BigDecimal.valueOf(20)));
+        config.put("precision", new JsonDecimal(BigDecimal.valueOf(20)));
         CURRENT_INSTANCE.logLevel = new LogHandler.LogLevel("info");
-        config.FIELDS.put("log", new JsonString("info"));
+        config.put("log", new JsonString("info"));
         CURRENT_INSTANCE.mainTicker = "USD";
-        config.FIELDS.put("main", new JsonString("USD"));
+        config.put("main", new JsonString("USD"));
         CURRENT_INSTANCE.main__Ticker = "USD Extra";
-        config.FIELDS.put("main__", new JsonString("USD Extra"));
+        config.put("main__", new JsonString("USD Extra"));
         return config;
     }
 
@@ -355,7 +355,7 @@ public class PasswordGui extends JFrame {
         String name = (String) PROFILE.getSelectedItem();
         boolean flag = true;
         for (JsonObject prof : PROFILES) {
-            if (prof.FIELDS.containsKey("name")) {
+            if (prof.containsKey("name")) {
                 if (prof.getString("name").getString().equalsIgnoreCase(name)) {
                     new ProfileGui(this, prof, CURRENT_INSTANCE).setVisible(true);
                     flag = false;
@@ -387,7 +387,7 @@ public class PasswordGui extends JFrame {
         }
         if (save) {
             JsonArray out = new JsonArray();
-            out.ARRAY.addAll(PROFILES);
+            out.addAll(PROFILES);
             File file = new File(CURRENT_INSTANCE.data.getPath() + File.separator + "profiles.json");
             CURRENT_INSTANCE.FILE_HANDLER.write(file, out.print());
         }

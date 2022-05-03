@@ -7,6 +7,7 @@ import com.donny.dendrofinance.gui.addedit.DeleteEntryGui;
 import com.donny.dendrofinance.gui.addedit.NewTransactionEntryGui;
 import com.donny.dendrofinance.gui.addedit.SpecialTransactionEntryGui;
 import com.donny.dendrofinance.gui.customswing.DendroFactory;
+import com.donny.dendrofinance.gui.menu.data.AccountMetaGui;
 import com.donny.dendrofinance.gui.menu.data.StatisticsGui;
 import com.donny.dendrofinance.gui.menu.data.backing.BackingTableGui;
 import com.donny.dendrofinance.gui.menu.reports.AssetStatusGui;
@@ -141,20 +142,33 @@ public class MainGui extends JFrame {
             {
                 JMenuBar bar = new JMenuBar();
 
-                //data
-                JMenu data = new JMenu("Data");
-                JMenuItem imp = new JMenuItem("Import");
-                imp.addActionListener(event -> CURRENT_INSTANCE.IMPORT_HANDLER.load());
+                //file
+                JMenu file = new JMenu("File");
+
                 JMenuItem rel = new JMenuItem("Reload");
                 rel.addActionListener(event -> {
                     try {
-                        CURRENT_INSTANCE.loadStuff();
+                        CURRENT_INSTANCE.reloadBackingElements();
+                        CURRENT_INSTANCE.reloadEntries();
                     } catch (JsonFormattingException ex) {
                         CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Malformed JSON in reload");
                     }
                 });
+                JMenuItem save = new JMenuItem("Save");
+                save.addActionListener(event -> CURRENT_INSTANCE.save());
+                JMenuItem imp = new JMenuItem("Import");
+                imp.addActionListener(event -> CURRENT_INSTANCE.IMPORT_HANDLER.load());
                 JMenuItem exp = new JMenuItem("Export");
                 exp.addActionListener(event -> CURRENT_INSTANCE.EXPORT_HANDLER.export());
+
+                file.add(rel);
+                file.add(save);
+                file.add(imp);
+                file.add(exp);
+
+                //data
+                JMenu data = new JMenu("Data");
+
                 JMenuItem curLst = new JMenuItem("Currencies");
                 curLst.addActionListener(event -> new BackingTableGui<>(this, CURRENT_INSTANCE.CURRENCIES, CURRENT_INSTANCE).setVisible(true));
                 JMenuItem stkLst = new JMenuItem("Stocks");
@@ -169,12 +183,12 @@ public class MainGui extends JFrame {
                 accLst.addActionListener(event -> new BackingTableGui<>(this, CURRENT_INSTANCE.ACCOUNTS, CURRENT_INSTANCE).setVisible(true));
                 JMenuItem exchLst = new JMenuItem("Exchanges");
                 exchLst.addActionListener(event -> new BackingTableGui<>(this, CURRENT_INSTANCE.EXCHANGES, CURRENT_INSTANCE).setVisible(true));
+
+                JMenuItem accountMeta = new JMenuItem("Account Metadata");
+                accountMeta.addActionListener(event -> new AccountMetaGui(this, CURRENT_INSTANCE).setVisible(true));
                 JMenuItem stats = new JMenuItem("Statistics");
                 stats.addActionListener(event -> new StatisticsGui(this, CURRENT_INSTANCE).setVisible(true));
-                data.add(imp);
-                data.add(rel);
-                data.add(exp);
-                data.add(new JSeparator());
+
                 data.add(curLst);
                 data.add(stkLst);
                 data.add(invLst);
@@ -183,22 +197,27 @@ public class MainGui extends JFrame {
                 data.add(accLst);
                 data.add(mApiLst);
                 data.add(new JSeparator());
+                data.add(accountMeta);
                 data.add(stats);
 
                 //reports
                 JMenu rep = new JMenu("Reports");
+
                 JMenuItem bal = new JMenuItem("Balance Sheet");
                 bal.addActionListener(event -> new BalanceSheetGui(this, CURRENT_INSTANCE).setVisible(true));
                 JMenuItem acc = new JMenuItem("Asset Status");
                 acc.addActionListener(event -> new AssetStatusGui(this, CURRENT_INSTANCE).setVisible(true));
+
                 JMenuItem budg = new JMenuItem("Budget");
                 budg.addActionListener(event -> new BudgetGui(this, CURRENT_INSTANCE).setVisible(true));
                 JMenuItem flow = new JMenuItem("Revenue and Expenses");
                 flow.addActionListener(event -> new RevExpGui(this, CURRENT_INSTANCE).setVisible(true));
+
                 JMenuItem asset = new JMenuItem("Non-Fungible Assets");
                 asset.addActionListener(event -> new MetaTableGui(this, new AssetMTC(CURRENT_INSTANCE), CURRENT_INSTANCE).setVisible(true));
                 JMenuItem loans = new JMenuItem("Loans and Debts");
                 loans.addActionListener(event -> new MetaTableGui(this, new LoanMTC(CURRENT_INSTANCE), CURRENT_INSTANCE).setVisible(true));
+
                 rep.add(bal);
                 rep.add(acc);
                 rep.add(new JSeparator());
@@ -209,6 +228,7 @@ public class MainGui extends JFrame {
                 rep.add(loans);
 
                 JMenu trad = new JMenu("Trading");
+
                 JMenuItem ledg = new JMenuItem("Trading Ledger");
                 ledg.addActionListener(event -> new LedgerGui(this, CURRENT_INSTANCE).setVisible(true));
                 JMenuItem pos = new JMenuItem("Trading Position");
@@ -217,12 +237,14 @@ public class MainGui extends JFrame {
                 orbk.addActionListener(event -> new OrderBookGui(this, CURRENT_INSTANCE).setVisible(true));
                 JMenuItem prc = new JMenuItem("Trading Prices");
                 prc.addActionListener(event -> new PricesGui(this, CURRENT_INSTANCE).setVisible(true));
+
                 trad.add(ledg);
                 trad.add(pos);
                 trad.add(orbk);
                 trad.add(prc);
 
                 JMenu util = new JMenu("Utilities");
+
                 JMenuItem repl = new JMenuItem("Account Replacement");
                 repl.addActionListener(event -> new AccountReplacementGui(this, CURRENT_INSTANCE).setVisible(true));
                 JMenuItem conv = new JMenuItem("Asset Conversions");
@@ -231,6 +253,7 @@ public class MainGui extends JFrame {
                 arch.addActionListener(event -> new ArchiveGui(this, CURRENT_INSTANCE).setVisible(true));
                 JMenuItem logs = new JMenuItem("Logs");
                 logs.addActionListener(event -> new LogClearGui(this, CURRENT_INSTANCE).setVisible(true));
+
                 JMenuItem taxes = new JMenuItem("Tax Calculator");
                 taxes.addActionListener(event -> new TaxGui(this, CURRENT_INSTANCE).setVisible(true));
                 JMenuItem appDep = new JMenuItem("Appreciation");
@@ -239,6 +262,7 @@ public class MainGui extends JFrame {
                 netInc.addActionListener(event -> new NetIncomeGui(this, CURRENT_INSTANCE).setVisible(true));
                 JMenuItem taxZero = new JMenuItem("Tax Zeroing");
                 taxZero.addActionListener(event -> new TaxZeroGui(this, CURRENT_INSTANCE).setVisible(true));
+
                 util.add(repl);
                 util.add(conv);
                 util.add(arch);
@@ -250,10 +274,12 @@ public class MainGui extends JFrame {
                 util.add(taxZero);
 
                 //add menus
+                bar.add(file);
                 bar.add(data);
                 bar.add(rep);
                 bar.add(trad);
                 bar.add(util);
+
                 setJMenuBar(bar);
             }
 

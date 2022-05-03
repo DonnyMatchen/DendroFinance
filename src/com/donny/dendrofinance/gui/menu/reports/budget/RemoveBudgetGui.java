@@ -33,7 +33,7 @@ public class RemoveBudgetGui extends JDialog {
                         }
                     }
                     if (entry != null) {
-                        CURRENT_INSTANCE.DATA_HANDLER.readBudgets().remove(entry);
+                        CURRENT_INSTANCE.DATA_HANDLER.deleteBudget(entry.getUUID());
                         caller.updateBudget();
                     }
                     dispose();

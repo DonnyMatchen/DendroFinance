@@ -610,7 +610,7 @@ public class NewTransactionEntryGui extends JDialog {
                         return false;
                     }
                 });
-                if (metaObject.FIELDS.containsKey("asset")) {
+                if (metaObject.containsKey("asset")) {
                     for (JsonObject obj : metaObject.getArray("asset").getObjectArray()) {
                         LCurrency cur = CURRENT_INSTANCE.getLCurrency(obj.getString("currency").getString());
                         ((DefaultTableModel) TABLE.getModel()).addRow(new String[]{
@@ -630,7 +630,7 @@ public class NewTransactionEntryGui extends JDialog {
                         return false;
                     }
                 });
-                if (metaObject.FIELDS.containsKey("loan")) {
+                if (metaObject.containsKey("loan")) {
                     for (JsonObject obj : metaObject.getArray("loan").getObjectArray()) {
                         LCurrency cur = CURRENT_INSTANCE.getLCurrency(obj.getString("cur").getString());
                         ((DefaultTableModel) TABLE.getModel()).addRow(new String[]{
@@ -650,7 +650,7 @@ public class NewTransactionEntryGui extends JDialog {
                         return false;
                     }
                 });
-                if (metaObject.FIELDS.containsKey("ledger")) {
+                if (metaObject.containsKey("ledger")) {
                     for (JsonObject obj : metaObject.getArray("ledger").getObjectArray()) {
                         LCurrency cur1 = CURRENT_INSTANCE.getLCurrency(obj.getString("from-cur").getString()),
                                 cur2 = CURRENT_INSTANCE.getLCurrency(obj.getString("to-cur").getString());
@@ -671,7 +671,7 @@ public class NewTransactionEntryGui extends JDialog {
                         return false;
                     }
                 });
-                if (metaObject.FIELDS.containsKey("asset-change")) {
+                if (metaObject.containsKey("asset-change")) {
                     for (JsonObject obj : metaObject.getArray("asset-change").getObjectArray()) {
                         LCurrency cur = CURRENT_INSTANCE.getLCurrency(obj.getString("currency").getString());
                         ((DefaultTableModel) TABLE.getModel()).addRow(new String[]{
@@ -690,7 +690,7 @@ public class NewTransactionEntryGui extends JDialog {
                         return false;
                     }
                 });
-                if (metaObject.FIELDS.containsKey("loan-change")) {
+                if (metaObject.containsKey("loan-change")) {
                     for (JsonObject obj : metaObject.getArray("loan-change").getObjectArray()) {
                         ((DefaultTableModel) TABLE.getModel()).addRow(new String[]{
                                 obj.getString("name").getString(),
@@ -716,48 +716,48 @@ public class NewTransactionEntryGui extends JDialog {
                 column = "B";
             }
             AWColumn t1 = AWColumn.fromString("" + column.charAt(0));
-            aArr.ARRAY.add(new JsonString(t1 + "!" + A1.getSelectedItem()));
-            vArr.ARRAY.add(new JsonDecimal(Validation.validateDecimal(C1)));
+            aArr.add(new JsonString(t1 + "!" + A1.getSelectedItem()));
+            vArr.add(new JsonDecimal(Validation.validateDecimal(C1)));
             if (A2.getSelectedItem() != null) {
                 column = (String) B2.getSelectedItem();
                 if (column.equals("Tracking")) {
                     column = "B";
                 }
                 AWColumn t2 = AWColumn.fromString("" + column.charAt(0));
-                aArr.ARRAY.add(new JsonString(t2 + "!" + A2.getSelectedItem()));
-                vArr.ARRAY.add(new JsonDecimal(Validation.validateDecimal(C2)));
+                aArr.add(new JsonString(t2 + "!" + A2.getSelectedItem()));
+                vArr.add(new JsonDecimal(Validation.validateDecimal(C2)));
                 if (A3.getSelectedItem() != null) {
                     column = (String) B3.getSelectedItem();
                     if (column.equals("Tracking")) {
                         column = "B";
                     }
                     AWColumn t3 = AWColumn.fromString("" + column.charAt(0));
-                    aArr.ARRAY.add(new JsonString(t3 + "!" + A3.getSelectedItem()));
-                    vArr.ARRAY.add(new JsonDecimal(Validation.validateDecimal(C3)));
+                    aArr.add(new JsonString(t3 + "!" + A3.getSelectedItem()));
+                    vArr.add(new JsonDecimal(Validation.validateDecimal(C3)));
                     if (A4.getSelectedItem() != null) {
                         column = (String) B4.getSelectedItem();
                         if (column.equals("Tracking")) {
                             column = "B";
                         }
                         AWColumn t4 = AWColumn.fromString("" + column.charAt(0));
-                        aArr.ARRAY.add(new JsonString(t4 + "!" + A4.getSelectedItem()));
-                        vArr.ARRAY.add(new JsonDecimal(Validation.validateDecimal(C4)));
+                        aArr.add(new JsonString(t4 + "!" + A4.getSelectedItem()));
+                        vArr.add(new JsonDecimal(Validation.validateDecimal(C4)));
                         if (A5.getSelectedItem() != null) {
                             column = (String) B5.getSelectedItem();
                             if (column.equals("Tracking")) {
                                 column = "B";
                             }
                             AWColumn t5 = AWColumn.fromString("" + column.charAt(0));
-                            aArr.ARRAY.add(new JsonString(t5 + "!" + A5.getSelectedItem()));
-                            vArr.ARRAY.add(new JsonDecimal(Validation.validateDecimal(C5)));
+                            aArr.add(new JsonString(t5 + "!" + A5.getSelectedItem()));
+                            vArr.add(new JsonDecimal(Validation.validateDecimal(C5)));
                             if (A6.getSelectedItem() != null) {
                                 column = (String) B6.getSelectedItem();
                                 if (column.equals("Tracking")) {
                                     column = "B";
                                 }
                                 AWColumn t6 = AWColumn.fromString("" + column.charAt(0));
-                                aArr.ARRAY.add(new JsonString(t6 + "!" + A6.getSelectedItem()));
-                                vArr.ARRAY.add(new JsonDecimal(Validation.validateDecimal(C6)));
+                                aArr.add(new JsonString(t6 + "!" + A6.getSelectedItem()));
+                                vArr.add(new JsonDecimal(Validation.validateDecimal(C6)));
                             }
                         }
                     }
@@ -837,17 +837,17 @@ public class NewTransactionEntryGui extends JDialog {
                             }
                             if (flag) {
                                 JsonObject obj = new JsonObject();
-                                obj.FIELDS.put("name", new JsonString(tableAccess.getValueAt(i, 0).toString()));
-                                obj.FIELDS.put("desc", new JsonString(tableAccess.getValueAt(i, 1).toString()));
-                                obj.FIELDS.put("currency", new JsonString(tableAccess.getValueAt(i, 2).toString()));
-                                obj.FIELDS.put("val", new JsonDecimal(
+                                obj.put("name", new JsonString(tableAccess.getValueAt(i, 0).toString()));
+                                obj.put("desc", new JsonString(tableAccess.getValueAt(i, 1).toString()));
+                                obj.put("currency", new JsonString(tableAccess.getValueAt(i, 2).toString()));
+                                obj.put("val", new JsonDecimal(
                                         CURRENT_INSTANCE.cleanNumber(tableAccess.getValueAt(i, 3).toString())
                                 ));
-                                obj.FIELDS.put("count", new JsonDecimal(tableAccess.getValueAt(i, 4).toString()));
-                                arr.ARRAY.add(obj);
+                                obj.put("count", new JsonDecimal(tableAccess.getValueAt(i, 4).toString()));
+                                arr.add(obj);
                             }
                         }
-                        metaObject.FIELDS.put("asset", arr);
+                        metaObject.put("asset", arr);
                     } catch (JsonFormattingException ex) {
                         CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Malformed Entry in Meta Table");
                     }
@@ -862,19 +862,19 @@ public class NewTransactionEntryGui extends JDialog {
                             }
                             if (flag) {
                                 JsonObject obj = new JsonObject();
-                                obj.FIELDS.put("name", new JsonString(tableAccess.getValueAt(i, 0).toString()));
-                                obj.FIELDS.put("desc", new JsonString(tableAccess.getValueAt(i, 1).toString()));
-                                obj.FIELDS.put("cur", new JsonString(tableAccess.getValueAt(i, 2).toString()));
-                                obj.FIELDS.put("princ", new JsonDecimal(
+                                obj.put("name", new JsonString(tableAccess.getValueAt(i, 0).toString()));
+                                obj.put("desc", new JsonString(tableAccess.getValueAt(i, 1).toString()));
+                                obj.put("cur", new JsonString(tableAccess.getValueAt(i, 2).toString()));
+                                obj.put("princ", new JsonDecimal(
                                         CURRENT_INSTANCE.cleanNumber(tableAccess.getValueAt(i, 3).toString())
                                 ));
-                                obj.FIELDS.put("rate", new JsonDecimal(
+                                obj.put("rate", new JsonDecimal(
                                         CURRENT_INSTANCE.cleanNumber(tableAccess.getValueAt(i, 4).toString())
                                 ));
-                                arr.ARRAY.add(obj);
+                                arr.add(obj);
                             }
                         }
-                        metaObject.FIELDS.put("loan", arr);
+                        metaObject.put("loan", arr);
                     } catch (JsonFormattingException ex) {
                         CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Malformed Entry in Meta Table");
                     }
@@ -889,21 +889,21 @@ public class NewTransactionEntryGui extends JDialog {
                             }
                             if (flag) {
                                 JsonObject obj = new JsonObject();
-                                obj.FIELDS.put("from-cur", new JsonString(tableAccess.getValueAt(i, 0).toString()));
-                                obj.FIELDS.put("to-cur", new JsonString(tableAccess.getValueAt(i, 1).toString()));
-                                obj.FIELDS.put("from-amnt", new JsonDecimal(
+                                obj.put("from-cur", new JsonString(tableAccess.getValueAt(i, 0).toString()));
+                                obj.put("to-cur", new JsonString(tableAccess.getValueAt(i, 1).toString()));
+                                obj.put("from-amnt", new JsonDecimal(
                                         CURRENT_INSTANCE.cleanNumber(tableAccess.getValueAt(i, 2).toString())
                                 ));
-                                obj.FIELDS.put("to-amnt", new JsonDecimal(
+                                obj.put("to-amnt", new JsonDecimal(
                                         CURRENT_INSTANCE.cleanNumber(tableAccess.getValueAt(i, 3).toString())
                                 ));
-                                obj.FIELDS.put("main-amnt", new JsonDecimal(
+                                obj.put("main-amnt", new JsonDecimal(
                                         CURRENT_INSTANCE.cleanNumber(tableAccess.getValueAt(i, 4).toString())
                                 ));
-                                arr.ARRAY.add(obj);
+                                arr.add(obj);
                             }
                         }
-                        metaObject.FIELDS.put("ledger", arr);
+                        metaObject.put("ledger", arr);
                     } catch (JsonFormattingException ex) {
                         CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Malformed Entry in Meta Table");
                     }
@@ -918,16 +918,16 @@ public class NewTransactionEntryGui extends JDialog {
                             }
                             if (flag) {
                                 JsonObject obj = new JsonObject();
-                                obj.FIELDS.put("name", new JsonString(tableAccess.getValueAt(i, 0).toString()));
-                                obj.FIELDS.put("currency", new JsonString(tableAccess.getValueAt(i, 1).toString()));
-                                obj.FIELDS.put("change", new JsonDecimal(
+                                obj.put("name", new JsonString(tableAccess.getValueAt(i, 0).toString()));
+                                obj.put("currency", new JsonString(tableAccess.getValueAt(i, 1).toString()));
+                                obj.put("change", new JsonDecimal(
                                         CURRENT_INSTANCE.cleanNumber(tableAccess.getValueAt(i, 2).toString())
                                 ));
-                                obj.FIELDS.put("count", new JsonDecimal(tableAccess.getValueAt(i, 3).toString()));
-                                arr.ARRAY.add(obj);
+                                obj.put("count", new JsonDecimal(tableAccess.getValueAt(i, 3).toString()));
+                                arr.add(obj);
                             }
                         }
-                        metaObject.FIELDS.put("asset-change", arr);
+                        metaObject.put("asset-change", arr);
                     } catch (JsonFormattingException ex) {
                         CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Malformed Entry in Meta Table");
                     }
@@ -942,12 +942,12 @@ public class NewTransactionEntryGui extends JDialog {
                             }
                             if (flag) {
                                 JsonObject obj = new JsonObject();
-                                obj.FIELDS.put("name", new JsonString(tableAccess.getValueAt(i, 0).toString()));
-                                obj.FIELDS.put("change", new JsonDecimal(tableAccess.getValueAt(i, 1).toString()));
-                                arr.ARRAY.add(obj);
+                                obj.put("name", new JsonString(tableAccess.getValueAt(i, 0).toString()));
+                                obj.put("change", new JsonDecimal(tableAccess.getValueAt(i, 1).toString()));
+                                arr.add(obj);
                             }
                         }
-                        metaObject.FIELDS.put("loan", arr);
+                        metaObject.put("loan", arr);
                     } catch (JsonFormattingException ex) {
                         CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Malformed Entry in Meta Table");
                     }

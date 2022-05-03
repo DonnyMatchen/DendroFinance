@@ -80,25 +80,22 @@ public class Instance {
                 LOG_HANDLER.warn(getClass(), "The timer was interrupted.  This could cause damage.  Check integrity of data before saving./");
             }
         }
+
+        //ensure folders and data files are set up
+        ensureFolders();
+        ensureBackingFiles();
         try {
-            loadStuff();
+            reloadBackingElements();
         } catch (JsonFormattingException e) {
             LOG_HANDLER.fatal(getClass(), "Mis-formatted data!\n" + e);
             LOG_HANDLER.save();
             System.exit(1);
         }
+        checkCurToMain();
 
         //Data
         DATA_HANDLER = new DataHandler(this);
-        DATA_HANDLER.init();
-        for (TransactionEntry entry : DATA_HANDLER.readTransactions()) {
-            if (!entry.isBalanced()) {
-                LOG_HANDLER.error(getClass(), "Unbalanced entry: " + entry.getUUID());
-            }
-        }
-        DATA_HANDLER.checkLedgers();
-        DATA_HANDLER.checkCG();
-        DATA_HANDLER.checkCurToMain();
+        reloadEntries();
         IMPORT_HANDLER = new ImportHandler(this);
         EXPORT_HANDLER = new ExportHandler(this);
         new MainGui(this).setVisible(true);
@@ -108,93 +105,85 @@ public class Instance {
         this(DendroFinance.newIid(), args);
     }
 
-    public final void loadStuff() throws JsonFormattingException {
-        LOG_HANDLER.trace(getClass(), "Instance.loadStuff() run");
+    public void ensureFolders() {
+        File archive = new File(data.getPath() + File.separator + "Archives"),
+                pStock = new File(data.getPath() + File.separator + "P_Stock"),
+                exp = new File(data.getPath() + File.separator + "Exports");
+        if (!archive.exists()) {
+            archive.mkdir();
+        }
+        if (!pStock.exists()) {
+            pStock.mkdir();
+        }
+        if (!exp.exists()) {
+            exp.mkdir();
+        }
+    }
+
+    public void ensureBackingFiles() {
+        File currencies = new File(data.getPath() + File.separator + "Currencies" + File.separator + "currencies.json"),
+                stocks = new File(data.getPath() + File.separator + "Currencies" + File.separator + "stocks.json"),
+                inventories = new File(data.getPath() + File.separator + "Currencies" + File.separator + "inventories.json"),
+                exchanges = new File(data.getPath() + File.separator + "Accounts" + File.separator + "exchanges.json"),
+                accounts = new File(data.getPath() + File.separator + "Accounts" + File.separator + "accounts.json"),
+                accTyp = new File(data.getPath() + File.separator + "Accounts" + File.separator + "account-types.json"),
+                taxItm = new File(data.getPath() + File.separator + "Accounts" + File.separator + "tax-items.json"),
+                marApi = new File(data.getPath() + File.separator + "Currencies" + File.separator + "market-apis.json");
+        //Hang to prevent File IO problems
+        boolean loaded = false;
+        while (!loaded) {
+            loaded = currencies.exists() && stocks.exists() && inventories.exists() && exchanges.exists() &&
+                    accounts.exists() && accTyp.exists() && taxItm.exists() && marApi.exists();
+            //Currencies
+            {
+                if (!currencies.exists()) {
+                    FILE_HANDLER.write(currencies, new String(FILE_HANDLER.getTemplate("Currencies/currencies.json"), Charset.forName("unicode")));
+                }
+                if (!stocks.exists()) {
+                    FILE_HANDLER.write(stocks, new String(FILE_HANDLER.getTemplate("Currencies/stocks.json"), Charset.forName("unicode")));
+                }
+                if (!inventories.exists()) {
+                    FILE_HANDLER.write(inventories, new String(FILE_HANDLER.getTemplate("Currencies/inventories.json"), Charset.forName("unicode")));
+                }
+                if (!marApi.exists()) {
+                    FILE_HANDLER.write(marApi, new String(FILE_HANDLER.getTemplate("Currencies/market-apis.json"), Charset.forName("unicode")));
+                }
+            }
+            //Accounts
+            {
+                if (!exchanges.exists()) {
+                    FILE_HANDLER.write(exchanges, new String(FILE_HANDLER.getTemplate("Accounts/exchanges.json"), Charset.forName("unicode")));
+                }
+                if (!accounts.exists()) {
+                    FILE_HANDLER.write(accounts, new String(FILE_HANDLER.getTemplate("Accounts/accounts.json"), Charset.forName("unicode")));
+                }
+                if (!accTyp.exists()) {
+                    FILE_HANDLER.write(accTyp, new String(FILE_HANDLER.getTemplate("Accounts/account-types.json"), Charset.forName("unicode")));
+                }
+                if (!taxItm.exists()) {
+                    FILE_HANDLER.write(taxItm, new String(FILE_HANDLER.getTemplate("Accounts/tax-items.json"), Charset.forName("unicode")));
+                }
+            }
+        }
+        LOG_HANDLER.trace(getClass(), "Defaults set where necessary");
+    }
+
+    public void reloadBackingElements() throws JsonFormattingException {
         //establishing data files
         File currencies = new File(data.getPath() + File.separator + "Currencies" + File.separator + "currencies.json"),
                 stocks = new File(data.getPath() + File.separator + "Currencies" + File.separator + "stocks.json"),
                 inventories = new File(data.getPath() + File.separator + "Currencies" + File.separator + "inventories.json"),
-                special = new File(data.getPath() + File.separator + "Currencies" + File.separator + "special.json"),
                 exchanges = new File(data.getPath() + File.separator + "Accounts" + File.separator + "exchanges.json"),
                 accounts = new File(data.getPath() + File.separator + "Accounts" + File.separator + "accounts.json"),
-                extranious = new File(data.getPath() + File.separator + "Accounts" + File.separator + "extranious.json"),
                 accTyp = new File(data.getPath() + File.separator + "Accounts" + File.separator + "account-types.json"),
                 taxItm = new File(data.getPath() + File.separator + "Accounts" + File.separator + "tax-items.json"),
                 marApi = new File(data.getPath() + File.separator + "Currencies" + File.separator + "market-apis.json");
-        //Create Defaults for new profiles
-        {
-            //Folders
-            {
-                File archive = new File(data.getPath() + File.separator + "Archives"),
-                        pStock = new File(data.getPath() + File.separator + "P_Stock"),
-                        exp = new File(data.getPath() + File.separator + "Exports");
-                if (!archive.exists()) {
-                    archive.mkdir();
-                }
-                if (!pStock.exists()) {
-                    pStock.mkdir();
-                }
-                if (!exp.exists()) {
-                    exp.mkdir();
-                }
-            }
-            //Hang to prevent File IO problems
-            boolean loaded = false;
-            while (!loaded) {
-                loaded = currencies.exists() && stocks.exists() && inventories.exists() && special.exists() &&
-                        exchanges.exists() && accounts.exists() && extranious.exists() && accTyp.exists() &&
-                        taxItm.exists() && marApi.exists();
-                //Currencies
-                {
-                    if (!currencies.exists()) {
-                        FILE_HANDLER.write(currencies, new String(FILE_HANDLER.getTemplate("Currencies/currencies.json"), Charset.forName("unicode")));
-                    }
-                    if (!stocks.exists()) {
-                        FILE_HANDLER.write(stocks, new String(FILE_HANDLER.getTemplate("Currencies/stocks.json"), Charset.forName("unicode")));
-                    }
-                    if (!inventories.exists()) {
-                        FILE_HANDLER.write(inventories, new String(FILE_HANDLER.getTemplate("Currencies/inventories.json"), Charset.forName("unicode")));
-                    }
-                    if (!special.exists()) {
-                        FILE_HANDLER.write(special, new String(FILE_HANDLER.getTemplate("Currencies/special.json"), Charset.forName("unicode")));
-                    }
-                    if (!marApi.exists()) {
-                        FILE_HANDLER.write(marApi, new String(FILE_HANDLER.getTemplate("Currencies/market-apis.json"), Charset.forName("unicode")));
-                    }
-                }
-                //Accounts
-                {
-                    if (!exchanges.exists()) {
-                        FILE_HANDLER.write(exchanges, new String(FILE_HANDLER.getTemplate("Accounts/exchanges.json"), Charset.forName("unicode")));
-                    }
-                    if (!accounts.exists()) {
-                        FILE_HANDLER.write(accounts, new String(FILE_HANDLER.getTemplate("Accounts/accounts.json"), Charset.forName("unicode")));
-                    }
-                    if (!extranious.exists()) {
-                        FILE_HANDLER.write(extranious, new String(FILE_HANDLER.getTemplate("Accounts/extranious.json"), Charset.forName("unicode")));
-                    }
-                    if (!accTyp.exists()) {
-                        FILE_HANDLER.write(accTyp, new String(FILE_HANDLER.getTemplate("Accounts/account-types.json"), Charset.forName("unicode")));
-                    }
-                    if (!taxItm.exists()) {
-                        FILE_HANDLER.write(taxItm, new String(FILE_HANDLER.getTemplate("Accounts/tax-items.json"), Charset.forName("unicode")));
-                    }
-                }
-            }
-            LOG_HANDLER.trace(getClass(), "Defaults set where necessary");
-        }
         //LCurrency
         {
             CURRENCIES.clear();
             JsonArray array = (JsonArray) JsonItem.sanitizeDigest(FILE_HANDLER.read(currencies));
-            JsonArray spec = (JsonArray) JsonItem.sanitizeDigest(FILE_HANDLER.read(special));
             for (JsonObject obj : array.getObjectArray()) {
                 LCurrency cur = new LCurrency(obj, this);
-                for (JsonObject obk : spec.getObjectArray()) {
-                    if (obk.getString("asset").getString().equals(cur.toString())) {
-                        cur.setAltApi(obk.getString("api").getString());
-                    }
-                }
                 CURRENCIES.add(cur);
             }
             main = getLCurrency(mainTicker);
@@ -205,6 +194,7 @@ public class Instance {
                 CURRENCIES.add(__);
             }
             CURRENCIES.changed = false;
+            LOG_HANDLER.trace(getClass(), "Currencies loaded");
         }
         //LStock
         {
@@ -273,10 +263,9 @@ public class Instance {
             }
             x++;
             y++;
-            JsonObject extraniousObj = (JsonObject) JsonItem.sanitizeDigest(FILE_HANDLER.read(extranious));
-            if (extraniousObj.FIELDS.containsKey("gift-cards")) {
-                for (JsonString item : extraniousObj.getArray("gift-cards").getStringArray()) {
-                    ACCOUNTS.add(new Account(item.getString() + "_GC", y, main,
+            if (accountObj.containsKey("gift-cards")) {
+                for (JsonString card : accountObj.getArray("gift-cards").getStringArray()) {
+                    ACCOUNTS.add(new Account(card.getString() + "_GC", y, main,
                             ACCOUNT_TYPES.getElement("Gift_Card"), null, this, false));
                     y++;
                 }
@@ -330,9 +319,9 @@ public class Instance {
                     }
                 }
             }
-            if (extraniousObj.FIELDS.containsKey("brave-mobile")) {
-                for (JsonString item : extraniousObj.getArray("brave-mobile").getStringArray()) {
-                    ACCOUNTS.add(new Account(item.getString() + "_BAT", x, getLCurrency("C!BAT"),
+            if (accountObj.containsKey("brave-mobile")) {
+                for (JsonString device : accountObj.getArray("brave-mobile").getStringArray()) {
+                    ACCOUNTS.add(new Account(device.getString() + "_BAT", x, getLCurrency("C!BAT"),
                             ACCOUNT_TYPES.getElement("Tracking"), null, this, false));
                     x++;
                 }
@@ -349,37 +338,93 @@ public class Instance {
         }
     }
 
+    public void reloadEntries() {
+        DATA_HANDLER.reload();
+        for (TransactionEntry entry : DATA_HANDLER.readTransactions()) {
+            if (!entry.isBalanced()) {
+                LOG_HANDLER.error(getClass(), "Unbalanced entry: " + entry.getUUID());
+            }
+        }
+        DATA_HANDLER.checkLedgers();
+        DATA_HANDLER.checkCG();
+    }
+
+    public void checkCurToMain() {
+        for (LCurrency currency : CURRENCIES) {
+            boolean flag = true;
+            for (LMarketApi marketApi : MARKET_APIS) {
+                if (marketApi.canConvert(currency, main)) {
+                    flag = false;
+                    break;
+                }
+            }
+            if (flag) {
+                LOG_HANDLER.error(getClass(), "Currency can't be converted to main: " + currency);
+            }
+        }
+        for (LStock stock : STOCKS) {
+            boolean flag = true;
+            for (LMarketApi marketApi : MARKET_APIS) {
+                if (marketApi.canConvert(stock, main)) {
+                    flag = false;
+                    break;
+                }
+            }
+            if (flag) {
+                LOG_HANDLER.error(getClass(), "Stock can't be converted to main: " + stock);
+            }
+        }
+        for (LInventory inventory : INVENTORIES) {
+            if (inventory.isCommodity()) {
+                boolean flag = true;
+                for (LMarketApi marketApi : MARKET_APIS) {
+                    if (marketApi.canConvert(inventory, main)) {
+                        flag = false;
+                        break;
+                    }
+                }
+                if (flag) {
+                    LOG_HANDLER.error(getClass(), "Commodity can't be converted to main: " + inventory);
+                }
+            }
+        }
+    }
+
+    public void save() {
+        DATA_HANDLER.save();
+        File currencies = new File(data.getPath() + File.separator + "Currencies" + File.separator + "currencies.json"),
+                stocks = new File(data.getPath() + File.separator + "Currencies" + File.separator + "stocks.json"),
+                inventories = new File(data.getPath() + File.separator + "Currencies" + File.separator + "inventories.json"),
+                exchanges = new File(data.getPath() + File.separator + "Accounts" + File.separator + "exchanges.json"),
+                accounts = new File(data.getPath() + File.separator + "Accounts" + File.separator + "accounts.json"),
+                accTyp = new File(data.getPath() + File.separator + "Accounts" + File.separator + "account-types.json"),
+                taxItm = new File(data.getPath() + File.separator + "Accounts" + File.separator + "tax-items.json");
+        if (CURRENCIES.changed) {
+            FILE_HANDLER.write(currencies, CURRENCIES.export().print());
+        }
+        if (STOCKS.changed) {
+            FILE_HANDLER.write(stocks, STOCKS.export().print());
+        }
+        if (INVENTORIES.changed) {
+            FILE_HANDLER.write(inventories, INVENTORIES.export().print());
+        }
+        if (ACCOUNTS.changed) {
+            FILE_HANDLER.write(accounts, ACCOUNTS.export().print());
+        }
+        if (EXCHANGES.changed) {
+            FILE_HANDLER.write(exchanges, EXCHANGES.export().print());
+        }
+        if (ACCOUNT_TYPES.changed) {
+            FILE_HANDLER.write(accTyp, ACCOUNT_TYPES.export().print());
+        }
+        if (TAX_ITEMS.changed) {
+            FILE_HANDLER.write(taxItm, TAX_ITEMS.export().print());
+        }
+    }
+
     public void conclude(boolean save) {
         if (save) {
-            DATA_HANDLER.save();
-            File currencies = new File(data.getPath() + File.separator + "Currencies" + File.separator + "currencies.json"),
-                    stocks = new File(data.getPath() + File.separator + "Currencies" + File.separator + "stocks.json"),
-                    inventories = new File(data.getPath() + File.separator + "Currencies" + File.separator + "inventories.json"),
-                    exchanges = new File(data.getPath() + File.separator + "Accounts" + File.separator + "exchanges.json"),
-                    accounts = new File(data.getPath() + File.separator + "Accounts" + File.separator + "accounts.json"),
-                    accTyp = new File(data.getPath() + File.separator + "Accounts" + File.separator + "account-types.json"),
-                    taxItm = new File(data.getPath() + File.separator + "Accounts" + File.separator + "tax-items.json");
-            if (CURRENCIES.changed) {
-                FILE_HANDLER.write(currencies, CURRENCIES.export().print());
-            }
-            if (STOCKS.changed) {
-                FILE_HANDLER.write(stocks, STOCKS.export().print());
-            }
-            if (INVENTORIES.changed) {
-                FILE_HANDLER.write(inventories, INVENTORIES.export().print());
-            }
-            if (ACCOUNTS.changed) {
-                FILE_HANDLER.write(accounts, ACCOUNTS.export().print());
-            }
-            if (EXCHANGES.changed) {
-                FILE_HANDLER.write(exchanges, EXCHANGES.export().print());
-            }
-            if (ACCOUNT_TYPES.changed) {
-                FILE_HANDLER.write(accTyp, ACCOUNT_TYPES.export().print());
-            }
-            if (TAX_ITEMS.changed) {
-                FILE_HANDLER.write(taxItm, TAX_ITEMS.export().print());
-            }
+            save();
         }
         ENCRYPTION_HANDLER.dispose();
         if (export) {

@@ -35,8 +35,8 @@ public class AccountType implements ExportableToJsonObject {
     @Override
     public JsonObject export() throws JsonFormattingException {
         JsonObject obj = new JsonObject();
-        obj.FIELDS.put("name", new JsonString(NAME));
-        obj.FIELDS.put("type", new JsonString(TYPE.toString()));
+        obj.put("name", new JsonString(NAME));
+        obj.put("type", new JsonString(TYPE.toString()));
         return obj;
     }
 }

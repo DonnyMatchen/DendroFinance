@@ -6,9 +6,13 @@ Accounts{
   "expense-prefix": integer
   "ghost-prefix": integer
   "tracking-prefix": integer
+  "gift-cards": array(string)
+  "brave-mobile": array(string)
   "accounts": array(Account)
 }
 
+* gift-cards: an array of gift card providers for {provider}_GC asset accounts.
+* brave-mobile: a list of devices or containers that have a brave rewards account associated with them.
 the prefixes are used to state the first index belonging to the specified broad account type.
 
 Account{

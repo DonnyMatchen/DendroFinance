@@ -40,7 +40,6 @@ public class Exchange implements ExportableToJsonObject {
         SUPPORTED = new ArrayList<>(sup);
         STAKING = new ArrayList<>();
         EXPORT = export;
-        curInst.LOG_HANDLER.trace(getClass(), "Exchange " + NAME + " Created");
     }
 
     public Exchange(String name, String alt, ArrayList<String> sup, ArrayList<JsonObject> stak, Instance curInst, boolean export) {

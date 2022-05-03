@@ -141,20 +141,30 @@ public class MainGui extends JFrame {
             {
                 JMenuBar bar = new JMenuBar();
 
-                //data
-                JMenu data = new JMenu("Data");
-                JMenuItem imp = new JMenuItem("Import");
-                imp.addActionListener(event -> CURRENT_INSTANCE.IMPORT_HANDLER.load());
+                //file
+                JMenu file = new JMenu("File");
                 JMenuItem rel = new JMenuItem("Reload");
                 rel.addActionListener(event -> {
                     try {
-                        CURRENT_INSTANCE.loadStuff();
+                        CURRENT_INSTANCE.reloadBackingElements();
+                        CURRENT_INSTANCE.reloadEntries();
                     } catch (JsonFormattingException ex) {
                         CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Malformed JSON in reload");
                     }
                 });
+                JMenuItem save = new JMenuItem("Save");
+                save.addActionListener(event -> CURRENT_INSTANCE.save());
+                JMenuItem imp = new JMenuItem("Import");
+                imp.addActionListener(event -> CURRENT_INSTANCE.IMPORT_HANDLER.load());
                 JMenuItem exp = new JMenuItem("Export");
                 exp.addActionListener(event -> CURRENT_INSTANCE.EXPORT_HANDLER.export());
+                file.add(rel);
+                file.add(save);
+                file.add(imp);
+                file.add(exp);
+
+                //data
+                JMenu data = new JMenu("Data");
                 JMenuItem curLst = new JMenuItem("Currencies");
                 curLst.addActionListener(event -> new BackingTableGui<>(this, CURRENT_INSTANCE.CURRENCIES, CURRENT_INSTANCE).setVisible(true));
                 JMenuItem stkLst = new JMenuItem("Stocks");
@@ -171,10 +181,6 @@ public class MainGui extends JFrame {
                 exchLst.addActionListener(event -> new BackingTableGui<>(this, CURRENT_INSTANCE.EXCHANGES, CURRENT_INSTANCE).setVisible(true));
                 JMenuItem stats = new JMenuItem("Statistics");
                 stats.addActionListener(event -> new StatisticsGui(this, CURRENT_INSTANCE).setVisible(true));
-                data.add(imp);
-                data.add(rel);
-                data.add(exp);
-                data.add(new JSeparator());
                 data.add(curLst);
                 data.add(stkLst);
                 data.add(invLst);
@@ -250,6 +256,7 @@ public class MainGui extends JFrame {
                 util.add(taxZero);
 
                 //add menus
+                bar.add(file);
                 bar.add(data);
                 bar.add(rep);
                 bar.add(trad);

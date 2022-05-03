@@ -36,10 +36,11 @@ public class DataHandler {
         CURRENT_INSTANCE.LOG_HANDLER.trace(getClass(), "DataHandler Initiated");
     }
 
-    public void init() {
+    public void reload() {
+        CURRENT_INSTANCE.UUID_HANDLER.UUIDS.clear();
         try {
-            TRANSACTIONS.load();
-            BUDGETS.load();
+            TRANSACTIONS.reload();
+            BUDGETS.reload();
         } catch (JsonFormattingException e) {
             CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Error loading datasets: " + e);
         }
@@ -1020,47 +1021,6 @@ public class DataHandler {
             if (flag && !entry.equals(getPrior())) {
                 CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Sale missing Capital Gain/Loss: " + entry.getUUID());
                 CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Value should be: " + map.get(uuid));
-            }
-        }
-    }
-
-    public void checkCurToMain() {
-        for (LCurrency currency : CURRENT_INSTANCE.CURRENCIES) {
-            boolean flag = true;
-            for (LMarketApi marketApi : CURRENT_INSTANCE.MARKET_APIS) {
-                if (marketApi.canConvert(currency, CURRENT_INSTANCE.main)) {
-                    flag = false;
-                    break;
-                }
-            }
-            if (flag) {
-                CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Currency can't be converted to main: " + currency);
-            }
-        }
-        for (LStock stock : CURRENT_INSTANCE.STOCKS) {
-            boolean flag = true;
-            for (LMarketApi marketApi : CURRENT_INSTANCE.MARKET_APIS) {
-                if (marketApi.canConvert(stock, CURRENT_INSTANCE.main)) {
-                    flag = false;
-                    break;
-                }
-            }
-            if (flag) {
-                CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Stock can't be converted to main: " + stock);
-            }
-        }
-        for (LInventory inventory : CURRENT_INSTANCE.INVENTORIES) {
-            if (inventory.isCommodity()) {
-                boolean flag = true;
-                for (LMarketApi marketApi : CURRENT_INSTANCE.MARKET_APIS) {
-                    if (marketApi.canConvert(inventory, CURRENT_INSTANCE.main)) {
-                        flag = false;
-                        break;
-                    }
-                }
-                if (flag) {
-                    CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Commodity can't be converted to main: " + inventory);
-                }
             }
         }
     }

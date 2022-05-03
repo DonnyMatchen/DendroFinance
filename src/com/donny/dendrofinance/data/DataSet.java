@@ -25,7 +25,8 @@ public class DataSet<E extends Entry> {
         TABLE = new ArrayList<>();
     }
 
-    public void load() throws JsonFormattingException {
+    public void reload() throws JsonFormattingException {
+        TABLE.clear();
         if (ARCHIVE.exists()) {
             String raw = CURRENT_INSTANCE.FILE_HANDLER.readDecrypt(ARCHIVE);
             if (raw.contains("passwd")) {
@@ -73,7 +74,7 @@ public class DataSet<E extends Entry> {
 
     public ArrayList<E> read() throws JsonFormattingException {
         if (TABLE.isEmpty() && !emptyDueToDeletion) {
-            load();
+            reload();
         }
         return new ArrayList<>(TABLE);
     }

@@ -9,6 +9,9 @@ v0.5.0
   * reworked budget guis
 -> reworked loading and saving of entries and backing elements
   * handled empty due to deletion
+  * rationalized Instance
+  * made reload more extensive and added save
+* removed obnoxious trace statements
 X editing accounts metadata in gui
 
 v0.4.2

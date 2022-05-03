@@ -30,7 +30,6 @@ public class Account implements ExportableToJsonObject {
         BUDGET = budget;
         EXPORT = export;
         EXCHANGE = exchange;
-        CURRENT_INSTANCE.LOG_HANDLER.trace(getClass(), "Account " + NAME + " Created");
     }
 
     public Account(String name, int aid, LCurrency cur, AccountType type, Exchange exchange, Instance curInst, boolean export) {

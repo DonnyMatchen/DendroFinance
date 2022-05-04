@@ -432,7 +432,7 @@ public class NewTransactionEntryGui extends JDialog {
                 META_TEXT_PANE.setViewportView(META_TEXT);
                 META_TYPE = new JComboBox<>();
                 META_TYPE.addItemListener(event -> metaTypeChanged());
-                META_TABLE_PANE = DendroFactory.getTable(new String[]{}, new Object[][]{}, false);
+                META_TABLE_PANE = DendroFactory.getTable(new String[]{}, new Object[][]{}, true);
                 TABLE = (JTable) META_TABLE_PANE.getViewport().getView();
                 META_TABLE_PANE.setViewportView(TABLE);
 
@@ -518,7 +518,7 @@ public class NewTransactionEntryGui extends JDialog {
             TransactionEntry entry = CURRENT_INSTANCE.DATA_HANDLER.getTransactionEntry(UUID);
             LAccountSet set = entry.getAccounts();
             if (set.getSize() <= 6) {
-                SIMP_DATE.setText("t(+0) " + entry.getDate().toString());
+                SIMP_DATE.setText(entry.getDate().toString());
                 SIMP_ENT.setText(entry.getEntity());
                 SIMP_ITM.setText(entry.getItems());
                 SIMP_DESC.setText(entry.getDescription());
@@ -569,15 +569,15 @@ public class NewTransactionEntryGui extends JDialog {
                     gamma.setText(wrapper.VALUE.toString());
                 }
             }
-            ADV_DATE.setText("t(+0) " + entry.getDate().toString());
+            ADV_DATE.setText(entry.getDate().toString());
             ADV_ENT.setText(entry.getEntity());
             ADV_ITM.setText(entry.getItems());
             ADV_DESC.setText(entry.getDescription());
             ACC.setText(entry.getAccounts().toString());
             metaObject = entry.getMeta();
         }
-        META.setText(metaObject.toString());
-        META_TEXT.setText(metaObject.toString());
+        META.setText(metaObject.print());
+        META_TEXT.setText(metaObject.print());
         META_TYPE.addItem("New NF Asset");
         META_TYPE.addItem("New Loan");
         META_TYPE.addItem("Trading Ledger");
@@ -607,7 +607,7 @@ public class NewTransactionEntryGui extends JDialog {
                 TABLE.setModel(new DefaultTableModel(new Vector<>(Arrays.asList("Name", "Description", "Cur", "Value", "Count")), 0) {
                     @Override
                     public boolean isCellEditable(int row, int column) {
-                        return false;
+                        return true;
                     }
                 });
                 if (metaObject.containsKey("asset")) {
@@ -627,7 +627,7 @@ public class NewTransactionEntryGui extends JDialog {
                 TABLE.setModel(new DefaultTableModel(new Vector<>(Arrays.asList("Name", "Description", "Cur", "Princ", "Rate")), 0) {
                     @Override
                     public boolean isCellEditable(int row, int column) {
-                        return false;
+                        return true;
                     }
                 });
                 if (metaObject.containsKey("loan")) {
@@ -647,7 +647,7 @@ public class NewTransactionEntryGui extends JDialog {
                 TABLE.setModel(new DefaultTableModel(new Vector<>(Arrays.asList("From", "To", "F Amount", "To Amount", "Main Amnt")), 0) {
                     @Override
                     public boolean isCellEditable(int row, int column) {
-                        return false;
+                        return true;
                     }
                 });
                 if (metaObject.containsKey("ledger")) {
@@ -668,7 +668,7 @@ public class NewTransactionEntryGui extends JDialog {
                 TABLE.setModel(new DefaultTableModel(new Vector<>(Arrays.asList("Name", "Cur", "Val Change", "Count Change")), 0) {
                     @Override
                     public boolean isCellEditable(int row, int column) {
-                        return false;
+                        return true;
                     }
                 });
                 if (metaObject.containsKey("asset-change")) {
@@ -687,7 +687,7 @@ public class NewTransactionEntryGui extends JDialog {
                 TABLE.setModel(new DefaultTableModel(new Vector<>(Arrays.asList("Name", "Value")), 0) {
                     @Override
                     public boolean isCellEditable(int row, int column) {
-                        return false;
+                        return true;
                     }
                 });
                 if (metaObject.containsKey("loan-change")) {
@@ -815,7 +815,7 @@ public class NewTransactionEntryGui extends JDialog {
     public void mUpdateAction() {
         try {
             metaObject = (JsonObject) JsonItem.sanitizeDigest(META_TEXT.getText());
-            META.setText(metaObject.toString());
+            META.setText(metaObject.print());
         } catch (JsonFormattingException ex) {
             CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Malformed Json on Json tab");
         }
@@ -953,8 +953,8 @@ public class NewTransactionEntryGui extends JDialog {
                     }
                 }
             }
-            META_TEXT.setText(metaObject.toString());
-            META.setText(metaObject.toString());
+            META_TEXT.setText(metaObject.print());
+            META.setText(metaObject.print());
             metaTypeChanged();
         }
     }

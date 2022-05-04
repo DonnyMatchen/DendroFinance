@@ -1,3 +1,9 @@
+v0.5.1
+X rationalized alpha, beta, gamma
+* fixed new/edit transaction gui
+  * fixed Meta tab in entry edit not functioning correctly
+  * removed t+ notation
+
 v0.5.0
 * minor bug fixes and optimizations
   * replaced calls to "Instance.main.encode" with "Instance.$"

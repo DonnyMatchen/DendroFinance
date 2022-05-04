@@ -103,7 +103,7 @@ public class JsonArray extends JsonItem {
         ARRAY.addAll(list);
     }
 
-    public ArrayList<JsonItem> getArray(){
+    public ArrayList<JsonItem> getArray() {
         return new ArrayList<>(ARRAY);
     }
 
@@ -171,23 +171,23 @@ public class JsonArray extends JsonItem {
         return (JsonObject) get(index);
     }
 
-    public boolean add(JsonItem item){
+    public boolean add(JsonItem item) {
         return ARRAY.add(item);
     }
 
-    public boolean addAll(Collection<? extends JsonItem> collection){
+    public boolean addAll(Collection<? extends JsonItem> collection) {
         return ARRAY.addAll(collection);
     }
 
-    public boolean remove(int index){
+    public boolean remove(int index) {
         return remove(index);
     }
 
-    public boolean remove(JsonItem item){
+    public boolean remove(JsonItem item) {
         return remove(item);
     }
 
-    public int size(){
+    public int size() {
         return ARRAY.size();
     }
 

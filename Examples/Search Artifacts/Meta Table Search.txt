@@ -1,0 +1,4 @@
+Searching meta tables is much simpler than transactions, since meta table elements are much simpler.
+
+$A or $a returns all entries, regardless of whether they are current
+$D or $d returns all entries that are not current

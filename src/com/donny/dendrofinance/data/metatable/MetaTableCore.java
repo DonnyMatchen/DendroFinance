@@ -21,4 +21,25 @@ public abstract class MetaTableCore {
     public abstract String getName();
 
     public abstract String print(String identifier, String name, LDate date);
+
+    protected class ProcessReturn {
+        public boolean all, dead;
+        public String reduced;
+
+        public ProcessReturn(String raw) {
+            all = false;
+            dead = false;
+            reduced = raw;
+            if (reduced.contains("$")) {
+                if (reduced.toLowerCase().contains("$a")) {
+                    all = true;
+                    reduced = reduced.replace("$a", "").trim();
+                }
+                if (reduced.toLowerCase().contains("$d")) {
+                    dead = true;
+                    reduced = reduced.replace("$d", "").trim();
+                }
+            }
+        }
+    }
 }

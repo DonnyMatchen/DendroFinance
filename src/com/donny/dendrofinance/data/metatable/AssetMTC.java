@@ -33,28 +33,35 @@ public class AssetMTC extends MetaTableCore {
 
     @Override
     public ArrayList<String[]> getContents(LDate date, String search) {
+        ProcessReturn pReturn = new ProcessReturn(search);
+        search = pReturn.reduced;
         ArrayList<String[]> out = new ArrayList<>();
         for (AssetMetadata meta : CURRENT_INSTANCE.DATA_HANDLER.assetsAsOf(date)) {
-            if (meta.NAME.toLowerCase().contains(search.toLowerCase()) || meta.DESC.toLowerCase().contains(search.toLowerCase())) {
-                boolean first = true;
-                HashMap<LCurrency, BigDecimal> counts = meta.getCount(), values = meta.getValues();
-                for (LCurrency cur : meta.getCurrencies()) {
-                    if (first) {
-                        if (meta.isCurrent()) {
-                            out.add(new String[]{
-                                    "" + meta.ROOT_REF, meta.NAME, meta.DESC, cur.encode(values.get(cur)), counts.get(cur).toString(), meta.DATE.toString(), ""
-                            });
+            if (
+                    (meta.isCurrent() && !(pReturn.all || pReturn.dead)) ||
+                            (!meta.isCurrent() && pReturn.dead) || pReturn.all
+            ) {
+                if (meta.NAME.toLowerCase().contains(search.toLowerCase()) || meta.DESC.toLowerCase().contains(search.toLowerCase())) {
+                    boolean first = true;
+                    HashMap<LCurrency, BigDecimal> counts = meta.getCount(), values = meta.getValues();
+                    for (LCurrency cur : meta.getCurrencies()) {
+                        if (first) {
+                            if (meta.isCurrent()) {
+                                out.add(new String[]{
+                                        "" + meta.ROOT_REF, meta.NAME, meta.DESC, cur.encode(values.get(cur)), counts.get(cur).toString(), meta.DATE.toString(), ""
+                                });
+                            } else {
+                                out.add(new String[]{
+                                        "" + meta.ROOT_REF, meta.NAME, meta.DESC, cur.encode(values.get(cur)), counts.get(cur).toString(), meta.DATE.toString(), meta.EVENTS.get(meta.EVENTS.size() - 1).DATE.toString()
+                                });
+                            }
                         } else {
                             out.add(new String[]{
-                                    "" + meta.ROOT_REF, meta.NAME, meta.DESC, cur.encode(values.get(cur)), counts.get(cur).toString(), meta.DATE.toString(), meta.EVENTS.get(meta.EVENTS.size() - 1).DATE.toString()
+                                    "", "", "", cur.encode(values.get(cur)), counts.get(cur).toString(), "", ""
                             });
                         }
-                    } else {
-                        out.add(new String[]{
-                                "", "", "", cur.encode(values.get(cur)), counts.get(cur).toString(), "", ""
-                        });
+                        first = false;
                     }
-                    first = false;
                 }
             }
         }

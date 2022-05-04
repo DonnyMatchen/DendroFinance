@@ -5,6 +5,7 @@ v0.5.1
   * removed t+ notation
 * added LDate formatting options
 * added date to PositionGui
+* added artifacts to meta tables
 
 v0.5.0
 * minor bug fixes and optimizations

@@ -5,13 +5,17 @@ import com.donny.dendrofinance.gui.MainGui;
 import com.donny.dendrofinance.gui.RegisterFrame;
 import com.donny.dendrofinance.gui.customswing.DendroFactory;
 import com.donny.dendrofinance.instance.Instance;
+import com.donny.dendrofinance.types.LDate;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 
 public class PositionGui extends RegisterFrame {
     private final JButton RECALC;
+    private final JTextField DATE;
+    private final JLabel A;
     private final JScrollPane PANE;
     private final JTable TABLE;
     private final DefaultTableModel TABLE_ACCESS;
@@ -21,6 +25,8 @@ public class PositionGui extends RegisterFrame {
 
         //Draw Gui
         {
+            A = new JLabel("Date");
+            DATE = new JTextField();
             PANE = DendroFactory.getTable(new String[]{
                     "Asset", "Volume", "Cost", "Unit", "Value", "Unit", "Position"
             }, new Object[][]{}, false);
@@ -36,7 +42,13 @@ public class PositionGui extends RegisterFrame {
                 getContentPane().setLayout(main);
                 main.setHorizontalGroup(
                         main.createSequentialGroup().addContainerGap().addGroup(
-                                main.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(
+                                main.createParallelGroup(GroupLayout.Alignment.CENTER).addGroup(
+                                        main.createSequentialGroup().addComponent(
+                                                A, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                        ).addGap(DendroFactory.SMALL_GAP).addComponent(
+                                                DATE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
+                                        )
+                                ).addComponent(
                                         PANE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
                                 ).addComponent(
                                         RECALC, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
@@ -44,7 +56,13 @@ public class PositionGui extends RegisterFrame {
                         ).addContainerGap()
                 );
                 main.setVerticalGroup(
-                        main.createSequentialGroup().addContainerGap().addComponent(
+                        main.createSequentialGroup().addContainerGap().addGroup(
+                                main.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(
+                                        A, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                ).addComponent(
+                                        DATE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                )
+                        ).addGap(DendroFactory.SMALL_GAP).addComponent(
                                 PANE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
                         ).addGap(DendroFactory.MEDIUM_GAP).addComponent(
                                 RECALC, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
@@ -61,11 +79,25 @@ public class PositionGui extends RegisterFrame {
         while (TABLE_ACCESS.getRowCount() > 0) {
             TABLE_ACCESS.removeRow(0);
         }
+        ArrayList<Position> positions;
+        boolean useDate;
+        LDate point = LDate.now(CURRENT_INSTANCE);
+        if (DATE.getText().equals("")) {
+            useDate = false;
+        } else {
+            LDate date = new LDate(DATE.getText(), CURRENT_INSTANCE);
+            if (date.toDateString().equals(LDate.now(CURRENT_INSTANCE).toDateString())) {
+                useDate = false;
+            } else {
+                useDate = true;
+                point = date;
+            }
+        }
         BigDecimal tCost = BigDecimal.ZERO, tVal = BigDecimal.ZERO;
-        for (Position p : CURRENT_INSTANCE.DATA_HANDLER.getPositions()) {
+        for (Position p : useDate ? CURRENT_INSTANCE.DATA_HANDLER.getPositions(point) : CURRENT_INSTANCE.DATA_HANDLER.getPositions()) {
             BigDecimal[] analog = p.collapse();
             if (analog[0].compareTo(BigDecimal.ONE.divide(BigDecimal.TEN.pow(p.ASSET.getPlaces() - 1), CURRENT_INSTANCE.precision)) > 0) {
-                BigDecimal val = p.ASSET.getTotal(analog[0]);
+                BigDecimal val = useDate ? p.ASSET.getTotal(analog[0], point) : p.ASSET.getTotal(analog[0]);
                 tCost = tCost.add(analog[1]);
                 tVal = tVal.add(val);
                 TABLE_ACCESS.addRow(new String[]{

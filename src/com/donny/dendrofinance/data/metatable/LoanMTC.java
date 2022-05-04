@@ -30,17 +30,24 @@ public class LoanMTC extends MetaTableCore {
 
     @Override
     public ArrayList<String[]> getContents(LDate date, String search) {
+        ProcessReturn pReturn = new ProcessReturn(search);
+        search = pReturn.reduced;
         ArrayList<String[]> out = new ArrayList<>();
         for (LoanMetadata meta : CURRENT_INSTANCE.DATA_HANDLER.loansAsOf(date)) {
-            if (meta.NAME.toLowerCase().contains(search.toLowerCase()) || meta.DESC.toLowerCase().contains(search.toLowerCase())) {
-                if (meta.isCurrent()) {
-                    out.add(new String[]{
-                            "" + meta.ROOT_REF, meta.NAME, meta.DESC, meta.CUR.encode(meta.principalRemaining()), CURRENT_INSTANCE.p(meta.RATE), meta.DATE.toString(), ""
-                    });
-                } else {
-                    out.add(new String[]{
-                            "" + meta.ROOT_REF, meta.NAME, meta.DESC, meta.CUR.encode(meta.principalRemaining()), CURRENT_INSTANCE.p(meta.RATE), meta.DATE.toString(), meta.EVENTS.get(meta.EVENTS.size() - 1).DATE.toString()
-                    });
+            if (
+                    (meta.isCurrent() && !(pReturn.all || pReturn.dead)) ||
+                            (meta.isCurrent() && !pReturn.dead) || pReturn.all
+            ) {
+                if (meta.NAME.toLowerCase().contains(search.toLowerCase()) || meta.DESC.toLowerCase().contains(search.toLowerCase())) {
+                    if (meta.isCurrent()) {
+                        out.add(new String[]{
+                                "" + meta.ROOT_REF, meta.NAME, meta.DESC, meta.CUR.encode(meta.principalRemaining()), CURRENT_INSTANCE.p(meta.RATE), meta.DATE.toString(), ""
+                        });
+                    } else {
+                        out.add(new String[]{
+                                "" + meta.ROOT_REF, meta.NAME, meta.DESC, meta.CUR.encode(meta.principalRemaining()), CURRENT_INSTANCE.p(meta.RATE), meta.DATE.toString(), meta.EVENTS.get(meta.EVENTS.size() - 1).DATE.toString()
+                        });
+                    }
                 }
             }
         }

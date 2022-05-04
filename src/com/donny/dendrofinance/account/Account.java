@@ -113,8 +113,8 @@ public class Account implements ExportableToJsonObject {
         return false;
     }
 
-    public BigDecimal alpha(boolean credit, BigDecimal input) {
-        return TYPE.TYPE.alpha(credit).multiply(input);
+    public BigDecimal getAlpha(boolean credit, BigDecimal input) {
+        return TYPE.TYPE.getAlpha(credit).multiply(input);
     }
 
     public int compareTo(Account b) {

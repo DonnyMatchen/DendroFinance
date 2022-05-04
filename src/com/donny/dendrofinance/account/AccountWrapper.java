@@ -56,12 +56,12 @@ public class AccountWrapper implements ExportableToJsonObject {
     /**
      * @return the amount with corrected sign
      */
-    public BigDecimal alpha() {
+    public BigDecimal getAlphaProcessed() {
         if (COLUMN == null) {
             return VALUE;
         } else return switch (COLUMN) {
-            case CREDIT -> ACCOUNT.alpha(true, VALUE);
-            case DEBIT -> ACCOUNT.alpha(false, VALUE);
+            case CREDIT -> ACCOUNT.getAlpha(true, VALUE);
+            case DEBIT -> ACCOUNT.getAlpha(false, VALUE);
             default -> VALUE;
         };
     }

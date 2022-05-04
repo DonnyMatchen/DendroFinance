@@ -43,22 +43,13 @@ public class Validation {
 
     public static LDate validateDate(JTextField field, LDate orig, Instance curInst) throws ValidationFailedException {
         require(field);
-        long add = 0;
-        if (!field.getText().contains(("t(+0)"))) {
-            if (field.getText().contains(("t("))) {
-                add = Long.parseLong(field.getText().split(" ")[0].replace("t(", "").replace(")", ""));
-            } else {
-                try {
-                    field.setBackground(DendroFactory.CONTENT);
-                    return new LDate(field.getText(), curInst);
-                } catch (NumberFormatException | ArrayIndexOutOfBoundsException e) {
-                    field.setBackground(DendroFactory.WRONG);
-                    throw new ValidationFailedException();
-                }
-            }
+        try {
+            field.setBackground(DendroFactory.CONTENT);
+            return new LDate(field.getText(), curInst);
+        } catch (NumberFormatException | ArrayIndexOutOfBoundsException e) {
+            field.setBackground(DendroFactory.WRONG);
+            throw new ValidationFailedException();
         }
-        field.setBackground(DendroFactory.CONTENT);
-        return new LDate(orig.getTime() + add, curInst);
     }
 
     public static BigDecimal validateDecimal(JTextField field) throws ValidationFailedException {

@@ -1,7 +1,6 @@
 package com.donny.dendrofinance.json;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.HashMap;
 
 public class JsonObject extends JsonItem {
@@ -130,23 +129,23 @@ public class JsonObject extends JsonItem {
         return (JsonObject) get(key);
     }
 
-    public void put(String key, JsonItem item){
-        if(!FIELDS.contains(key)){
+    public void put(String key, JsonItem item) {
+        if (!FIELDS.contains(key)) {
             FIELDS.add(key);
         }
         CONTENTS.put(key, item);
     }
 
-    public void remove(String key){
+    public void remove(String key) {
         FIELDS.remove(key);
         CONTENTS.remove(key);
     }
 
-    public boolean containsKey(String key){
+    public boolean containsKey(String key) {
         return FIELDS.contains(key) && CONTENTS.containsKey(key);
     }
 
-    public ArrayList<String> getFields(){
+    public ArrayList<String> getFields() {
         return new ArrayList<>(FIELDS);
     }
 

@@ -321,10 +321,10 @@ public class TransactionEntry extends Entry<TransactionHeader> implements Compar
                 deb = deb.add(wrapper.VALUE);
             }
             switch (wrapper.ACCOUNT.getBroadAccountType()) {
-                case ASSET -> ass = ass.add(wrapper.alpha());
-                case LIABILITY -> lia = lia.add(wrapper.alpha());
-                case EQUITY_MINUS, EXPENSE -> equ = equ.subtract(wrapper.alpha());
-                case EQUITY_PLUS, REVENUE -> equ = equ.add(wrapper.alpha());
+                case ASSET -> ass = ass.add(wrapper.getAlphaProcessed());
+                case LIABILITY -> lia = lia.add(wrapper.getAlphaProcessed());
+                case EQUITY_MINUS, EXPENSE -> equ = equ.subtract(wrapper.getAlphaProcessed());
+                case EQUITY_PLUS, REVENUE -> equ = equ.add(wrapper.getAlphaProcessed());
             }
             switch (wrapper.COLUMN) {
                 case TRACKER -> {

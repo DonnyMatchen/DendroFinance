@@ -125,7 +125,7 @@ public class DataHandler {
             if (entry.getAccounts().toString().contains(acc.getName()) && entry.getDate().compare(date) <= 0) {
                 for (AccountWrapper wrapper : entry.getAccounts()) {
                     if (wrapper.ACCOUNT.equals(acc)) {
-                        x = x.add(wrapper.alpha());
+                        x = x.add(wrapper.getAlphaProcessed());
                     }
                 }
             }
@@ -162,7 +162,7 @@ public class DataHandler {
         for (TransactionEntry entry : readTransactions()) {
             if (entry.getDate().compare(date) <= 0) {
                 for (AccountWrapper wrapper : entry.getAccounts()) {
-                    accounts.add(wrapper.ACCOUNT, wrapper.alpha());
+                    accounts.add(wrapper.ACCOUNT, wrapper.getAlphaProcessed());
                 }
             }
         }
@@ -174,7 +174,7 @@ public class DataHandler {
         for (TransactionEntry entry : readTransactions()) {
             if (entry.getDate().compare(y, m, d) <= 0) {
                 for (AccountWrapper wrapper : entry.getAccounts()) {
-                    accounts.add(wrapper.ACCOUNT, wrapper.alpha());
+                    accounts.add(wrapper.ACCOUNT, wrapper.getAlphaProcessed());
                 }
             }
         }

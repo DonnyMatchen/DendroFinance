@@ -119,23 +119,17 @@ public class ArchiveGui extends RegisterFrame {
     private void archive() {
         if (YEAR.getSelectedItem() != null) {
             int year = Integer.parseInt((String) YEAR.getSelectedItem());
-            TransactionEntry prior = null;
+            TransactionEntry prior = new TransactionEntry(CURRENT_INSTANCE);
             ArrayList<TransactionEntry> entries = new ArrayList<>();
             for (TransactionEntry entry : CURRENT_INSTANCE.DATA_HANDLER.readTransactions()) {
                 if (entry.getDate().getYear() <= year) {
-                    if (entry.getEntity().equals("PRIOR")) {
-                        prior = entry;
-                    }
                     entries.add(entry);
                 }
-            }
-            if (prior == null) {
-                prior = new TransactionEntry(CURRENT_INSTANCE);
             }
             Aggregation<Account> acc = new Aggregation<>();
             for (TransactionEntry entry : entries) {
                 for (AccountWrapper wrapper : entry.getAccounts()) {
-                    acc.add(wrapper.ACCOUNT, wrapper.alpha());
+                    acc.add(wrapper.ACCOUNT, wrapper.getAlphaProcessed());
                 }
             }
             LAccountSet aSet = new LAccountSet(CURRENT_INSTANCE);

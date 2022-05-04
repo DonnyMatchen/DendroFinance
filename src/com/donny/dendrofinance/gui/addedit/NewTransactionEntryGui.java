@@ -523,50 +523,50 @@ public class NewTransactionEntryGui extends JDialog {
                 SIMP_ITM.setText(entry.getItems());
                 SIMP_DESC.setText(entry.getDescription());
                 for (int i = 0; i < set.getSize(); i++) {
-                    SearchBox alpha;
-                    JComboBox<String> beta;
-                    JTextField gamma;
+                    SearchBox alef;
+                    JComboBox<String> bet;
+                    JTextField gimel;
                     switch (i) {
                         case 0 -> {
-                            alpha = A1;
-                            beta = B1;
-                            gamma = C1;
+                            alef = A1;
+                            bet = B1;
+                            gimel = C1;
                         }
                         case 1 -> {
-                            alpha = A2;
-                            beta = B2;
-                            gamma = C2;
+                            alef = A2;
+                            bet = B2;
+                            gimel = C2;
                         }
                         case 2 -> {
-                            alpha = A3;
-                            beta = B3;
-                            gamma = C3;
+                            alef = A3;
+                            bet = B3;
+                            gimel = C3;
                         }
                         case 3 -> {
-                            alpha = A4;
-                            beta = B4;
-                            gamma = C4;
+                            alef = A4;
+                            bet = B4;
+                            gimel = C4;
                         }
                         case 4 -> {
-                            alpha = A5;
-                            beta = B5;
-                            gamma = C5;
+                            alef = A5;
+                            bet = B5;
+                            gimel = C5;
                         }
                         default -> {
-                            alpha = A6;
-                            beta = B6;
-                            gamma = C6;
+                            alef = A6;
+                            bet = B6;
+                            gimel = C6;
                         }
                     }
                     AccountWrapper wrapper = set.get(i);
                     switch (wrapper.COLUMN) {
-                        case DEBIT -> beta.setSelectedIndex(0);
-                        case CREDIT -> beta.setSelectedIndex(1);
-                        case GHOST -> beta.setSelectedIndex(2);
-                        case TRACKER -> beta.setSelectedIndex(3);
+                        case DEBIT -> bet.setSelectedIndex(0);
+                        case CREDIT -> bet.setSelectedIndex(1);
+                        case GHOST -> bet.setSelectedIndex(2);
+                        case TRACKER -> bet.setSelectedIndex(3);
                     }
-                    alpha.setSelectedIndex(wrapper.ACCOUNT.getName());
-                    gamma.setText(wrapper.VALUE.toString());
+                    alef.setSelectedIndex(wrapper.ACCOUNT.getName());
+                    gimel.setText(wrapper.VALUE.toString());
                 }
             }
             ADV_DATE.setText(entry.getDate().toString());

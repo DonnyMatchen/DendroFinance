@@ -28,7 +28,7 @@ public enum BroadAccountType {
         return GHOST;
     }
 
-    public BigDecimal alpha(boolean credit) {
+    public BigDecimal getAlpha(boolean credit) {
         BigDecimal p = BigDecimal.ONE, n = BigDecimal.valueOf(-1);
         if (this == GHOST || this == TRACKING) {
             return p;

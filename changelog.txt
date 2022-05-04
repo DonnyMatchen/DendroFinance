@@ -1,5 +1,5 @@
 v0.5.1
-X rationalized alpha, beta, gamma
+* rationalized alpha
 * fixed new/edit transaction gui
   * fixed Meta tab in entry edit not functioning correctly
   * removed t+ notation

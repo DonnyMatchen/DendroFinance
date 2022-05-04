@@ -62,19 +62,28 @@ public class LDate extends LType<LDate> {
                 String[] split = raw.split(" ");
                 String[] dayParts = split[0].split("/");
                 String[] timeParts = split[1].split(":");
-                int year, month, day, hour, minute, second;
+                int year, month, day, hour, minute, second, mili;
+                if (dayParts.length == 3) {
+                    if (dayParts[2].length() == 4) {
+                        year = Integer.parseInt(dayParts[2]);
+                    } else if (dayParts[2].length() == 2) {
+                        year = 2000 + Integer.parseInt(dayParts[2]);
+                    } else {
+                        year = now(curInst).getYear();
+                    }
+                } else {
+                    year = now(curInst).getYear();
+                }
                 if (curInst.american) {
-                    year = Integer.parseInt(dayParts[2]);
                     month = Integer.parseInt(dayParts[0]);
                     day = Integer.parseInt(dayParts[1]);
                 } else {
-                    year = Integer.parseInt(dayParts[2]);
                     month = Integer.parseInt(dayParts[1]);
                     day = Integer.parseInt(dayParts[0]);
                 }
                 hour = Integer.parseInt(timeParts[0]);
                 minute = Integer.parseInt(timeParts[1]);
-                int mili = 0;
+                mili = 0;
                 second = 0;
                 if (timeParts.length >= 3) {
                     if (timeParts[2].contains(".")) {
@@ -96,12 +105,21 @@ public class LDate extends LType<LDate> {
             } else {
                 String[] dayParts = raw.split("/");
                 int year, month, day;
+                if (dayParts.length == 3) {
+                    if (dayParts[2].length() == 4) {
+                        year = Integer.parseInt(dayParts[2]);
+                    } else if (dayParts[2].length() == 2) {
+                        year = 2000 + Integer.parseInt(dayParts[2]);
+                    } else {
+                        year = now(curInst).getYear();
+                    }
+                } else {
+                    year = now(curInst).getYear();
+                }
                 if (curInst.american) {
-                    year = Integer.parseInt(dayParts[2]);
                     month = Integer.parseInt(dayParts[0]);
                     day = Integer.parseInt(dayParts[1]);
                 } else {
-                    year = Integer.parseInt(dayParts[2]);
                     month = Integer.parseInt(dayParts[1]);
                     day = Integer.parseInt(dayParts[0]);
                 }

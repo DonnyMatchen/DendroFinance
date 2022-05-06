@@ -10,13 +10,13 @@ import com.donny.dendrofinance.types.LDate;
 import java.math.BigDecimal;
 
 public class CheckMetadata {
-    public final int REF;
+    public final long REF;
     public final LDate ISSUED, CASHED;
     public final String CHECK_NUMBER;
     public final BigDecimal VALUE;
     private final Instance CURRENT_INSTANCE;
 
-    public CheckMetadata(int uuid, LDate issued, LDate cashed, String number, BigDecimal value, Instance curInst) {
+    public CheckMetadata(long uuid, LDate issued, LDate cashed, String number, BigDecimal value, Instance curInst) {
         REF = uuid;
         ISSUED = issued;
         CASHED = cashed;
@@ -25,7 +25,7 @@ public class CheckMetadata {
         CURRENT_INSTANCE = curInst;
     }
 
-    public CheckMetadata(int uuid, LDate issued, JsonObject obj, Instance curInst) {
+    public CheckMetadata(long uuid, LDate issued, JsonObject obj, Instance curInst) {
         this(
                 uuid,
                 obj.containsKey("issued") ? new LDate(obj.getDecimal("issued"), curInst) : issued,

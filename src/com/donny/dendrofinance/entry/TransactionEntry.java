@@ -130,6 +130,12 @@ public class TransactionEntry extends Entry<TransactionHeader> implements Compar
         addLedgerMeta(getUUID(), getDate(), from, to, fromAmount, toAmount, mainValue);
     }
 
+    public void addCheckMeta(long uuid, LDate cashed, String checkNum, BigDecimal value) {
+        ArrayList<CheckMetadata> meta = getCheckMetadata();
+        meta.add(new CheckMetadata(uuid, getDate(), cashed, checkNum, value, CURRENT_INSTANCE));
+        setCheckMeta(meta);
+    }
+
     public ArrayList<AssetMetadata> getAssetMeta() {
         if (hasMeta("asset")) {
             ArrayList<AssetMetadata> assets = new ArrayList<>();
@@ -253,6 +259,31 @@ public class TransactionEntry extends Entry<TransactionHeader> implements Compar
             }
         }
         getJson("meta-data").OBJECT.put("ledger", array);
+    }
+
+    public ArrayList<CheckMetadata> getCheckMetadata() {
+        if (hasMeta("check")) {
+            ArrayList<CheckMetadata> checks = new ArrayList<>();
+            JsonArray array = (JsonArray) getMeta("check");
+            for (JsonObject obj : array.getObjectArray()) {
+                checks.add(new CheckMetadata(getUUID(), getDate(), obj, CURRENT_INSTANCE));
+            }
+            return checks;
+        } else {
+            return new ArrayList<>();
+        }
+    }
+
+    public void setCheckMeta(ArrayList<CheckMetadata> list) {
+        JsonArray array = new JsonArray();
+        for (CheckMetadata check : list) {
+            try {
+                array.add(check.export());
+            } catch (JsonFormattingException e) {
+                CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "The universe has broken\n" + check.REF + ": " + check);
+            }
+        }
+        getJson("meta-data").OBJECT.put("check", array);
     }
 
     public LDate getDate() {
@@ -433,7 +464,7 @@ public class TransactionEntry extends Entry<TransactionHeader> implements Compar
                     .append(wrapper.COLUMN.toString()).append("): ");
             sb.append(wrapper.ACCOUNT.getCurrency().encode(wrapper.VALUE));
         }
-        sb.append("\n\nMetaData:");
+        sb.append("\n\nMetadata:");
         if (hasMeta("loan")) {
             sb.append("\n\nLoan Metadata:");
             for (LoanMetadata meta : getLoanMeta()) {

@@ -711,13 +711,13 @@ public class NewTransactionEntryGui extends JDialog {
                 });
                 if (metaObject.containsKey("check")) {
                     for (JsonObject obj : metaObject.getArray("check").getObjectArray()) {
-                        if(obj.getDecimal("cashed").decimal.compareTo(BigDecimal.ZERO) == 0){
+                        if (obj.getDecimal("cashed").decimal.compareTo(BigDecimal.ZERO) == 0) {
                             ((DefaultTableModel) TABLE.getModel()).addRow(new String[]{
                                     "",
                                     obj.getString("number").getString(),
                                     CURRENT_INSTANCE.$(obj.getDecimal("value").decimal)
                             });
-                        }else {
+                        } else {
                             ((DefaultTableModel) TABLE.getModel()).addRow(new String[]{
                                     new LDate(obj.getDecimal("cashed"), CURRENT_INSTANCE).toDateString(),
                                     obj.getString("number").getString(),
@@ -990,13 +990,13 @@ public class NewTransactionEntryGui extends JDialog {
                             }
                             if (flag) {
                                 JsonObject obj = new JsonObject();
-                                if(
+                                if (
                                         tableAccess.getValueAt(i, 0).toString().equals("")
-                                        || tableAccess.getValueAt(i, 0).toString().equalsIgnoreCase("null")
-                                        || tableAccess.getValueAt(i, 0).toString().equalsIgnoreCase("outstanding")
-                                ){
+                                                || tableAccess.getValueAt(i, 0).toString().equalsIgnoreCase("null")
+                                                || tableAccess.getValueAt(i, 0).toString().equalsIgnoreCase("outstanding")
+                                ) {
                                     obj.put("cashed", new JsonDecimal(BigDecimal.valueOf(new LDate(0, CURRENT_INSTANCE).getTime())));
-                                }else {
+                                } else {
                                     obj.put("cashed", new JsonDecimal(BigDecimal.valueOf(new LDate(tableAccess.getValueAt(i, 0).toString(), CURRENT_INSTANCE).getTime())));
                                 }
                                 obj.put("number", new JsonString(tableAccess.getValueAt(i, 1).toString()));

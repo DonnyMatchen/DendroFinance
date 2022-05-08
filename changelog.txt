@@ -1,4 +1,4 @@
-b0.6.0
+b0.5.2
 -> added check metadata
   * created CheckMetadata class
   * added creator and getter metadata methods to TransactionEntry

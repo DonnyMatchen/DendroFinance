@@ -13,11 +13,13 @@ import com.donny.dendrofinance.gui.form.ValidationFailedException;
 import com.donny.dendrofinance.instance.Instance;
 import com.donny.dendrofinance.json.*;
 import com.donny.dendrofinance.types.LAccountSet;
+import com.donny.dendrofinance.types.LDate;
 import com.donny.dendrofinance.types.LJson;
 import com.donny.dendrofinance.types.LString;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Vector;
 
@@ -583,6 +585,7 @@ public class NewTransactionEntryGui extends JDialog {
         META_TYPE.addItem("Trading Ledger");
         META_TYPE.addItem("NF Asset Change");
         META_TYPE.addItem("Loan Change");
+        META_TYPE.addItem("Check");
     }
 
     public void bChanged(JComboBox<String> b, SearchBox a) {
@@ -695,6 +698,23 @@ public class NewTransactionEntryGui extends JDialog {
                         ((DefaultTableModel) TABLE.getModel()).addRow(new String[]{
                                 obj.getString("name").getString(),
                                 obj.getDecimal("change").decimal.toString()
+                        });
+                    }
+                }
+            }
+            case (5) -> {
+                TABLE.setModel(new DefaultTableModel(new Vector<>(Arrays.asList("Date Cashed", "Check Number", "Value")), 0) {
+                    @Override
+                    public boolean isCellEditable(int row, int column) {
+                        return true;
+                    }
+                });
+                if (metaObject.containsKey("check")) {
+                    for (JsonObject obj : metaObject.getArray("check").getObjectArray()) {
+                        ((DefaultTableModel) TABLE.getModel()).addRow(new String[]{
+                                new LDate(obj.getDecimal("cashed"), CURRENT_INSTANCE).toDateString(),
+                                obj.getString("number").getString(),
+                                CURRENT_INSTANCE.$(obj.getDecimal("value").decimal)
                         });
                     }
                 }
@@ -948,6 +968,27 @@ public class NewTransactionEntryGui extends JDialog {
                             }
                         }
                         metaObject.put("loan", arr);
+                    } catch (JsonFormattingException ex) {
+                        CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Malformed Entry in Meta Table");
+                    }
+                }
+                case (5) -> {
+                    try {
+                        for (int i = 0; i < TABLE.getRowCount(); i++) {
+                            for (int j = 0; j < 2; j++) {
+                                if (tableAccess.getValueAt(i, j) == null) {
+                                    flag = false;
+                                }
+                            }
+                            if (flag) {
+                                JsonObject obj = new JsonObject();
+                                obj.put("cashed", new JsonDecimal(BigDecimal.valueOf(new LDate(tableAccess.getValueAt(i, 0).toString(), CURRENT_INSTANCE).getTime())));
+                                obj.put("number", new JsonString(tableAccess.getValueAt(i, 1).toString()));
+                                obj.put("value", new JsonDecimal(tableAccess.getValueAt(i, 2).toString()));
+                                arr.add(obj);
+                            }
+                        }
+                        metaObject.put("check", arr);
                     } catch (JsonFormattingException ex) {
                         CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Malformed Entry in Meta Table");
                     }

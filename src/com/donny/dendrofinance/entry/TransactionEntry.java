@@ -378,6 +378,31 @@ public class TransactionEntry extends Entry<TransactionHeader> implements Compar
         return cred.compareTo(deb) == 0 && ass.compareTo(lia.add(equ)) == 0 && corCol;
     }
 
+    private String getFlags() {
+        String flags = "";
+        if (hasMeta()) {
+            if (hasMeta("loan")) {
+                flags += "L";
+            }
+            if (hasMeta("loan-change")) {
+                flags += "l";
+            }
+            if (hasMeta("asset")) {
+                flags += "A";
+            }
+            if (hasMeta("asset-change")) {
+                flags += "a";
+            }
+            if (hasMeta("ledger")) {
+                flags += "T";
+            }
+            if (hasMeta("check")) {
+                flags += "C";
+            }
+        }
+        return flags;
+    }
+
     public ArrayList<String[]> display() {
         ArrayList<String[]> layers = new ArrayList<>();
         for (int i = 0; i < getAccounts().getSize(); i++) {
@@ -388,7 +413,7 @@ public class TransactionEntry extends Entry<TransactionHeader> implements Compar
                         layers.add(new String[]{
                                 getUUID() + "", getDate().toString(), getEntity(), getItems(), getDescription(),
                                 wrapper.ACCOUNT.getName(), wrapper.ACCOUNT.getCurrency().encode(wrapper.VALUE),
-                                "", "", ""
+                                "", "", "", getFlags()
                         });
                     } else {
                         layers.add(new String[]{
@@ -403,7 +428,7 @@ public class TransactionEntry extends Entry<TransactionHeader> implements Compar
                         layers.add(new String[]{
                                 getUUID() + "", getDate().toString(), getEntity(), getItems(), getDescription(),
                                 wrapper.ACCOUNT.getName(), "", wrapper.ACCOUNT.getCurrency().encode(wrapper.VALUE),
-                                "", ""
+                                "", "", getFlags()
                         });
                     } else {
                         layers.add(new String[]{
@@ -417,7 +442,7 @@ public class TransactionEntry extends Entry<TransactionHeader> implements Compar
                     if (i == 0) {
                         layers.add(new String[]{
                                 getUUID() + "", getDate().toString(), getEntity(), getItems(), getDescription(),
-                                wrapper.ACCOUNT.getName(), "", "", "", wrapper.ACCOUNT.getCurrency().encode(wrapper.VALUE)
+                                wrapper.ACCOUNT.getName(), "", "", "", wrapper.ACCOUNT.getCurrency().encode(wrapper.VALUE), getFlags()
                         });
                     } else {
                         layers.add(new String[]{
@@ -431,7 +456,7 @@ public class TransactionEntry extends Entry<TransactionHeader> implements Compar
                         layers.add(new String[]{
                                 getUUID() + "", getDate().toString(), getEntity(), getItems(), getDescription(),
                                 wrapper.ACCOUNT.getName(), "", "",
-                                wrapper.ACCOUNT.getCurrency().encode(wrapper.VALUE), ""
+                                wrapper.ACCOUNT.getCurrency().encode(wrapper.VALUE), "", getFlags()
                         });
                     } else {
                         layers.add(new String[]{

@@ -7,7 +7,8 @@ b0.5.2
     * option for incomplete added
   * added support for check metadata to DataHandler
   * added CheckGui
-  * added checkmeta to TransactionEntry.print
+  * added checkmeta to TransactionEntry.toString
+* added meta flags to MainGui
 
 v0.5.1
 * rationalized alpha

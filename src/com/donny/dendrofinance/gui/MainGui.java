@@ -10,10 +10,7 @@ import com.donny.dendrofinance.gui.customswing.DendroFactory;
 import com.donny.dendrofinance.gui.menu.data.AccountMetaGui;
 import com.donny.dendrofinance.gui.menu.data.StatisticsGui;
 import com.donny.dendrofinance.gui.menu.data.backing.BackingTableGui;
-import com.donny.dendrofinance.gui.menu.reports.AssetStatusGui;
-import com.donny.dendrofinance.gui.menu.reports.BalanceSheetGui;
-import com.donny.dendrofinance.gui.menu.reports.MetaTableGui;
-import com.donny.dendrofinance.gui.menu.reports.RevExpGui;
+import com.donny.dendrofinance.gui.menu.reports.*;
 import com.donny.dendrofinance.gui.menu.reports.budget.BudgetGui;
 import com.donny.dendrofinance.gui.menu.trading.LedgerGui;
 import com.donny.dendrofinance.gui.menu.trading.OrderBookGui;
@@ -76,7 +73,7 @@ public class MainGui extends JFrame {
             C = new JLabel("Search");
 
             TABLE_PANE = DendroFactory.getTable(new String[]{
-                    "UUID", "Date", "Entity", "Items", "Description", "Account", "Debit", "Credit", "Tracking", "Ghost"
+                    "UUID", "Date", "Entity", "Items", "Description", "Account", "Debit", "Credit", "Tracking", "Ghost", "Meta"
             }, new Object[][]{}, false);
             TABLE_PANE.getVerticalScrollBar().addAdjustmentListener(event -> {
                 if (force) {
@@ -203,6 +200,9 @@ public class MainGui extends JFrame {
                 //reports
                 JMenu rep = new JMenu("Reports");
 
+                JMenuItem checks = new JMenuItem("Checkbook");
+                checks.addActionListener(event -> new CheckGui(this, CURRENT_INSTANCE).setVisible(true));
+
                 JMenuItem bal = new JMenuItem("Balance Sheet");
                 bal.addActionListener(event -> new BalanceSheetGui(this, CURRENT_INSTANCE).setVisible(true));
                 JMenuItem acc = new JMenuItem("Asset Status");
@@ -218,6 +218,8 @@ public class MainGui extends JFrame {
                 JMenuItem loans = new JMenuItem("Loans and Debts");
                 loans.addActionListener(event -> new MetaTableGui(this, new LoanMTC(CURRENT_INSTANCE), CURRENT_INSTANCE).setVisible(true));
 
+                rep.add(checks);
+                rep.add(new JSeparator());
                 rep.add(bal);
                 rep.add(acc);
                 rep.add(new JSeparator());

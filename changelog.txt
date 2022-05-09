@@ -1,3 +1,16 @@
+v0.5.2
+* added check metadata
+  * created CheckMetadata class
+  * added creator and getter metadata methods to TransactionEntry
+  * added check metadata to advanced transaction metadata tab
+    * integrated at a basic level
+    * option for incomplete added
+  * added support for check metadata to DataHandler
+  * added CheckGui
+  * added checkmeta to TransactionEntry.toString
+* added meta flags to MainGui
+* added option to use existing budgets as templates
+
 v0.5.1
 * rationalized alpha
 * fixed new/edit transaction gui

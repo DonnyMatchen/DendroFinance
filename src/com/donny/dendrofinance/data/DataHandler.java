@@ -652,6 +652,34 @@ public class DataHandler {
         return out;
     }
 
+    public ArrayList<CheckMetadata> getChecks(LDate date) {
+        ArrayList<CheckMetadata> meta = new ArrayList<>();
+        for (TransactionEntry entry : readTransactions()) {
+            if (entry.getDate().compare(date) <= 0 && entry.hasMeta("check")) {
+                meta.addAll(entry.getCheckMetadata());
+            }
+        }
+        return meta;
+    }
+
+    public ArrayList<CheckMetadata> getChecks() {
+        return getChecks(LDate.now(CURRENT_INSTANCE));
+    }
+
+    public ArrayList<CheckMetadata> getOutstandingChecks(LDate date) {
+        ArrayList<CheckMetadata> out = new ArrayList<>();
+        for (CheckMetadata check : getChecks(date)) {
+            if (check.isOutstanding()) {
+                out.add(check);
+            }
+        }
+        return out;
+    }
+
+    public ArrayList<CheckMetadata> getOutstandingChecks() {
+        return getOutstandingChecks(LDate.now(CURRENT_INSTANCE));
+    }
+
     public boolean buySell(LDate date, BigDecimal amount, BigDecimal cost, String exchange, String currency) {
         try {
             if (amount.compareTo(BigDecimal.ZERO) > 0) {

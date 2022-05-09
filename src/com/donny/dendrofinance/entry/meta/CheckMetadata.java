@@ -6,10 +6,11 @@ import com.donny.dendrofinance.json.JsonFormattingException;
 import com.donny.dendrofinance.json.JsonObject;
 import com.donny.dendrofinance.json.JsonString;
 import com.donny.dendrofinance.types.LDate;
+import com.donny.dendrofinance.util.ExportableToJsonObject;
 
 import java.math.BigDecimal;
 
-public class CheckMetadata {
+public class CheckMetadata implements ExportableToJsonObject {
     public final long REF;
     public final LDate ISSUED, CASHED;
     public final String CHECK_NUMBER;
@@ -36,6 +37,10 @@ public class CheckMetadata {
         );
     }
 
+    public boolean isOutstanding() {
+        return CASHED.getTime() == 0;
+    }
+
     public JsonObject export() throws JsonFormattingException {
         JsonObject obj = new JsonObject();
         obj.put("issued", new JsonDecimal(BigDecimal.valueOf(ISSUED.getTime())));
@@ -47,6 +52,10 @@ public class CheckMetadata {
 
     @Override
     public String toString() {
-        return "(" + ISSUED.toString() + " -- " + CASHED.toString() + ")\n(" + CHECK_NUMBER + ") " + CURRENT_INSTANCE.main.encode(VALUE);
+        if (isOutstanding()) {
+            return "(" + ISSUED.toDateString() + " -- ???)\n(" + CHECK_NUMBER + ") " + CURRENT_INSTANCE.main.encode(VALUE);
+        } else {
+            return "(" + ISSUED.toDateString() + " -- " + CASHED.toDateString() + ")\n(" + CHECK_NUMBER + ") " + CURRENT_INSTANCE.main.encode(VALUE);
+        }
     }
 }

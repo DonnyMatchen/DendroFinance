@@ -495,6 +495,12 @@ public class TransactionEntry extends Entry<TransactionHeader> implements Compar
                 sb.append("\n").append(meta.toString());
             }
         }
+        if (hasMeta("check")) {
+            sb.append("\n\nCheck Metadata:");
+            for (CheckMetadata meta : getCheckMetadata()) {
+                sb.append("\n").append(meta.toString());
+            }
+        }
         return sb.toString();
     }
 }

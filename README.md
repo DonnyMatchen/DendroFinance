@@ -1,5 +1,6 @@
 <h1>DESCRIPTION</h1><br>
 This application is designed for management of personal finance and small business finance data.  It is specifically geared towards trading activity, and that portion differs from GAAP in a few ways.<br>
+The recommended maximum number of transactions is 63,877<br>
 <br>
 <h1>COMPATIBILITY</h1><br>
 This project requires Java 17.<br>

@@ -1,11 +1,15 @@
 package com.donny.dendrofinance.json;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 
 public class JsonObject extends JsonItem {
-    private final HashMap<String, JsonItem> CONTENTS;
-    private final ArrayList<String> FIELDS;
+    private final LinkedHashMap<String, JsonItem> CONTENTS;
+
+    public JsonObject() {
+        super(JsonType.OBJECT);
+        CONTENTS = new LinkedHashMap<>();
+    }
 
     public JsonObject(String raw) throws JsonFormattingException {
         this();
@@ -92,17 +96,10 @@ public class JsonObject extends JsonItem {
                 }
             }
             rawValues.add(sb.toString());
-            FIELDS.addAll(keys);
             for (int i = 0; i < keys.size(); i++) {
                 CONTENTS.put(keys.get(i), JsonItem.digest(rawValues.get(i)));
             }
         }
-    }
-
-    public JsonObject() {
-        super(JsonType.OBJECT);
-        CONTENTS = new HashMap<>();
-        FIELDS = new ArrayList<>();
     }
 
     public JsonItem get(String key) {
@@ -130,47 +127,43 @@ public class JsonObject extends JsonItem {
     }
 
     public void put(String key, JsonItem item) {
-        if (!FIELDS.contains(key)) {
-            FIELDS.add(key);
-        }
         CONTENTS.put(key, item);
     }
 
     public void remove(String key) {
-        FIELDS.remove(key);
         CONTENTS.remove(key);
     }
 
     public boolean containsKey(String key) {
-        return FIELDS.contains(key) && CONTENTS.containsKey(key);
+        return CONTENTS.containsKey(key);
     }
 
     public ArrayList<String> getFields() {
-        return new ArrayList<>(FIELDS);
+        return new ArrayList<>(CONTENTS.keySet());
     }
 
     @Override
     public String toString() {
-        if (!FIELDS.isEmpty()) {
+        if (CONTENTS.isEmpty()) {
+            return "{}";
+        } else {
             StringBuilder sb = new StringBuilder("{");
-            for (String key : FIELDS) {
+            for (String key : CONTENTS.keySet()) {
                 sb.append("\"").append(key).append("\":").append(CONTENTS.get(key)).append(",");
             }
             sb.deleteCharAt(sb.length() - 1);
             return sb.append("}").toString();
-        } else {
-            return "{}";
         }
     }
 
     @Override
     public String print(int scope) {
         int internal = scope + 1;
-        if (FIELDS.isEmpty()) {
+        if (CONTENTS.isEmpty()) {
             return "{}";
         } else {
             StringBuilder sb = new StringBuilder("{");
-            for (String key : FIELDS) {
+            for (String key : CONTENTS.keySet()) {
                 sb.append("\n").append(indent(internal)).append("\"").append(key).append("\": ").append(CONTENTS.get(key).print(internal)).append(",");
             }
             return sb.deleteCharAt(sb.length() - 1).append("\n").append(indent(scope)).append("}").toString();

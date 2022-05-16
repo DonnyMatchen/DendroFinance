@@ -2,6 +2,7 @@ v0.5.3
 * updated to java 18
 * updated readme
 * minor bug fixes
+* JsonObject optimized
 
 v0.5.2
 * added check metadata

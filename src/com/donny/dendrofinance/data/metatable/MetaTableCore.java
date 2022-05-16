@@ -22,7 +22,7 @@ public abstract class MetaTableCore {
 
     public abstract String print(String identifier, String name, LDate date);
 
-    protected class ProcessReturn {
+    protected static class ProcessReturn {
         public boolean all, dead;
         public String reduced;
 

@@ -391,7 +391,8 @@ public class LMarketApi implements ExportableToJsonObject {
                 case "@search-name@" -> getAlteredName(SEARCH);
                 case "@year@" -> DATE == null ? "" : "" + DATE.getYear();
                 case "@year-2@" -> DATE == null ? "" : "" + DATE.getYear() % 100;
-                case "@month@" -> DATE == null ? "" : DATE.getMonth() < 10 ? "0" + DATE.getMonth() : "" + DATE.getMonth();
+                case "@month@" ->
+                        DATE == null ? "" : DATE.getMonth() < 10 ? "0" + DATE.getMonth() : "" + DATE.getMonth();
                 case "@month-str@" -> DATE == null ? "" : DATE.getMonthStringShort();
                 case "@month-long@" -> DATE == null ? "" : DATE.getMonthString();
                 case "@day@" -> DATE == null ? "" : DATE.getDay() < 10 ? "0" + DATE.getDay() : "" + DATE.getDay();

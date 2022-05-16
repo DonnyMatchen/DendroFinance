@@ -1,3 +1,8 @@
+v0.5.3
+* updated to java 18
+* updated readme
+* minor bug fixes
+
 v0.5.2
 * added check metadata
   * created CheckMetadata class

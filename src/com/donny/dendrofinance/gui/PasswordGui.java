@@ -249,7 +249,8 @@ public class PasswordGui extends JFrame {
             aesCipher.init(Cipher.ENCRYPT_MODE, aesKey);
             bflCipher.init(Cipher.ENCRYPT_MODE, bflKey);
             return Base64.getEncoder().encodeToString(bflCipher.doFinal(aesCipher.doFinal(text.getBytes(Charset.forName("unicode")))));
-        } catch (BadPaddingException | IllegalBlockSizeException | InvalidKeyException | NoSuchPaddingException | NoSuchAlgorithmException ex) {
+        } catch (BadPaddingException | IllegalBlockSizeException | InvalidKeyException | NoSuchPaddingException |
+                 NoSuchAlgorithmException ex) {
             CURRENT_INSTANCE.LOG_HANDLER.fatal(getClass(), "Incorrect password used.");
             CURRENT_INSTANCE.LOG_HANDLER.save();
             ex.printStackTrace();
@@ -265,7 +266,8 @@ public class PasswordGui extends JFrame {
             aesCipher.init(Cipher.DECRYPT_MODE, aesKey);
             bflCipher.init(Cipher.DECRYPT_MODE, bflKey);
             return new String(aesCipher.doFinal(bflCipher.doFinal(Base64.getDecoder().decode(text))), Charset.forName("Unicode"));
-        } catch (BadPaddingException | NoSuchPaddingException | NoSuchAlgorithmException | IllegalBlockSizeException | InvalidKeyException ex) {
+        } catch (BadPaddingException | NoSuchPaddingException | NoSuchAlgorithmException | IllegalBlockSizeException |
+                 InvalidKeyException ex) {
             CURRENT_INSTANCE.LOG_HANDLER.fatal(getClass(), "Incorrect password used.");
             CURRENT_INSTANCE.LOG_HANDLER.save();
             System.exit(1);

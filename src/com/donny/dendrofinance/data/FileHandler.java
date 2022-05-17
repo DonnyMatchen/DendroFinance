@@ -88,11 +88,13 @@ public class FileHandler {
     }
 
     public byte[] getResource(String path) {
-        InputStream stream = getClass().getResourceAsStream("/com/donny/dendrofinance/resources/" + path);
-        try {
+        try (InputStream stream = getClass().getResourceAsStream("/com/donny/dendrofinance/resources/" + path)) {
             return stream.readAllBytes();
         } catch (IOException e) {
             CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Resource not located: " + path);
+            return null;
+        } catch (NullPointerException ex) {
+            CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "No such resource: " + path);
             return null;
         }
     }

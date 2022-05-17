@@ -179,12 +179,12 @@ public class JsonArray extends JsonItem {
         return ARRAY.addAll(collection);
     }
 
-    public boolean remove(int index) {
-        return remove(index);
+    public JsonItem remove(int index) {
+        return ARRAY.remove(index);
     }
 
     public boolean remove(JsonItem item) {
-        return remove(item);
+        return ARRAY.remove(item);
     }
 
     public int size() {

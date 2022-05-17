@@ -1,9 +1,10 @@
 <h1>DESCRIPTION</h1><br>
 This application is designed for management of personal finance and small business finance data.  It is specifically geared towards trading activity, and that portion differs from GAAP in a few ways.<br>
+The recommended maximum number of transactions is 63,877<br>
 <br>
 <h1>COMPATIBILITY</h1><br>
-This project requires Java 17.<br>
-Torsocks seems to interfere with this application's ability to read and write files and access APIs.<br>
+This application requires Java 18 or a later version compatible with it.<br>
+Torsocks seems to interfere with this application's ability to read and write files and access APIs.  The latter may be due to many APIs blocking TOR nodes.<br>
 In Linux systems using the Nautilus filesystem interface or derivatives, there seems to be a problem when .jar files are run.  It seems to set the working directory to the home folder rather than the directory the .jar file is in.<br>
 <br>
 With the exception of private stock history JSONs, all JSONs in the data directory are saved and read in Unicode/UTF16.  The application will crash if they are not saved in the correct format.  Edit them through the gui unless you can ensure you will save them correctly.<br>

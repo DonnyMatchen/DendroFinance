@@ -64,9 +64,12 @@ public class LoanMetadata {
 
     public BigDecimal principalReduction(BigDecimal payment, String period) {
         return switch (period) {
-            case "S" -> payment.subtract(principalRemaining().multiply(LMath.squareRoot(BigDecimal.ONE.add(RATE), CURRENT_INSTANCE.precision)));
-            case "Q" -> payment.subtract(principalRemaining().multiply(LMath.forthRoot(BigDecimal.ONE.add(RATE), CURRENT_INSTANCE.precision)));
-            case "M" -> payment.subtract(principalRemaining().multiply(LMath.twelfthRoot(BigDecimal.ONE.add(RATE), CURRENT_INSTANCE.precision)));
+            case "S" ->
+                    payment.subtract(principalRemaining().multiply(LMath.squareRoot(BigDecimal.ONE.add(RATE), CURRENT_INSTANCE.precision)));
+            case "Q" ->
+                    payment.subtract(principalRemaining().multiply(LMath.forthRoot(BigDecimal.ONE.add(RATE), CURRENT_INSTANCE.precision)));
+            case "M" ->
+                    payment.subtract(principalRemaining().multiply(LMath.twelfthRoot(BigDecimal.ONE.add(RATE), CURRENT_INSTANCE.precision)));
             default -> payment.subtract(principalRemaining().multiply(BigDecimal.ONE.add(RATE)));
         };
     }

@@ -3,6 +3,7 @@ v0.5.3
 * updated readme
 * minor bug fixes
 * JsonObject optimized
+* optimized memory usage by replacing hashmap with arraylist in Entry and Header
 
 v0.5.2
 * added check metadata

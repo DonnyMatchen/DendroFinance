@@ -4,7 +4,6 @@ import com.donny.dendrofinance.entry.Field;
 import com.donny.dendrofinance.instance.Instance;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 public abstract class Header {
     protected final ArrayList<Field> PROTOTYPE;
@@ -21,12 +20,8 @@ public abstract class Header {
         };
     }
 
-    public HashMap<String, Field> getBlank() {
-        HashMap<String, Field> blank = new HashMap<>();
-        for (Field f : PROTOTYPE) {
-            blank.put(f.getName(), f);
-        }
-        return blank;
+    public ArrayList<Field> getBlank() {
+        return new ArrayList<>(PROTOTYPE);
     }
 
     public ArrayList<Field> getProto() {

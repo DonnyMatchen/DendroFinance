@@ -9,10 +9,10 @@ import com.donny.dendrofinance.json.JsonString;
 import com.donny.dendrofinance.types.*;
 
 import java.math.BigDecimal;
-import java.util.HashMap;
+import java.util.ArrayList;
 
 public class Entry<T extends Header> {
-    public final HashMap<String, Field> VALUES;
+    public final ArrayList<Field> VALUES;
     protected final T HEADER;
     protected final Instance CURRENT_INSTANCE;
     private final long UUID;
@@ -42,7 +42,7 @@ public class Entry<T extends Header> {
             UUID = curInst.UUID_HANDLER.generateUUID();
         }
         for (String key : types.getFields()) {
-            insertIntoField(key, new Field(key, types.getString(key), obj.get(key), curInst));
+            insertIntoField(new Field(key, types.getString(key), obj.get(key), curInst));
         }
 
     }
@@ -59,11 +59,15 @@ public class Entry<T extends Header> {
     }
 
     public LType get(String fieldName) {
-        if (VALUES.containsKey(fieldName)) {
-            return VALUES.get(fieldName).getValue();
+        for (Field field : VALUES) {
+            if (field.getName().equals(fieldName)) {
+                return field.getValue();
+            }
         }
-        if (HEADER.getBlank().containsKey(fieldName)) {
-            return HEADER.getBlank().get(fieldName).getValue();
+        for (Field field : HEADER.getBlank()) {
+            if (field.getName().equals(fieldName)) {
+                return field.getValue();
+            }
         }
         CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "(Get) Field \"" + fieldName + "\" not found in: " + UUID);
         return null;
@@ -93,20 +97,36 @@ public class Entry<T extends Header> {
         return (LJson) get(fieldName);
     }
 
-    public final void insertIntoField(String name, Field field) {
-        if (VALUES.containsKey(name)) {
-            if (VALUES.get(name).getType() == field.getType() && VALUES.get(name).getName().equals(field.getName())) {
-                insertIntoField(name, field.getValue());
+    public final void insertIntoField(Field container) {
+        for (Field field : VALUES) {
+            if (field.getType() == container.getType() && field.getName().equals(container.getName())) {
+                field.setValue(container.getValue());
+                break;
+            }
+        }
+        for (Field field : HEADER.getBlank()) {
+            if (field.getType() == container.getType() && field.getName().equals(container.getName())) {
+                field.setValue(container.getValue());
+                break;
             }
         }
     }
 
     public void insertIntoField(String name, LType value) {
-        if (VALUES.containsKey(name)) {
-            if (VALUES.get(name).getValue().getClass() == value.getClass()) {
-                VALUES.get(name).setValue(value);
+        boolean flag = true;
+        for (Field field : VALUES) {
+            if (field.getType() == FieldType.resolve(value) && field.getName().equals(name)) {
+                flag = !field.setValue(value);
+                break;
             }
-        } else {
+        }
+        for (Field field : HEADER.getBlank()) {
+            if (field.getType() == FieldType.resolve(value) && field.getName().equals(name)) {
+                flag = !field.setValue(value);
+                break;
+            }
+        }
+        if (flag) {
             CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "(Insert) Field \"" + name + "\" not found in: " + UUID);
         }
     }
@@ -130,10 +150,9 @@ public class Entry<T extends Header> {
         obj.put("_header", new JsonString(HEADER.getName()));
         obj.put("_uuid", new JsonDecimal(BigDecimal.valueOf(UUID)));
         obj.put("_types", new JsonObject());
-        for (String key : VALUES.keySet()) {
-            Field f = VALUES.get(key);
-            obj.getObject("_types").put(key, new JsonString(f.getType().toString()));
-            obj.put(key, f.getValue().export());
+        for (Field field : VALUES) {
+            obj.getObject("_types").put(field.getName(), new JsonString(field.getType().toString()));
+            obj.put(field.getName(), field.getValue().export());
         }
         return obj;
     }

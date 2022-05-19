@@ -19,9 +19,18 @@ Transaction{
 }
 
 _uuid: unique identifier for the entry
-date: the date of the transaction as a unix timestamp
+date: the date of the transaction as a unix millisecond timestamp
 entity: the legal entity or person the transaction was with
 items: the items bought, sold, or traded, if applicable
 description: notes about the transaction
 accounts: a series of accounts and values that, hopefully, are balanced
-meta-data: transaction metadata.  Anything can be added, but the program will only recognize certain structures
+meta-data: transaction metadata.  Anything can be added, but the program will only recognize certain structures.
+
+AssetChangeMetadata array: "asset-change"
+AssetMetadata array: "asset"
+CheckMetadata array: "check"
+LedgerMetadata array: "ledger"
+LoanChangeMetadata array: "loan-change"
+LoanMetadata array: "loan"
+
+NOTE: all of these MUST be arrays.  that's how the software is set up.

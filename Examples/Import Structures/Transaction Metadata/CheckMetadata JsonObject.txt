@@ -1,0 +1,11 @@
+{
+  "issued": integer
+  "cashed": integer
+  "number": string
+  "value": decimal
+}
+
+issued: the date of the transaction's occurrence as a unix millisecond timestamp
+cashed: the date of the transaction's completion as a unix millisecond timestamp
+number: the check number
+value: the value of the check in main currency

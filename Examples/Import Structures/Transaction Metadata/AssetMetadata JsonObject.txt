@@ -1,0 +1,15 @@
+AssetMetadata{
+  "date": integer
+  "name": string
+  "desc": string
+  "currency": string
+  "val": decimal
+  "count": decimal
+}
+
+date: the date of the transaction as a unix millisecond timestamp
+name: name of the asset
+desc: description of the asset
+currency: the currency of the initial value
+val: the initial value
+count: the initial count

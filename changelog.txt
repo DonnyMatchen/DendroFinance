@@ -12,6 +12,7 @@ v0.5.4
 * changed ExportableToJsonObject to ExportableToJson
 * added entry imports to Examples
   * added transaction import
+    * added metadata
   * added budget import
 
 v0.5.3

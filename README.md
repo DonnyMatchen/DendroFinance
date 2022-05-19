@@ -1,6 +1,7 @@
 <h1>DESCRIPTION</h1><br>
 This application is designed for management of personal finance and small business finance data.  It is specifically geared towards trading activity, and that portion differs from GAAP in a few ways.<br>
 The recommended maximum number of transactions is between 65,000 - 75,000 depending on the commonality of metadata<br>
+for help with milliseconds since epoch, this site is an option: <a href="https://www.unixtimestamp.com/">UnixTimeStamp.com</a>
 <br>
 <h1>COMPATIBILITY</h1><br>
 This application requires Java 18 or a later version compatible with it.<br>

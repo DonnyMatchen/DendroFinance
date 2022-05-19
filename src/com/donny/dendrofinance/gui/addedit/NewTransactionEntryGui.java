@@ -14,8 +14,6 @@ import com.donny.dendrofinance.instance.Instance;
 import com.donny.dendrofinance.json.*;
 import com.donny.dendrofinance.types.LAccountSet;
 import com.donny.dendrofinance.types.LDate;
-import com.donny.dendrofinance.types.LJson;
-import com.donny.dendrofinance.types.LString;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -793,9 +791,9 @@ public class NewTransactionEntryGui extends JDialog {
             }
             entry.insert(
                     Validation.validateDate(SIMP_DATE, entry.getDate(), CURRENT_INSTANCE),
-                    new LString(Validation.validateString(SIMP_ENT)),
-                    new LString(Validation.validateStringAllowEmpty(SIMP_ITM)),
-                    new LString(Validation.validateStringAllowEmpty(SIMP_DESC)),
+                    Validation.validateString(SIMP_ENT),
+                    Validation.validateStringAllowEmpty(SIMP_ITM),
+                    Validation.validateStringAllowEmpty(SIMP_DESC),
                     new LAccountSet(aArr, CURRENT_INSTANCE)
             );
         } catch (ValidationFailedException ex) {
@@ -820,12 +818,12 @@ public class NewTransactionEntryGui extends JDialog {
             }
             entry.insert(
                     Validation.validateDate(ADV_DATE, entry.getDate(), CURRENT_INSTANCE),
-                    new LString(Validation.validateString(ADV_ENT)),
-                    new LString(Validation.validateStringAllowEmpty(ADV_ITM)),
-                    new LString(Validation.validateStringAllowEmpty(ADV_DESC)),
+                    Validation.validateString(ADV_ENT),
+                    Validation.validateStringAllowEmpty(ADV_ITM),
+                    Validation.validateStringAllowEmpty(ADV_DESC),
                     new LAccountSet(Validation.validateString(ACC), CURRENT_INSTANCE)
             );
-            entry.insertIntoField("meta-data", new LJson(Validation.validateJsonObject(META)));
+            entry.setMeta(Validation.validateJsonObject(META));
             if (UUID == 0) {
                 CURRENT_INSTANCE.DATA_HANDLER.addTransaction(entry);
             }

@@ -1,3 +1,11 @@
+v0.5.4
+* de-generified entries for better memory handling
+* removed headers
+* removed fields
+* removed unused LTypes
+  * changed LType to interface
+* ToolBox added to .gitignore
+
 v0.5.3
 * updated to java 18
 * updated readme

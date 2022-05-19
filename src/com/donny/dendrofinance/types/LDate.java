@@ -10,7 +10,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
-public class LDate extends LType<LDate> {
+public class LDate implements LType<LDate> {
     private final Date DATE;
     private final Instance CURRENT_INSTANCE;
 

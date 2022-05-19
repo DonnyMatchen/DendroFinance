@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Iterator;
 
-public class LAccountSet extends LType<ArrayList<AccountWrapper>> implements Iterable<AccountWrapper> {
+public class LAccountSet implements LType<ArrayList<AccountWrapper>>, Iterable<AccountWrapper> {
     private final Instance CURRENT_INSTANCE;
     private final ArrayList<AccountWrapper> REGISTRY;
 

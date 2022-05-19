@@ -7,7 +7,6 @@ import com.donny.dendrofinance.gui.customswing.DendroFactory;
 import com.donny.dendrofinance.instance.Instance;
 import com.donny.dendrofinance.types.LAccountSet;
 import com.donny.dendrofinance.types.LDate;
-import com.donny.dendrofinance.types.LString;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
@@ -204,17 +203,17 @@ public class AppDepGui extends RegisterFrame {
                 if (x.compareTo(BigDecimal.ZERO) >= 0) {
                     entry.insert(
                             date,
-                            new LString("ACC"),
-                            new LString(""),
-                            new LString("Appreciation (" + date.getYear() + "-" + (date.getMonth() < 10 ? "0" : "") + date.getMonth() + ")"),
+                            "ACC",
+                            "",
+                            "Appreciation (" + date.getYear() + "-" + (date.getMonth() < 10 ? "0" : "") + date.getMonth() + ")",
                             new LAccountSet("C!Appreciation(" + x + "), " + accs, CURRENT_INSTANCE)
                     );
                 } else {
                     entry.insert(
                             date,
-                            new LString("ACC"),
-                            new LString(""),
-                            new LString("Depreciation (" + date.getYear() + "-" + (date.getMonth() < 10 ? "0" : "") + date.getMonth() + ")"),
+                            "ACC",
+                            "",
+                            "Depreciation (" + date.getYear() + "-" + (date.getMonth() < 10 ? "0" : "") + date.getMonth() + ")",
                             new LAccountSet("D!Depreciation(" + x.abs() + "), " + accs, CURRENT_INSTANCE)
                     );
                 }

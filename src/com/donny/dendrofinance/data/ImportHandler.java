@@ -9,8 +9,6 @@ import com.donny.dendrofinance.json.JsonItem;
 import com.donny.dendrofinance.json.JsonObject;
 import com.donny.dendrofinance.types.LAccountSet;
 import com.donny.dendrofinance.types.LDate;
-import com.donny.dendrofinance.types.LJson;
-import com.donny.dendrofinance.types.LString;
 
 import java.io.File;
 
@@ -45,14 +43,14 @@ public class ImportHandler {
             TransactionEntry entry = new TransactionEntry(CURRENT_INSTANCE);
             entry.insert(
                     new LDate(fields[0], CURRENT_INSTANCE),
-                    new LString(fields[1]),
-                    new LString(fields[2]),
-                    new LString(fields[3]),
+                    fields[1],
+                    fields[2],
+                    fields[3],
                     new LAccountSet(fields[4], CURRENT_INSTANCE)
             );
             try {
                 if (!fields[5].equals("{}")) {
-                    entry.insertIntoField("meta-data", new LJson((JsonObject) JsonItem.sanitizeDigest(fields[6])));
+                    entry.setMeta((JsonObject) JsonItem.sanitizeDigest(fields[6]));
                 }
             } catch (JsonFormattingException e) {
                 CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Bad Metadata: " + fields[6]);

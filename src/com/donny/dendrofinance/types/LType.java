@@ -3,12 +3,12 @@ package com.donny.dendrofinance.types;
 import com.donny.dendrofinance.json.JsonFormattingException;
 import com.donny.dendrofinance.json.JsonItem;
 
-public abstract class LType<E> {
-    public abstract boolean sameAs(E b);
+public interface LType<E> {
+    boolean sameAs(E b);
 
-    public abstract int compare(E b);
+    int compare(E b);
 
-    public abstract JsonItem export() throws JsonFormattingException;
+    JsonItem export() throws JsonFormattingException;
 
-    public abstract boolean isDefault();
+    boolean isDefault();
 }

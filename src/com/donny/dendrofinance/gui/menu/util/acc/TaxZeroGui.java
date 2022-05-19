@@ -9,7 +9,6 @@ import com.donny.dendrofinance.gui.customswing.DendroFactory;
 import com.donny.dendrofinance.instance.Instance;
 import com.donny.dendrofinance.types.LAccountSet;
 import com.donny.dendrofinance.types.LDate;
-import com.donny.dendrofinance.types.LString;
 
 import javax.swing.*;
 import java.math.BigDecimal;
@@ -40,9 +39,9 @@ public class TaxZeroGui extends RegisterFrame {
                 TransactionEntry entry = new TransactionEntry(CURRENT_INSTANCE);
                 entry.insert(
                         new LDate(DATE.getText(), CURRENT_INSTANCE),
-                        new LString("ACC"),
-                        new LString(""),
-                        new LString("Tax Zeroing"),
+                        "ACC",
+                        "",
+                        "Tax Zeroing",
                         new LAccountSet(sb.substring(2), CURRENT_INSTANCE)
                 );
                 CURRENT_INSTANCE.DATA_HANDLER.addTransaction(entry);

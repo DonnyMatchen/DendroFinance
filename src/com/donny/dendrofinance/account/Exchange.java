@@ -9,12 +9,12 @@ import com.donny.dendrofinance.json.JsonArray;
 import com.donny.dendrofinance.json.JsonFormattingException;
 import com.donny.dendrofinance.json.JsonObject;
 import com.donny.dendrofinance.json.JsonString;
-import com.donny.dendrofinance.util.ExportableToJsonObject;
+import com.donny.dendrofinance.util.ExportableToJson;
 
 import java.util.ArrayList;
 import java.util.Comparator;
 
-public class Exchange implements ExportableToJsonObject {
+public class Exchange implements ExportableToJson {
     public final String NAME, ALT;
     public final ArrayList<String> SUPPORTED;
     public final ArrayList<JsonObject> STAKING;

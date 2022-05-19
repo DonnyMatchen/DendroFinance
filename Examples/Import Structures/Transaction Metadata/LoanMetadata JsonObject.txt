@@ -1,0 +1,15 @@
+LoanMetadata{
+  "date": integer
+  "name": string
+  "desc": string
+  "cur": string
+  "princ": decimal
+  "rate": decimal
+}
+
+date: the date of the transaction as a unix millisecond timestamp
+name: name of the asset
+desc: description of the asset
+cur: the currency of the initial value
+princ: the initial principle of the loan
+rate: the interest rate of the loan

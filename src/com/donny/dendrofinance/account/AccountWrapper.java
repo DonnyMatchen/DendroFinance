@@ -5,11 +5,11 @@ import com.donny.dendrofinance.json.JsonDecimal;
 import com.donny.dendrofinance.json.JsonFormattingException;
 import com.donny.dendrofinance.json.JsonObject;
 import com.donny.dendrofinance.json.JsonString;
-import com.donny.dendrofinance.util.ExportableToJsonObject;
+import com.donny.dendrofinance.util.ExportableToJson;
 
 import java.math.BigDecimal;
 
-public class AccountWrapper implements ExportableToJsonObject {
+public class AccountWrapper implements ExportableToJson {
     public final Account ACCOUNT;
     public final AWColumn COLUMN;
     public final BigDecimal VALUE;

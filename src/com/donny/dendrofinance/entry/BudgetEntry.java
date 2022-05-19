@@ -1,37 +1,40 @@
 package com.donny.dendrofinance.entry;
 
 import com.donny.dendrofinance.account.Account;
-import com.donny.dendrofinance.header.BudgetHeader;
 import com.donny.dendrofinance.instance.Instance;
 import com.donny.dendrofinance.json.JsonDecimal;
 import com.donny.dendrofinance.json.JsonFormattingException;
 import com.donny.dendrofinance.json.JsonObject;
-import com.donny.dendrofinance.types.LJson;
-import com.donny.dendrofinance.types.LString;
+import com.donny.dendrofinance.json.JsonString;
 
 import java.math.BigDecimal;
 
-public class BudgetEntry extends Entry<BudgetHeader> {
+public class BudgetEntry extends Entry {
+    private String name;
+    private JsonObject contents;
+
     public BudgetEntry(Instance curInst) {
-        super(curInst, "BudgetHeader");
+        super(curInst);
+        name = "DEFAULT";
+        contents = new JsonObject();
     }
 
     public BudgetEntry(String name, Instance curInst) {
         this(curInst);
-        insert(new LString(name), new LJson(getEmptyBudget(curInst)));
+        this.name = name;
+        contents = getEmptyBudget(curInst);
     }
 
     public BudgetEntry(JsonObject obj, Instance curInst) {
         super(obj, curInst);
+        name = obj.getString("name").getString();
+        contents = obj.getObject("contents");
     }
 
     public BudgetEntry(BudgetEntry entry, String name) {
         this(entry.CURRENT_INSTANCE);
-        try {
-            insert(new LString(name), new LJson(new JsonObject(entry.getBudget().toString())));
-        } catch (JsonFormattingException ex) {
-            insert(new LString(name), new LJson(getEmptyBudget(CURRENT_INSTANCE)));
-        }
+        this.name = name;
+        contents = entry.contents;
     }
 
     public static JsonObject getEmptyBudget(Instance curInst) {
@@ -44,16 +47,29 @@ public class BudgetEntry extends Entry<BudgetHeader> {
         return obj;
     }
 
-    public void insert(LString name, LJson contents) {
-        insertIntoField("name", name);
-        insertIntoField("contents", contents);
+    public void insert(String name, JsonObject contents) {
+        this.name = name;
+        this.contents = contents;
     }
 
     public String getName() {
-        return getString("name").VALUE;
+        return name;
     }
 
     public JsonObject getBudget() {
-        return getJson("contents").OBJECT;
+        return contents;
+    }
+
+    @Override
+    public JsonObject export() throws JsonFormattingException {
+        JsonObject obj = super.export();
+        obj.put("name", new JsonString(name));
+        obj.put("contents", contents);
+        return obj;
+    }
+
+    @Override
+    public String toFlatString() {
+        return getUUID() + "\t" + name + "\t" + contents.toString();
     }
 }

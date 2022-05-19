@@ -14,7 +14,6 @@ import com.donny.dendrofinance.instance.Instance;
 import com.donny.dendrofinance.json.JsonFormattingException;
 import com.donny.dendrofinance.types.LAccountSet;
 import com.donny.dendrofinance.types.LDate;
-import com.donny.dendrofinance.types.LString;
 import com.donny.dendrofinance.util.Aggregation;
 import com.donny.dendrofinance.util.Curation;
 
@@ -122,7 +121,7 @@ public class DataHandler {
     public BigDecimal accountAsOf(Account acc, LDate date) {
         BigDecimal x = BigDecimal.ZERO;
         for (TransactionEntry entry : readTransactions()) {
-            if (entry.getAccounts().toString().contains(acc.getName()) && entry.getDate().compare(date) <= 0) {
+            if (entry.getAccounts().toString().contains(acc.getName()) && entry.getDate().compareTo(date) <= 0) {
                 for (AccountWrapper wrapper : entry.getAccounts()) {
                     if (wrapper.ACCOUNT.equals(acc)) {
                         x = x.add(wrapper.getAlphaProcessed());
@@ -160,7 +159,7 @@ public class DataHandler {
     public HashMap<Account, BigDecimal> accountsAsOf(LDate date) {
         Aggregation<Account> accounts = new Aggregation<>();
         for (TransactionEntry entry : readTransactions()) {
-            if (entry.getDate().compare(date) <= 0) {
+            if (entry.getDate().compareTo(date) <= 0) {
                 for (AccountWrapper wrapper : entry.getAccounts()) {
                     accounts.add(wrapper.ACCOUNT, wrapper.getAlphaProcessed());
                 }
@@ -172,7 +171,7 @@ public class DataHandler {
     public HashMap<Account, BigDecimal> accountsAsOf(int y, int m, int d) {
         Aggregation<Account> accounts = new Aggregation<>();
         for (TransactionEntry entry : readTransactions()) {
-            if (entry.getDate().compare(y, m, d) <= 0) {
+            if (entry.getDate().compareTo(y, m, d) <= 0) {
                 for (AccountWrapper wrapper : entry.getAccounts()) {
                     accounts.add(wrapper.ACCOUNT, wrapper.getAlphaProcessed());
                 }
@@ -219,7 +218,7 @@ public class DataHandler {
     public ArrayList<AssetMetadata> assetsAsOf(LDate date) {
         ArrayList<AssetMetadata> assets = new ArrayList<>();
         for (TransactionEntry entry : readTransactions()) {
-            if (entry.getDate().compare(date) <= 0) {
+            if (entry.getDate().compareTo(date) <= 0) {
                 if (entry.hasMeta("asset")) {
                     assets.addAll(entry.getAssetMeta());
                 }
@@ -270,7 +269,7 @@ public class DataHandler {
     public ArrayList<LoanMetadata> loansAsOf(LDate date) {
         ArrayList<LoanMetadata> loans = new ArrayList<>();
         for (TransactionEntry entry : readTransactions()) {
-            if (entry.getDate().compare(date) <= 0) {
+            if (entry.getDate().compareTo(date) <= 0) {
                 if (entry.hasMeta("loan")) {
                     loans.addAll(entry.getLoanMeta());
                 }
@@ -436,7 +435,7 @@ public class DataHandler {
                 correct.add(entry);
             }
         }
-        correct.sort((t1, t2) -> t1.getDate().compare(t2.getDate()));
+        correct.sort((t1, t2) -> t1.getDate().compareTo(t2.getDate()));
         return correct;
     }
 
@@ -494,7 +493,7 @@ public class DataHandler {
         ArrayList<Position> positions = new ArrayList<>();
         ArrayList<OrderBookEntry> orderBook = new ArrayList<>();
         for (TransactionEntry entry : readTransactions()) {
-            if (entry.hasMeta("ledger") && entry.getDate().compare(date) <= 0) {
+            if (entry.hasMeta("ledger") && entry.getDate().compareTo(date) <= 0) {
                 for (LedgerMetadata meta : entry.getLedgerMeta()) {
                     boolean flag = true, auxFlag = true;
                     if (meta.FROM.equals(CURRENT_INSTANCE.main)) {
@@ -614,7 +613,7 @@ public class DataHandler {
     public ArrayList<LedgerMetadata> getLedgerMeta(LCurrency currency, LDate date) {
         ArrayList<LedgerMetadata> out = new ArrayList<>();
         for (TransactionEntry entry : readTransactions()) {
-            if (entry.hasMeta("ledger") && entry.getDate().compare(date) <= 0) {
+            if (entry.hasMeta("ledger") && entry.getDate().compareTo(date) <= 0) {
                 for (LedgerMetadata meta : entry.getLedgerMeta()) {
                     if (meta.FROM.equals(currency) || meta.TO.equals(currency)) {
                         out.add(meta);
@@ -655,7 +654,7 @@ public class DataHandler {
     public ArrayList<CheckMetadata> getChecks(LDate date) {
         ArrayList<CheckMetadata> meta = new ArrayList<>();
         for (TransactionEntry entry : readTransactions()) {
-            if (entry.getDate().compare(date) <= 0 && entry.hasMeta("check")) {
+            if (entry.getDate().compareTo(date) <= 0 && entry.hasMeta("check")) {
                 meta.addAll(entry.getCheckMetadata());
             }
         }
@@ -707,9 +706,9 @@ public class DataHandler {
             if (amount.compareTo(BigDecimal.ZERO) > 0) {
                 entry.insert(
                         date,
-                        new LString(e.NAME),
-                        new LString(c.toString()),
-                        new LString(currency + " Purchase"),
+                        e.NAME,
+                        c.toString(),
+                        currency + " Purchase",
                         new LAccountSet(
                                 "D!" + acc + "("
                                         + cost.abs() + "), D!Trading_Expenses("
@@ -734,9 +733,9 @@ public class DataHandler {
                 }
                 entry.insert(
                         date,
-                        new LString(e.NAME),
-                        new LString(c.toString()),
-                        new LString(currency + " Sale"),
+                        e.NAME,
+                        c.toString(),
+                        currency + " Sale",
                         new LAccountSet("D!" + e.NAME + "_USD("
                                 + cost + "), D!Portfolio("
                                 + cost + "), C!" + acc + "("
@@ -781,9 +780,9 @@ public class DataHandler {
             if (amount.compareTo(BigDecimal.ZERO) > 0) {
                 entry.insert(
                         date,
-                        new LString(exchange),
-                        new LString(currency),
-                        new LString(description),
+                        exchange,
+                        currency,
+                        description,
                         new LAccountSet("D!" + acc + "("
                                 + cost + "), C!Portfolio("
                                 + cost + "), T!" + e.NAME + "_" + c.getTicker() + (s ? "_S" : "") + "("
@@ -795,9 +794,9 @@ public class DataHandler {
             } else if (amount.compareTo(BigDecimal.ZERO) < 0) {
                 entry.insert(
                         date,
-                        new LString(exchange),
-                        new LString(currency),
-                        new LString(description),
+                        exchange,
+                        currency,
+                        description,
                         new LAccountSet("D!Portfolio("
                                 + cost + "), C!" + acc + "("
                                 + cost + "), T!" + e.NAME + "_" + c.getTicker() + "("
@@ -850,9 +849,9 @@ public class DataHandler {
             TransactionEntry entry = new TransactionEntry(CURRENT_INSTANCE);
             entry.insert(
                     date,
-                    new LString(ent),
-                    new LString(c.toString()),
-                    new LString(c + " Transfer"),
+                    ent,
+                    c.toString(),
+                    c + " Transfer",
                     new LAccountSet("D!Portfolio("
                             + cost + "), C!" + acc + "("
                             + cost + "), T!" + ef.NAME + "_" + c.getTicker() + "("
@@ -900,9 +899,9 @@ public class DataHandler {
             TransactionEntry entry = new TransactionEntry(CURRENT_INSTANCE);
             entry.insert(
                     date,
-                    new LString(ent),
-                    new LString(tc + ", " + fc),
-                    new LString(tc + " Transfer"),
+                    ent,
+                    tc + ", " + fc,
+                    tc + " Transfer",
                     new LAccountSet("D!Portfolio("
                             + cost + "), C!Crypto("
                             + cost + "), T!" + ef.NAME + "_" + tc.getTicker() + "("
@@ -953,9 +952,9 @@ public class DataHandler {
             }
             entry.insert(
                     date,
-                    new LString(e.NAME),
-                    new LString(fc + ", " + tc),
-                    new LString("Trade (" + fc + " -> " + tc + ")"),
+                    e.NAME,
+                    fc + ", " + tc,
+                    "Trade (" + fc + " -> " + tc + ")",
                     new LAccountSet("T!" + e.NAME + "_" + fc.getTicker() + "("
                             + fromAmount + "), T!" + e.NAME + "_" + tc.getTicker() + "("
                             + toAmount + "), G!Tax_Cap" + gl + "("

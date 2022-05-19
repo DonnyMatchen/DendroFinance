@@ -7,11 +7,11 @@ import com.donny.dendrofinance.json.JsonDecimal;
 import com.donny.dendrofinance.json.JsonFormattingException;
 import com.donny.dendrofinance.json.JsonObject;
 import com.donny.dendrofinance.json.JsonString;
-import com.donny.dendrofinance.util.ExportableToJsonObject;
+import com.donny.dendrofinance.util.ExportableToJson;
 
 import java.math.BigDecimal;
 
-public class Account implements ExportableToJsonObject {
+public class Account implements ExportableToJson {
     public final boolean EXPORT;
     public final Exchange EXCHANGE;
     private final Instance CURRENT_INSTANCE;

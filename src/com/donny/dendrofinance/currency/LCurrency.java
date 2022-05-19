@@ -9,12 +9,12 @@ import com.donny.dendrofinance.json.JsonFormattingException;
 import com.donny.dendrofinance.json.JsonObject;
 import com.donny.dendrofinance.json.JsonString;
 import com.donny.dendrofinance.types.LDate;
-import com.donny.dendrofinance.util.ExportableToJsonObject;
+import com.donny.dendrofinance.util.ExportableToJson;
 
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 
-public class LCurrency implements ExportableToJsonObject {
+public class LCurrency implements ExportableToJson {
     protected final Instance CURRENT_INSTANCE;
     private final String NAME, TIC, SYMBOL, ALT_NAME;
     private final int PLACES;

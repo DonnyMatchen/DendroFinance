@@ -6,58 +6,73 @@ import com.donny.dendrofinance.account.AccountWrapper;
 import com.donny.dendrofinance.account.BroadAccountType;
 import com.donny.dendrofinance.currency.LCurrency;
 import com.donny.dendrofinance.entry.meta.*;
-import com.donny.dendrofinance.header.TransactionHeader;
 import com.donny.dendrofinance.instance.Instance;
-import com.donny.dendrofinance.json.JsonArray;
-import com.donny.dendrofinance.json.JsonFormattingException;
-import com.donny.dendrofinance.json.JsonItem;
-import com.donny.dendrofinance.json.JsonObject;
+import com.donny.dendrofinance.json.*;
 import com.donny.dendrofinance.types.LAccountSet;
 import com.donny.dendrofinance.types.LDate;
-import com.donny.dendrofinance.types.LString;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
 
-public class TransactionEntry extends Entry<TransactionHeader> implements Comparable<TransactionEntry> {
+public class TransactionEntry extends Entry implements Comparable<TransactionEntry> {
+    private LDate date;
+    private String entity, items, description;
+    private LAccountSet accounts;
+    private JsonObject metadata;
 
     public TransactionEntry(Instance curInst) {
-        super(curInst, "TransactionHeader");
+        super(curInst);
+        date = LDate.now(curInst);
+        entity = "UNKNOWN";
+        items = "";
+        description = "";
+        accounts = new LAccountSet(curInst);
+        metadata = new JsonObject();
     }
 
     public TransactionEntry(JsonObject obj, Instance curInst) {
         super(obj, curInst);
+        date = new LDate(obj.getDecimal("date"), curInst);
+        entity = obj.getString("entity").getString();
+        items = obj.getString("items").getString();
+        description = obj.getString("description").getString();
+        accounts = new LAccountSet(obj.getArray("accounts"), curInst);
+        metadata = obj.getObject("meta-data");
     }
 
-    public void insert(LDate date, LString ent, LString itm, LString desc,
+    public void insert(LDate date, String ent, String itm, String desc,
                        LAccountSet accounts
     ) {
         accounts.sort();
-        insertIntoField("date", date);
-        insertIntoField("entity", ent);
-        insertIntoField("items", itm);
-        insertIntoField("description", desc);
-        insertIntoField("accounts", accounts);
+        this.date = date;
+        entity = ent;
+        items = itm;
+        description = desc;
+        this.accounts = accounts;
     }
 
     public JsonItem getMeta(String key) {
-        return getJson("meta-data").OBJECT.get(key);
+        return metadata.get(key);
     }
 
     public JsonObject getMeta() {
-        return getJson("meta-data").OBJECT;
+        return metadata;
+    }
+
+    public void setMeta(JsonObject newMeta) {
+        metadata = newMeta;
     }
 
     public ArrayList<String> metaList() {
-        return new ArrayList<>(getJson("meta-data").OBJECT.getFields());
+        return new ArrayList<>(metadata.getFields());
     }
 
     public boolean hasMeta() {
-        return !getJson("meta-data").OBJECT.getFields().isEmpty();
+        return !metadata.getFields().isEmpty();
     }
 
     public boolean hasMeta(String key) {
-        return getJson("meta-data").OBJECT.containsKey(key);
+        return metadata.containsKey(key);
     }
 
     public void addAssetChangeMeta(long uuid, LDate date, String name, LCurrency cur, BigDecimal change, BigDecimal count) {
@@ -71,7 +86,7 @@ public class TransactionEntry extends Entry<TransactionHeader> implements Compar
     }
 
     public void addAssetChangeMeta(String name, LCurrency cur, BigDecimal change, BigDecimal count) {
-        addAssetChangeMeta(getUUID(), getDate(), name, cur, change, count);
+        addAssetChangeMeta(getUUID(), date, name, cur, change, count);
     }
 
     public void addAssetMeta(long uuid, LDate date, String name, String desc, LCurrency cur, BigDecimal value, BigDecimal count) {
@@ -85,7 +100,7 @@ public class TransactionEntry extends Entry<TransactionHeader> implements Compar
     }
 
     public void addAssetMeta(String name, String desc, LCurrency cur, BigDecimal value, BigDecimal count) {
-        addAssetMeta(getUUID(), getDate(), name, desc, cur, value, count);
+        addAssetMeta(getUUID(), date, name, desc, cur, value, count);
     }
 
     public void addLoanChangeMeta(long uuid, LDate date, String name, BigDecimal change) {
@@ -99,7 +114,7 @@ public class TransactionEntry extends Entry<TransactionHeader> implements Compar
     }
 
     public void addLoanChangeMeta(String name, BigDecimal change) {
-        addLoanChangeMeta(getUUID(), getDate(), name, change);
+        addLoanChangeMeta(getUUID(), date, name, change);
     }
 
     public void addLoanMeta(long uuid, LDate date, String name, String desc, LCurrency cur, BigDecimal principal, BigDecimal rate) {
@@ -113,7 +128,7 @@ public class TransactionEntry extends Entry<TransactionHeader> implements Compar
     }
 
     public void addLoanMeta(String name, String desc, LCurrency cur, BigDecimal principal, BigDecimal rate) {
-        addLoanMeta(getUUID(), getDate(), name, desc, cur, principal, rate);
+        addLoanMeta(getUUID(), date, name, desc, cur, principal, rate);
     }
 
     public void addLedgerMeta(long uuid, LDate date, LCurrency from, LCurrency to, BigDecimal fromAmount, BigDecimal toAmount, BigDecimal mainValue) {
@@ -127,21 +142,20 @@ public class TransactionEntry extends Entry<TransactionHeader> implements Compar
     }
 
     public void addLedgerMeta(LCurrency from, LCurrency to, BigDecimal fromAmount, BigDecimal toAmount, BigDecimal mainValue) {
-        addLedgerMeta(getUUID(), getDate(), from, to, fromAmount, toAmount, mainValue);
+        addLedgerMeta(getUUID(), date, from, to, fromAmount, toAmount, mainValue);
     }
 
     public void addCheckMeta(long uuid, LDate cashed, String checkNum, BigDecimal value) {
         ArrayList<CheckMetadata> meta = getCheckMetadata();
-        meta.add(new CheckMetadata(uuid, getDate(), cashed, checkNum, value, CURRENT_INSTANCE));
+        meta.add(new CheckMetadata(uuid, date, cashed, checkNum, value, CURRENT_INSTANCE));
         setCheckMeta(meta);
     }
 
     public ArrayList<AssetMetadata> getAssetMeta() {
         if (hasMeta("asset")) {
             ArrayList<AssetMetadata> assets = new ArrayList<>();
-            JsonArray array = (JsonArray) getMeta("asset");
-            for (JsonObject obj : array.getObjectArray()) {
-                assets.add(new AssetMetadata(getUUID(), getDate(), obj, CURRENT_INSTANCE));
+            for (JsonObject obj : metadata.getArray("asset").getObjectArray()) {
+                assets.add(new AssetMetadata(getUUID(), date, obj, CURRENT_INSTANCE));
             }
             return assets;
         } else {
@@ -158,15 +172,14 @@ public class TransactionEntry extends Entry<TransactionHeader> implements Compar
                 CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "The universe has broken\n" + asset.NAME);
             }
         }
-        getJson("meta-data").OBJECT.put("asset", array);
+        metadata.put("asset", array);
     }
 
     public ArrayList<AssetChangeMetadata> getAssetChangeMeta() {
         if (hasMeta("asset-change")) {
             ArrayList<AssetChangeMetadata> assets = new ArrayList<>();
-            JsonArray array = (JsonArray) getMeta("asset-change");
-            for (JsonObject obj : array.getObjectArray()) {
-                assets.add(new AssetChangeMetadata(getUUID(), getDate(), obj, CURRENT_INSTANCE));
+            for (JsonObject obj : metadata.getArray("asset-change").getObjectArray()) {
+                assets.add(new AssetChangeMetadata(getUUID(), date, obj, CURRENT_INSTANCE));
             }
             return assets;
         } else {
@@ -183,15 +196,14 @@ public class TransactionEntry extends Entry<TransactionHeader> implements Compar
                 CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "The universe has broken\n" + asset.NAME);
             }
         }
-        getJson("meta-data").OBJECT.put("asset-change", array);
+        metadata.put("asset-change", array);
     }
 
     public ArrayList<LoanMetadata> getLoanMeta() {
         if (hasMeta("loan")) {
             ArrayList<LoanMetadata> assets = new ArrayList<>();
-            JsonArray array = (JsonArray) getMeta("loan");
-            for (JsonObject obj : array.getObjectArray()) {
-                assets.add(new LoanMetadata(getUUID(), getDate(), obj, CURRENT_INSTANCE));
+            for (JsonObject obj : metadata.getArray("loan").getObjectArray()) {
+                assets.add(new LoanMetadata(getUUID(), date, obj, CURRENT_INSTANCE));
             }
             return assets;
         } else {
@@ -208,15 +220,14 @@ public class TransactionEntry extends Entry<TransactionHeader> implements Compar
                 CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "The universe has broken\n" + loan.NAME);
             }
         }
-        getJson("meta-data").OBJECT.put("loan", array);
+        metadata.put("loan", array);
     }
 
     public ArrayList<LoanChangeMetadata> getLoanChangeMeta() {
         if (hasMeta("loan-change")) {
             ArrayList<LoanChangeMetadata> assets = new ArrayList<>();
-            JsonArray array = (JsonArray) getMeta("loan-change");
-            for (JsonObject obj : array.getObjectArray()) {
-                assets.add(new LoanChangeMetadata(getUUID(), getDate(), obj, CURRENT_INSTANCE));
+            for (JsonObject obj : metadata.getArray("loan-change").getObjectArray()) {
+                assets.add(new LoanChangeMetadata(getUUID(), date, obj, CURRENT_INSTANCE));
             }
             return assets;
         } else {
@@ -233,15 +244,14 @@ public class TransactionEntry extends Entry<TransactionHeader> implements Compar
                 CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "The universe has broken\n" + loan.NAME);
             }
         }
-        getJson("meta-data").OBJECT.put("loan-change", array);
+        metadata.put("loan-change", array);
     }
 
     public ArrayList<LedgerMetadata> getLedgerMeta() {
         if (hasMeta("ledger")) {
             ArrayList<LedgerMetadata> ledgers = new ArrayList<>();
-            JsonArray array = (JsonArray) getMeta("ledger");
-            for (JsonObject obj : array.getObjectArray()) {
-                ledgers.add(new LedgerMetadata(getUUID(), getDate(), obj, CURRENT_INSTANCE));
+            for (JsonObject obj : metadata.getArray("ledger").getObjectArray()) {
+                ledgers.add(new LedgerMetadata(getUUID(), date, obj, CURRENT_INSTANCE));
             }
             return ledgers;
         } else {
@@ -258,15 +268,14 @@ public class TransactionEntry extends Entry<TransactionHeader> implements Compar
                 CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "The universe has broken\n" + ledger.UUID + ": " + ledger);
             }
         }
-        getJson("meta-data").OBJECT.put("ledger", array);
+        metadata.put("ledger", array);
     }
 
     public ArrayList<CheckMetadata> getCheckMetadata() {
         if (hasMeta("check")) {
             ArrayList<CheckMetadata> checks = new ArrayList<>();
-            JsonArray array = (JsonArray) getMeta("check");
-            for (JsonObject obj : array.getObjectArray()) {
-                checks.add(new CheckMetadata(getUUID(), getDate(), obj, CURRENT_INSTANCE));
+            for (JsonObject obj : metadata.getArray("check").getObjectArray()) {
+                checks.add(new CheckMetadata(getUUID(), date, obj, CURRENT_INSTANCE));
             }
             return checks;
         } else {
@@ -283,39 +292,39 @@ public class TransactionEntry extends Entry<TransactionHeader> implements Compar
                 CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "The universe has broken\n" + check.REF + ": " + check);
             }
         }
-        getJson("meta-data").OBJECT.put("check", array);
+        metadata.put("check", array);
     }
 
     public LDate getDate() {
-        return getDate("date");
+        return date;
     }
 
     public String getEntity() {
-        return getString("entity").VALUE;
+        return entity;
     }
 
     public String getItems() {
-        return getString("items").VALUE;
+        return items;
     }
 
     public String getDescription() {
-        return getString("description").VALUE;
+        return description;
     }
 
     public LAccountSet getAccounts() {
-        return getAccountSet("accounts");
+        return accounts;
     }
 
     public void addAccount(String column, Account a, BigDecimal d) {
-        getAccounts().add(new AccountWrapper(a, column, d));
+        accounts.add(new AccountWrapper(a, column, d));
     }
 
     public void deleteAccount(int i) {
-        getAccounts().remove(i);
+        accounts.remove(i);
     }
 
     public boolean hasBudgetAccounts() {
-        for (AccountWrapper aw : getAccounts()) {
+        for (AccountWrapper aw : accounts) {
             if (aw.ACCOUNT.getBudgetType() != null) {
                 return true;
             }
@@ -324,7 +333,7 @@ public class TransactionEntry extends Entry<TransactionHeader> implements Compar
     }
 
     public boolean hasGhostAccounts() {
-        for (AccountWrapper aw : getAccounts()) {
+        for (AccountWrapper aw : accounts) {
             if (aw.ACCOUNT.getBroadAccountType() == BroadAccountType.GHOST) {
                 return true;
             }
@@ -333,7 +342,7 @@ public class TransactionEntry extends Entry<TransactionHeader> implements Compar
     }
 
     public boolean hasTrackingAccounts() {
-        for (AccountWrapper aw : getAccounts()) {
+        for (AccountWrapper aw : accounts) {
             if (aw.ACCOUNT.getBroadAccountType() == BroadAccountType.TRACKING) {
                 return true;
             }
@@ -345,7 +354,7 @@ public class TransactionEntry extends Entry<TransactionHeader> implements Compar
         BigDecimal cred = BigDecimal.ZERO, deb = BigDecimal.ZERO,
                 ass = BigDecimal.ZERO, lia = BigDecimal.ZERO, equ = BigDecimal.ZERO;
         boolean corCol = true;
-        for (AccountWrapper wrapper : getAccounts()) {
+        for (AccountWrapper wrapper : accounts) {
             if (wrapper.COLUMN == AWColumn.CREDIT) {
                 cred = cred.add(wrapper.VALUE);
             } else if (wrapper.COLUMN == AWColumn.DEBIT) {
@@ -405,13 +414,13 @@ public class TransactionEntry extends Entry<TransactionHeader> implements Compar
 
     public ArrayList<String[]> display() {
         ArrayList<String[]> layers = new ArrayList<>();
-        for (int i = 0; i < getAccounts().getSize(); i++) {
-            AccountWrapper wrapper = getAccounts().get(i);
+        for (int i = 0; i < accounts.getSize(); i++) {
+            AccountWrapper wrapper = accounts.get(i);
             switch (wrapper.COLUMN) {
                 case DEBIT -> {
                     if (i == 0) {
                         layers.add(new String[]{
-                                getUUID() + "", getDate().toString(), getEntity(), getItems(), getDescription(),
+                                "" + getUUID(), date.toString(), entity, items, description,
                                 wrapper.ACCOUNT.getName(), wrapper.ACCOUNT.getCurrency().encode(wrapper.VALUE),
                                 "", "", "", getFlags()
                         });
@@ -426,7 +435,7 @@ public class TransactionEntry extends Entry<TransactionHeader> implements Compar
                 case CREDIT -> {
                     if (i == 0) {
                         layers.add(new String[]{
-                                getUUID() + "", getDate().toString(), getEntity(), getItems(), getDescription(),
+                                "" + getUUID(), date.toString(), entity, items, description,
                                 wrapper.ACCOUNT.getName(), "", wrapper.ACCOUNT.getCurrency().encode(wrapper.VALUE),
                                 "", "", getFlags()
                         });
@@ -441,7 +450,7 @@ public class TransactionEntry extends Entry<TransactionHeader> implements Compar
                 case GHOST -> {
                     if (i == 0) {
                         layers.add(new String[]{
-                                getUUID() + "", getDate().toString(), getEntity(), getItems(), getDescription(),
+                                "" + getUUID(), date.toString(), entity, items, description,
                                 wrapper.ACCOUNT.getName(), "", "", "", wrapper.ACCOUNT.getCurrency().encode(wrapper.VALUE), getFlags()
                         });
                     } else {
@@ -454,7 +463,7 @@ public class TransactionEntry extends Entry<TransactionHeader> implements Compar
                 case TRACKER -> {
                     if (i == 0) {
                         layers.add(new String[]{
-                                getUUID() + "", getDate().toString(), getEntity(), getItems(), getDescription(),
+                                "" + getUUID(), date.toString(), entity, items, description,
                                 wrapper.ACCOUNT.getName(), "", "",
                                 wrapper.ACCOUNT.getCurrency().encode(wrapper.VALUE), "", getFlags()
                         });
@@ -473,18 +482,36 @@ public class TransactionEntry extends Entry<TransactionHeader> implements Compar
 
     @Override
     public int compareTo(TransactionEntry entry) {
-        return getDate().compare(entry.getDate());
+        return date.compareTo(entry.date);
+    }
+
+    @Override
+    public JsonObject export() throws JsonFormattingException {
+        JsonObject obj = super.export();
+        obj.put("date", new JsonDecimal(BigDecimal.valueOf(date.getTime())));
+        obj.put("entity", new JsonString(entity));
+        obj.put("items", new JsonString(items));
+        obj.put("description", new JsonString(description));
+        obj.put("accounts", accounts.export());
+        obj.put("meta-data", metadata);
+        return obj;
+    }
+
+    @Override
+    public String toFlatString() {
+        return getUUID() + "\t" + date + "\t" + entity + "\t" + items + "\t" + description + "\t" +
+                accounts.toString() + "\t" + metadata.toString();
     }
 
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder("UUID: ").append(getUUID())
-                .append("\n\nDate: ").append(getDate())
-                .append("\n\nEntity: ").append(getEntity())
-                .append("\n\nItems: ").append(getItems())
-                .append("\n\nDescription: ").append(getDescription())
+                .append("\n\nDate: ").append(date)
+                .append("\n\nEntity: ").append(entity)
+                .append("\n\nItems: ").append(items)
+                .append("\n\nDescription: ").append(description)
                 .append("\n\nAccounts:");
-        for (AccountWrapper wrapper : getAccounts()) {
+        for (AccountWrapper wrapper : accounts) {
             sb.append("\n").append(wrapper.ACCOUNT.getName()).append(" (")
                     .append(wrapper.COLUMN.toString()).append("): ");
             sb.append(wrapper.ACCOUNT.getCurrency().encode(wrapper.VALUE));

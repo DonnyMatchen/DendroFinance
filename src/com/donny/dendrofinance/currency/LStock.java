@@ -46,7 +46,7 @@ public class LStock extends LCurrency {
             JsonArray arr = CURRENT_INSTANCE.FILE_HANDLER.getPrivateStock(getName());
             BigDecimal ret = BigDecimal.ZERO;
             for (JsonObject obj : arr.getObjectArray()) {
-                if (new LDate(obj.getString("date").getString(), CURRENT_INSTANCE).compare(date) <= 0) {
+                if (new LDate(obj.getString("date").getString(), CURRENT_INSTANCE).compareTo(date) <= 0) {
                     ret = amount.multiply(obj.getDecimal("price").decimal);
                 }
             }

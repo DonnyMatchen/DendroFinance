@@ -3,12 +3,12 @@ package com.donny.dendrofinance.data.backingtable;
 import com.donny.dendrofinance.gui.menu.data.backing.BackingTableGui;
 import com.donny.dendrofinance.instance.Instance;
 import com.donny.dendrofinance.json.JsonArray;
-import com.donny.dendrofinance.util.ExportableToJsonObject;
+import com.donny.dendrofinance.util.ExportableToJson;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 
-public abstract class BackingTableCore<E extends ExportableToJsonObject> implements Iterable<E> {
+public abstract class BackingTableCore<E extends ExportableToJson> implements Iterable<E> {
     public final boolean SORTABLE;
     protected final Instance CURRENT_INSTANCE;
     protected final ArrayList<E> TABLE;

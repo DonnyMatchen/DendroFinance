@@ -1,0 +1,36 @@
+AccountWrapper{
+  "acc": string
+  "col": string
+  "val": decimal
+}
+
+acc: the account name
+col: D for debit, C for credit, G for ghost, or T for tracking
+val: the value.  this should generally be a positive number if debit or credit
+
+Transaction{
+  "_uuid": integer
+  "date": integer
+  "entity": string
+  "items": string
+  "description": string
+  "accounts": array(AccountWrapper)
+  "meta-data": object
+}
+
+_uuid: unique identifier for the entry
+date: the date of the transaction as a unix millisecond timestamp
+entity: the legal entity or person the transaction was with
+items: the items bought, sold, or traded, if applicable
+description: notes about the transaction
+accounts: a series of accounts and values that, hopefully, are balanced
+meta-data: transaction metadata.  Anything can be added, but the program will only recognize certain structures.
+
+AssetChangeMetadata array: "asset-change"
+AssetMetadata array: "asset"
+CheckMetadata array: "check"
+LedgerMetadata array: "ledger"
+LoanChangeMetadata array: "loan-change"
+LoanMetadata array: "loan"
+
+NOTE: all of these MUST be arrays.  that's how the software is set up.

@@ -1,0 +1,13 @@
+AssetChangeMetadata{
+  "date": integer
+  "name": string
+  "currency": string
+  "change": decimal
+  "count": decimal
+}
+
+date: the date of the transaction as a unix millisecond timestamp
+name: name of the existing asset
+currency: the currency of change in value
+change: the change in value
+count: the change in count

@@ -1,0 +1,9 @@
+LoanChangeMetadata{
+  "date": integer
+  "name": string
+  "change": decimal
+}
+
+date: the date of the transaction as a unix millisecond timestamp
+name: name of the asset
+change: the change to the principle of the loan

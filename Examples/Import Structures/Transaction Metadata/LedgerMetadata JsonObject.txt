@@ -1,0 +1,15 @@
+LedgerMetadata{
+  "date": integer
+  "from-cur": string
+  "to-cur": string
+  "from-amnt": decimal
+  "to-amnt": decimal
+  "main-amnt": decimal
+}
+
+date: the date of the transaction as a unix millisecond timestamp
+from-cur: the currency for the 'from' side of the transaction
+to-cur: the currency for the 'to' side of the transaction
+from-amnt: the amount of the 'from' side of the transaction
+to-amnt: the amount of the 'to' side of the transaction
+main-amnt: the value of the transaction in the main currency

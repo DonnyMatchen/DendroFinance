@@ -3,6 +3,7 @@ package com.donny.dendrofinance.types;
 import com.donny.dendrofinance.instance.Instance;
 import com.donny.dendrofinance.json.JsonDecimal;
 import com.donny.dendrofinance.json.JsonItem;
+import com.donny.dendrofinance.util.ExportableToJson;
 
 import java.math.BigDecimal;
 import java.text.DateFormat;
@@ -10,7 +11,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
-public class LDate extends LType<LDate> {
+public class LDate implements ExportableToJson, Comparable<LDate> {
     private final Date DATE;
     private final Instance CURRENT_INSTANCE;
 
@@ -243,12 +244,16 @@ public class LDate extends LType<LDate> {
         };
     }
 
+    public boolean equals(LDate date) {
+        return DATE.getTime() == date.DATE.getTime();
+    }
+
     @Override
-    public int compare(LDate date) {
+    public int compareTo(LDate date) {
         return Long.compare(getTime(), date.getTime());
     }
 
-    public int compare(int y, int m, int d) {
+    public int compareTo(int y, int m, int d) {
         String[] thisVals = new SimpleDateFormat("yyyy/MM/dd").format(DATE).split("/");
         int year = Integer.parseInt(thisVals[0]);
         int month = Integer.parseInt(thisVals[1]);
@@ -265,17 +270,7 @@ public class LDate extends LType<LDate> {
     }
 
     @Override
-    public boolean isDefault() {
-        return DATE.getTime() == 0;
-    }
-
-    @Override
-    public boolean sameAs(LDate date) {
-        return DATE.getTime() == date.DATE.getTime();
-    }
-
-    @Override
-    public JsonItem export() {
+    public JsonDecimal export() {
         return new JsonDecimal(BigDecimal.valueOf(DATE.getTime()));
     }
 

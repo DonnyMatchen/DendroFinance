@@ -8,12 +8,13 @@ import com.donny.dendrofinance.json.JsonArray;
 import com.donny.dendrofinance.json.JsonFormattingException;
 import com.donny.dendrofinance.json.JsonItem;
 import com.donny.dendrofinance.json.JsonObject;
+import com.donny.dendrofinance.util.ExportableToJson;
 
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Iterator;
 
-public class LAccountSet extends LType<ArrayList<AccountWrapper>> implements Iterable<AccountWrapper> {
+public class LAccountSet implements ExportableToJson, Comparable<LAccountSet>, Iterable<AccountWrapper> {
     private final Instance CURRENT_INSTANCE;
     private final ArrayList<AccountWrapper> REGISTRY;
 
@@ -43,10 +44,9 @@ public class LAccountSet extends LType<ArrayList<AccountWrapper>> implements Ite
         }
     }
 
-    @Override
-    public boolean sameAs(ArrayList<AccountWrapper> b) {
-        if (REGISTRY.size() == b.size()) {
-            for (int i = 0; i < b.size(); i++) {
+    public boolean equals(LAccountSet b) {
+        if (REGISTRY.size() == b.REGISTRY.size()) {
+            for (int i = 0; i < b.REGISTRY.size(); i++) {
                 if (!REGISTRY.get(i).equals(b.get(i))) {
                     return false;
                 }
@@ -58,13 +58,8 @@ public class LAccountSet extends LType<ArrayList<AccountWrapper>> implements Ite
     }
 
     @Override
-    public int compare(ArrayList<AccountWrapper> b) {
-        return Integer.compare(REGISTRY.size(), b.size());
-    }
-
-    @Override
-    public boolean isDefault() {
-        return REGISTRY.isEmpty();
+    public int compareTo(LAccountSet b) {
+        return Integer.compare(REGISTRY.size(), b.REGISTRY.size());
     }
 
     public AccountWrapper get(int i) {
@@ -86,7 +81,7 @@ public class LAccountSet extends LType<ArrayList<AccountWrapper>> implements Ite
     }
 
     @Override
-    public JsonItem export() throws JsonFormattingException {
+    public JsonArray export() throws JsonFormattingException {
         JsonArray arr = new JsonArray();
         for (AccountWrapper a : REGISTRY) {
             arr.add(a.export());
@@ -156,4 +151,6 @@ public class LAccountSet extends LType<ArrayList<AccountWrapper>> implements Ite
     public Iterator<AccountWrapper> iterator() {
         return REGISTRY.iterator();
     }
+
+
 }

@@ -1,0 +1,10 @@
+BudgetEntry{
+  _uuid: integer
+  "name": string
+  "contents": object
+}
+
+_uuid: unique identifier for the entry
+name: name of the budget
+contents: an object with account names from revenue and expenses paired with decimal values.
+Make sure that all revenue and expense accounts are included

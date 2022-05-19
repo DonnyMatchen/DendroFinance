@@ -17,7 +17,6 @@ import com.donny.dendrofinance.json.JsonFormattingException;
 import com.donny.dendrofinance.json.JsonItem;
 import com.donny.dendrofinance.types.LAccountSet;
 import com.donny.dendrofinance.types.LDate;
-import com.donny.dendrofinance.types.LString;
 import com.donny.dendrofinance.util.Aggregation;
 import com.donny.dendrofinance.util.Curation;
 
@@ -167,18 +166,18 @@ public class ArchiveGui extends RegisterFrame {
             LDate min = LDate.now(CURRENT_INSTANCE), max = prior.getDate();
             prior.insert(
                     new LDate(year, 12, 31, CURRENT_INSTANCE),
-                    new LString("PRIOR"),
-                    new LString(""),
-                    new LString(""),
+                    "PRIOR",
+                    "",
+                    "",
                     aSet
             );
             JsonArray arr = new JsonArray();
             for (TransactionEntry entry : entries) {
                 CURRENT_INSTANCE.DATA_HANDLER.deleteTransaction(entry.getUUID());
-                if (entry.getDate().compare(min) < 0) {
+                if (entry.getDate().compareTo(min) < 0) {
                     min = entry.getDate();
                 }
-                if (entry.getDate().compare(max) > 0) {
+                if (entry.getDate().compareTo(max) > 0) {
                     max = entry.getDate();
                 }
                 try {

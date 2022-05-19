@@ -10,9 +10,9 @@ v0.5.4
   * removed LType and replaced with interface calls
 * removed ToolBox
 * changed ExportableToJsonObject to ExportableToJson
--> added entry imports to examples
-  X added transaction import
-  X added budget import
+* added entry imports to Examples
+  * added transaction import
+  * added budget import
 
 v0.5.3
 * updated to java 18

@@ -191,7 +191,9 @@ public class LCurrency implements ExportableToJson {
         obj.put("symbol", new JsonString(SYMBOL));
         obj.put("places", new JsonDecimal(BigDecimal.valueOf(PLACES)));
         obj.put("alt", new JsonString(ALT_NAME));
-        obj.put("factor", new JsonDecimal(FACTOR));
+        if (FACTOR.compareTo(BigDecimal.ONE) != 0) {
+            obj.put("factor", new JsonDecimal(FACTOR));
+        }
         String flags = "";
         if (FIAT) {
             flags += "F";

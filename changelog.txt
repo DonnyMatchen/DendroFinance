@@ -4,7 +4,7 @@ v0.5.4
 * removed fields
 * removed unused LTypes
   * changed LType to interface
-* ToolBox added to .gitignore
+* removed ToolBox
 
 v0.5.3
 * updated to java 18

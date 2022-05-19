@@ -38,11 +38,11 @@ public class LDate implements ExportableToJson, Comparable<LDate> {
         CURRENT_INSTANCE = curInst;
     }
 
-    public LDate(int year, int month, int day, int hour, int minute, int second, int mili, Instance curInst) {
+    public LDate(int year, int month, int day, int hour, int minute, int second, int milli, Instance curInst) {
         Calendar date = Calendar.getInstance();
         date.set(year, month - 1, day, hour, minute, second);
         long temp = date.getTime().getTime();
-        DATE = new Date(temp - (temp % 1000) + mili);
+        DATE = new Date(temp - (temp % 1000) + milli);
         CURRENT_INSTANCE = curInst;
     }
 
@@ -63,7 +63,7 @@ public class LDate implements ExportableToJson, Comparable<LDate> {
                 String[] split = raw.split(" ");
                 String[] dayParts = split[0].split("/");
                 String[] timeParts = split[1].split(":");
-                int year, month, day, hour, minute, second, mili;
+                int year, month, day, hour, minute, second, milli;
                 if (dayParts.length == 3) {
                     if (dayParts[2].length() == 4) {
                         year = Integer.parseInt(dayParts[2]);
@@ -84,7 +84,7 @@ public class LDate implements ExportableToJson, Comparable<LDate> {
                 }
                 hour = Integer.parseInt(timeParts[0]);
                 minute = Integer.parseInt(timeParts[1]);
-                mili = 0;
+                milli = 0;
                 second = 0;
                 if (timeParts.length >= 3) {
                     if (timeParts[2].contains(".")) {
@@ -92,7 +92,7 @@ public class LDate implements ExportableToJson, Comparable<LDate> {
                         while (temp.length() < 3) {
                             temp.append("0");
                         }
-                        mili = Integer.parseInt(temp.toString());
+                        milli = Integer.parseInt(temp.toString());
                         second = Integer.parseInt(timeParts[2].split("\\.")[0]);
                     } else {
                         second = Integer.parseInt(timeParts[2]);
@@ -101,7 +101,7 @@ public class LDate implements ExportableToJson, Comparable<LDate> {
                 Calendar date = Calendar.getInstance();
                 date.set(year, month - 1, day, hour, minute, second);
                 long temp = date.getTime().getTime();
-                DATE = new Date(temp - (temp % 1000) + mili);
+                DATE = new Date(temp - (temp % 1000) + milli);
                 CURRENT_INSTANCE = curInst;
             } else {
                 String[] dayParts = raw.split("/");
@@ -279,7 +279,7 @@ public class LDate implements ExportableToJson, Comparable<LDate> {
         return toString(true);
     }
 
-    public String toString(boolean mili) {
+    public String toString(boolean milli) {
         if (CURRENT_INSTANCE.day) {
             if (CURRENT_INSTANCE.american) {
                 return new SimpleDateFormat("MM/dd/yyyy").format(DATE);
@@ -287,7 +287,7 @@ public class LDate implements ExportableToJson, Comparable<LDate> {
                 return new SimpleDateFormat("dd/MM/yyyy").format(DATE);
             }
         } else {
-            if (mili) {
+            if (milli) {
                 if (CURRENT_INSTANCE.american) {
                     return new SimpleDateFormat("MM/dd/yyyy | HH:mm:ss.SSS zzz").format(DATE);
                 } else {

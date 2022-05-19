@@ -128,23 +128,6 @@ public class CurrencyBTC extends BackingTableCore<LCurrency> {
                 return TABLE.indexOf(cur);
             }
             String ticker = cur.getTicker();
-            if (cur.getName().contains("Mili")) {
-                ticker = " m" + ticker;
-            } else if (cur.getName().contains("Centi")) {
-                ticker = " c" + ticker;
-            } else if (cur.getName().contains("Deci")) {
-                ticker = " d" + ticker;
-            } else if (cur.getName().contains("Hecta")) {
-                ticker = " h" + ticker;
-            } else if (cur.getName().contains("NanoEther")) {
-                ticker = " Gwei";
-            } else if (cur.getName().contains("Nano")) {
-                ticker = " n" + ticker;
-            } else if (cur.getName().contains("Micro")) {
-                ticker = " μ" + ticker;
-            } else if (cur.getName().contains("Satoshi")) {
-                ticker = " Satoshi";
-            }
             if (ticker.equals(identifier)) {
                 return TABLE.indexOf(cur);
             }

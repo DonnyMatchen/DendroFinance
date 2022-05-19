@@ -1,5 +1,8 @@
 v0.5.5
 * rearranged fields in defaults
+* proofread changelog
+* removed "mili" and replaced with "milli"
+* fixed factor in currency.json
 
 v0.5.4
 * de-generified entries for better memory handling
@@ -34,7 +37,7 @@ v0.5.2
     * option for incomplete added
   * added support for check metadata to DataHandler
   * added CheckGui
-  * added checkmeta to TransactionEntry.toString
+  * added check meta to TransactionEntry.toString
 * added meta flags to MainGui
 * added option to use existing budgets as templates
 
@@ -52,9 +55,9 @@ v0.5.0
   * replaced calls to "Instance.main.encode" with "Instance.$"
   * menus section of main gui made more readable
 * removal of extra data files
-  * removed special, it's no longer needed
-  * moved contents of extranious to accounts
-* reworked of budgets
+  * removed special as it is no longer needed
+  * moved contents of extraneous to accounts
+* reworked budgets
   * restructured budget entry
   * reworked budget guis
 * reworked loading and saving of entries and backing elements
@@ -68,9 +71,9 @@ v0.5.0
   * reworked JsonArray
 
 v0.4.2
-* dated conversion fixed
-* minor typo corrections
-* better error printing
+* fixed date based conversion
+* corrected minor typos
+* implemented better error printing
 * fixed bug in menu
 * made MainGui more readable
 
@@ -103,4 +106,4 @@ v0.4.0
   * updated account in data structures
   * added exchange to account from gui
 * removed stub MenuItem
-* simplified editGui code
+* simplified EditGui code

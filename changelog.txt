@@ -1,10 +1,18 @@
 v0.5.4
 * de-generified entries for better memory handling
-* removed headers
-* removed fields
+  * data is now stored as fields rather than in array of generic objects
+  * Entry made abstract
+  * removed header object
+  * removed field object
+    * it was decided that entries no longer required flexibility of this kind.
 * removed unused LTypes
-  * changed LType to interface
+  * removed LString, LInt, LDecimal, LJson
+  * removed LType and replaced with interface calls
 * removed ToolBox
+* changed ExportableToJsonObject to ExportableToJson
+-> added entry imports to examples
+  X added transaction import
+  X added budget import
 
 v0.5.3
 * updated to java 18

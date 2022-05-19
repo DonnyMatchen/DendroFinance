@@ -121,7 +121,7 @@ public class DataHandler {
     public BigDecimal accountAsOf(Account acc, LDate date) {
         BigDecimal x = BigDecimal.ZERO;
         for (TransactionEntry entry : readTransactions()) {
-            if (entry.getAccounts().toString().contains(acc.getName()) && entry.getDate().compare(date) <= 0) {
+            if (entry.getAccounts().toString().contains(acc.getName()) && entry.getDate().compareTo(date) <= 0) {
                 for (AccountWrapper wrapper : entry.getAccounts()) {
                     if (wrapper.ACCOUNT.equals(acc)) {
                         x = x.add(wrapper.getAlphaProcessed());
@@ -159,7 +159,7 @@ public class DataHandler {
     public HashMap<Account, BigDecimal> accountsAsOf(LDate date) {
         Aggregation<Account> accounts = new Aggregation<>();
         for (TransactionEntry entry : readTransactions()) {
-            if (entry.getDate().compare(date) <= 0) {
+            if (entry.getDate().compareTo(date) <= 0) {
                 for (AccountWrapper wrapper : entry.getAccounts()) {
                     accounts.add(wrapper.ACCOUNT, wrapper.getAlphaProcessed());
                 }
@@ -171,7 +171,7 @@ public class DataHandler {
     public HashMap<Account, BigDecimal> accountsAsOf(int y, int m, int d) {
         Aggregation<Account> accounts = new Aggregation<>();
         for (TransactionEntry entry : readTransactions()) {
-            if (entry.getDate().compare(y, m, d) <= 0) {
+            if (entry.getDate().compareTo(y, m, d) <= 0) {
                 for (AccountWrapper wrapper : entry.getAccounts()) {
                     accounts.add(wrapper.ACCOUNT, wrapper.getAlphaProcessed());
                 }
@@ -218,7 +218,7 @@ public class DataHandler {
     public ArrayList<AssetMetadata> assetsAsOf(LDate date) {
         ArrayList<AssetMetadata> assets = new ArrayList<>();
         for (TransactionEntry entry : readTransactions()) {
-            if (entry.getDate().compare(date) <= 0) {
+            if (entry.getDate().compareTo(date) <= 0) {
                 if (entry.hasMeta("asset")) {
                     assets.addAll(entry.getAssetMeta());
                 }
@@ -269,7 +269,7 @@ public class DataHandler {
     public ArrayList<LoanMetadata> loansAsOf(LDate date) {
         ArrayList<LoanMetadata> loans = new ArrayList<>();
         for (TransactionEntry entry : readTransactions()) {
-            if (entry.getDate().compare(date) <= 0) {
+            if (entry.getDate().compareTo(date) <= 0) {
                 if (entry.hasMeta("loan")) {
                     loans.addAll(entry.getLoanMeta());
                 }
@@ -435,7 +435,7 @@ public class DataHandler {
                 correct.add(entry);
             }
         }
-        correct.sort((t1, t2) -> t1.getDate().compare(t2.getDate()));
+        correct.sort((t1, t2) -> t1.getDate().compareTo(t2.getDate()));
         return correct;
     }
 
@@ -493,7 +493,7 @@ public class DataHandler {
         ArrayList<Position> positions = new ArrayList<>();
         ArrayList<OrderBookEntry> orderBook = new ArrayList<>();
         for (TransactionEntry entry : readTransactions()) {
-            if (entry.hasMeta("ledger") && entry.getDate().compare(date) <= 0) {
+            if (entry.hasMeta("ledger") && entry.getDate().compareTo(date) <= 0) {
                 for (LedgerMetadata meta : entry.getLedgerMeta()) {
                     boolean flag = true, auxFlag = true;
                     if (meta.FROM.equals(CURRENT_INSTANCE.main)) {
@@ -613,7 +613,7 @@ public class DataHandler {
     public ArrayList<LedgerMetadata> getLedgerMeta(LCurrency currency, LDate date) {
         ArrayList<LedgerMetadata> out = new ArrayList<>();
         for (TransactionEntry entry : readTransactions()) {
-            if (entry.hasMeta("ledger") && entry.getDate().compare(date) <= 0) {
+            if (entry.hasMeta("ledger") && entry.getDate().compareTo(date) <= 0) {
                 for (LedgerMetadata meta : entry.getLedgerMeta()) {
                     if (meta.FROM.equals(currency) || meta.TO.equals(currency)) {
                         out.add(meta);
@@ -654,7 +654,7 @@ public class DataHandler {
     public ArrayList<CheckMetadata> getChecks(LDate date) {
         ArrayList<CheckMetadata> meta = new ArrayList<>();
         for (TransactionEntry entry : readTransactions()) {
-            if (entry.getDate().compare(date) <= 0 && entry.hasMeta("check")) {
+            if (entry.getDate().compareTo(date) <= 0 && entry.hasMeta("check")) {
                 meta.addAll(entry.getCheckMetadata());
             }
         }

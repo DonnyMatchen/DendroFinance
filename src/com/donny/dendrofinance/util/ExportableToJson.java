@@ -1,14 +1,9 @@
-package com.donny.dendrofinance.types;
+package com.donny.dendrofinance.util;
 
 import com.donny.dendrofinance.json.JsonFormattingException;
 import com.donny.dendrofinance.json.JsonItem;
+import com.donny.dendrofinance.json.JsonObject;
 
-public interface LType<E> {
-    boolean sameAs(E b);
-
-    int compare(E b);
-
+public interface ExportableToJson {
     JsonItem export() throws JsonFormattingException;
-
-    boolean isDefault();
 }

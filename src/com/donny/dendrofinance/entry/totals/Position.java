@@ -25,7 +25,7 @@ public class Position {
     }
 
     public void sort() {
-        ELEMENTS.sort((el1, el2) -> el1.DATE.compare(el2.DATE));
+        ELEMENTS.sort((el1, el2) -> el1.DATE.compareTo(el2.DATE));
     }
 
     public ArrayList<OrderBookEntry> change(long uuid, LDate date, LCurrency cur, BigDecimal amount, BigDecimal cost) {

@@ -6,11 +6,11 @@ import com.donny.dendrofinance.json.JsonFormattingException;
 import com.donny.dendrofinance.json.JsonObject;
 import com.donny.dendrofinance.json.JsonString;
 import com.donny.dendrofinance.types.LDate;
-import com.donny.dendrofinance.util.ExportableToJsonObject;
+import com.donny.dendrofinance.util.ExportableToJson;
 
 import java.math.BigDecimal;
 
-public class CheckMetadata implements ExportableToJsonObject {
+public class CheckMetadata implements ExportableToJson {
     public final long REF;
     public final LDate ISSUED, CASHED;
     public final String CHECK_NUMBER;

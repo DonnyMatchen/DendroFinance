@@ -5,9 +5,9 @@ import com.donny.dendrofinance.instance.Instance;
 import com.donny.dendrofinance.json.JsonFormattingException;
 import com.donny.dendrofinance.json.JsonObject;
 import com.donny.dendrofinance.json.JsonString;
-import com.donny.dendrofinance.util.ExportableToJsonObject;
+import com.donny.dendrofinance.util.ExportableToJson;
 
-public class AccountType implements ExportableToJsonObject {
+public class AccountType implements ExportableToJson {
     public final String NAME;
     public final BroadAccountType TYPE;
 

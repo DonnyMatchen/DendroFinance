@@ -482,7 +482,7 @@ public class TransactionEntry extends Entry implements Comparable<TransactionEnt
 
     @Override
     public int compareTo(TransactionEntry entry) {
-        return date.compare(entry.date);
+        return date.compareTo(entry.date);
     }
 
     @Override

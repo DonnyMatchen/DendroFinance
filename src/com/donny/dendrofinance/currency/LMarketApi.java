@@ -3,13 +3,13 @@ package com.donny.dendrofinance.currency;
 import com.donny.dendrofinance.instance.Instance;
 import com.donny.dendrofinance.json.*;
 import com.donny.dendrofinance.types.LDate;
-import com.donny.dendrofinance.util.ExportableToJsonObject;
+import com.donny.dendrofinance.util.ExportableToJson;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-public class LMarketApi implements ExportableToJsonObject {
+public class LMarketApi implements ExportableToJson {
     public final String NAME, TYPES, BASE_URL, BASE_URL_HISTORY, KEY;
     private final Instance CURRENT_INSTANCE;
     private final ArrayList<String> PARSE_PATH, PARSE_PATH_HISTORY, NATS, EXCEPTS;

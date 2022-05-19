@@ -4,11 +4,11 @@ import com.donny.dendrofinance.instance.Instance;
 import com.donny.dendrofinance.json.JsonDecimal;
 import com.donny.dendrofinance.json.JsonFormattingException;
 import com.donny.dendrofinance.json.JsonObject;
-import com.donny.dendrofinance.util.ExportableToJsonObject;
+import com.donny.dendrofinance.util.ExportableToJson;
 
 import java.math.BigDecimal;
 
-public abstract class Entry implements ExportableToJsonObject {
+public abstract class Entry implements ExportableToJson {
     protected final Instance CURRENT_INSTANCE;
     private final long UUID;
 

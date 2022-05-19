@@ -139,11 +139,11 @@ public class RevExpGui extends RegisterFrame {
                 if (!START.getText().equals("")) {
                     String[] starter = START.getText().split("/");
                     if (CURRENT_INSTANCE.american) {
-                        if (entry.getDate().compare(Integer.parseInt(starter[2]), Integer.parseInt(starter[0]), Integer.parseInt(starter[1])) < 0) {
+                        if (entry.getDate().compareTo(Integer.parseInt(starter[2]), Integer.parseInt(starter[0]), Integer.parseInt(starter[1])) < 0) {
                             flag = false;
                         }
                     } else {
-                        if (entry.getDate().compare(Integer.parseInt(starter[2]), Integer.parseInt(starter[1]), Integer.parseInt(starter[0])) < 0) {
+                        if (entry.getDate().compareTo(Integer.parseInt(starter[2]), Integer.parseInt(starter[1]), Integer.parseInt(starter[0])) < 0) {
                             flag = false;
                         }
                     }
@@ -151,11 +151,11 @@ public class RevExpGui extends RegisterFrame {
                 if (!START.getText().equals("")) {
                     String[] ender = END.getText().split("/");
                     if (CURRENT_INSTANCE.american) {
-                        if (entry.getDate().compare(Integer.parseInt(ender[2]), Integer.parseInt(ender[0]), Integer.parseInt(ender[1])) > 0) {
+                        if (entry.getDate().compareTo(Integer.parseInt(ender[2]), Integer.parseInt(ender[0]), Integer.parseInt(ender[1])) > 0) {
                             flag = false;
                         }
                     } else {
-                        if (entry.getDate().compare(Integer.parseInt(ender[2]), Integer.parseInt(ender[1]), Integer.parseInt(ender[0])) > 0) {
+                        if (entry.getDate().compareTo(Integer.parseInt(ender[2]), Integer.parseInt(ender[1]), Integer.parseInt(ender[0])) > 0) {
                             flag = false;
                         }
                     }

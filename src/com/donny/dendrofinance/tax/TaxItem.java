@@ -1,12 +1,12 @@
 package com.donny.dendrofinance.tax;
 
 import com.donny.dendrofinance.json.*;
-import com.donny.dendrofinance.util.ExportableToJsonObject;
+import com.donny.dendrofinance.util.ExportableToJson;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
 
-public class TaxItem implements ExportableToJsonObject {
+public class TaxItem implements ExportableToJson {
     public final String NAME;
     public final boolean BOUNDED;
     public final BigDecimal BOUND, EXEMPTION;
@@ -95,7 +95,7 @@ public class TaxItem implements ExportableToJsonObject {
         return obj;
     }
 
-    public static class BracketItem implements ExportableToJsonObject {
+    public static class BracketItem implements ExportableToJson {
         public final BigDecimal LOWER_BOUND, RATE;
 
         public BracketItem(BigDecimal bound, BigDecimal rate) {

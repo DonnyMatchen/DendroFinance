@@ -174,10 +174,10 @@ public class ArchiveGui extends RegisterFrame {
             JsonArray arr = new JsonArray();
             for (TransactionEntry entry : entries) {
                 CURRENT_INSTANCE.DATA_HANDLER.deleteTransaction(entry.getUUID());
-                if (entry.getDate().compare(min) < 0) {
+                if (entry.getDate().compareTo(min) < 0) {
                     min = entry.getDate();
                 }
-                if (entry.getDate().compare(max) > 0) {
+                if (entry.getDate().compareTo(max) > 0) {
                     max = entry.getDate();
                 }
                 try {

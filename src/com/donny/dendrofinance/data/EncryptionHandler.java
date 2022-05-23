@@ -53,43 +53,50 @@ public class EncryptionHandler {
         SecretKeySpec[] keys = getKeys(newKey);
         if (keys[0] == null || keys[1] == null) {
             CURRENT_INSTANCE.LOG_HANDLER.fatal(getClass(), "Password Hashing Failed!");
-            CURRENT_INSTANCE.LOG_HANDLER.save();
-            System.exit(1);
+            aesKey = null;
+            bflKey = null;
+        } else {
+            aesKey = keys[0];
+            bflKey = keys[1];
         }
-        aesKey = keys[0];
-        bflKey = keys[1];
+    }
+
+    public boolean keysSet() {
+        return aesKey != null && bflKey != null;
     }
 
     public String encrypt(String text) {
-        try {
-            Cipher aesCipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
-            Cipher bflCipher = Cipher.getInstance("Blowfish");
-            aesCipher.init(Cipher.ENCRYPT_MODE, aesKey);
-            bflCipher.init(Cipher.ENCRYPT_MODE, bflKey);
-            return Base64.getEncoder().encodeToString(bflCipher.doFinal(aesCipher.doFinal(text.getBytes(Charset.forName("unicode")))));
-        } catch (BadPaddingException | IllegalBlockSizeException | InvalidKeyException | NoSuchPaddingException |
-                 NoSuchAlgorithmException ex) {
-            CURRENT_INSTANCE.LOG_HANDLER.fatal(getClass(), "Incorrect password used.");
-            CURRENT_INSTANCE.LOG_HANDLER.save();
-            ex.printStackTrace();
-            System.exit(1);
+        if (keysSet()) {
+            try {
+                Cipher aesCipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
+                Cipher bflCipher = Cipher.getInstance("Blowfish");
+                aesCipher.init(Cipher.ENCRYPT_MODE, aesKey);
+                bflCipher.init(Cipher.ENCRYPT_MODE, bflKey);
+                return Base64.getEncoder().encodeToString(bflCipher.doFinal(aesCipher.doFinal(text.getBytes(Charset.forName("unicode")))));
+            } catch (BadPaddingException | IllegalBlockSizeException | InvalidKeyException | NoSuchPaddingException |
+                     NoSuchAlgorithmException ex) {
+                CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Something went wrong attempting to encrypt");
+            }
         }
+        CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Incorrect password");
         return null;
     }
 
     public String decrypt(String text) {
-        try {
-            Cipher aesCipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
-            Cipher bflCipher = Cipher.getInstance("Blowfish");
-            aesCipher.init(Cipher.DECRYPT_MODE, aesKey);
-            bflCipher.init(Cipher.DECRYPT_MODE, bflKey);
-            return new String(aesCipher.doFinal(bflCipher.doFinal(Base64.getDecoder().decode(text))), Charset.forName("Unicode"));
-        } catch (BadPaddingException | NoSuchPaddingException | NoSuchAlgorithmException | IllegalBlockSizeException |
-                 InvalidKeyException ex) {
-            CURRENT_INSTANCE.LOG_HANDLER.fatal(getClass(), "Incorrect password used.");
-            CURRENT_INSTANCE.LOG_HANDLER.save();
-            System.exit(1);
+        if (keysSet()) {
+            try {
+                Cipher aesCipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
+                Cipher bflCipher = Cipher.getInstance("Blowfish");
+                aesCipher.init(Cipher.DECRYPT_MODE, aesKey);
+                bflCipher.init(Cipher.DECRYPT_MODE, bflKey);
+                return new String(aesCipher.doFinal(bflCipher.doFinal(Base64.getDecoder().decode(text))), Charset.forName("Unicode"));
+            } catch (BadPaddingException | NoSuchPaddingException | NoSuchAlgorithmException |
+                     IllegalBlockSizeException |
+                     InvalidKeyException ex) {
+                CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Something went wrong attempting to decrypt");
+            }
         }
+        CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Incorrect password");
         return null;
     }
 }

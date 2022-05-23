@@ -76,7 +76,12 @@ public class FileHandler {
 
     public String readDecrypt(File file) {
         ensure(file.getParentFile());
-        return CURRENT_INSTANCE.ENCRYPTION_HANDLER.decrypt(read(file)).replace("\r", "");
+        String str = CURRENT_INSTANCE.ENCRYPTION_HANDLER.decrypt(read(file));
+        if (str == null) {
+            return null;
+        } else {
+            return str.replace("\r", "");
+        }
     }
 
     public String readDecrypt(File dir, String file) {
@@ -133,7 +138,10 @@ public class FileHandler {
 
     public void writeEncrypt(File file, String output) {
         ensure(file.getParentFile());
-        write(file, CURRENT_INSTANCE.ENCRYPTION_HANDLER.encrypt(output));
+        String str = CURRENT_INSTANCE.ENCRYPTION_HANDLER.encrypt(output);
+        if (str != null) {
+            write(file, str);
+        }
     }
 
     public void writeEncrypt(File dir, String file, String output) {

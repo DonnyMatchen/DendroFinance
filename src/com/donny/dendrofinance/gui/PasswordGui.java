@@ -6,24 +6,13 @@ import com.donny.dendrofinance.gui.customswing.DendroFactory;
 import com.donny.dendrofinance.instance.Instance;
 import com.donny.dendrofinance.json.*;
 
-import javax.crypto.BadPaddingException;
-import javax.crypto.Cipher;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
-import javax.crypto.spec.SecretKeySpec;
 import javax.swing.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.io.File;
 import java.math.BigDecimal;
 import java.math.MathContext;
-import java.nio.charset.Charset;
-import java.security.InvalidKeyException;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Base64;
 import java.util.Comparator;
 
 /**
@@ -33,15 +22,11 @@ public class PasswordGui extends JFrame {
     public final String[] ARGS;
     public final ArrayList<JsonObject> PROFILES;
     private final Instance CURRENT_INSTANCE;
-    //Swin components
     private final JLabel A, B;
     private final JPasswordField PASSWORD;
     private final JComboBox<String> PROFILE;
     private final JButton ENTER, NEW_INSTANCE, EDIT_PROFILE, NEW_PROFILE;
-    //other variables
     public boolean done = false;
-    //key ring
-    private SecretKeySpec aesKey, bflKey;
 
     public PasswordGui(String[] args, Instance curInst) {
         super("Log In");
@@ -157,33 +142,6 @@ public class PasswordGui extends JFrame {
         CURRENT_INSTANCE.LOG_HANDLER.trace(getClass(), "PasswordGui created");
     }
 
-    /**
-     * @param key a password as a raw byte array
-     * @return <code>SecretKeySpec[]</code>
-     * 0 = AES key
-     * 1 = Blowfish key
-     */
-    private static SecretKeySpec[] setKey(char[] key) {
-        try {
-            byte[] hash = new String(key).getBytes(Charset.forName("unicode"));
-            MessageDigest sha = MessageDigest.getInstance("SHA-512");
-            hash = sha.digest(hash);
-            byte[] aesHash = new byte[32];
-            byte[] bflHash = new byte[32];
-            System.arraycopy(hash, 0, aesHash, 0, 32);
-            System.arraycopy(hash, 32, bflHash, 0, 32);
-            Arrays.fill(key, (char) 0);
-            return new SecretKeySpec[]{
-                    new SecretKeySpec(aesHash, "AES"),
-                    new SecretKeySpec(bflHash, "Blowfish")
-            };
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-            Arrays.fill(key, (char) 0);
-            return null;
-        }
-    }
-
     private void enterPressed() {
         for (JsonObject prof : PROFILES) {
             String name = prof.getString("name").getString();
@@ -192,15 +150,8 @@ public class PasswordGui extends JFrame {
                 break;
             }
         }
-        SecretKeySpec[] keys = setKey(PASSWORD.getPassword());
-        aesKey = keys[0];
-        bflKey = keys[1];
+        CURRENT_INSTANCE.ENCRYPTION_HANDLER.changeKey(PASSWORD.getPassword());
         PASSWORD.setText("");
-        if (aesKey == null || bflKey == null) {
-            CURRENT_INSTANCE.LOG_HANDLER.fatal(getClass(), "Password Hashing Failed!");
-            CURRENT_INSTANCE.LOG_HANDLER.save();
-            System.exit(1);
-        }
         File directory = new File(CURRENT_INSTANCE.data.getPath() + File.separator + "Entries");
         boolean flag = true, noTB = false;
         File[] directoryList = directory.listFiles();
@@ -234,45 +185,6 @@ public class PasswordGui extends JFrame {
             done = true;
             setVisible(false);
         }
-    }
-
-    public void changeKey(char[] newKey) {
-        SecretKeySpec[] keys = setKey(newKey);
-        aesKey = keys[0];
-        bflKey = keys[1];
-    }
-
-    public String encrypt(String text) {
-        try {
-            Cipher aesCipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
-            Cipher bflCipher = Cipher.getInstance("Blowfish");
-            aesCipher.init(Cipher.ENCRYPT_MODE, aesKey);
-            bflCipher.init(Cipher.ENCRYPT_MODE, bflKey);
-            return Base64.getEncoder().encodeToString(bflCipher.doFinal(aesCipher.doFinal(text.getBytes(Charset.forName("unicode")))));
-        } catch (BadPaddingException | IllegalBlockSizeException | InvalidKeyException | NoSuchPaddingException |
-                 NoSuchAlgorithmException ex) {
-            CURRENT_INSTANCE.LOG_HANDLER.fatal(getClass(), "Incorrect password used.");
-            CURRENT_INSTANCE.LOG_HANDLER.save();
-            ex.printStackTrace();
-            System.exit(1);
-        }
-        return null;
-    }
-
-    public String decrypt(String text) {
-        try {
-            Cipher aesCipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
-            Cipher bflCipher = Cipher.getInstance("Blowfish");
-            aesCipher.init(Cipher.DECRYPT_MODE, aesKey);
-            bflCipher.init(Cipher.DECRYPT_MODE, bflKey);
-            return new String(aesCipher.doFinal(bflCipher.doFinal(Base64.getDecoder().decode(text))), Charset.forName("Unicode"));
-        } catch (BadPaddingException | NoSuchPaddingException | NoSuchAlgorithmException | IllegalBlockSizeException |
-                 InvalidKeyException ex) {
-            CURRENT_INSTANCE.LOG_HANDLER.fatal(getClass(), "Incorrect password used.");
-            CURRENT_INSTANCE.LOG_HANDLER.save();
-            System.exit(1);
-        }
-        return null;
     }
 
     public void loadConfig(JsonObject config) {

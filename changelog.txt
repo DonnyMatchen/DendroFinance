@@ -1,3 +1,13 @@
+v0.5.6
+* separated encryption handling and password gui
+X overhaul password system
+  X implemented logout functionality
+  X implemented password change functionality
+  X implement specific password for archives
+    X added encrypted export and import functionality
+    X removed export from profile flags
+      X reworked export
+
 v0.5.5
 * rearranged fields in defaults
 * proofread changelog

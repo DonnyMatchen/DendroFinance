@@ -51,7 +51,7 @@ public class Instance {
 
     //flags, api keys, and other minor alterable things
     public MathContext precision;
-    public boolean log, export, american, day;
+    public boolean log, american, day;
     public String mainTicker, main__Ticker;
     public LogHandler.LogLevel logLevel;
     public LCurrency main;
@@ -427,9 +427,6 @@ public class Instance {
     public void conclude(boolean save) {
         if (save) {
             save();
-        }
-        if (export) {
-            EXPORT_HANDLER.export();
         }
         if (log) {
             LOG_HANDLER.save();

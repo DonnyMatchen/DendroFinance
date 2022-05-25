@@ -203,12 +203,6 @@ public class PasswordGui extends JFrame {
             if (flags.contains("L")) {
                 CURRENT_INSTANCE.log = true;
             }
-            if (flags.contains("X")) {
-                CURRENT_INSTANCE.export = true;
-            }
-            if (flags.contains("x")) {
-                CURRENT_INSTANCE.export = false;
-            }
             if (flags.contains("A")) {
                 CURRENT_INSTANCE.american = true;
             }
@@ -242,7 +236,6 @@ public class PasswordGui extends JFrame {
         JsonObject config = new JsonObject();
         config.put("name", new JsonString(name));
         CURRENT_INSTANCE.log = false;
-        CURRENT_INSTANCE.export = false;
         CURRENT_INSTANCE.american = true;
         CURRENT_INSTANCE.day = false;
         config.put("flags", new JsonString("lxAd"));

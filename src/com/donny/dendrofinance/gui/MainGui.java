@@ -153,15 +153,24 @@ public class MainGui extends JFrame {
                 });
                 JMenuItem save = new JMenuItem("Save");
                 save.addActionListener(event -> CURRENT_INSTANCE.save());
+
                 JMenuItem imp = new JMenuItem("Import");
                 imp.addActionListener(event -> CURRENT_INSTANCE.IMPORT_HANDLER.load());
                 JMenuItem exp = new JMenuItem("Export");
                 exp.addActionListener(event -> CURRENT_INSTANCE.EXPORT_HANDLER.export());
 
+                JMenuItem logout = new JMenuItem("Log OUt");
+
+                JMenuItem change = new JMenuItem("Change Password");
+
                 file.add(rel);
                 file.add(save);
+                file.add(new JSeparator());
                 file.add(imp);
                 file.add(exp);
+                file.add(new JSeparator());
+                file.add(logout);
+                file.add(change);
 
                 //data
                 JMenu data = new JMenu("Data");

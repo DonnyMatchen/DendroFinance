@@ -1,10 +1,13 @@
 package com.donny.dendrofinance.data;
 
+import com.donny.dendrofinance.gui.customswing.AlertGui;
+import com.donny.dendrofinance.gui.password.UnkPasswordGui;
 import com.donny.dendrofinance.instance.Instance;
 import com.donny.dendrofinance.json.JsonArray;
 import com.donny.dendrofinance.json.JsonFormattingException;
 import com.donny.dendrofinance.json.JsonItem;
 
+import javax.swing.*;
 import java.io.*;
 import java.math.BigDecimal;
 import java.net.URL;
@@ -88,20 +91,26 @@ public class FileHandler {
         return readDecrypt(new File(dir.getPath() + File.separator + file));
     }
 
-    public String readDecryptUnknownPassword(File file) {
+    public String readDecryptUnknownPassword(File file, JFrame caller) {
         ensure(file.getParentFile());
-        EncryptionHandler decrypt = new EncryptionHandler(CURRENT_INSTANCE);
-        //TODO add password gui
-        String str = decrypt.decrypt(read(file));
-        if (str == null) {
-            return null;
+        EncryptionHandler decrypt = UnkPasswordGui.getTestPassword(caller, file.getName(), CURRENT_INSTANCE);
+        if (decrypt != null) {
+            String str = decrypt.decrypt(read(file));
+            if (str == null) {
+                new AlertGui(caller, "Password Incorrect", CURRENT_INSTANCE).setVisible(true);
+                return null;
+            } else {
+                new AlertGui(caller, "Password Correct", CURRENT_INSTANCE).setVisible(true);
+                return str.replace("\r", "");
+            }
         } else {
-            return str.replace("\r", "");
+            CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Password Entry Failed");
+            return null;
         }
     }
 
-    public String readDecryptUnknownPassword(File dir, String file) {
-        return readDecryptUnknownPassword(new File(dir.getPath() + File.separator + file));
+    public String readDecryptUnknownPassword(File dir, String file, JFrame caller) {
+        return readDecryptUnknownPassword(new File(dir.getPath() + File.separator + file), caller);
     }
 
     public byte[] getTemplate(String path) {

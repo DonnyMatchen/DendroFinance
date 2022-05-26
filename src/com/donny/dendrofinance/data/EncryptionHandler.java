@@ -7,6 +7,7 @@ import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.spec.SecretKeySpec;
+import java.io.File;
 import java.nio.charset.Charset;
 import java.security.InvalidKeyException;
 import java.security.MessageDigest;
@@ -98,5 +99,29 @@ public class EncryptionHandler {
         }
         CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Incorrect password");
         return null;
+    }
+
+    public boolean checkPassword() {
+        File directory = new File(CURRENT_INSTANCE.data.getPath() + File.separator + "Entries");
+        boolean flag = true, noTB = false;
+        File[] directoryList = directory.listFiles();
+        if (directory.isDirectory() && directoryList != null) {
+            for (File f : directoryList) {
+                if (f.getName().contains(".xtbl")) {
+                    String plain = decrypt(CURRENT_INSTANCE.FILE_HANDLER.read(f));
+                    if (plain != null) {
+                        if (plain.indexOf("passwd") != 0) {
+                            flag = false;
+                            break;
+                        }
+                    } else {
+                        flag = false;
+                        break;
+                    }
+                }
+            }
+            return flag;
+        }
+        return true;
     }
 }

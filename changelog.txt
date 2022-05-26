@@ -1,15 +1,19 @@
 v0.6.0
+* added modal frame
+* moved RegisterFrame to gui.customswing
 * separated encryption handling and password gui
 -> overhaul password system
   X implemented logout
   X implemented password change
   X reworked ArchiveGui
     X implemented specific password for archives
-  -> added gui for unexpected password
+  * added gui for un-assumed password
 -> reworked import and export
   * removed export from profile flags
+  * added .xtbl option to import
+    * password not assumed
   * added import gui
-  X added export gui
+  -> added export gui
 
 v0.5.5
 * rearranged fields in defaults

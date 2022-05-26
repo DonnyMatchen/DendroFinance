@@ -1,5 +1,6 @@
 package com.donny.dendrofinance.gui.menu.util.taxgui;
 
+import com.donny.dendrofinance.gui.customswing.ModalFrame;
 import com.donny.dendrofinance.gui.customswing.DendroFactory;
 import com.donny.dendrofinance.instance.Instance;
 import com.donny.dendrofinance.tax.TaxItem;
@@ -9,7 +10,7 @@ import javax.swing.table.DefaultTableModel;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 
-public class NewTaxGui extends JDialog {
+public class NewTaxGui extends ModalFrame {
     private final JTextField NAME, BOUND, EXEMPT;
     private final JLabel A, B, C, D;
     private final JScrollPane PANE;
@@ -18,7 +19,7 @@ public class NewTaxGui extends JDialog {
     private final JButton SAVE, CANCEL, NEW, DELETE;
 
     public NewTaxGui(TaxGui caller, Instance curInst) {
-        super(caller, "New Tax", true);
+        super(caller, "New Tax", curInst);
 
         //draw gui
         {
@@ -53,17 +54,17 @@ public class NewTaxGui extends JDialog {
                 for (int i = 0; i < TABLE.getRowCount(); i++) {
                     try {
                         list.add(new BigDecimal[]{
-                                curInst.cleanNumber((String) TABLE_ACCESS.getValueAt(i, 0)),
-                                curInst.cleanNumber((String) TABLE_ACCESS.getValueAt(i, 1))
+                                CURRENT_INSTANCE.cleanNumber((String) TABLE_ACCESS.getValueAt(i, 0)),
+                                CURRENT_INSTANCE.cleanNumber((String) TABLE_ACCESS.getValueAt(i, 1))
                         });
                     } catch (NumberFormatException ex) {
-                        curInst.LOG_HANDLER.error(getClass(), "Bad bracket: ["
+                        CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Bad bracket: ["
                                 + TABLE_ACCESS.getValueAt(i, 0) + ", "
                                 + TABLE_ACCESS.getValueAt(i, 1) + "]");
                     }
                 }
                 item.setBrackets(list);
-                curInst.TAX_ITEMS.add(item);
+                CURRENT_INSTANCE.TAX_ITEMS.add(item);
                 caller.updateTaxes();
                 dispose();
             });

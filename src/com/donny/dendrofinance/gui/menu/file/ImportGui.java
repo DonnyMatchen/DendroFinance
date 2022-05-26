@@ -1,7 +1,7 @@
 package com.donny.dendrofinance.gui.menu.file;
 
 import com.donny.dendrofinance.gui.MainGui;
-import com.donny.dendrofinance.gui.RegisterFrame;
+import com.donny.dendrofinance.gui.customswing.RegisterFrame;
 import com.donny.dendrofinance.gui.customswing.DendroFactory;
 import com.donny.dendrofinance.instance.Instance;
 
@@ -31,7 +31,7 @@ public class ImportGui extends RegisterFrame {
             IMPORT = DendroFactory.getButton("Import");
             IMPORT.addActionListener(event -> {
                 if (LIST.getSelectedIndex() >= 0) {
-                    CURRENT_INSTANCE.IMPORT_HANDLER.load(DIR + File.separator + LIST_ACCESS.get(LIST.getSelectedIndex()));
+                    CURRENT_INSTANCE.IMPORT_HANDLER.load(DIR + File.separator + LIST_ACCESS.get(LIST.getSelectedIndex()), this);
                     updateList();
                 }
             });
@@ -39,7 +39,7 @@ public class ImportGui extends RegisterFrame {
             IMPORT_ALL.addActionListener(event -> {
                 if (LIST_ACCESS.getSize() > 0) {
                     for (int i = 0; i < LIST_ACCESS.getSize(); i++) {
-                        CURRENT_INSTANCE.IMPORT_HANDLER.load(DIR + File.separator + LIST_ACCESS.get(i));
+                        CURRENT_INSTANCE.IMPORT_HANDLER.load(DIR + File.separator + LIST_ACCESS.get(i), this);
                     }
                     updateList();
                 }
@@ -51,14 +51,10 @@ public class ImportGui extends RegisterFrame {
                 getContentPane().setLayout(main);
                 main.setHorizontalGroup(
                         main.createSequentialGroup().addContainerGap().addGroup(
-                                main.createParallelGroup(GroupLayout.Alignment.CENTER).addGroup(
-                                        main.createSequentialGroup().addComponent(
-                                                A, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
-                                        ).addGap(
-                                                DendroFactory.SMALL_GAP
-                                        ).addComponent(
-                                                PANE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
-                                        )
+                                main.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(
+                                        A, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                ).addComponent(
+                                        PANE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
                                 ).addGroup(
                                         main.createSequentialGroup().addComponent(
                                                 IMPORT, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
@@ -71,13 +67,11 @@ public class ImportGui extends RegisterFrame {
                         ).addContainerGap()
                 );
                 main.setVerticalGroup(
-                        main.createSequentialGroup().addContainerGap().addGroup(
-                                main.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(
-                                        A, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
-                                ).addComponent(
-                                        PANE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
-                                )
-                        ).addGap(DendroFactory.SMALL_GAP).addGroup(
+                        main.createSequentialGroup().addContainerGap().addComponent(
+                                A, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                        ).addGap(DendroFactory.SMALL_GAP).addComponent(
+                                PANE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
+                        ).addGap(DendroFactory.MEDIUM_GAP).addGroup(
                                 main.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(
                                         IMPORT, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                 ).addComponent(
@@ -86,6 +80,7 @@ public class ImportGui extends RegisterFrame {
                         ).addContainerGap()
                 );
             }
+            pack();
         }
         updateList();
     }

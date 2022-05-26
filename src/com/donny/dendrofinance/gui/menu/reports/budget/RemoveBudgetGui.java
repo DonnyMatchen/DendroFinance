@@ -1,20 +1,18 @@
 package com.donny.dendrofinance.gui.menu.reports.budget;
 
 import com.donny.dendrofinance.entry.BudgetEntry;
+import com.donny.dendrofinance.gui.customswing.ModalFrame;
 import com.donny.dendrofinance.gui.customswing.DendroFactory;
 import com.donny.dendrofinance.instance.Instance;
 
 import javax.swing.*;
 
-public class RemoveBudgetGui extends JDialog {
-    private final Instance CURRENT_INSTANCE;
-
+public class RemoveBudgetGui extends ModalFrame {
     private JLabel A;
     private JButton NO, YES;
 
     public RemoveBudgetGui(BudgetGui caller, String budget, Instance curInst) {
-        super(caller, "Remove Budget", true);
-        CURRENT_INSTANCE = curInst;
+        super(caller, "Remove Budget", curInst);
         if (budget == null) {
             dispose();
         } else {

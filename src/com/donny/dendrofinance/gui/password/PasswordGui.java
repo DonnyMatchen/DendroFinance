@@ -152,40 +152,9 @@ public class PasswordGui extends JFrame {
         }
         CURRENT_INSTANCE.ENCRYPTION_HANDLER.changeKey(PASSWORD.getPassword());
         PASSWORD.setText("");
-        if (CURRENT_INSTANCE.ENCRYPTION_HANDLER.keysSet()) {
-            File directory = new File(CURRENT_INSTANCE.data.getPath() + File.separator + "Entries");
-            boolean flag = true, noTB = false;
-            File[] directoryList = directory.listFiles();
-            if (directory.isDirectory() && directoryList != null) {
-                for (File f : directoryList) {
-                    if (f.getName().contains(".xtbl")) {
-                        String plain = CURRENT_INSTANCE.FILE_HANDLER.readDecrypt(f);
-                        if (plain != null) {
-                            if (plain.indexOf("passwd") != 0) {
-                                flag = false;
-                                break;
-                            }
-                        } else {
-                            flag = false;
-                            break;
-                        }
-                    }
-                }
-                if (flag) {
-                    done = true;
-                    setVisible(false);
-                } else {
-                    CURRENT_INSTANCE.LOG_HANDLER.fatal(getClass(), "Incorrect Password Entered");
-                    CURRENT_INSTANCE.LOG_HANDLER.save();
-                    System.exit(1);
-                }
-            } else {
-                noTB = true;
-            }
-            if (noTB) {
-                done = true;
-                setVisible(false);
-            }
+        if (CURRENT_INSTANCE.ENCRYPTION_HANDLER.keysSet() && CURRENT_INSTANCE.ENCRYPTION_HANDLER.checkPassword()) {
+            done = true;
+            setVisible(false);
         } else {
             CURRENT_INSTANCE.LOG_HANDLER.fatal(getClass(), "Incorrect Password Entered");
             CURRENT_INSTANCE.LOG_HANDLER.save();

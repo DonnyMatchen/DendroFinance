@@ -1,6 +1,7 @@
 package com.donny.dendrofinance.gui.addedit;
 
 import com.donny.dendrofinance.gui.MainGui;
+import com.donny.dendrofinance.gui.customswing.ModalFrame;
 import com.donny.dendrofinance.gui.customswing.DendroFactory;
 import com.donny.dendrofinance.gui.customswing.SearchBox;
 import com.donny.dendrofinance.gui.form.Validation;
@@ -10,7 +11,7 @@ import com.donny.dendrofinance.instance.Instance;
 import javax.swing.*;
 import java.util.ArrayList;
 
-public class SpecialTransactionEntryGui extends JDialog {
+public class SpecialTransactionEntryGui extends ModalFrame {
     private final MainGui MAIN;
     private final JTabbedPane BACK;
     private final JPanel BS, IP, CT, TT, TD;
@@ -34,11 +35,9 @@ public class SpecialTransactionEntryGui extends JDialog {
             CT_CANCEL, CT_SAVE,
             TT_CANCEL, TT_SAVE,
             TD_CANCEL, TD_SAVE;
-    private final Instance CURRENT_INSTANCE;
 
     public SpecialTransactionEntryGui(MainGui caller, Instance curInst) {
-        super(caller, "New Special Transaction Entry", true);
-        CURRENT_INSTANCE = curInst;
+        super(caller, "New Special Transaction Entry", curInst);
         MAIN = caller;
         //draw GUI
         {

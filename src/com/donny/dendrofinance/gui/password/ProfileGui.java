@@ -1,5 +1,6 @@
 package com.donny.dendrofinance.gui.password;
 
+import com.donny.dendrofinance.gui.customswing.ModalFrame;
 import com.donny.dendrofinance.gui.customswing.DendroFactory;
 import com.donny.dendrofinance.gui.form.Validation;
 import com.donny.dendrofinance.gui.form.ValidationFailedException;
@@ -12,9 +13,7 @@ import com.donny.dendrofinance.json.JsonString;
 import javax.swing.*;
 import java.math.BigDecimal;
 
-public class ProfileGui extends JDialog {
-    private final Instance CURRENT_INSTANCE;
-
+public class ProfileGui extends ModalFrame {
     private final JPanel FLAGS;
     private final JLabel A, B, C, D, E, F;
     private final JCheckBox LOG, AMER, DAY;
@@ -23,8 +22,7 @@ public class ProfileGui extends JDialog {
     private final PasswordGui CALLER;
 
     public ProfileGui(PasswordGui caller, JsonObject config, Instance curInst) {
-        super(caller, "Profile Gui", true);
-        CURRENT_INSTANCE = curInst;
+        super(caller, "Profile Gui", curInst);
         CALLER = caller;
         {
             setDefaultCloseOperation(DISPOSE_ON_CLOSE);

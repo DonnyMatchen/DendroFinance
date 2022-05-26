@@ -1,6 +1,7 @@
 package com.donny.dendrofinance.gui.menu.data.backing;
 
 import com.donny.dendrofinance.data.backingtable.BackingTableCore;
+import com.donny.dendrofinance.gui.customswing.ModalFrame;
 import com.donny.dendrofinance.gui.customswing.DendroFactory;
 import com.donny.dendrofinance.instance.Instance;
 import com.donny.dendrofinance.json.JsonFormattingException;
@@ -8,14 +9,14 @@ import com.donny.dendrofinance.util.ExportableToJson;
 
 import javax.swing.*;
 
-public class DeleteBackingGui<E extends ExportableToJson> extends JDialog {
+public class DeleteBackingGui<E extends ExportableToJson> extends ModalFrame {
     private final JLabel A;
     private final JScrollPane PANE;
     private final JTextArea TEXT;
     private final JButton CANCEL, DELETE;
 
     public DeleteBackingGui(BackingTableGui<E> caller, BackingTableCore<E> core, int index, Instance curInst) {
-        super(caller, "Delete " + core.getName(false), true);
+        super(caller, "Delete " + core.getName(false), curInst);
 
         //draw gui
         {
@@ -26,7 +27,7 @@ public class DeleteBackingGui<E extends ExportableToJson> extends JDialog {
             try {
                 TEXT.setText(core.getElement(index).export().toString());
             } catch (JsonFormattingException ex) {
-                curInst.LOG_HANDLER.error(getClass(), "Malformed object" + core.getElement(index));
+                CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Malformed object" + core.getElement(index));
                 dispose();
             }
             CANCEL = DendroFactory.getButton("Cancel");

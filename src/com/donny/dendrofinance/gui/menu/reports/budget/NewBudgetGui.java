@@ -1,22 +1,21 @@
 package com.donny.dendrofinance.gui.menu.reports.budget;
 
 import com.donny.dendrofinance.entry.BudgetEntry;
+import com.donny.dendrofinance.gui.customswing.ModalFrame;
 import com.donny.dendrofinance.gui.customswing.DendroFactory;
 import com.donny.dendrofinance.instance.Instance;
 
 import javax.swing.*;
 
-public class NewBudgetGui extends JDialog {
+public class NewBudgetGui extends ModalFrame {
     public final BudgetGui CALLER;
-    private final Instance CURRENT_INSTANCE;
     private final JLabel A, B;
     private final JTextField NAME;
     private final JComboBox<String> TEMPLATE;
     private final JButton CANCEL, OK;
 
     public NewBudgetGui(BudgetGui caller, Instance curInst) {
-        super(caller, "New Budget", true);
-        CURRENT_INSTANCE = curInst;
+        super(caller, "New Budget", curInst);
         CALLER = caller;
         //draw gui
         {

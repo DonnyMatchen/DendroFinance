@@ -5,6 +5,7 @@ import com.donny.dendrofinance.account.AccountWrapper;
 import com.donny.dendrofinance.currency.LCurrency;
 import com.donny.dendrofinance.entry.TransactionEntry;
 import com.donny.dendrofinance.gui.MainGui;
+import com.donny.dendrofinance.gui.customswing.ModalFrame;
 import com.donny.dendrofinance.gui.customswing.DendroFactory;
 import com.donny.dendrofinance.gui.customswing.ItemField;
 import com.donny.dendrofinance.gui.customswing.SearchBox;
@@ -21,10 +22,9 @@ import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Vector;
 
-public class NewTransactionEntryGui extends JDialog {
+public class NewTransactionEntryGui extends ModalFrame {
     public final MainGui MAIN;
     public final long UUID;
-    private final Instance CURRENT_INSTANCE;
     private final JTabbedPane BACK;
     private final JPanel SIMP_TAB, ADV_TAB, META_TAB;
     private final JLabel A, B, C, D,
@@ -50,8 +50,7 @@ public class NewTransactionEntryGui extends JDialog {
     }
 
     public NewTransactionEntryGui(MainGui caller, long uuid, Instance curInst) {
-        super(caller, (uuid == 0 ? "New" : "Edit") + " Transaction Entry", true);
-        CURRENT_INSTANCE = curInst;
+        super(caller, (uuid == 0 ? "New" : "Edit") + " Transaction Entry", curInst);
         MAIN = caller;
         UUID = uuid;
         //draw gui
@@ -85,12 +84,12 @@ public class NewTransactionEntryGui extends JDialog {
                 C5 = new JTextField();
                 C6 = new JTextField();
 
-                A1 = new SearchBox("Account 1", curInst.getDCAccountsAsStrings());
-                A2 = new SearchBox("Account 2", curInst.getDCAccountsAsStrings());
-                A3 = new SearchBox("Account 3", curInst.getDCAccountsAsStrings());
-                A4 = new SearchBox("Account 4", curInst.getDCAccountsAsStrings());
-                A5 = new SearchBox("Account 5", curInst.getDCAccountsAsStrings());
-                A6 = new SearchBox("Account 6", curInst.getDCAccountsAsStrings());
+                A1 = new SearchBox("Account 1", CURRENT_INSTANCE.getDCAccountsAsStrings());
+                A2 = new SearchBox("Account 2", CURRENT_INSTANCE.getDCAccountsAsStrings());
+                A3 = new SearchBox("Account 3", CURRENT_INSTANCE.getDCAccountsAsStrings());
+                A4 = new SearchBox("Account 4", CURRENT_INSTANCE.getDCAccountsAsStrings());
+                A5 = new SearchBox("Account 5", CURRENT_INSTANCE.getDCAccountsAsStrings());
+                A6 = new SearchBox("Account 6", CURRENT_INSTANCE.getDCAccountsAsStrings());
 
                 B1 = new JComboBox<>();
                 B1.setModel(new DefaultComboBoxModel<>(new String[]{"Debit", "Credit", "Tax", "Tracking"}));

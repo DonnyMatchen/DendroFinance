@@ -1,15 +1,16 @@
 package com.donny.dendrofinance.gui;
 
 import com.donny.dendrofinance.gui.customswing.DendroFactory;
+import com.donny.dendrofinance.gui.customswing.ModalFrame;
 
 import javax.swing.*;
 
-public class ClosePrompt extends JDialog {
+public class ClosePrompt extends ModalFrame {
     private final JLabel A;
     private final JButton CANCEL, D_SAVE, SAVE;
 
     public ClosePrompt(MainGui caller) {
-        super(caller, "Close", true);
+        super(caller, "Close", null);
 
         //make gui
         {

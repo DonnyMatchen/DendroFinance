@@ -2,6 +2,7 @@ package com.donny.dendrofinance.data;
 
 import com.donny.dendrofinance.entry.BudgetEntry;
 import com.donny.dendrofinance.entry.TransactionEntry;
+import com.donny.dendrofinance.gui.MainGui;
 import com.donny.dendrofinance.instance.Instance;
 import com.donny.dendrofinance.json.JsonArray;
 import com.donny.dendrofinance.json.JsonFormattingException;
@@ -10,6 +11,7 @@ import com.donny.dendrofinance.json.JsonObject;
 import com.donny.dendrofinance.types.LAccountSet;
 import com.donny.dendrofinance.types.LDate;
 
+import javax.swing.*;
 import java.io.File;
 import java.util.Base64;
 
@@ -24,13 +26,15 @@ public class ImportHandler {
     /*
      * It is expected that JSON imports might be encrypted, but CSVs never will be
      */
-    public final void load(String path) {
+    public final void load(String path, JFrame caller) {
         File file = new File(path);
         if (file.exists()) {
             if (path.toLowerCase().contains(".csv")) {
                 loadCSV(file);
             } else if (path.toLowerCase().contains(".json")) {
                 loadJSON(file);
+            } else if (path.toLowerCase().contains(".xtbl")) {
+                loadXTBL(file, caller);
             }
         }
     }
@@ -61,14 +65,7 @@ public class ImportHandler {
 
     public void loadJSON(File file) {
         boolean imported = false;
-        String raw = CURRENT_INSTANCE.FILE_HANDLER.read(file);
         if (file.getName().toLowerCase().contains("transaction")) {
-            try {
-                Base64.getDecoder().decode(raw);
-                raw = CURRENT_INSTANCE.FILE_HANDLER.readDecryptUnknownPassword(file);
-            } catch (IllegalArgumentException ex) {
-                CURRENT_INSTANCE.LOG_HANDLER.info(this.getClass(), "the following file does not appear to have been encrypted:\n" + file.getPath());
-            }
             try {
                 JsonArray array = (JsonArray) JsonItem.sanitizeDigest(CURRENT_INSTANCE.FILE_HANDLER.read(file));
                 for (JsonObject obj : array.getObjectArray()) {
@@ -81,6 +78,40 @@ public class ImportHandler {
         } else if (file.getName().toLowerCase().contains("budget")) {
             try {
                 JsonArray array = (JsonArray) JsonItem.sanitizeDigest(CURRENT_INSTANCE.FILE_HANDLER.read(file));
+                for (JsonObject obj : array.getObjectArray()) {
+                    CURRENT_INSTANCE.DATA_HANDLER.addBudget(new BudgetEntry(obj, CURRENT_INSTANCE));
+                }
+                imported = true;
+            } catch (JsonFormattingException e) {
+                CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Malformed Import File:\n" + file.getPath());
+            }
+        }
+        if (imported) {
+            CURRENT_INSTANCE.FILE_HANDLER.delete(file);
+        }
+    }
+
+    public void loadXTBL(File file, JFrame caller) {
+        boolean imported = false;
+        if (file.getName().toLowerCase().contains("transaction")) {
+            String raw = CURRENT_INSTANCE.FILE_HANDLER.readDecryptUnknownPassword(file, caller);
+            if (raw == null) {
+                CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Incorrect password for file: " + file.getPath());
+            } else {
+                try {
+                    JsonArray array = (JsonArray) JsonItem.sanitizeDigest(raw.replace("passwd", ""));
+                    for (JsonObject obj : array.getObjectArray()) {
+                        CURRENT_INSTANCE.DATA_HANDLER.addTransaction(new TransactionEntry(obj, CURRENT_INSTANCE));
+                    }
+                    imported = true;
+                } catch (JsonFormattingException e) {
+                    CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Malformed Import File:\n" + file.getPath());
+                }
+            }
+        } else if (file.getName().toLowerCase().contains("budget")) {
+            try {
+                String raw = CURRENT_INSTANCE.FILE_HANDLER.readDecryptUnknownPassword(file, caller);
+                JsonArray array = (JsonArray) JsonItem.sanitizeDigest(raw.replace("passwd", ""));
                 for (JsonObject obj : array.getObjectArray()) {
                     CURRENT_INSTANCE.DATA_HANDLER.addBudget(new BudgetEntry(obj, CURRENT_INSTANCE));
                 }

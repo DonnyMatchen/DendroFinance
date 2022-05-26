@@ -1,4 +1,4 @@
-package com.donny.dendrofinance.gui;
+package com.donny.dendrofinance.gui.password;
 
 import com.donny.dendrofinance.DendroFinance;
 import com.donny.dendrofinance.data.LogHandler;

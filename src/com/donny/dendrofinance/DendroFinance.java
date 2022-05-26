@@ -25,6 +25,22 @@ public class DendroFinance {
     }
 
     public static void main(String[] args) {
-        Instance curInst = new Instance(args);
+        Instance curInst = getInstance(args);
+    }
+
+    public static void nullInstance(Instance instance) {
+        Instance remove = null;
+        for (Instance inst : INSTANCES) {
+            if (instance.equals(inst)) {
+                remove = inst;
+            }
+        }
+        if (remove != null) {
+            INSTANCES.remove(instance);
+        }
+    }
+
+    public static Instance getInstance(String[] args) {
+        return new Instance(args);
     }
 }

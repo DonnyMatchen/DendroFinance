@@ -11,27 +11,26 @@ import com.donny.dendrofinance.types.LAccountSet;
 import com.donny.dendrofinance.types.LDate;
 
 import java.io.File;
+import java.util.Base64;
 
 public class ImportHandler {
     private final Instance CURRENT_INSTANCE;
 
     public ImportHandler(Instance curInst) {
         CURRENT_INSTANCE = curInst;
-        load();
         CURRENT_INSTANCE.LOG_HANDLER.trace(getClass(), "ImportHandler initiated");
     }
 
-    public final void load() {
-        File[] dataList = CURRENT_INSTANCE.data.listFiles();
-        if (dataList != null) {
-            for (File f : dataList) {
-                if (!f.isDirectory()) {
-                    if (f.getName().contains(".csv")) {
-                        loadCSV(f);
-                    } else if (f.getName().contains(".json")) {
-                        loadJSON(f);
-                    }
-                }
+    /*
+     * It is expected that JSON imports might be encrypted, but CSVs never will be
+     */
+    public final void load(String path) {
+        File file = new File(path);
+        if (file.exists()) {
+            if (path.toLowerCase().contains(".csv")) {
+                loadCSV(file);
+            } else if (path.toLowerCase().contains(".json")) {
+                loadJSON(file);
             }
         }
     }
@@ -62,7 +61,14 @@ public class ImportHandler {
 
     public void loadJSON(File file) {
         boolean imported = false;
+        String raw = CURRENT_INSTANCE.FILE_HANDLER.read(file);
         if (file.getName().toLowerCase().contains("transaction")) {
+            try {
+                Base64.getDecoder().decode(raw);
+                raw = CURRENT_INSTANCE.FILE_HANDLER.readDecryptUnknownPassword(file);
+            } catch (IllegalArgumentException ex) {
+                CURRENT_INSTANCE.LOG_HANDLER.info(this.getClass(), "the following file does not appear to have been encrypted:\n" + file.getPath());
+            }
             try {
                 JsonArray array = (JsonArray) JsonItem.sanitizeDigest(CURRENT_INSTANCE.FILE_HANDLER.read(file));
                 for (JsonObject obj : array.getObjectArray()) {

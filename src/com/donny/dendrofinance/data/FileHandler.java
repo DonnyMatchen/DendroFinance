@@ -88,6 +88,22 @@ public class FileHandler {
         return readDecrypt(new File(dir.getPath() + File.separator + file));
     }
 
+    public String readDecryptUnknownPassword(File file) {
+        ensure(file.getParentFile());
+        EncryptionHandler decrypt = new EncryptionHandler(CURRENT_INSTANCE);
+        //TODO add password gui
+        String str = decrypt.decrypt(read(file));
+        if (str == null) {
+            return null;
+        } else {
+            return str.replace("\r", "");
+        }
+    }
+
+    public String readDecryptUnknownPassword(File dir, String file) {
+        return readDecryptUnknownPassword(new File(dir.getPath() + File.separator + file));
+    }
+
     public byte[] getTemplate(String path) {
         return getResource("templates/" + path);
     }

@@ -1,4 +1,4 @@
-package com.donny.dendrofinance.gui;
+package com.donny.dendrofinance.gui.password;
 
 import com.donny.dendrofinance.gui.customswing.DendroFactory;
 import com.donny.dendrofinance.gui.form.Validation;

@@ -13,7 +13,7 @@ import com.donny.dendrofinance.data.*;
 import com.donny.dendrofinance.data.backingtable.*;
 import com.donny.dendrofinance.entry.TransactionEntry;
 import com.donny.dendrofinance.gui.MainGui;
-import com.donny.dendrofinance.gui.PasswordGui;
+import com.donny.dendrofinance.gui.password.PasswordGui;
 import com.donny.dendrofinance.gui.customswing.DendroFactory;
 import com.donny.dendrofinance.gui.customswing.SearchBox;
 import com.donny.dendrofinance.json.*;
@@ -110,15 +110,21 @@ public class Instance {
     public void ensureFolders() {
         File archive = new File(data.getPath() + File.separator + "Archives"),
                 pStock = new File(data.getPath() + File.separator + "P_Stock"),
-                exp = new File(data.getPath() + File.separator + "Exports");
-        if (!archive.exists()) {
-            archive.mkdir();
-        }
-        if (!pStock.exists()) {
-            pStock.mkdir();
-        }
-        if (!exp.exists()) {
-            exp.mkdir();
+                exp = new File(data.getPath() + File.separator + "Exports"),
+                imp = new File(data.getPath() + File.separator + "Imports");
+        while (!archive.exists() || !pStock.exists() || !exp.exists() || !imp.exists()) {
+            if (!archive.exists()) {
+                archive.mkdir();
+            }
+            if (!pStock.exists()) {
+                pStock.mkdir();
+            }
+            if (!exp.exists()) {
+                exp.mkdir();
+            }
+            if (!imp.exists()) {
+                imp.mkdir();
+            }
         }
     }
 

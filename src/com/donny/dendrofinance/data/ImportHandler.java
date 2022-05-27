@@ -31,9 +31,16 @@ public class ImportHandler {
         }
 
         public static ImportMode fromString(String string) {
+            /*
+
+            MODE.addItem("Keep Both");
+            MODE.addItem("Ignore New");
+            MODE.addItem("Replace Old");
+
+             */
             return switch (string.toUpperCase()) {
-                case "IGNORE" -> IGNORE;
-                case "OVERWRITE" -> OVERWRITE;
+                case "IGNORE", "IGNORE NEW" -> IGNORE;
+                case "OVERWRITE", "REPLACE OLD" -> OVERWRITE;
                 default -> KEEP;
             };
         }

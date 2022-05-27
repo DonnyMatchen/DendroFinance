@@ -29,10 +29,9 @@ public class ImportGui extends RegisterFrame {
             B = new JLabel("Mode");
 
             MODE = new JComboBox<>();
-            for (String mode : ImportHandler.ImportMode.getArray()) {
-                MODE.addItem(mode);
-            }
-            MODE.setSelectedItem("KEEP");
+            MODE.addItem("Keep Both");
+            MODE.addItem("Ignore New");
+            MODE.addItem("Replace Old");
 
             PANE = DendroFactory.getScrollPane(false, true);
             LIST = DendroFactory.getList();

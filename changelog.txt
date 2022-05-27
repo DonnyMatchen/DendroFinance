@@ -10,6 +10,7 @@ v0.6.0
   * added gui for un-assumed password
 -> reworked import and export
   * removed export from profile flags
+  * added import modes
   * added .xtbl option to import
     * password not assumed
   * added import gui

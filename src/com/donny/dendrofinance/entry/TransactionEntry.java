@@ -5,6 +5,7 @@ import com.donny.dendrofinance.account.Account;
 import com.donny.dendrofinance.account.AccountWrapper;
 import com.donny.dendrofinance.account.BroadAccountType;
 import com.donny.dendrofinance.currency.LCurrency;
+import com.donny.dendrofinance.data.ImportHandler;
 import com.donny.dendrofinance.entry.meta.*;
 import com.donny.dendrofinance.instance.Instance;
 import com.donny.dendrofinance.json.*;
@@ -30,8 +31,8 @@ public class TransactionEntry extends Entry implements Comparable<TransactionEnt
         metadata = new JsonObject();
     }
 
-    public TransactionEntry(JsonObject obj, Instance curInst) {
-        super(obj, curInst);
+    public TransactionEntry(JsonObject obj, ImportHandler.ImportMode mode, Instance curInst) {
+        super(obj, mode, curInst);
         date = new LDate(obj.getDecimal("date"), curInst);
         entity = obj.getString("entity").getString();
         items = obj.getString("items").getString();

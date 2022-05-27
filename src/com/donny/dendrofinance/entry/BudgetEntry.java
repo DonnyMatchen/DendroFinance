@@ -1,6 +1,7 @@
 package com.donny.dendrofinance.entry;
 
 import com.donny.dendrofinance.account.Account;
+import com.donny.dendrofinance.data.ImportHandler;
 import com.donny.dendrofinance.instance.Instance;
 import com.donny.dendrofinance.json.JsonDecimal;
 import com.donny.dendrofinance.json.JsonFormattingException;
@@ -25,8 +26,8 @@ public class BudgetEntry extends Entry {
         contents = getEmptyBudget(curInst);
     }
 
-    public BudgetEntry(JsonObject obj, Instance curInst) {
-        super(obj, curInst);
+    public BudgetEntry(JsonObject obj, ImportHandler.ImportMode mode, Instance curInst) {
+        super(obj, mode, curInst);
         name = obj.getString("name").getString();
         contents = obj.getObject("contents");
     }

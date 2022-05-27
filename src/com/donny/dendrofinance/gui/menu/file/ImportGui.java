@@ -1,5 +1,6 @@
 package com.donny.dendrofinance.gui.menu.file;
 
+import com.donny.dendrofinance.data.ImportHandler;
 import com.donny.dendrofinance.gui.MainGui;
 import com.donny.dendrofinance.gui.customswing.RegisterFrame;
 import com.donny.dendrofinance.gui.customswing.DendroFactory;
@@ -10,7 +11,8 @@ import java.io.File;
 
 public class ImportGui extends RegisterFrame {
     private final String DIR;
-    private final JLabel A;
+    private final JLabel A, B;
+    private final JComboBox<String> MODE;
     private final JScrollPane PANE;
     private final JList<String> LIST;
     private final DefaultListModel<String> LIST_ACCESS;
@@ -24,6 +26,14 @@ public class ImportGui extends RegisterFrame {
         //draw gui
         {
             A = new JLabel("File");
+            B = new JLabel("Mode");
+
+            MODE = new JComboBox<>();
+            for (String mode : ImportHandler.ImportMode.getArray()) {
+                MODE.addItem(mode);
+            }
+            MODE.setSelectedItem("KEEP");
+
             PANE = DendroFactory.getScrollPane(false, true);
             LIST = DendroFactory.getList();
             LIST_ACCESS = (DefaultListModel<String>) LIST.getModel();
@@ -31,7 +41,9 @@ public class ImportGui extends RegisterFrame {
             IMPORT = DendroFactory.getButton("Import");
             IMPORT.addActionListener(event -> {
                 if (LIST.getSelectedIndex() >= 0) {
-                    CURRENT_INSTANCE.IMPORT_HANDLER.load(DIR + File.separator + LIST_ACCESS.get(LIST.getSelectedIndex()), this);
+                    CURRENT_INSTANCE.IMPORT_HANDLER.load(DIR + File.separator + LIST_ACCESS.get(LIST.getSelectedIndex()),
+                            this,
+                            ImportHandler.ImportMode.fromString((String) MODE.getSelectedItem()));
                     updateList();
                 }
             });
@@ -39,7 +51,9 @@ public class ImportGui extends RegisterFrame {
             IMPORT_ALL.addActionListener(event -> {
                 if (LIST_ACCESS.getSize() > 0) {
                     for (int i = 0; i < LIST_ACCESS.getSize(); i++) {
-                        CURRENT_INSTANCE.IMPORT_HANDLER.load(DIR + File.separator + LIST_ACCESS.get(i), this);
+                        CURRENT_INSTANCE.IMPORT_HANDLER.load(DIR + File.separator + LIST_ACCESS.get(i),
+                                this,
+                                ImportHandler.ImportMode.fromString((String) MODE.getSelectedItem()));
                     }
                     updateList();
                 }
@@ -57,6 +71,12 @@ public class ImportGui extends RegisterFrame {
                                         PANE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
                                 ).addGroup(
                                         main.createSequentialGroup().addComponent(
+                                                B, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                        ).addGap(DendroFactory.SMALL_GAP).addComponent(
+                                                MODE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
+                                        )
+                                ).addGroup(
+                                        main.createSequentialGroup().addComponent(
                                                 IMPORT, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                         ).addGap(
                                                 DendroFactory.SMALL_GAP, DendroFactory.SMALL_GAP, Short.MAX_VALUE
@@ -71,6 +91,12 @@ public class ImportGui extends RegisterFrame {
                                 A, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                         ).addGap(DendroFactory.SMALL_GAP).addComponent(
                                 PANE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
+                        ).addGap(DendroFactory.SMALL_GAP).addGroup(
+                                main.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(
+                                        B, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                ).addComponent(
+                                        MODE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                )
                         ).addGap(DendroFactory.MEDIUM_GAP).addGroup(
                                 main.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(
                                         IMPORT, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE

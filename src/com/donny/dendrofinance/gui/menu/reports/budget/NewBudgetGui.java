@@ -1,22 +1,21 @@
 package com.donny.dendrofinance.gui.menu.reports.budget;
 
 import com.donny.dendrofinance.entry.BudgetEntry;
+import com.donny.dendrofinance.gui.customswing.ModalFrame;
 import com.donny.dendrofinance.gui.customswing.DendroFactory;
 import com.donny.dendrofinance.instance.Instance;
 
 import javax.swing.*;
 
-public class NewBudgetGui extends JDialog {
+public class NewBudgetGui extends ModalFrame {
     public final BudgetGui CALLER;
-    private final Instance CURRENT_INSTANCE;
     private final JLabel A, B;
     private final JTextField NAME;
     private final JComboBox<String> TEMPLATE;
     private final JButton CANCEL, OK;
 
     public NewBudgetGui(BudgetGui caller, Instance curInst) {
-        super(caller, "New Budget", true);
-        CURRENT_INSTANCE = curInst;
+        super(caller, "New Budget", curInst);
         CALLER = caller;
         //draw gui
         {
@@ -31,35 +30,7 @@ public class NewBudgetGui extends JDialog {
             CANCEL = DendroFactory.getButton("Cancel");
             CANCEL.addActionListener(event -> dispose());
             OK = DendroFactory.getButton("Ok");
-            OK.addActionListener(event -> {
-                boolean flag = true;
-                BudgetEntry template = null;
-                if (NAME.getText().equals("")) {
-                    flag = false;
-                }
-                if (flag) {
-                    for (BudgetEntry entry : CURRENT_INSTANCE.DATA_HANDLER.readBudgets()) {
-                        if (entry.getName().equalsIgnoreCase(NAME.getText())) {
-                            flag = false;
-                            break;
-                        }
-                        if (entry.getName().equals(TEMPLATE.getSelectedItem().toString())) {
-                            template = entry;
-                        }
-                    }
-                }
-                if (flag) {
-                    if (template == null) {
-                        CURRENT_INSTANCE.DATA_HANDLER.addBudget(new BudgetEntry(NAME.getText(), CURRENT_INSTANCE));
-                    } else {
-                        CURRENT_INSTANCE.DATA_HANDLER.addBudget(new BudgetEntry(template, NAME.getText()));
-                    }
-                    CALLER.updateBudget();
-                    dispose();
-                } else {
-                    NAME.setBackground(DendroFactory.WRONG);
-                }
-            });
+            OK.addActionListener(event -> okAction());
 
             //back layout
             {
@@ -114,6 +85,36 @@ public class NewBudgetGui extends JDialog {
             }
 
             pack();
+        }
+    }
+
+    public void okAction() {
+        boolean flag = true;
+        BudgetEntry template = null;
+        if (NAME.getText().equals("")) {
+            flag = false;
+        }
+        if (flag) {
+            for (BudgetEntry entry : CURRENT_INSTANCE.DATA_HANDLER.readBudgets()) {
+                if (entry.getName().equalsIgnoreCase(NAME.getText())) {
+                    flag = false;
+                    break;
+                }
+                if (entry.getName().equals(TEMPLATE.getSelectedItem().toString())) {
+                    template = entry;
+                }
+            }
+        }
+        if (flag) {
+            if (template == null) {
+                CURRENT_INSTANCE.DATA_HANDLER.addBudget(new BudgetEntry(NAME.getText(), CURRENT_INSTANCE));
+            } else {
+                CURRENT_INSTANCE.DATA_HANDLER.addBudget(new BudgetEntry(template, NAME.getText()));
+            }
+            CALLER.updateBudget();
+            dispose();
+        } else {
+            NAME.setBackground(DendroFactory.WRONG);
         }
     }
 }

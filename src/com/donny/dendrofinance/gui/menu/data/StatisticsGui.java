@@ -5,7 +5,7 @@ import com.donny.dendrofinance.entry.TransactionEntry;
 import com.donny.dendrofinance.entry.meta.AssetMetadata;
 import com.donny.dendrofinance.entry.meta.LoanMetadata;
 import com.donny.dendrofinance.gui.MainGui;
-import com.donny.dendrofinance.gui.RegisterFrame;
+import com.donny.dendrofinance.gui.customswing.RegisterFrame;
 import com.donny.dendrofinance.gui.customswing.DendroFactory;
 import com.donny.dendrofinance.instance.Instance;
 

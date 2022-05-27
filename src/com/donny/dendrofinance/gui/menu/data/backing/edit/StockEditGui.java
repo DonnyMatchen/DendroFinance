@@ -33,35 +33,7 @@ public class StockEditGui extends BackingEditGui<LStock> {
         cancel = DendroFactory.getButton("Cancel");
         cancel.addActionListener(event -> dispose());
         save = DendroFactory.getButton("Save");
-        save.addActionListener(event -> {
-            if (INDEX >= 0) {
-                try {
-                    TABLE.replace(INDEX, new LStock(
-                            Validation.validateString(name),
-                            Validation.validateString(ticker),
-                            publik.isSelected(),
-                            dead.isSelected(),
-                            CURRENT_INSTANCE
-                    ));
-                    dispose();
-                } catch (ValidationFailedException ex) {
-                    CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "You did a badness!");
-                }
-            } else {
-                try {
-                    TABLE.add(new LStock(
-                            Validation.validateString(name),
-                            Validation.validateString(ticker),
-                            publik.isSelected(),
-                            dead.isSelected(),
-                            CURRENT_INSTANCE
-                    ));
-                    dispose();
-                } catch (ValidationFailedException ex) {
-                    CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "You did a badness!");
-                }
-            }
-        });
+        save.addActionListener(event -> saveAction());
 
         //populate if in edit mode
         if (INDEX >= 0) {
@@ -138,6 +110,37 @@ public class StockEditGui extends BackingEditGui<LStock> {
                             )
                     ).addContainerGap()
             );
+        }
+    }
+
+    @Override
+    protected void saveAction() {
+        if (INDEX >= 0) {
+            try {
+                TABLE.replace(INDEX, new LStock(
+                        Validation.validateString(name),
+                        Validation.validateString(ticker),
+                        publik.isSelected(),
+                        dead.isSelected(),
+                        CURRENT_INSTANCE
+                ));
+                dispose();
+            } catch (ValidationFailedException ex) {
+                CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "You did a badness!");
+            }
+        } else {
+            try {
+                TABLE.add(new LStock(
+                        Validation.validateString(name),
+                        Validation.validateString(ticker),
+                        publik.isSelected(),
+                        dead.isSelected(),
+                        CURRENT_INSTANCE
+                ));
+                dispose();
+            } catch (ValidationFailedException ex) {
+                CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "You did a badness!");
+            }
         }
     }
 }

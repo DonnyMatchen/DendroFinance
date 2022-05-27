@@ -64,52 +64,7 @@ public class MarketApiEditGui extends BackingEditGui<LMarketApi> {
         cancel = DendroFactory.getButton("Cancel");
         cancel.addActionListener(event -> dispose());
         save = DendroFactory.getButton("Save");
-        save.addActionListener(event -> {
-            try {
-                String type = "";
-                if (fiat.isSelected()) {
-                    type += "F";
-                }
-                if (stock.isSelected()) {
-                    type += "S";
-                }
-                if (crypto.isSelected()) {
-                    type += "C";
-                }
-                if (inventory.isSelected()) {
-                    type += "I";
-                }
-                LMarketApi temp = new LMarketApi(
-                        Validation.validateString(name),
-                        type,
-                        Validation.validateString(url_),
-                        Validation.validateString(urlH_),
-                        Validation.validateString(key_),
-                        CURRENT_INSTANCE
-                );
-                if (!path_.getText().equals("")) {
-                    temp.resetParsePath(new ArrayList<>(Arrays.asList(Validation.validateString(path_).replace(" ", "").split(","))));
-                }
-                if (!pathH_.getText().equals("")) {
-                    temp.resetParsePathHistory(new ArrayList<>(Arrays.asList(Validation.validateString(pathH_).replace(" ", "").split(","))));
-                }
-                if (!nats_.getText().equals("")) {
-                    temp.resetNats(new ArrayList<>(Arrays.asList(Validation.validateString(nats_).replace(" ", "").split(","))));
-                }
-                if (!excepts_.getText().equals("")) {
-                    temp.resetExcepts(new ArrayList<>(Arrays.asList(Validation.validateString(excepts_).replace(" ", "").split(","))));
-                }
-                if (INDEX >= 0) {
-                    TABLE.replace(INDEX, temp);
-                } else {
-                    TABLE.add(temp);
-                }
-
-                dispose();
-            } catch (ValidationFailedException ex) {
-                CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "You did a badness!");
-            }
-        });
+        save.addActionListener(event -> saveAction());
 
         if (INDEX >= 0) {
             LMarketApi root = TABLE.getElement(INDEX);
@@ -285,6 +240,54 @@ public class MarketApiEditGui extends BackingEditGui<LMarketApi> {
                             )
                     ).addContainerGap()
             );
+        }
+    }
+
+    @Override
+    protected void saveAction() {
+        try {
+            String type = "";
+            if (fiat.isSelected()) {
+                type += "F";
+            }
+            if (stock.isSelected()) {
+                type += "S";
+            }
+            if (crypto.isSelected()) {
+                type += "C";
+            }
+            if (inventory.isSelected()) {
+                type += "I";
+            }
+            LMarketApi temp = new LMarketApi(
+                    Validation.validateString(name),
+                    type,
+                    Validation.validateString(url_),
+                    Validation.validateString(urlH_),
+                    Validation.validateString(key_),
+                    CURRENT_INSTANCE
+            );
+            if (!path_.getText().equals("")) {
+                temp.resetParsePath(new ArrayList<>(Arrays.asList(Validation.validateString(path_).replace(" ", "").split(","))));
+            }
+            if (!pathH_.getText().equals("")) {
+                temp.resetParsePathHistory(new ArrayList<>(Arrays.asList(Validation.validateString(pathH_).replace(" ", "").split(","))));
+            }
+            if (!nats_.getText().equals("")) {
+                temp.resetNats(new ArrayList<>(Arrays.asList(Validation.validateString(nats_).replace(" ", "").split(","))));
+            }
+            if (!excepts_.getText().equals("")) {
+                temp.resetExcepts(new ArrayList<>(Arrays.asList(Validation.validateString(excepts_).replace(" ", "").split(","))));
+            }
+            if (INDEX >= 0) {
+                TABLE.replace(INDEX, temp);
+            } else {
+                TABLE.add(temp);
+            }
+
+            dispose();
+        } catch (ValidationFailedException ex) {
+            CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "You did a badness!");
         }
     }
 }

@@ -1,5 +1,6 @@
-package com.donny.dendrofinance.gui;
+package com.donny.dendrofinance.gui.password;
 
+import com.donny.dendrofinance.gui.customswing.ModalFrame;
 import com.donny.dendrofinance.gui.customswing.DendroFactory;
 import com.donny.dendrofinance.gui.form.Validation;
 import com.donny.dendrofinance.gui.form.ValidationFailedException;
@@ -12,19 +13,16 @@ import com.donny.dendrofinance.json.JsonString;
 import javax.swing.*;
 import java.math.BigDecimal;
 
-public class ProfileGui extends JDialog {
-    private final Instance CURRENT_INSTANCE;
-
+public class ProfileGui extends ModalFrame {
     private final JPanel FLAGS;
     private final JLabel A, B, C, D, E, F;
-    private final JCheckBox LOG, EXP, AMER, DAY;
+    private final JCheckBox LOG, AMER, DAY;
     private final JButton SAVE, CANCEL;
     private final JTextField NAME, PRECISION, LOG_LEVEL, CUR, CUR2;
     private final PasswordGui CALLER;
 
     public ProfileGui(PasswordGui caller, JsonObject config, Instance curInst) {
-        super(caller, "Profile Gui", true);
-        CURRENT_INSTANCE = curInst;
+        super(caller, "Profile Gui", curInst);
         CALLER = caller;
         {
             setDefaultCloseOperation(DISPOSE_ON_CLOSE);
@@ -39,7 +37,6 @@ public class ProfileGui extends JDialog {
             F = new JLabel("Main Extra");
 
             LOG = new JCheckBox("Log");
-            EXP = new JCheckBox("Export");
             AMER = new JCheckBox("US Date Format");
             DAY = new JCheckBox("Use day not time");
 
@@ -63,32 +60,32 @@ public class ProfileGui extends JDialog {
                     flags.setHorizontalGroup(
                             flags.createSequentialGroup().addContainerGap().addGroup(
                                     flags.createParallelGroup(GroupLayout.Alignment.LEADING).addComponent(
-                                            LOG, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
-                                    ).addComponent(
-                                            EXP, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
-                                    )
-                            ).addGap(DendroFactory.SMALL_GAP).addGroup(
-                                    flags.createParallelGroup(GroupLayout.Alignment.LEADING).addComponent(
                                             AMER, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                     ).addComponent(
                                             DAY, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                     )
-                            ).addContainerGap()
+                            ).addGap(DendroFactory.SMALL_GAP).addGroup(
+                                    flags.createParallelGroup(GroupLayout.Alignment.LEADING).addComponent(
+                                            LOG, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                    ).addGap(
+                                            DendroFactory.SMALL_GAP, DendroFactory.SMALL_GAP, Short.MAX_VALUE
+                                    )
+                            )
                     );
                     flags.setVerticalGroup(
                             flags.createSequentialGroup().addContainerGap().addGroup(
                                     flags.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(
-                                            LOG, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
-                                    ).addComponent(
                                             AMER, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                    ).addComponent(
+                                            LOG, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                     )
                             ).addGap(DendroFactory.SMALL_GAP).addGroup(
                                     flags.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(
-                                            EXP, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
-                                    ).addComponent(
                                             DAY, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                    ).addGap(
+                                            DendroFactory.SMALL_GAP, DendroFactory.SMALL_GAP, Short.MAX_VALUE
                                     )
-                            )
+                            ).addContainerGap()
                     );
                 }
 
@@ -199,12 +196,6 @@ public class ProfileGui extends JDialog {
             if (flags.contains("L")) {
                 LOG.setSelected(true);
             }
-            if (flags.contains("X")) {
-                EXP.setSelected(true);
-            }
-            if (flags.contains("x")) {
-                EXP.setSelected(false);
-            }
             if (flags.contains("A")) {
                 AMER.setSelected(true);
             }
@@ -249,11 +240,6 @@ public class ProfileGui extends JDialog {
                 flagsS += "L";
             } else {
                 flagsS += "l";
-            }
-            if (EXP.isSelected()) {
-                flagsS += "X";
-            } else {
-                flagsS += "x";
             }
             if (AMER.isSelected()) {
                 flagsS += "A";

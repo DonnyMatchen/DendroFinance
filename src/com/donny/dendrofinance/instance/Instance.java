@@ -13,7 +13,7 @@ import com.donny.dendrofinance.data.*;
 import com.donny.dendrofinance.data.backingtable.*;
 import com.donny.dendrofinance.entry.TransactionEntry;
 import com.donny.dendrofinance.gui.MainGui;
-import com.donny.dendrofinance.gui.PasswordGui;
+import com.donny.dendrofinance.gui.password.PasswordGui;
 import com.donny.dendrofinance.gui.customswing.DendroFactory;
 import com.donny.dendrofinance.gui.customswing.SearchBox;
 import com.donny.dendrofinance.json.*;
@@ -32,8 +32,9 @@ public class Instance {
 
     //Major managing objects and handling lists
     public final String IID;
+    public final String[] ARGS;
     public final LogHandler LOG_HANDLER;
-    public final PasswordGui ENCRYPTION_HANDLER;
+    public final EncryptionHandler ENCRYPTION_HANDLER;
     public final FileHandler FILE_HANDLER;
     public final UuidHandler UUID_HANDLER;
     public final CurrencyBTC CURRENCIES;
@@ -51,7 +52,7 @@ public class Instance {
 
     //flags, api keys, and other minor alterable things
     public MathContext precision;
-    public boolean log, export, american, day;
+    public boolean log, american, day;
     public String mainTicker, main__Ticker;
     public LogHandler.LogLevel logLevel;
     public LCurrency main;
@@ -59,6 +60,7 @@ public class Instance {
 
     public Instance(String iid, String[] args) {
         IID = iid;
+        ARGS = args;
         CURRENCIES = new CurrencyBTC(this);
         STOCKS = new StockBTC(this);
         INVENTORIES = new InventoryBTC(this);
@@ -70,14 +72,15 @@ public class Instance {
         LOG_HANDLER = new LogHandler(this);
         FILE_HANDLER = new FileHandler(this);
         DendroFactory.init(this);
-        ENCRYPTION_HANDLER = new PasswordGui(args, this);
+        ENCRYPTION_HANDLER = new EncryptionHandler(this);
+        PasswordGui password = new PasswordGui(this);
         UUID_HANDLER = new UuidHandler(this);
-        ENCRYPTION_HANDLER.setVisible(true);
-        while (!ENCRYPTION_HANDLER.done) {
+        password.setVisible(true);
+        while (!password.done) {
             try {
                 TimeUnit.SECONDS.sleep(1);
             } catch (InterruptedException ex) {
-                LOG_HANDLER.warn(getClass(), "The timer was interrupted.  This could cause damage.  Check integrity of data before saving./");
+                LOG_HANDLER.warn(getClass(), "The timer was interrupted.  This could cause damage.  Check integrity of data before saving.");
             }
         }
 
@@ -99,6 +102,7 @@ public class Instance {
         IMPORT_HANDLER = new ImportHandler(this);
         EXPORT_HANDLER = new ExportHandler(this);
         new MainGui(this).setVisible(true);
+        password.dispose();
     }
 
     public Instance(String[] args) {
@@ -108,15 +112,21 @@ public class Instance {
     public void ensureFolders() {
         File archive = new File(data.getPath() + File.separator + "Archives"),
                 pStock = new File(data.getPath() + File.separator + "P_Stock"),
-                exp = new File(data.getPath() + File.separator + "Exports");
-        if (!archive.exists()) {
-            archive.mkdir();
-        }
-        if (!pStock.exists()) {
-            pStock.mkdir();
-        }
-        if (!exp.exists()) {
-            exp.mkdir();
+                exp = new File(data.getPath() + File.separator + "Exports"),
+                imp = new File(data.getPath() + File.separator + "Imports");
+        while (!archive.exists() || !pStock.exists() || !exp.exists() || !imp.exists()) {
+            if (!archive.exists()) {
+                archive.mkdir();
+            }
+            if (!pStock.exists()) {
+                pStock.mkdir();
+            }
+            if (!exp.exists()) {
+                exp.mkdir();
+            }
+            if (!imp.exists()) {
+                imp.mkdir();
+            }
         }
     }
 
@@ -425,10 +435,6 @@ public class Instance {
     public void conclude(boolean save) {
         if (save) {
             save();
-        }
-        ENCRYPTION_HANDLER.dispose();
-        if (export) {
-            EXPORT_HANDLER.export();
         }
         if (log) {
             LOG_HANDLER.save();

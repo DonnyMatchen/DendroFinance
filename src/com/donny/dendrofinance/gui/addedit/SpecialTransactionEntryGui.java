@@ -1,6 +1,7 @@
 package com.donny.dendrofinance.gui.addedit;
 
 import com.donny.dendrofinance.gui.MainGui;
+import com.donny.dendrofinance.gui.customswing.ModalFrame;
 import com.donny.dendrofinance.gui.customswing.DendroFactory;
 import com.donny.dendrofinance.gui.customswing.SearchBox;
 import com.donny.dendrofinance.gui.form.Validation;
@@ -10,7 +11,7 @@ import com.donny.dendrofinance.instance.Instance;
 import javax.swing.*;
 import java.util.ArrayList;
 
-public class SpecialTransactionEntryGui extends JDialog {
+public class SpecialTransactionEntryGui extends ModalFrame {
     private final MainGui MAIN;
     private final JTabbedPane BACK;
     private final JPanel BS, IP, CT, TT, TD;
@@ -34,11 +35,9 @@ public class SpecialTransactionEntryGui extends JDialog {
             CT_CANCEL, CT_SAVE,
             TT_CANCEL, TT_SAVE,
             TD_CANCEL, TD_SAVE;
-    private final Instance CURRENT_INSTANCE;
 
     public SpecialTransactionEntryGui(MainGui caller, Instance curInst) {
-        super(caller, "New Special Transaction Entry", true);
-        CURRENT_INSTANCE = curInst;
+        super(caller, "New Special Transaction Entry", curInst);
         MAIN = caller;
         //draw GUI
         {
@@ -380,16 +379,9 @@ public class SpecialTransactionEntryGui extends JDialog {
                 TT_F_CUR = new SearchBox("Fee Currency", new ArrayList<>());
                 TT_F_EXCHANGE = new SearchBox("From Exchange", CURRENT_INSTANCE.getExchangesAsStrings());
                 TT_T_EXCHANGE = new SearchBox("To Exchange", CURRENT_INSTANCE.getExchangesAsStrings());
-                TT_F_EXCHANGE.addListSelectionListener(event -> {
-                    update2ECur(TT_L_CUR, TT_F_EXCHANGE, TT_T_EXCHANGE);
-                    updateToken(TT_F_CUR, TT_F_EXCHANGE, TT_T_EXCHANGE);
-                });
-                TT_T_EXCHANGE.addListSelectionListener(event -> {
-                    update2ECur(TT_L_CUR, TT_F_EXCHANGE, TT_T_EXCHANGE);
-                    updateToken(TT_F_CUR, TT_F_EXCHANGE, TT_T_EXCHANGE);
-                });
-                update2ECur(TT_L_CUR, TT_F_EXCHANGE, TT_T_EXCHANGE);
-                updateToken(TT_F_CUR, TT_F_EXCHANGE, TT_T_EXCHANGE);
+                TT_F_EXCHANGE.addListSelectionListener(event -> updateTT());
+                TT_T_EXCHANGE.addListSelectionListener(event -> updateTT());
+                updateTT();
 
                 TT_CANCEL = DendroFactory.getButton("Cancel");
                 TT_CANCEL.addActionListener(event -> dispose());
@@ -524,12 +516,8 @@ public class SpecialTransactionEntryGui extends JDialog {
                 TD_F_CUR = new SearchBox("From Currency", new ArrayList<>());
                 TD_T_CUR = new SearchBox("To Currency", new ArrayList<>());
                 TD_EXCHANGE = new SearchBox("Exchange", CURRENT_INSTANCE.getExchangesAsStrings());
-                CT_F_EXCHANGE.addListSelectionListener(event -> {
-                    updateCur(TD_F_CUR, TD_EXCHANGE);
-                    updateCur(TD_T_CUR, TD_EXCHANGE);
-                });
-                updateCur(TD_F_CUR, TD_EXCHANGE);
-                updateCur(TD_T_CUR, TD_EXCHANGE);
+                TD_EXCHANGE.addListSelectionListener(event -> updateTD());
+                updateTD();
 
                 TD_CANCEL = DendroFactory.getButton("Cancel");
                 TD_CANCEL.addActionListener(event -> dispose());
@@ -629,6 +617,16 @@ public class SpecialTransactionEntryGui extends JDialog {
 
             pack();
         }
+    }
+
+    private void updateTT() {
+        update2ECur(TT_L_CUR, TT_F_EXCHANGE, TT_T_EXCHANGE);
+        updateToken(TT_F_CUR, TT_F_EXCHANGE, TT_T_EXCHANGE);
+    }
+
+    private void updateTD() {
+        updateCur(TD_F_CUR, TD_EXCHANGE);
+        updateCur(TD_T_CUR, TD_EXCHANGE);
     }
 
     private void updateCur(SearchBox cur, SearchBox exchange) {

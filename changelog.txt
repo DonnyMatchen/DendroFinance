@@ -1,3 +1,24 @@
+v0.6.0
+* minor fixes and improvements
+  * added modal frame
+  * moved RegisterFrame to gui.customswing
+  * removed anonymous functions
+* overhaul password system
+  * separated encryption handling and password gui
+  * implemented logout
+  * implemented password change
+  * implemented specific password for archives
+  * added gui for un-assumed password
+    * added option for using profile password
+* reworked import and export
+  * removed export from profile flags
+  * added import modes
+  * added .xtbl option to import
+    * password not assumed
+    * added support for .xarc
+  * added import gui
+  * added export gui
+
 v0.5.5
 * rearranged fields in defaults
 * proofread changelog

@@ -35,22 +35,7 @@ public class AccountTypeEditGui extends BackingEditGui<AccountType> {
         cancel = DendroFactory.getButton("Cancel");
         cancel.addActionListener(event -> dispose());
         save = DendroFactory.getButton("Save");
-        save.addActionListener(event -> {
-            try {
-                AccountType temp = new AccountType(
-                        Validation.validateString(name),
-                        (String) type.getSelectedItem()
-                );
-                if (INDEX >= 0) {
-                    TABLE.replace(INDEX, temp);
-                } else {
-                    TABLE.add(temp);
-                }
-                dispose();
-            } catch (ValidationFailedException ex) {
-                CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "You did a badness!");
-            }
-        });
+        save.addActionListener(event -> saveAction());
 
         //populate if in edit mode
         if (INDEX >= 0) {
@@ -111,6 +96,24 @@ public class AccountTypeEditGui extends BackingEditGui<AccountType> {
                             )
                     ).addContainerGap()
             );
+        }
+    }
+
+    @Override
+    protected void saveAction() {
+        try {
+            AccountType temp = new AccountType(
+                    Validation.validateString(name),
+                    (String) type.getSelectedItem()
+            );
+            if (INDEX >= 0) {
+                TABLE.replace(INDEX, temp);
+            } else {
+                TABLE.add(temp);
+            }
+            dispose();
+        } catch (ValidationFailedException ex) {
+            CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "You did a badness!");
         }
     }
 }

@@ -1,10 +1,13 @@
 package com.donny.dendrofinance.data;
 
+import com.donny.dendrofinance.gui.customswing.AlertGui;
+import com.donny.dendrofinance.gui.password.UnkPasswordGui;
 import com.donny.dendrofinance.instance.Instance;
 import com.donny.dendrofinance.json.JsonArray;
 import com.donny.dendrofinance.json.JsonFormattingException;
 import com.donny.dendrofinance.json.JsonItem;
 
+import javax.swing.*;
 import java.io.*;
 import java.math.BigDecimal;
 import java.net.URL;
@@ -76,11 +79,38 @@ public class FileHandler {
 
     public String readDecrypt(File file) {
         ensure(file.getParentFile());
-        return CURRENT_INSTANCE.ENCRYPTION_HANDLER.decrypt(read(file)).replace("\r", "");
+        String str = CURRENT_INSTANCE.ENCRYPTION_HANDLER.decrypt(read(file));
+        if (str == null) {
+            return null;
+        } else {
+            return str.replace("\r", "");
+        }
     }
 
     public String readDecrypt(File dir, String file) {
         return readDecrypt(new File(dir.getPath() + File.separator + file));
+    }
+
+    public String readDecryptUnknownPassword(File file, JFrame caller) {
+        ensure(file.getParentFile());
+        EncryptionHandler decrypt = UnkPasswordGui.getTestPassword(caller, file.getName(), CURRENT_INSTANCE);
+        if (decrypt != null) {
+            String str = decrypt.decrypt(read(file));
+            if (str == null) {
+                new AlertGui(caller, "Password Incorrect", CURRENT_INSTANCE).setVisible(true);
+                return null;
+            } else {
+                new AlertGui(caller, "Password Correct", CURRENT_INSTANCE).setVisible(true);
+                return str.replace("\r", "");
+            }
+        } else {
+            CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Password Entry Failed");
+            return null;
+        }
+    }
+
+    public String readDecryptUnknownPassword(File dir, String file, JFrame caller) {
+        return readDecryptUnknownPassword(new File(dir.getPath() + File.separator + file), caller);
     }
 
     public byte[] getTemplate(String path) {
@@ -133,11 +163,28 @@ public class FileHandler {
 
     public void writeEncrypt(File file, String output) {
         ensure(file.getParentFile());
-        write(file, CURRENT_INSTANCE.ENCRYPTION_HANDLER.encrypt(output));
+        String str = CURRENT_INSTANCE.ENCRYPTION_HANDLER.encrypt(output);
+        if (str != null) {
+            write(file, str);
+        }
     }
 
     public void writeEncrypt(File dir, String file, String output) {
         writeEncrypt(new File(dir.getPath() + File.separator + file), output);
+    }
+
+    public void writeEncryptUnknownPassword(File file, String output, JFrame caller) {
+        ensure(file.getParentFile());
+        EncryptionHandler encrypt = UnkPasswordGui.getTestPassword(caller, file.getName(), CURRENT_INSTANCE);
+        if (encrypt != null) {
+            write(file, encrypt.encrypt(output));
+        } else {
+            CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Password Entry Failed");
+        }
+    }
+
+    public void writeEncryptUnknownPassword(File dir, String file, String output, JFrame caller) {
+        writeEncryptUnknownPassword(new File(dir.getPath() + File.separator + file), output, caller);
     }
 
     public void append(File file, String output) {

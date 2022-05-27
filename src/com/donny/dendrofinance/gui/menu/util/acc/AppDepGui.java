@@ -2,7 +2,7 @@ package com.donny.dendrofinance.gui.menu.util.acc;
 
 import com.donny.dendrofinance.entry.TransactionEntry;
 import com.donny.dendrofinance.gui.MainGui;
-import com.donny.dendrofinance.gui.RegisterFrame;
+import com.donny.dendrofinance.gui.customswing.RegisterFrame;
 import com.donny.dendrofinance.gui.customswing.DendroFactory;
 import com.donny.dendrofinance.instance.Instance;
 import com.donny.dendrofinance.types.LAccountSet;
@@ -187,40 +187,7 @@ public class AppDepGui extends RegisterFrame {
             FIAT_APP = new JTextField();
             FIAT_APP.setEditable(false);
             SAVE = DendroFactory.getButton("Save");
-            SAVE.addActionListener(event -> {
-                BigDecimal x = BigDecimal.ZERO;
-                BigDecimal stock = new BigDecimal(STOCK_APP.getText());
-                BigDecimal crypto = new BigDecimal(CRYPTO_APP.getText());
-                BigDecimal inventory = new BigDecimal(INV_APP.getText());
-                BigDecimal fiat = new BigDecimal(FIAT_APP.getText());
-                x = x.add(stock).add(crypto).add(inventory).add(fiat);
-                LDate date = new LDate(DATE.getText(), CURRENT_INSTANCE);
-                TransactionEntry entry = new TransactionEntry(CURRENT_INSTANCE);
-                String accs = (stock.compareTo(BigDecimal.ZERO) == 0 ? "" : stock.compareTo(BigDecimal.ZERO) > 0 ? "D!Stock(" + stock + "), " : "C!Stock(" + stock.abs() + "), ")
-                        + (crypto.compareTo(BigDecimal.ZERO) == 0 ? "" : crypto.compareTo(BigDecimal.ZERO) > 0 ? "D!Crypto(" + crypto + "), " : "C!Crypto(" + crypto.abs() + "), ")
-                        + (inventory.compareTo(BigDecimal.ZERO) == 0 ? "" : inventory.compareTo(BigDecimal.ZERO) > 0 ? "D!Held_Inventory(" + inventory + "), " : "C!Held_Inventory(" + inventory.abs() + "), ")
-                        + (fiat.compareTo(BigDecimal.ZERO) == 0 ? "" : fiat.compareTo(BigDecimal.ZERO) > 0 ? "D!Other_Cash(" + fiat + "), " : "C!Other_Cash(" + fiat.abs() + "), ");
-                if (x.compareTo(BigDecimal.ZERO) >= 0) {
-                    entry.insert(
-                            date,
-                            "ACC",
-                            "",
-                            "Appreciation (" + date.getYear() + "-" + (date.getMonth() < 10 ? "0" : "") + date.getMonth() + ")",
-                            new LAccountSet("C!Appreciation(" + x + "), " + accs, CURRENT_INSTANCE)
-                    );
-                } else {
-                    entry.insert(
-                            date,
-                            "ACC",
-                            "",
-                            "Depreciation (" + date.getYear() + "-" + (date.getMonth() < 10 ? "0" : "") + date.getMonth() + ")",
-                            new LAccountSet("D!Depreciation(" + x.abs() + "), " + accs, CURRENT_INSTANCE)
-                    );
-                }
-                CURRENT_INSTANCE.DATA_HANDLER.addTransaction(entry);
-                caller.updateTable();
-                dispose();
-            });
+            SAVE.addActionListener(event -> saveAction());
 
             //group layout
             {
@@ -342,5 +309,40 @@ public class AppDepGui extends RegisterFrame {
 
             pack();
         }
+    }
+
+    private void saveAction() {
+        BigDecimal x = BigDecimal.ZERO;
+        BigDecimal stock = new BigDecimal(STOCK_APP.getText());
+        BigDecimal crypto = new BigDecimal(CRYPTO_APP.getText());
+        BigDecimal inventory = new BigDecimal(INV_APP.getText());
+        BigDecimal fiat = new BigDecimal(FIAT_APP.getText());
+        x = x.add(stock).add(crypto).add(inventory).add(fiat);
+        LDate date = new LDate(DATE.getText(), CURRENT_INSTANCE);
+        TransactionEntry entry = new TransactionEntry(CURRENT_INSTANCE);
+        String accs = (stock.compareTo(BigDecimal.ZERO) == 0 ? "" : stock.compareTo(BigDecimal.ZERO) > 0 ? "D!Stock(" + stock + "), " : "C!Stock(" + stock.abs() + "), ")
+                + (crypto.compareTo(BigDecimal.ZERO) == 0 ? "" : crypto.compareTo(BigDecimal.ZERO) > 0 ? "D!Crypto(" + crypto + "), " : "C!Crypto(" + crypto.abs() + "), ")
+                + (inventory.compareTo(BigDecimal.ZERO) == 0 ? "" : inventory.compareTo(BigDecimal.ZERO) > 0 ? "D!Held_Inventory(" + inventory + "), " : "C!Held_Inventory(" + inventory.abs() + "), ")
+                + (fiat.compareTo(BigDecimal.ZERO) == 0 ? "" : fiat.compareTo(BigDecimal.ZERO) > 0 ? "D!Other_Cash(" + fiat + "), " : "C!Other_Cash(" + fiat.abs() + "), ");
+        if (x.compareTo(BigDecimal.ZERO) >= 0) {
+            entry.insert(
+                    date,
+                    "ACC",
+                    "",
+                    "Appreciation (" + date.getYear() + "-" + (date.getMonth() < 10 ? "0" : "") + date.getMonth() + ")",
+                    new LAccountSet("C!Appreciation(" + x + "), " + accs, CURRENT_INSTANCE)
+            );
+        } else {
+            entry.insert(
+                    date,
+                    "ACC",
+                    "",
+                    "Depreciation (" + date.getYear() + "-" + (date.getMonth() < 10 ? "0" : "") + date.getMonth() + ")",
+                    new LAccountSet("D!Depreciation(" + x.abs() + "), " + accs, CURRENT_INSTANCE)
+            );
+        }
+        CURRENT_INSTANCE.DATA_HANDLER.addTransaction(entry);
+        CALLER.updateTable();
+        dispose();
     }
 }

@@ -44,12 +44,66 @@ public class DataHandler {
         }
     }
 
-    public boolean addTransaction(TransactionEntry entry) {
+    public boolean addTransaction(TransactionEntry entry, ImportHandler.ImportMode mode) {
+        if (entry.clashing) {
+            switch (mode) {
+                case IGNORE -> {
+                    return false;
+                }
+                case KEEP -> {
+                    return TRANSACTIONS.add(entry);
+                }
+                case OVERWRITE -> {
+                    TransactionEntry orig = null;
+                    for (TransactionEntry candidate : readTransactions()) {
+                        if (candidate.getUUID() == entry.getUUID()) {
+                            orig = candidate;
+                            break;
+                        }
+                    }
+                    if (orig != null) {
+                        TRANSACTIONS.remove(orig);
+                    }
+                    return TRANSACTIONS.add(entry);
+                }
+            }
+        }
         return TRANSACTIONS.add(entry);
     }
 
-    public boolean addBudget(BudgetEntry entry) {
+    public boolean addTransaction(TransactionEntry entry) {
+        return addTransaction(entry, ImportHandler.ImportMode.KEEP);
+    }
+
+    public boolean addBudget(BudgetEntry entry, ImportHandler.ImportMode mode) {
+        if (entry.clashing) {
+            switch (mode) {
+                case IGNORE -> {
+                    return false;
+                }
+                case KEEP -> {
+                    return BUDGETS.add(entry);
+                }
+                case OVERWRITE -> {
+                    BudgetEntry orig = null;
+                    for (BudgetEntry candidate : readBudgets()) {
+                        if (candidate.getUUID() == entry.getUUID()) {
+                            orig = candidate;
+                            break;
+                        }
+                    }
+                    if (orig != null) {
+                        BUDGETS.remove(orig);
+                    }
+                    return BUDGETS.add(entry);
+                }
+            }
+        }
         return BUDGETS.add(entry);
+    }
+
+    public boolean addBudget(BudgetEntry entry) {
+        return addBudget(entry, ImportHandler.ImportMode.KEEP);
     }
 
     public boolean deleteTransaction(long uuid) {
@@ -84,7 +138,6 @@ public class DataHandler {
 
     public ArrayList<TransactionEntry> readTransactions() {
         try {
-            TRANSACTIONS.read().sort(TransactionEntry::compareTo);
             return TRANSACTIONS.read();
         } catch (JsonFormattingException e) {
             CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Error loading datasets: " + e);

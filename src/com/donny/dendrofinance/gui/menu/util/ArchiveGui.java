@@ -9,7 +9,7 @@ import com.donny.dendrofinance.entry.meta.LoanMetadata;
 import com.donny.dendrofinance.entry.totals.Position;
 import com.donny.dendrofinance.entry.totals.PositionElement;
 import com.donny.dendrofinance.gui.MainGui;
-import com.donny.dendrofinance.gui.RegisterFrame;
+import com.donny.dendrofinance.gui.customswing.RegisterFrame;
 import com.donny.dendrofinance.gui.customswing.DendroFactory;
 import com.donny.dendrofinance.instance.Instance;
 import com.donny.dendrofinance.json.JsonArray;
@@ -187,7 +187,7 @@ public class ArchiveGui extends RegisterFrame {
                 }
             }
             String name = min.toDateString().replace("/", "-") + " == " + max.toDateString().replace("/", "-") + ".xarc";
-            CURRENT_INSTANCE.FILE_HANDLER.writeEncrypt(DIR, name, arr.toString());
+            CURRENT_INSTANCE.FILE_HANDLER.writeEncryptUnknownPassword(DIR, name, arr.toString(), this);
             Curation<Integer> years = new Curation<>();
             for (TransactionEntry entry : CURRENT_INSTANCE.DATA_HANDLER.readTransactions()) {
                 if (!entry.getEntity().equals("PRIOR")) {
@@ -214,11 +214,13 @@ public class ArchiveGui extends RegisterFrame {
         if (ARCHIVES.getSelectedItem() != null) {
             if (new File(DIR.getPath() + File.separator + ARCHIVES.getSelectedItem() + ".xarc").exists()) {
                 try {
-                    JsonItem temp = JsonItem.sanitizeDigest(CURRENT_INSTANCE.FILE_HANDLER.readDecrypt(DIR, ARCHIVES.getSelectedItem() + ".xarc"));
-                    CURRENT_INSTANCE.FILE_HANDLER.write(
-                            new File(CURRENT_INSTANCE.data.getPath() + File.separator + "Exports"),
-                            "Archive (" + ARCHIVES.getSelectedItem() + ").json",
-                            temp.print());
+                    JsonItem temp = JsonItem.sanitizeDigest(CURRENT_INSTANCE.FILE_HANDLER.readDecryptUnknownPassword(DIR, ARCHIVES.getSelectedItem() + ".xarc", this));
+                    if (temp != null) {
+                        CURRENT_INSTANCE.FILE_HANDLER.write(
+                                new File(CURRENT_INSTANCE.data.getPath() + File.separator + "Exports"),
+                                "Archive (" + ARCHIVES.getSelectedItem() + ").json",
+                                temp.print());
+                    }
                 } catch (JsonFormattingException ex) {
                     CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Your archive is borked");
                     CURRENT_INSTANCE.LOG_HANDLER.debug(getClass(), ex.getMessage());

@@ -1,24 +1,23 @@
 package com.donny.dendrofinance.gui.addedit;
 
 import com.donny.dendrofinance.gui.MainGui;
+import com.donny.dendrofinance.gui.customswing.ModalFrame;
 import com.donny.dendrofinance.gui.customswing.DendroFactory;
 import com.donny.dendrofinance.instance.Instance;
 
 import javax.swing.*;
 
-public class DeleteEntryGui extends JDialog {
+public class DeleteEntryGui extends ModalFrame {
     public final MainGui MAIN;
     public final long UUID;
-    private final Instance CURRENT_INSTANCE;
     private final JLabel TEXT1, TEXT2;
     private final JButton OK, CANCEL;
     private final JScrollPane PANE;
     private final JTextArea AREA;
 
     public DeleteEntryGui(MainGui caller, long uuid, Instance curInst) {
-        super(caller, "Delete Transaction Entry", true);
+        super(caller, "Delete Transaction Entry", curInst);
         UUID = uuid;
-        CURRENT_INSTANCE = curInst;
         MAIN = caller;
         //draw gui
         {

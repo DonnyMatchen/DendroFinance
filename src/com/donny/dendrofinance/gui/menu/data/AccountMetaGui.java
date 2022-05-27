@@ -1,7 +1,7 @@
 package com.donny.dendrofinance.gui.menu.data;
 
 import com.donny.dendrofinance.gui.MainGui;
-import com.donny.dendrofinance.gui.RegisterFrame;
+import com.donny.dendrofinance.gui.customswing.RegisterFrame;
 import com.donny.dendrofinance.gui.customswing.DendroFactory;
 import com.donny.dendrofinance.instance.Instance;
 import com.donny.dendrofinance.json.JsonFormattingException;
@@ -32,16 +32,7 @@ public class AccountMetaGui extends RegisterFrame {
             A = new JLabel("Gift Cards");
             B = new JLabel("Brave Devices");
             SAVE = DendroFactory.getButton("Save");
-            SAVE.addActionListener(event -> {
-                try {
-                    accountObject.put("gift-cards", JsonItem.sanitizeDigest(GIFT.getText()));
-                    accountObject.put("brave-mobile", JsonItem.sanitizeDigest(BRAVE.getText()));
-                    CURRENT_INSTANCE.FILE_HANDLER.write(accounts, accountObject.print());
-                    dispose();
-                } catch (JsonFormattingException ex) {
-                    CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Accounts.json seems to be damaged: " + ex);
-                }
-            });
+            SAVE.addActionListener(event -> saveAction());
 
             //group layout
             {
@@ -97,6 +88,17 @@ public class AccountMetaGui extends RegisterFrame {
             }
 
             pack();
+        }
+    }
+
+    private void saveAction() {
+        try {
+            accountObject.put("gift-cards", JsonItem.sanitizeDigest(GIFT.getText()));
+            accountObject.put("brave-mobile", JsonItem.sanitizeDigest(BRAVE.getText()));
+            CURRENT_INSTANCE.FILE_HANDLER.write(accounts, accountObject.print());
+            dispose();
+        } catch (JsonFormattingException ex) {
+            CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Accounts.json seems to be damaged: " + ex);
         }
     }
 }

@@ -3,7 +3,7 @@ package com.donny.dendrofinance.gui.menu.trading;
 import com.donny.dendrofinance.currency.LCurrency;
 import com.donny.dendrofinance.entry.meta.LedgerMetadata;
 import com.donny.dendrofinance.gui.MainGui;
-import com.donny.dendrofinance.gui.RegisterFrame;
+import com.donny.dendrofinance.gui.customswing.RegisterFrame;
 import com.donny.dendrofinance.gui.customswing.DendroFactory;
 import com.donny.dendrofinance.gui.customswing.SearchBox;
 import com.donny.dendrofinance.instance.Instance;

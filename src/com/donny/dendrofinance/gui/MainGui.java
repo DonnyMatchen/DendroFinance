@@ -1,5 +1,6 @@
 package com.donny.dendrofinance.gui;
 
+import com.donny.dendrofinance.DendroFinance;
 import com.donny.dendrofinance.data.metatable.AssetMTC;
 import com.donny.dendrofinance.data.metatable.LoanMTC;
 import com.donny.dendrofinance.entry.TransactionEntry;
@@ -7,9 +8,13 @@ import com.donny.dendrofinance.gui.addedit.DeleteEntryGui;
 import com.donny.dendrofinance.gui.addedit.NewTransactionEntryGui;
 import com.donny.dendrofinance.gui.addedit.SpecialTransactionEntryGui;
 import com.donny.dendrofinance.gui.customswing.DendroFactory;
+import com.donny.dendrofinance.gui.customswing.RegisterFrame;
 import com.donny.dendrofinance.gui.menu.data.AccountMetaGui;
 import com.donny.dendrofinance.gui.menu.data.StatisticsGui;
 import com.donny.dendrofinance.gui.menu.data.backing.BackingTableGui;
+import com.donny.dendrofinance.gui.menu.file.ChangePasswordGui;
+import com.donny.dendrofinance.gui.menu.file.ExportGui;
+import com.donny.dendrofinance.gui.menu.file.ImportGui;
 import com.donny.dendrofinance.gui.menu.reports.*;
 import com.donny.dendrofinance.gui.menu.reports.budget.BudgetGui;
 import com.donny.dendrofinance.gui.menu.trading.LedgerGui;
@@ -31,10 +36,7 @@ import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.event.*;
 import java.util.ArrayList;
 
 public class MainGui extends JFrame {
@@ -75,11 +77,7 @@ public class MainGui extends JFrame {
             TABLE_PANE = DendroFactory.getTable(new String[]{
                     "UUID", "Date", "Entity", "Items", "Description", "Account", "Debit", "Credit", "Tracking", "Ghost", "Meta"
             }, new Object[][]{}, false);
-            TABLE_PANE.getVerticalScrollBar().addAdjustmentListener(event -> {
-                if (force) {
-                    event.getAdjustable().setValue(event.getAdjustable().getMaximum());
-                }
-            });
+            TABLE_PANE.getVerticalScrollBar().addAdjustmentListener(event -> tablePaneScrolled(event));
             TABLE = (JTable) TABLE_PANE.getViewport().getView();
             TABLE.addMouseListener(new MouseAdapter() {
                 @Override
@@ -153,15 +151,25 @@ public class MainGui extends JFrame {
                 });
                 JMenuItem save = new JMenuItem("Save");
                 save.addActionListener(event -> CURRENT_INSTANCE.save());
+
                 JMenuItem imp = new JMenuItem("Import");
-                imp.addActionListener(event -> CURRENT_INSTANCE.IMPORT_HANDLER.load());
+                imp.addActionListener(event -> new ImportGui(this, CURRENT_INSTANCE).setVisible(true));
                 JMenuItem exp = new JMenuItem("Export");
-                exp.addActionListener(event -> CURRENT_INSTANCE.EXPORT_HANDLER.export());
+                exp.addActionListener(event -> new ExportGui(this, CURRENT_INSTANCE).setVisible(true));
+
+                JMenuItem logout = new JMenuItem("Log OUt");
+                logout.addActionListener(event -> new ClosePrompt(this, false).setVisible(true));
+                JMenuItem change = new JMenuItem("Change Password");
+                change.addActionListener(event -> new ChangePasswordGui(this, CURRENT_INSTANCE).setVisible(true));
 
                 file.add(rel);
                 file.add(save);
+                file.add(new JSeparator());
                 file.add(imp);
                 file.add(exp);
+                file.add(new JSeparator());
+                file.add(logout);
+                file.add(change);
 
                 //data
                 JMenu data = new JMenu("Data");
@@ -395,6 +403,12 @@ public class MainGui extends JFrame {
         CURRENT_INSTANCE.LOG_HANDLER.trace(getClass(), "MainGui Created");
     }
 
+    public void tablePaneScrolled(AdjustmentEvent event) {
+        if (force) {
+            event.getAdjustable().setValue(event.getAdjustable().getMaximum());
+        }
+    }
+
     public void updateTable() {
         updateTable(SEARCH.getText());
     }
@@ -432,18 +446,22 @@ public class MainGui extends JFrame {
         }
     }
 
-    public void conclude(boolean save) {
+    public void conclude(boolean save, boolean exit) {
         CURRENT_INSTANCE.conclude(save);
         ArrayList<RegisterFrame> temp = new ArrayList<>(FRAME_REGISTRY);
         for (RegisterFrame frame : temp) {
             frame.dispose();
         }
         super.dispose();
-        System.exit(0);
+        if (exit) {
+            System.exit(0);
+        } else {
+            new Thread(() -> DendroFinance.main(CURRENT_INSTANCE.ARGS)).start();
+        }
     }
 
     @Override
     public void dispose() {
-        new ClosePrompt(this).setVisible(true);
+        new ClosePrompt(this, true).setVisible(true);
     }
 }

@@ -1,15 +1,16 @@
 package com.donny.dendrofinance.gui;
 
 import com.donny.dendrofinance.gui.customswing.DendroFactory;
+import com.donny.dendrofinance.gui.customswing.ModalFrame;
 
 import javax.swing.*;
 
-public class ClosePrompt extends JDialog {
+public class ClosePrompt extends ModalFrame {
     private final JLabel A;
     private final JButton CANCEL, D_SAVE, SAVE;
 
-    public ClosePrompt(MainGui caller) {
-        super(caller, "Close", true);
+    public ClosePrompt(MainGui caller, boolean exit) {
+        super(caller, exit ? "Close" : "Log Out", null);
 
         //make gui
         {
@@ -17,9 +18,9 @@ public class ClosePrompt extends JDialog {
             CANCEL = DendroFactory.getButton("Cancel");
             CANCEL.addActionListener(event -> dispose());
             D_SAVE = DendroFactory.getButton("Don't Save");
-            D_SAVE.addActionListener(event -> caller.conclude(false));
+            D_SAVE.addActionListener(event -> caller.conclude(false, exit));
             SAVE = DendroFactory.getButton("Save");
-            SAVE.addActionListener(event -> caller.conclude(true));
+            SAVE.addActionListener(event -> caller.conclude(true, exit));
 
             //GroupLayout
             {

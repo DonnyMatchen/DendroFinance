@@ -1,33 +1,32 @@
 package com.donny.dendrofinance.gui.menu.file;
 
+import com.donny.dendrofinance.data.EncryptionHandler;
 import com.donny.dendrofinance.gui.MainGui;
+import com.donny.dendrofinance.gui.customswing.AlertGui;
 import com.donny.dendrofinance.gui.customswing.DendroFactory;
 import com.donny.dendrofinance.gui.customswing.RegisterFrame;
 import com.donny.dendrofinance.instance.Instance;
 
 import javax.swing.*;
 
-public class ExportGui extends RegisterFrame {
+public class ChangePasswordGui extends RegisterFrame {
     private final JLabel A, B;
-    private final JTextField NAME;
-    private final JComboBox<String> TYPE;
-    private final JButton EXPORT;
+    private final JPasswordField ORIG, PASS;
+    private final JButton ENTER;
 
-    public ExportGui(MainGui caller, Instance curInst) {
-        super(caller, "Export", curInst);
+    public ChangePasswordGui(MainGui caller, Instance curInst) {
+        super(caller, "Change Password", curInst);
 
         //draw gui
         {
-            A = new JLabel("Label");
-            B = new JLabel("Extension");
+            A = new JLabel("Current Password");
+            B = new JLabel("New Password");
 
-            NAME = new JTextField();
-            TYPE = new JComboBox<>();
-            TYPE.addItem("JSON");
-            TYPE.addItem("XTBL");
+            ORIG = new JPasswordField();
+            PASS = new JPasswordField();
 
-            EXPORT = DendroFactory.getButton("Export");
-            EXPORT.addActionListener(event -> exportAction());
+            ENTER = DendroFactory.getButton("Enter");
+            ENTER.addActionListener(event -> enterAction());
 
             //group layout
             {
@@ -44,13 +43,13 @@ public class ExportGui extends RegisterFrame {
                                                 )
                                         ).addGap(DendroFactory.SMALL_GAP).addGroup(
                                                 main.createParallelGroup(GroupLayout.Alignment.LEADING).addComponent(
-                                                        NAME, GroupLayout.PREFERRED_SIZE, 250, Short.MAX_VALUE
+                                                        ORIG, GroupLayout.PREFERRED_SIZE, 250, Short.MAX_VALUE
                                                 ).addComponent(
-                                                        TYPE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
+                                                        PASS, GroupLayout.PREFERRED_SIZE, 250, Short.MAX_VALUE
                                                 )
                                         )
                                 ).addComponent(
-                                        EXPORT, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                        ENTER, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                 )
                         ).addContainerGap()
                 );
@@ -59,16 +58,16 @@ public class ExportGui extends RegisterFrame {
                                 main.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(
                                         A, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                 ).addComponent(
-                                        NAME, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                        ORIG, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                 )
                         ).addGap(DendroFactory.SMALL_GAP).addGroup(
                                 main.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(
                                         B, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                 ).addComponent(
-                                        TYPE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                        PASS, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                 )
                         ).addGap(DendroFactory.MEDIUM_GAP).addComponent(
-                                EXPORT, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                ENTER, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                         ).addContainerGap()
                 );
             }
@@ -76,8 +75,19 @@ public class ExportGui extends RegisterFrame {
         }
     }
 
-    private void exportAction() {
-        CURRENT_INSTANCE.EXPORT_HANDLER.export((String) TYPE.getSelectedItem(), NAME.getText(), this);
-        dispose();
+    private void enterAction() {
+        EncryptionHandler test = new EncryptionHandler(CURRENT_INSTANCE);
+        test.changeKey(ORIG.getPassword());
+        if (test.checkPassword()) {
+            CURRENT_INSTANCE.ENCRYPTION_HANDLER.changeKey(PASS.getPassword());
+            ORIG.setText("");
+            PASS.setText("");
+            CURRENT_INSTANCE.save();
+            dispose();
+        } else {
+            ORIG.setText("");
+            PASS.setText("");
+            new AlertGui(this, "Incorrect Password", CURRENT_INSTANCE).setVisible(true);
+        }
     }
 }

@@ -11,6 +11,7 @@ import com.donny.dendrofinance.gui.customswing.RegisterFrame;
 import com.donny.dendrofinance.gui.menu.data.AccountMetaGui;
 import com.donny.dendrofinance.gui.menu.data.StatisticsGui;
 import com.donny.dendrofinance.gui.menu.data.backing.BackingTableGui;
+import com.donny.dendrofinance.gui.menu.file.ChangePasswordGui;
 import com.donny.dendrofinance.gui.menu.file.ExportGui;
 import com.donny.dendrofinance.gui.menu.file.ImportGui;
 import com.donny.dendrofinance.gui.menu.reports.*;
@@ -156,8 +157,10 @@ public class MainGui extends JFrame {
                 exp.addActionListener(event -> new ExportGui(this, CURRENT_INSTANCE).setVisible(true));
 
                 JMenuItem logout = new JMenuItem("Log OUt");
-
+                logout.addActionListener(event -> {
+                });
                 JMenuItem change = new JMenuItem("Change Password");
+                change.addActionListener(event -> new ChangePasswordGui(this, CURRENT_INSTANCE).setVisible(true));
 
                 file.add(rel);
                 file.add(save);

@@ -6,7 +6,7 @@ v0.6.0
 -> overhaul password system
   * separated encryption handling and password gui
   X implemented logout
-  X implemented password change
+  * implemented password change
   X implemented specific password for archives
   * added gui for un-assumed password
     * added option for using profile password

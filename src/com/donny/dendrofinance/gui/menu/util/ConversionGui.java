@@ -34,27 +34,7 @@ public class ConversionGui extends RegisterFrame {
             DISPLAY = (JTextArea) PANE.getViewport().getView();
             DISPLAY.setEditable(false);
             CONVERT = DendroFactory.getButton("Convert");
-            CONVERT.addActionListener(event -> {
-                if (!DATE.getText().equals("") && !new LDate(DATE.getText(), CURRENT_INSTANCE).toDateString().equals(LDate.now(CURRENT_INSTANCE).toDateString())) {
-                    LCurrency a = CURRENT_INSTANCE.getLCurrency(CUR_A.getSelectedItem());
-                    LCurrency b = CURRENT_INSTANCE.getLCurrency(CUR_B.getSelectedItem());
-                    BigDecimal x = CURRENT_INSTANCE.cleanNumber(AMOUNT.getText());
-                    if (x.compareTo(BigDecimal.ZERO) == 0) {
-                        x = BigDecimal.ONE;
-                    }
-                    BigDecimal y = CURRENT_INSTANCE.convert(x, a, b, new LDate(DATE.getText(), CURRENT_INSTANCE));
-                    DISPLAY.setText(a.encode(x) + "\n=\n" + b.encode(y));
-                } else {
-                    LCurrency a = CURRENT_INSTANCE.getLCurrency(CUR_A.getSelectedItem());
-                    LCurrency b = CURRENT_INSTANCE.getLCurrency(CUR_B.getSelectedItem());
-                    BigDecimal x = CURRENT_INSTANCE.cleanNumber(AMOUNT.getText());
-                    if (x.compareTo(BigDecimal.ZERO) == 0) {
-                        x = BigDecimal.ONE;
-                    }
-                    BigDecimal y = CURRENT_INSTANCE.convert(x, a, b);
-                    DISPLAY.setText(a.encode(x) + "\n=\n" + b.encode(y));
-                }
-            });
+            CONVERT.addActionListener(event -> convertAction());
 
             //group layout
             {
@@ -113,6 +93,28 @@ public class ConversionGui extends RegisterFrame {
             }
 
             pack();
+        }
+    }
+
+    private void convertAction() {
+        if (!DATE.getText().equals("") && !new LDate(DATE.getText(), CURRENT_INSTANCE).toDateString().equals(LDate.now(CURRENT_INSTANCE).toDateString())) {
+            LCurrency a = CURRENT_INSTANCE.getLCurrency(CUR_A.getSelectedItem());
+            LCurrency b = CURRENT_INSTANCE.getLCurrency(CUR_B.getSelectedItem());
+            BigDecimal x = CURRENT_INSTANCE.cleanNumber(AMOUNT.getText());
+            if (x.compareTo(BigDecimal.ZERO) == 0) {
+                x = BigDecimal.ONE;
+            }
+            BigDecimal y = CURRENT_INSTANCE.convert(x, a, b, new LDate(DATE.getText(), CURRENT_INSTANCE));
+            DISPLAY.setText(a.encode(x) + "\n=\n" + b.encode(y));
+        } else {
+            LCurrency a = CURRENT_INSTANCE.getLCurrency(CUR_A.getSelectedItem());
+            LCurrency b = CURRENT_INSTANCE.getLCurrency(CUR_B.getSelectedItem());
+            BigDecimal x = CURRENT_INSTANCE.cleanNumber(AMOUNT.getText());
+            if (x.compareTo(BigDecimal.ZERO) == 0) {
+                x = BigDecimal.ONE;
+            }
+            BigDecimal y = CURRENT_INSTANCE.convert(x, a, b);
+            DISPLAY.setText(a.encode(x) + "\n=\n" + b.encode(y));
         }
     }
 }

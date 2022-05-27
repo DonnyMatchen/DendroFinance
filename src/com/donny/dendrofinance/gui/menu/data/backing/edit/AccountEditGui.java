@@ -38,28 +38,7 @@ public class AccountEditGui extends BackingEditGui<Account> {
         cancel = DendroFactory.getButton("Cancel");
         cancel.addActionListener(event -> dispose());
         save = DendroFactory.getButton("Save");
-        save.addActionListener(event -> {
-            try {
-                Account temp = new Account(
-                        Validation.validateString(name),
-                        Validation.validateInteger(aid).intValue(),
-                        CURRENT_INSTANCE.getLCurrency(currency.getSelectedItem()),
-                        CURRENT_INSTANCE.ACCOUNT_TYPES.getElement(type.getSelectedItem()),
-                        Validation.validateStringAllowEmpty(budget),
-                        exchange.getSelectedItem() == null ? null : CURRENT_INSTANCE.EXCHANGES.getElement(exchange.getSelectedItem()),
-                        CURRENT_INSTANCE,
-                        true
-                );
-                if (INDEX >= 0) {
-                    TABLE.replace(INDEX, temp);
-                } else {
-                    TABLE.add(temp);
-                }
-                dispose();
-            } catch (ValidationFailedException ex) {
-                CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "You did a badness!");
-            }
-        });
+        save.addActionListener(event -> saveAction());
 
         //populate if in edit mode
         if (INDEX >= 0) {
@@ -151,6 +130,30 @@ public class AccountEditGui extends BackingEditGui<Account> {
                             )
                     ).addContainerGap()
             );
+        }
+    }
+
+    @Override
+    protected void saveAction() {
+        try {
+            Account temp = new Account(
+                    Validation.validateString(name),
+                    Validation.validateInteger(aid).intValue(),
+                    CURRENT_INSTANCE.getLCurrency(currency.getSelectedItem()),
+                    CURRENT_INSTANCE.ACCOUNT_TYPES.getElement(type.getSelectedItem()),
+                    Validation.validateStringAllowEmpty(budget),
+                    exchange.getSelectedItem() == null ? null : CURRENT_INSTANCE.EXCHANGES.getElement(exchange.getSelectedItem()),
+                    CURRENT_INSTANCE,
+                    true
+            );
+            if (INDEX >= 0) {
+                TABLE.replace(INDEX, temp);
+            } else {
+                TABLE.add(temp);
+            }
+            dispose();
+        } catch (ValidationFailedException ex) {
+            CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "You did a badness!");
         }
     }
 }

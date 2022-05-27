@@ -33,10 +33,7 @@ import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.event.*;
 import java.util.ArrayList;
 
 public class MainGui extends JFrame {
@@ -77,11 +74,7 @@ public class MainGui extends JFrame {
             TABLE_PANE = DendroFactory.getTable(new String[]{
                     "UUID", "Date", "Entity", "Items", "Description", "Account", "Debit", "Credit", "Tracking", "Ghost", "Meta"
             }, new Object[][]{}, false);
-            TABLE_PANE.getVerticalScrollBar().addAdjustmentListener(event -> {
-                if (force) {
-                    event.getAdjustable().setValue(event.getAdjustable().getMaximum());
-                }
-            });
+            TABLE_PANE.getVerticalScrollBar().addAdjustmentListener(event -> tablePaneScrolled(event));
             TABLE = (JTable) TABLE_PANE.getViewport().getView();
             TABLE.addMouseListener(new MouseAdapter() {
                 @Override
@@ -404,6 +397,12 @@ public class MainGui extends JFrame {
 
         updateTable("");
         CURRENT_INSTANCE.LOG_HANDLER.trace(getClass(), "MainGui Created");
+    }
+
+    public void tablePaneScrolled(AdjustmentEvent event) {
+        if (force) {
+            event.getAdjustable().setValue(event.getAdjustable().getMaximum());
+        }
     }
 
     public void updateTable() {

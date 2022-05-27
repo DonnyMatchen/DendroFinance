@@ -36,38 +36,7 @@ public class NewTaxGui extends ModalFrame {
             TABLE = (JTable) PANE.getViewport().getView();
             TABLE_ACCESS = (DefaultTableModel) TABLE.getModel();
             SAVE = DendroFactory.getButton("Save");
-            SAVE.addActionListener(event -> {
-                TaxItem item;
-                if (BOUND.getText().equals("")) {
-                    item = new TaxItem(
-                            NAME.getText(),
-                            new BigDecimal(EXEMPT.getText())
-                    );
-                } else {
-                    item = new TaxItem(
-                            NAME.getText(),
-                            new BigDecimal(EXEMPT.getText()),
-                            new BigDecimal(BOUND.getText())
-                    );
-                }
-                ArrayList<BigDecimal[]> list = new ArrayList<>();
-                for (int i = 0; i < TABLE.getRowCount(); i++) {
-                    try {
-                        list.add(new BigDecimal[]{
-                                CURRENT_INSTANCE.cleanNumber((String) TABLE_ACCESS.getValueAt(i, 0)),
-                                CURRENT_INSTANCE.cleanNumber((String) TABLE_ACCESS.getValueAt(i, 1))
-                        });
-                    } catch (NumberFormatException ex) {
-                        CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Bad bracket: ["
-                                + TABLE_ACCESS.getValueAt(i, 0) + ", "
-                                + TABLE_ACCESS.getValueAt(i, 1) + "]");
-                    }
-                }
-                item.setBrackets(list);
-                CURRENT_INSTANCE.TAX_ITEMS.add(item);
-                caller.updateTaxes();
-                dispose();
-            });
+            SAVE.addActionListener(event -> saveAction(caller));
             CANCEL = DendroFactory.getButton("Cancel");
             CANCEL.addActionListener(event -> dispose());
             NEW = DendroFactory.getButton("New Bracket Entry");
@@ -165,5 +134,38 @@ public class NewTaxGui extends ModalFrame {
 
             pack();
         }
+    }
+
+    private void saveAction(TaxGui caller) {
+        TaxItem item;
+        if (BOUND.getText().equals("")) {
+            item = new TaxItem(
+                    NAME.getText(),
+                    new BigDecimal(EXEMPT.getText())
+            );
+        } else {
+            item = new TaxItem(
+                    NAME.getText(),
+                    new BigDecimal(EXEMPT.getText()),
+                    new BigDecimal(BOUND.getText())
+            );
+        }
+        ArrayList<BigDecimal[]> list = new ArrayList<>();
+        for (int i = 0; i < TABLE.getRowCount(); i++) {
+            try {
+                list.add(new BigDecimal[]{
+                        CURRENT_INSTANCE.cleanNumber((String) TABLE_ACCESS.getValueAt(i, 0)),
+                        CURRENT_INSTANCE.cleanNumber((String) TABLE_ACCESS.getValueAt(i, 1))
+                });
+            } catch (NumberFormatException ex) {
+                CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Bad bracket: ["
+                        + TABLE_ACCESS.getValueAt(i, 0) + ", "
+                        + TABLE_ACCESS.getValueAt(i, 1) + "]");
+            }
+        }
+        item.setBrackets(list);
+        CURRENT_INSTANCE.TAX_ITEMS.add(item);
+        caller.updateTaxes();
+        dispose();
     }
 }

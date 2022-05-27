@@ -39,25 +39,9 @@ public class ImportGui extends RegisterFrame {
             LIST_ACCESS = (DefaultListModel<String>) LIST.getModel();
             PANE.setViewportView(LIST);
             IMPORT = DendroFactory.getButton("Import");
-            IMPORT.addActionListener(event -> {
-                if (LIST.getSelectedIndex() >= 0) {
-                    CURRENT_INSTANCE.IMPORT_HANDLER.load(DIR + File.separator + LIST_ACCESS.get(LIST.getSelectedIndex()),
-                            this,
-                            ImportHandler.ImportMode.fromString((String) MODE.getSelectedItem()));
-                    updateList();
-                }
-            });
+            IMPORT.addActionListener(event -> importAction());
             IMPORT_ALL = DendroFactory.getButton("Import All");
-            IMPORT_ALL.addActionListener(event -> {
-                if (LIST_ACCESS.getSize() > 0) {
-                    for (int i = 0; i < LIST_ACCESS.getSize(); i++) {
-                        CURRENT_INSTANCE.IMPORT_HANDLER.load(DIR + File.separator + LIST_ACCESS.get(i),
-                                this,
-                                ImportHandler.ImportMode.fromString((String) MODE.getSelectedItem()));
-                    }
-                    updateList();
-                }
-            });
+            IMPORT_ALL.addActionListener(event -> importAllAction());
 
             //group layout
             {
@@ -109,6 +93,26 @@ public class ImportGui extends RegisterFrame {
             pack();
         }
         updateList();
+    }
+
+    private void importAction() {
+        if (LIST.getSelectedIndex() >= 0) {
+            CURRENT_INSTANCE.IMPORT_HANDLER.load(DIR + File.separator + LIST_ACCESS.get(LIST.getSelectedIndex()),
+                    this,
+                    ImportHandler.ImportMode.fromString((String) MODE.getSelectedItem()));
+            updateList();
+        }
+    }
+
+    private void importAllAction() {
+        if (LIST_ACCESS.getSize() > 0) {
+            for (int i = 0; i < LIST_ACCESS.getSize(); i++) {
+                CURRENT_INSTANCE.IMPORT_HANDLER.load(DIR + File.separator + LIST_ACCESS.get(i),
+                        this,
+                        ImportHandler.ImportMode.fromString((String) MODE.getSelectedItem()));
+            }
+            updateList();
+        }
     }
 
     private void updateList() {

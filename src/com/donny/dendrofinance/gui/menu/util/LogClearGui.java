@@ -31,17 +31,9 @@ public class LogClearGui extends RegisterFrame {
             VIEW = (JTextArea) VIEW_PANE.getViewport().getView();
             VIEW.setEditable(false);
             REMOVE = DendroFactory.getButton("Remove");
-            REMOVE.addActionListener(event -> {
-                CURRENT_INSTANCE.FILE_HANDLER.delete(LOGS, LIST.getSelectedValue());
-                updateList();
-            });
+            REMOVE.addActionListener(event -> removeAction());
             REMOVE_ALL = DendroFactory.getButton("Remove All");
-            REMOVE_ALL.addActionListener(event -> {
-                for (int i = 0; i < LIST.getModel().getSize(); i++) {
-                    CURRENT_INSTANCE.FILE_HANDLER.delete(LOGS, LIST.getModel().getElementAt(i));
-                }
-                updateList();
-            });
+            REMOVE_ALL.addActionListener(event -> removeAllAction());
             LOAD = DendroFactory.getButton("Load");
             LOAD.addActionListener(event -> VIEW.setText(
                     CURRENT_INSTANCE.FILE_HANDLER.readPlain(LOGS, LIST.getSelectedValue())
@@ -94,6 +86,18 @@ public class LogClearGui extends RegisterFrame {
             pack();
         }
 
+        updateList();
+    }
+
+    private void removeAction() {
+        CURRENT_INSTANCE.FILE_HANDLER.delete(LOGS, LIST.getSelectedValue());
+        updateList();
+    }
+
+    private void removeAllAction() {
+        for (int i = 0; i < LIST.getModel().getSize(); i++) {
+            CURRENT_INSTANCE.FILE_HANDLER.delete(LOGS, LIST.getModel().getElementAt(i));
+        }
         updateList();
     }
 

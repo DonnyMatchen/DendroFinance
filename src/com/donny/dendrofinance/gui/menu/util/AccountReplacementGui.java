@@ -25,30 +25,7 @@ public class AccountReplacementGui extends RegisterFrame {
             OLD = new SearchBox("Existing Account", CURRENT_INSTANCE.getAccountsInUseAsStrings());
             NEW = new SearchBox("Replacement Account", CURRENT_INSTANCE.getAccountsAsStrings());
             GO = new JButton("Do Change");
-            GO.addActionListener(event -> {
-                Account a = CURRENT_INSTANCE.ACCOUNTS.getElement(OLD.getSelectedItem());
-                Account b = CURRENT_INSTANCE.ACCOUNTS.getElement(NEW.getSelectedItem());
-                for (TransactionEntry entry : CURRENT_INSTANCE.DATA_HANDLER.readTransactions()) {
-                    int index = -1;
-                    AWColumn column = null;
-                    BigDecimal value = null;
-                    for (int i = 0; i < entry.getAccounts().getSize(); i++) {
-                        if (entry.getAccounts().get(i).ACCOUNT.equals(a)) {
-                            index = i;
-                            column = entry.getAccounts().get(i).COLUMN;
-                            value = entry.getAccounts().get(i).VALUE;
-                        }
-                    }
-                    if (index != -1) {
-                        entry.getAccounts().replace(index, new AccountWrapper(b, column.toString(), value));
-                    }
-                }
-                if (!a.inUse()) {
-                    OLD.setMaster(CURRENT_INSTANCE.getAccountsInUseAsStrings());
-                } else {
-                    CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "I don't know how you fucked this up.  Account not replaced.");
-                }
-            });
+            GO.addActionListener(event -> goAction());
 
             //group layout
             {
@@ -77,6 +54,31 @@ public class AccountReplacementGui extends RegisterFrame {
             }
 
             pack();
+        }
+    }
+
+    private void goAction() {
+        Account a = CURRENT_INSTANCE.ACCOUNTS.getElement(OLD.getSelectedItem());
+        Account b = CURRENT_INSTANCE.ACCOUNTS.getElement(NEW.getSelectedItem());
+        for (TransactionEntry entry : CURRENT_INSTANCE.DATA_HANDLER.readTransactions()) {
+            int index = -1;
+            AWColumn column = null;
+            BigDecimal value = null;
+            for (int i = 0; i < entry.getAccounts().getSize(); i++) {
+                if (entry.getAccounts().get(i).ACCOUNT.equals(a)) {
+                    index = i;
+                    column = entry.getAccounts().get(i).COLUMN;
+                    value = entry.getAccounts().get(i).VALUE;
+                }
+            }
+            if (index != -1) {
+                entry.getAccounts().replace(index, new AccountWrapper(b, column.toString(), value));
+            }
+        }
+        if (!a.inUse()) {
+            OLD.setMaster(CURRENT_INSTANCE.getAccountsInUseAsStrings());
+        } else {
+            CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "I don't know how you fucked this up.  Account not replaced.");
         }
     }
 }

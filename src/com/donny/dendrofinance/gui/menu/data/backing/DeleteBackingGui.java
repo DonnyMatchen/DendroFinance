@@ -33,11 +33,7 @@ public class DeleteBackingGui<E extends ExportableToJson> extends ModalFrame {
             CANCEL = DendroFactory.getButton("Cancel");
             CANCEL.addActionListener(event -> dispose());
             DELETE = DendroFactory.getButton("Ok");
-            DELETE.addActionListener(event -> {
-                core.deleteElement(index);
-                caller.updateTable();
-                dispose();
-            });
+            DELETE.addActionListener(event -> deleteAction(caller, core, index));
 
             //group layout
             {
@@ -77,5 +73,11 @@ public class DeleteBackingGui<E extends ExportableToJson> extends ModalFrame {
 
             pack();
         }
+    }
+
+    public void deleteAction(BackingTableGui<E> caller, BackingTableCore<E> core, int index) {
+        core.deleteElement(index);
+        caller.updateTable();
+        dispose();
     }
 }

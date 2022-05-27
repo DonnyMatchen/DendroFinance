@@ -30,35 +30,7 @@ public class NewBudgetGui extends ModalFrame {
             CANCEL = DendroFactory.getButton("Cancel");
             CANCEL.addActionListener(event -> dispose());
             OK = DendroFactory.getButton("Ok");
-            OK.addActionListener(event -> {
-                boolean flag = true;
-                BudgetEntry template = null;
-                if (NAME.getText().equals("")) {
-                    flag = false;
-                }
-                if (flag) {
-                    for (BudgetEntry entry : CURRENT_INSTANCE.DATA_HANDLER.readBudgets()) {
-                        if (entry.getName().equalsIgnoreCase(NAME.getText())) {
-                            flag = false;
-                            break;
-                        }
-                        if (entry.getName().equals(TEMPLATE.getSelectedItem().toString())) {
-                            template = entry;
-                        }
-                    }
-                }
-                if (flag) {
-                    if (template == null) {
-                        CURRENT_INSTANCE.DATA_HANDLER.addBudget(new BudgetEntry(NAME.getText(), CURRENT_INSTANCE));
-                    } else {
-                        CURRENT_INSTANCE.DATA_HANDLER.addBudget(new BudgetEntry(template, NAME.getText()));
-                    }
-                    CALLER.updateBudget();
-                    dispose();
-                } else {
-                    NAME.setBackground(DendroFactory.WRONG);
-                }
-            });
+            OK.addActionListener(event -> okAction());
 
             //back layout
             {
@@ -113,6 +85,36 @@ public class NewBudgetGui extends ModalFrame {
             }
 
             pack();
+        }
+    }
+
+    public void okAction() {
+        boolean flag = true;
+        BudgetEntry template = null;
+        if (NAME.getText().equals("")) {
+            flag = false;
+        }
+        if (flag) {
+            for (BudgetEntry entry : CURRENT_INSTANCE.DATA_HANDLER.readBudgets()) {
+                if (entry.getName().equalsIgnoreCase(NAME.getText())) {
+                    flag = false;
+                    break;
+                }
+                if (entry.getName().equals(TEMPLATE.getSelectedItem().toString())) {
+                    template = entry;
+                }
+            }
+        }
+        if (flag) {
+            if (template == null) {
+                CURRENT_INSTANCE.DATA_HANDLER.addBudget(new BudgetEntry(NAME.getText(), CURRENT_INSTANCE));
+            } else {
+                CURRENT_INSTANCE.DATA_HANDLER.addBudget(new BudgetEntry(template, NAME.getText()));
+            }
+            CALLER.updateBudget();
+            dispose();
+        } else {
+            NAME.setBackground(DendroFactory.WRONG);
         }
     }
 }

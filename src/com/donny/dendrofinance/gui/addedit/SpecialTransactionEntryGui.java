@@ -379,16 +379,9 @@ public class SpecialTransactionEntryGui extends ModalFrame {
                 TT_F_CUR = new SearchBox("Fee Currency", new ArrayList<>());
                 TT_F_EXCHANGE = new SearchBox("From Exchange", CURRENT_INSTANCE.getExchangesAsStrings());
                 TT_T_EXCHANGE = new SearchBox("To Exchange", CURRENT_INSTANCE.getExchangesAsStrings());
-                TT_F_EXCHANGE.addListSelectionListener(event -> {
-                    update2ECur(TT_L_CUR, TT_F_EXCHANGE, TT_T_EXCHANGE);
-                    updateToken(TT_F_CUR, TT_F_EXCHANGE, TT_T_EXCHANGE);
-                });
-                TT_T_EXCHANGE.addListSelectionListener(event -> {
-                    update2ECur(TT_L_CUR, TT_F_EXCHANGE, TT_T_EXCHANGE);
-                    updateToken(TT_F_CUR, TT_F_EXCHANGE, TT_T_EXCHANGE);
-                });
-                update2ECur(TT_L_CUR, TT_F_EXCHANGE, TT_T_EXCHANGE);
-                updateToken(TT_F_CUR, TT_F_EXCHANGE, TT_T_EXCHANGE);
+                TT_F_EXCHANGE.addListSelectionListener(event -> updateTT());
+                TT_T_EXCHANGE.addListSelectionListener(event -> updateTT());
+                updateTT();
 
                 TT_CANCEL = DendroFactory.getButton("Cancel");
                 TT_CANCEL.addActionListener(event -> dispose());
@@ -523,12 +516,8 @@ public class SpecialTransactionEntryGui extends ModalFrame {
                 TD_F_CUR = new SearchBox("From Currency", new ArrayList<>());
                 TD_T_CUR = new SearchBox("To Currency", new ArrayList<>());
                 TD_EXCHANGE = new SearchBox("Exchange", CURRENT_INSTANCE.getExchangesAsStrings());
-                CT_F_EXCHANGE.addListSelectionListener(event -> {
-                    updateCur(TD_F_CUR, TD_EXCHANGE);
-                    updateCur(TD_T_CUR, TD_EXCHANGE);
-                });
-                updateCur(TD_F_CUR, TD_EXCHANGE);
-                updateCur(TD_T_CUR, TD_EXCHANGE);
+                TD_EXCHANGE.addListSelectionListener(event -> updateTD());
+                updateTD();
 
                 TD_CANCEL = DendroFactory.getButton("Cancel");
                 TD_CANCEL.addActionListener(event -> dispose());
@@ -628,6 +617,16 @@ public class SpecialTransactionEntryGui extends ModalFrame {
 
             pack();
         }
+    }
+
+    private void updateTT() {
+        update2ECur(TT_L_CUR, TT_F_EXCHANGE, TT_T_EXCHANGE);
+        updateToken(TT_F_CUR, TT_F_EXCHANGE, TT_T_EXCHANGE);
+    }
+
+    private void updateTD() {
+        updateCur(TD_F_CUR, TD_EXCHANGE);
+        updateCur(TD_T_CUR, TD_EXCHANGE);
     }
 
     private void updateCur(SearchBox cur, SearchBox exchange) {

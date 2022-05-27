@@ -20,4 +20,6 @@ public abstract class BackingEditGui<E extends ExportableToJson> extends ModalFr
     }
 
     protected abstract void initComponents();
+
+    protected abstract void saveAction();
 }

@@ -44,30 +44,7 @@ public class CurrencyEditGui extends BackingEditGui<LCurrency> {
         cancel = DendroFactory.getButton("Cancel");
         cancel.addActionListener(event -> dispose());
         save = DendroFactory.getButton("Save");
-        save.addActionListener(event -> {
-            try {
-                LCurrency temp = new LCurrency(
-                        Validation.validateString(name),
-                        Validation.validateString(ticker),
-                        fiat.isSelected(),
-                        Validation.validateString(symbol),
-                        forwards.isSelected(),
-                        Validation.validateInteger(places).intValue(),
-                        Validation.validateString(alt),
-                        token.isSelected(),
-                        extinct.isSelected(),
-                        CURRENT_INSTANCE
-                );
-                if (INDEX >= 0) {
-                    TABLE.replace(INDEX, temp);
-                } else {
-                    TABLE.add(temp);
-                }
-                dispose();
-            } catch (ValidationFailedException ex) {
-                CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "You did a badness!");
-            }
-        });
+        save.addActionListener(event -> saveAction());
 
         //populate if in edit mode
         if (INDEX >= 0) {
@@ -214,6 +191,32 @@ public class CurrencyEditGui extends BackingEditGui<LCurrency> {
                             )
                     ).addContainerGap()
             );
+        }
+    }
+
+    @Override
+    protected void saveAction() {
+        try {
+            LCurrency temp = new LCurrency(
+                    Validation.validateString(name),
+                    Validation.validateString(ticker),
+                    fiat.isSelected(),
+                    Validation.validateString(symbol),
+                    forwards.isSelected(),
+                    Validation.validateInteger(places).intValue(),
+                    Validation.validateString(alt),
+                    token.isSelected(),
+                    extinct.isSelected(),
+                    CURRENT_INSTANCE
+            );
+            if (INDEX >= 0) {
+                TABLE.replace(INDEX, temp);
+            } else {
+                TABLE.add(temp);
+            }
+            dispose();
+        } catch (ValidationFailedException ex) {
+            CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "You did a badness!");
         }
     }
 }

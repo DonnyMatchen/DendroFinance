@@ -1,13 +1,16 @@
 v0.6.0
-* added modal frame
-* moved RegisterFrame to gui.customswing
-* separated encryption handling and password gui
+* minor fixes and improvements
+  * added modal frame
+  * moved RegisterFrame to gui.customswing
+  * removed anonymous functions
 -> overhaul password system
+  * separated encryption handling and password gui
   X implemented logout
   X implemented password change
   X reworked ArchiveGui
     X implemented specific password for archives
   * added gui for un-assumed password
+    X added option for using profile password
 -> reworked import and export
   * removed export from profile flags
   * added import modes

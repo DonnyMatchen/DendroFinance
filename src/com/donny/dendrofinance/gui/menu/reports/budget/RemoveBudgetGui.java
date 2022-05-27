@@ -22,20 +22,7 @@ public class RemoveBudgetGui extends ModalFrame {
                 NO = DendroFactory.getButton("No");
                 NO.addActionListener(event -> dispose());
                 YES = DendroFactory.getButton("Yes");
-                YES.addActionListener(event -> {
-                    BudgetEntry entry = null;
-                    for (BudgetEntry e : CURRENT_INSTANCE.DATA_HANDLER.readBudgets()) {
-                        if (e.getName().equals(budget)) {
-                            entry = e;
-                            break;
-                        }
-                    }
-                    if (entry != null) {
-                        CURRENT_INSTANCE.DATA_HANDLER.deleteBudget(entry.getUUID());
-                        caller.updateBudget();
-                    }
-                    dispose();
-                });
+                YES.addActionListener(event -> yesAction(caller, budget));
 
                 //back layout
                 {
@@ -72,5 +59,20 @@ public class RemoveBudgetGui extends ModalFrame {
                 pack();
             }
         }
+    }
+
+    private void yesAction(BudgetGui caller, String budget) {
+        BudgetEntry entry = null;
+        for (BudgetEntry e : CURRENT_INSTANCE.DATA_HANDLER.readBudgets()) {
+            if (e.getName().equals(budget)) {
+                entry = e;
+                break;
+            }
+        }
+        if (entry != null) {
+            CURRENT_INSTANCE.DATA_HANDLER.deleteBudget(entry.getUUID());
+            caller.updateBudget();
+        }
+        dispose();
     }
 }

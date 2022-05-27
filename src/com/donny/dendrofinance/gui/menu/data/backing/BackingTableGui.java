@@ -77,31 +77,22 @@ public class BackingTableGui<E extends ExportableToJson> extends RegisterFrame {
             TABLE_ACCESS = (DefaultTableModel) TABLE.getModel();
 
             UP = DendroFactory.getButton("Move Up");
-            UP.addActionListener(actionEvent -> {
-                TABLE_CORE.move(getIdentifier(TABLE.getSelectedRow()), true);
-                updateTable();
-            });
+            UP.addActionListener(event -> moveElement(true));
 
             DOWN = DendroFactory.getButton("Move Down");
-            DOWN.addActionListener(actionEvent -> {
-                TABLE_CORE.move(getIdentifier(TABLE.getSelectedRow()), false);
-                updateTable();
-            });
+            DOWN.addActionListener(event -> moveElement(false));
 
             EDIT = DendroFactory.getButton("Edit");
             EDIT.addActionListener(event -> TABLE_CORE.getEditDialog(this, TABLE_CORE.getIndex(getIdentifier(TABLE.getSelectedRow()))));
 
             DELETE = DendroFactory.getButton("Remove");
-            DELETE.addActionListener(actionEvent -> new DeleteBackingGui<>(this, TABLE_CORE, TABLE_CORE.getIndex(getIdentifier(TABLE.getSelectedRow())), curInst).setVisible(true));
+            DELETE.addActionListener(event -> new DeleteBackingGui<>(this, TABLE_CORE, TABLE_CORE.getIndex(getIdentifier(TABLE.getSelectedRow())), curInst).setVisible(true));
 
             CREATE = DendroFactory.getButton("New");
             CREATE.addActionListener(event -> TABLE_CORE.getEditDialog(this, -1));
 
             SORT = DendroFactory.getButton("Sort");
-            SORT.addActionListener(actionEvent -> {
-                TABLE_CORE.sort();
-                updateTable();
-            });
+            SORT.addActionListener(event -> sort());
             SORT.setEnabled(TABLE_CORE.SORTABLE);
 
             //back layout
@@ -173,6 +164,16 @@ public class BackingTableGui<E extends ExportableToJson> extends RegisterFrame {
             TABLE_ACCESS.removeRow(0);
         }
         TABLE_CORE.getContents(search).forEach(TABLE_ACCESS::addRow);
+    }
+
+    private void moveElement(boolean up) {
+        TABLE_CORE.move(getIdentifier(TABLE.getSelectedRow()), up);
+        updateTable();
+    }
+
+    private void sort() {
+        TABLE_CORE.sort();
+        updateTable();
     }
 
     private String getIdentifier(int row) {

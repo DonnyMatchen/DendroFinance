@@ -18,7 +18,9 @@ public class UnkPasswordGui extends ModalFrame {
 
     private final JPasswordField PASSWORD;
     private final JLabel A;
-    private final JButton ENTER;
+    private final JButton ENTER, DEFAULT;
+
+    private boolean defaultPassword = false;
 
     public static EncryptionHandler getTestPassword(JFrame caller, String nameFor, Instance curInst) {
         UnkPasswordGui unk = new UnkPasswordGui(caller, nameFor, curInst);
@@ -46,6 +48,8 @@ public class UnkPasswordGui extends ModalFrame {
             });
             ENTER = DendroFactory.getButton("Enter");
             ENTER.addActionListener(event -> enterPressed());
+            DEFAULT = DendroFactory.getButton("Use Profile Password");
+            DEFAULT.addActionListener(event -> defaultPressed());
 
             //group layout
             {
@@ -77,7 +81,7 @@ public class UnkPasswordGui extends ModalFrame {
     }
 
     private EncryptionHandler getEncryptionHandler() {
-        return ENC_HAND.keysSet() ? ENC_HAND : null;
+        return defaultPassword ? CURRENT_INSTANCE.ENCRYPTION_HANDLER : ENC_HAND.keysSet() ? ENC_HAND : null;
     }
 
     private void enterPressed() {
@@ -86,6 +90,12 @@ public class UnkPasswordGui extends ModalFrame {
         if (!ENC_HAND.keysSet()) {
             CURRENT_INSTANCE.LOG_HANDLER.fatal(getClass(), "Password failed to set");
         }
+        dispose();
+    }
+
+    private void defaultPressed() {
+        PASSWORD.setText("");
+        defaultPassword = true;
         dispose();
     }
 }

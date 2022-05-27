@@ -38,20 +38,11 @@ public class TaxGui extends RegisterFrame {
             D = new JLabel("Result");
 
             CALCULATE = DendroFactory.getButton("Calculate");
-            CALCULATE.addActionListener(event -> {
-                if (EXEMPT.getText().equals("")) {
-                    RESULT.setText(CURRENT_INSTANCE.$(CURRENT_INSTANCE.TAX_ITEMS.getElement((String) ITEMS.getSelectedItem()).process(CURRENT_INSTANCE.cleanNumber(VALUE.getText()))));
-                } else {
-                    RESULT.setText(CURRENT_INSTANCE.$(CURRENT_INSTANCE.TAX_ITEMS.getElement((String) ITEMS.getSelectedItem()).process(CURRENT_INSTANCE.cleanNumber(VALUE.getText()), CURRENT_INSTANCE.cleanNumber(EXEMPT.getText()))));
-                }
-            });
+            CALCULATE.addActionListener(event -> calculateAction());
             NEW = DendroFactory.getButton("New Tax Item");
             NEW.addActionListener(event -> new NewTaxGui(this, CURRENT_INSTANCE).setVisible(true));
             DELETE = DendroFactory.getButton("Delete Tax Item");
-            DELETE.addActionListener(event -> {
-                CURRENT_INSTANCE.TAX_ITEMS.deleteElement((String) ITEMS.getSelectedItem());
-                updateTaxes();
-            });
+            DELETE.addActionListener(event -> deleteAction());
 
             //group layout
             {
@@ -141,5 +132,18 @@ public class TaxGui extends RegisterFrame {
     public void updateTaxes() {
         ITEMS.removeAllItems();
         CURRENT_INSTANCE.TAX_ITEMS.forEach(item -> ITEMS.addItem(item.NAME));
+    }
+
+    private void calculateAction() {
+        if (EXEMPT.getText().equals("")) {
+            RESULT.setText(CURRENT_INSTANCE.$(CURRENT_INSTANCE.TAX_ITEMS.getElement((String) ITEMS.getSelectedItem()).process(CURRENT_INSTANCE.cleanNumber(VALUE.getText()))));
+        } else {
+            RESULT.setText(CURRENT_INSTANCE.$(CURRENT_INSTANCE.TAX_ITEMS.getElement((String) ITEMS.getSelectedItem()).process(CURRENT_INSTANCE.cleanNumber(VALUE.getText()), CURRENT_INSTANCE.cleanNumber(EXEMPT.getText()))));
+        }
+    }
+
+    public void deleteAction() {
+        CURRENT_INSTANCE.TAX_ITEMS.deleteElement((String) ITEMS.getSelectedItem());
+        updateTaxes();
     }
 }

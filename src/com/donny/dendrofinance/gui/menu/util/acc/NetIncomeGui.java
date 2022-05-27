@@ -27,40 +27,7 @@ public class NetIncomeGui extends RegisterFrame {
             DATE = new JTextField();
             A = new JLabel("Date");
             SAVE = DendroFactory.getButton("Save");
-            SAVE.addActionListener(event -> {
-                BigDecimal net = BigDecimal.ZERO;
-                HashMap<Account, BigDecimal> accounts = CURRENT_INSTANCE.DATA_HANDLER.accountsAsOf(new LDate(DATE.getText(), CURRENT_INSTANCE));
-                for (Account a : accounts.keySet()) {
-                    if (a.getBroadAccountType() == BroadAccountType.REVENUE) {
-                        net = net.add(accounts.get(a));
-                    } else if (a.getBroadAccountType() == BroadAccountType.EXPENSE) {
-                        net = net.subtract(accounts.get(a));
-                    }
-                }
-                StringBuilder sb = new StringBuilder();
-                if (net.compareTo(BigDecimal.ZERO) >= 0) {
-                    sb.append("C!Net_Income(").append(net).append(")");
-                } else {
-                    sb.append("D!Net_Income(").append(net.abs()).append(")");
-                }
-                for (Account a : accounts.keySet()) {
-                    if ((a.getBroadAccountType() == BroadAccountType.REVENUE || a.getBroadAccountType() == BroadAccountType.EXPENSE) && accounts.get(a).compareTo(BigDecimal.ZERO) != 0) {
-                        sb.append(", ").append(a.getDefaultColumn(false)).append("!").append(a.getName())
-                                .append("(").append(accounts.get(a)).append(")");
-                    }
-                }
-                TransactionEntry entry = new TransactionEntry(CURRENT_INSTANCE);
-                entry.insert(
-                        new LDate(DATE.getText(), CURRENT_INSTANCE),
-                        "ACC",
-                        "",
-                        "Net Income",
-                        new LAccountSet(sb.toString(), CURRENT_INSTANCE)
-                );
-                CURRENT_INSTANCE.DATA_HANDLER.addTransaction(entry);
-                caller.updateTable();
-                dispose();
-            });
+            SAVE.addActionListener(event -> saveAction());
 
             //group layout
             {
@@ -98,5 +65,40 @@ public class NetIncomeGui extends RegisterFrame {
         DATE.setText(date.toString());
 
         pack();
+    }
+
+    private void saveAction() {
+        BigDecimal net = BigDecimal.ZERO;
+        HashMap<Account, BigDecimal> accounts = CURRENT_INSTANCE.DATA_HANDLER.accountsAsOf(new LDate(DATE.getText(), CURRENT_INSTANCE));
+        for (Account a : accounts.keySet()) {
+            if (a.getBroadAccountType() == BroadAccountType.REVENUE) {
+                net = net.add(accounts.get(a));
+            } else if (a.getBroadAccountType() == BroadAccountType.EXPENSE) {
+                net = net.subtract(accounts.get(a));
+            }
+        }
+        StringBuilder sb = new StringBuilder();
+        if (net.compareTo(BigDecimal.ZERO) >= 0) {
+            sb.append("C!Net_Income(").append(net).append(")");
+        } else {
+            sb.append("D!Net_Income(").append(net.abs()).append(")");
+        }
+        for (Account a : accounts.keySet()) {
+            if ((a.getBroadAccountType() == BroadAccountType.REVENUE || a.getBroadAccountType() == BroadAccountType.EXPENSE) && accounts.get(a).compareTo(BigDecimal.ZERO) != 0) {
+                sb.append(", ").append(a.getDefaultColumn(false)).append("!").append(a.getName())
+                        .append("(").append(accounts.get(a)).append(")");
+            }
+        }
+        TransactionEntry entry = new TransactionEntry(CURRENT_INSTANCE);
+        entry.insert(
+                new LDate(DATE.getText(), CURRENT_INSTANCE),
+                "ACC",
+                "",
+                "Net Income",
+                new LAccountSet(sb.toString(), CURRENT_INSTANCE)
+        );
+        CURRENT_INSTANCE.DATA_HANDLER.addTransaction(entry);
+        CALLER.updateTable();
+        dispose();
     }
 }

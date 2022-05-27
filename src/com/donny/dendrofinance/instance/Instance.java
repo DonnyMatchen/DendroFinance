@@ -32,6 +32,7 @@ public class Instance {
 
     //Major managing objects and handling lists
     public final String IID;
+    public final String[] ARGS;
     public final LogHandler LOG_HANDLER;
     public final EncryptionHandler ENCRYPTION_HANDLER;
     public final FileHandler FILE_HANDLER;
@@ -59,6 +60,7 @@ public class Instance {
 
     public Instance(String iid, String[] args) {
         IID = iid;
+        ARGS = args;
         CURRENCIES = new CurrencyBTC(this);
         STOCKS = new StockBTC(this);
         INVENTORIES = new InventoryBTC(this);
@@ -71,7 +73,7 @@ public class Instance {
         FILE_HANDLER = new FileHandler(this);
         DendroFactory.init(this);
         ENCRYPTION_HANDLER = new EncryptionHandler(this);
-        PasswordGui password = new PasswordGui(args, this);
+        PasswordGui password = new PasswordGui(this);
         UUID_HANDLER = new UuidHandler(this);
         password.setVisible(true);
         while (!password.done) {

@@ -19,7 +19,6 @@ import java.util.Comparator;
  * @author Donny
  */
 public class PasswordGui extends JFrame {
-    public final String[] ARGS;
     public final ArrayList<JsonObject> PROFILES;
     private final Instance CURRENT_INSTANCE;
     private final JLabel A, B;
@@ -28,11 +27,10 @@ public class PasswordGui extends JFrame {
     private final JButton ENTER, NEW_INSTANCE, EDIT_PROFILE, NEW_PROFILE;
     public boolean done = false;
 
-    public PasswordGui(String[] args, Instance curInst) {
+    public PasswordGui(Instance curInst) {
         super("Log In");
         CURRENT_INSTANCE = curInst;
         PROFILES = new ArrayList<>();
-        ARGS = args;
         //draw gui
         {
             setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
@@ -220,7 +218,7 @@ public class PasswordGui extends JFrame {
     }
 
     public void newInstance() {
-        new Thread(() -> DendroFinance.main(ARGS)).start();
+        new Thread(() -> DendroFinance.main(CURRENT_INSTANCE.ARGS)).start();
     }
 
     public void newProfile() {

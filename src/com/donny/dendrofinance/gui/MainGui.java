@@ -1,5 +1,6 @@
 package com.donny.dendrofinance.gui;
 
+import com.donny.dendrofinance.DendroFinance;
 import com.donny.dendrofinance.data.metatable.AssetMTC;
 import com.donny.dendrofinance.data.metatable.LoanMTC;
 import com.donny.dendrofinance.entry.TransactionEntry;
@@ -157,8 +158,7 @@ public class MainGui extends JFrame {
                 exp.addActionListener(event -> new ExportGui(this, CURRENT_INSTANCE).setVisible(true));
 
                 JMenuItem logout = new JMenuItem("Log OUt");
-                logout.addActionListener(event -> {
-                });
+                logout.addActionListener(event -> new ClosePrompt(this, false).setVisible(true));
                 JMenuItem change = new JMenuItem("Change Password");
                 change.addActionListener(event -> new ChangePasswordGui(this, CURRENT_INSTANCE).setVisible(true));
 
@@ -446,18 +446,22 @@ public class MainGui extends JFrame {
         }
     }
 
-    public void conclude(boolean save) {
+    public void conclude(boolean save, boolean exit) {
         CURRENT_INSTANCE.conclude(save);
         ArrayList<RegisterFrame> temp = new ArrayList<>(FRAME_REGISTRY);
         for (RegisterFrame frame : temp) {
             frame.dispose();
         }
         super.dispose();
-        System.exit(0);
+        if (exit) {
+            System.exit(0);
+        } else {
+            new Thread(() -> DendroFinance.main(CURRENT_INSTANCE.ARGS)).start();
+        }
     }
 
     @Override
     public void dispose() {
-        new ClosePrompt(this).setVisible(true);
+        new ClosePrompt(this, true).setVisible(true);
     }
 }

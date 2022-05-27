@@ -3,9 +3,9 @@ v0.6.0
   * added modal frame
   * moved RegisterFrame to gui.customswing
   * removed anonymous functions
--> overhaul password system
+* overhaul password system
   * separated encryption handling and password gui
-  X implemented logout
+  * implemented logout
   * implemented password change
   * implemented specific password for archives
   * added gui for un-assumed password

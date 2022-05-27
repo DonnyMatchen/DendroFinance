@@ -11,6 +11,7 @@ import com.donny.dendrofinance.gui.customswing.RegisterFrame;
 import com.donny.dendrofinance.gui.menu.data.AccountMetaGui;
 import com.donny.dendrofinance.gui.menu.data.StatisticsGui;
 import com.donny.dendrofinance.gui.menu.data.backing.BackingTableGui;
+import com.donny.dendrofinance.gui.menu.file.ExportGui;
 import com.donny.dendrofinance.gui.menu.file.ImportGui;
 import com.donny.dendrofinance.gui.menu.reports.*;
 import com.donny.dendrofinance.gui.menu.reports.budget.BudgetGui;
@@ -152,7 +153,7 @@ public class MainGui extends JFrame {
                 JMenuItem imp = new JMenuItem("Import");
                 imp.addActionListener(event -> new ImportGui(this, CURRENT_INSTANCE).setVisible(true));
                 JMenuItem exp = new JMenuItem("Export");
-                exp.addActionListener(event -> CURRENT_INSTANCE.EXPORT_HANDLER.export());
+                exp.addActionListener(event -> new ExportGui(this, CURRENT_INSTANCE).setVisible(true));
 
                 JMenuItem logout = new JMenuItem("Log OUt");
 

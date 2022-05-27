@@ -173,6 +173,20 @@ public class FileHandler {
         writeEncrypt(new File(dir.getPath() + File.separator + file), output);
     }
 
+    public void writeEncryptUnknownPassword(File file, String output, JFrame caller) {
+        ensure(file.getParentFile());
+        EncryptionHandler encrypt = UnkPasswordGui.getTestPassword(caller, file.getName(), CURRENT_INSTANCE);
+        if (encrypt != null) {
+            write(file, encrypt.encrypt(output));
+        } else {
+            CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Password Entry Failed");
+        }
+    }
+
+    public void writeDecryptUnknownPassword(File dir, String file, String output, JFrame caller) {
+        writeEncryptUnknownPassword(new File(dir.getPath() + File.separator + file), output, caller);
+    }
+
     public void append(File file, String output) {
         ensure(file.getParentFile());
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(file, Charset.forName("unicode"), true))) {

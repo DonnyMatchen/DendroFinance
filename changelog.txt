@@ -7,7 +7,7 @@ v0.6.0
   * separated encryption handling and password gui
   X implemented logout
   * implemented password change
-  X implemented specific password for archives
+  * implemented specific password for archives
   * added gui for un-assumed password
     * added option for using profile password
 * reworked import and export
@@ -15,6 +15,7 @@ v0.6.0
   * added import modes
   * added .xtbl option to import
     * password not assumed
+    * added support for .xarc
   * added import gui
   * added export gui
 

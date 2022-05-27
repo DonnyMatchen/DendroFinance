@@ -69,7 +69,7 @@ public class ImportHandler {
                 loadCSV(file);
             } else if (path.toLowerCase().contains(".json")) {
                 loadJSON(file, mode);
-            } else if (path.toLowerCase().contains(".xtbl")) {
+            } else if (path.toLowerCase().contains(".xtbl") || path.toLowerCase().contains(".xarc")) {
                 loadXTBL(file, caller, mode);
             }
         }
@@ -129,7 +129,7 @@ public class ImportHandler {
 
     public void loadXTBL(File file, JFrame caller, ImportMode mode) {
         boolean imported = false;
-        if (file.getName().toLowerCase().contains("transaction")) {
+        if (file.getName().toLowerCase().contains("transaction") || file.getName().toLowerCase().contains(".xarc")) {
             String raw = CURRENT_INSTANCE.FILE_HANDLER.readDecryptUnknownPassword(file, caller);
             if (raw == null) {
                 CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Incorrect password for file: " + file.getPath());

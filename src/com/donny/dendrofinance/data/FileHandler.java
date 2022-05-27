@@ -183,7 +183,7 @@ public class FileHandler {
         }
     }
 
-    public void writeDecryptUnknownPassword(File dir, String file, String output, JFrame caller) {
+    public void writeEncryptUnknownPassword(File dir, String file, String output, JFrame caller) {
         writeEncryptUnknownPassword(new File(dir.getPath() + File.separator + file), output, caller);
     }
 

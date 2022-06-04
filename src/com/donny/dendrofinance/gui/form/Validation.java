@@ -15,7 +15,7 @@ public class Validation {
         field.setText(field.getText().replace("\"", ""));
         if (field.getText().equals("")) {
             field.setBackground(DendroFactory.WRONG);
-            throw new ValidationFailedException();
+            throw new ValidationFailedException("Field cannot be empty");
         } else {
             field.setBackground(DendroFactory.CONTENT);
         }
@@ -25,7 +25,7 @@ public class Validation {
         field.setText(field.getText().replace("\"", ""));
         if (field.getText().equals("")) {
             field.setBackground(DendroFactory.WRONG);
-            throw new ValidationFailedException();
+            throw new ValidationFailedException("Field cannot be empty");
         } else {
             field.setBackground(DendroFactory.CONTENT);
         }
@@ -35,7 +35,7 @@ public class Validation {
         field.setText(field.getText().replace("\"", ""));
         if (field.getText().equals("")) {
             field.setTextBackground(DendroFactory.WRONG);
-            throw new ValidationFailedException();
+            throw new ValidationFailedException("Field cannot be empty");
         } else {
             field.setTextBackground(DendroFactory.CONTENT);
         }
@@ -48,7 +48,7 @@ public class Validation {
             return new LDate(field.getText(), curInst);
         } catch (NumberFormatException | ArrayIndexOutOfBoundsException e) {
             field.setBackground(DendroFactory.WRONG);
-            throw new ValidationFailedException();
+            throw new ValidationFailedException("Field is not a valid date");
         }
     }
 
@@ -59,7 +59,7 @@ public class Validation {
             return new BigDecimal(field.getText());
         } catch (NumberFormatException e) {
             field.setBackground(DendroFactory.WRONG);
-            throw new ValidationFailedException();
+            throw new ValidationFailedException("Field is not a valid number");
         }
     }
 
@@ -70,7 +70,7 @@ public class Validation {
             return new BigInteger(field.getText());
         } catch (NumberFormatException e) {
             field.setBackground(DendroFactory.WRONG);
-            throw new ValidationFailedException();
+            throw new ValidationFailedException("Field is not a valid integer");
         }
     }
 
@@ -105,17 +105,13 @@ public class Validation {
     }
 
     public static JsonItem validateJson(JTextArea field) throws ValidationFailedException {
-        if (field.getText().equals("")) {
+        require(field);
+        try {
+            field.setBackground(DendroFactory.CONTENT);
+            return JsonItem.sanitizeDigest(field.getText());
+        } catch (JsonFormattingException e) {
             field.setBackground(DendroFactory.WRONG);
-            throw new ValidationFailedException();
-        } else {
-            try {
-                field.setBackground(DendroFactory.CONTENT);
-                return JsonItem.sanitizeDigest(field.getText());
-            } catch (JsonFormattingException e) {
-                field.setBackground(DendroFactory.WRONG);
-                throw new ValidationFailedException();
-            }
+            throw new ValidationFailedException("Field is not a valid JSON");
         }
     }
 
@@ -126,7 +122,7 @@ public class Validation {
             return (JsonObject) item;
         } else {
             field.setBackground(DendroFactory.WRONG);
-            throw new ValidationFailedException();
+            throw new ValidationFailedException("Field is not a valid JSON Object");
         }
     }
 
@@ -137,7 +133,7 @@ public class Validation {
             return (JsonArray) item;
         } else {
             field.setBackground(DendroFactory.WRONG);
-            throw new ValidationFailedException();
+            throw new ValidationFailedException("Field is not a valid JSON Array");
         }
     }
 }

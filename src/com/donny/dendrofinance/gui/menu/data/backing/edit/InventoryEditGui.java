@@ -183,7 +183,7 @@ public class InventoryEditGui extends BackingEditGui<LInventory> {
             }
             dispose();
         } catch (ValidationFailedException ex) {
-            CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "You did a badness!");
+            CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "You did a badness!  " + ex.getMessage());
         }
     }
 }

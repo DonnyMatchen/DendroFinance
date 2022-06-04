@@ -1,3 +1,11 @@
+v0.6.1
+* minor fixes
+  * EncryptionHandler.getKeys is now a static method
+  * EncryptionHandler.keysSet changed to EncryptionHandler.keysInitiated
+  * added more clarity to ValidationFailedException
+    * added messages to all throws
+  * fixed one instance where require was not used and should have been
+
 v0.6.0
 * minor fixes and improvements
   * added modal frame

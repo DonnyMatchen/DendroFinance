@@ -796,7 +796,7 @@ public class NewTransactionEntryGui extends ModalFrame {
                     new LAccountSet(aArr, CURRENT_INSTANCE)
             );
         } catch (ValidationFailedException ex) {
-            CURRENT_INSTANCE.LOG_HANDLER.warn(getClass(), "You did a badness!");
+            CURRENT_INSTANCE.LOG_HANDLER.warn(getClass(), "You did a badness!  " + ex.getMessage());
         } catch (JsonFormattingException ex) {
             CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Somehow, the strings in account dropdowns are broken.\nThis should not be happening.  What did you do?");
         }
@@ -829,7 +829,7 @@ public class NewTransactionEntryGui extends ModalFrame {
             MAIN.updateTable();
             dispose();
         } catch (ValidationFailedException ex) {
-            CURRENT_INSTANCE.LOG_HANDLER.warn(getClass(), "You did a badness!");
+            CURRENT_INSTANCE.LOG_HANDLER.warn(getClass(), "You did a badness!  " + ex.getMessage());
         }
     }
 

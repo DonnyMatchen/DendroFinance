@@ -16,20 +16,13 @@ import java.util.Arrays;
 import java.util.Base64;
 
 public class EncryptionHandler {
-    private final Instance CURRENT_INSTANCE;
-    private SecretKeySpec aesKey, bflKey;
-
-    public EncryptionHandler(Instance curInst) {
-        CURRENT_INSTANCE = curInst;
-    }
-
     /**
      * @param key a password as a raw byte array
      * @return <code>SecretKeySpec[]</code>
      * 0 = AES key
      * 1 = Blowfish key
      */
-    public SecretKeySpec[] getKeys(char[] key) {
+    public static SecretKeySpec[] getKeys(char[] key) {
         try {
             byte[] hash = new String(key).getBytes(Charset.forName("unicode"));
             MessageDigest sha = MessageDigest.getInstance("SHA-512");
@@ -50,6 +43,13 @@ public class EncryptionHandler {
         }
     }
 
+    private final Instance CURRENT_INSTANCE;
+    private SecretKeySpec aesKey, bflKey;
+
+    public EncryptionHandler(Instance curInst) {
+        CURRENT_INSTANCE = curInst;
+    }
+
     public void changeKey(char[] newKey) {
         SecretKeySpec[] keys = getKeys(newKey);
         if (keys[0] == null || keys[1] == null) {
@@ -62,12 +62,12 @@ public class EncryptionHandler {
         }
     }
 
-    public boolean keysSet() {
+    public boolean keysInitiated() {
         return aesKey != null && bflKey != null;
     }
 
     public String encrypt(String text) {
-        if (keysSet()) {
+        if (keysInitiated()) {
             try {
                 Cipher aesCipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
                 Cipher bflCipher = Cipher.getInstance("Blowfish");
@@ -84,7 +84,7 @@ public class EncryptionHandler {
     }
 
     public String decrypt(String text) {
-        if (keysSet()) {
+        if (keysInitiated()) {
             try {
                 Cipher aesCipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
                 Cipher bflCipher = Cipher.getInstance("Blowfish");

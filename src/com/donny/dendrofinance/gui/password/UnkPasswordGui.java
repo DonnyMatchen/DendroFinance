@@ -1,17 +1,13 @@
 package com.donny.dendrofinance.gui.password;
 
 import com.donny.dendrofinance.data.EncryptionHandler;
-import com.donny.dendrofinance.gui.MainGui;
 import com.donny.dendrofinance.gui.customswing.DendroFactory;
 import com.donny.dendrofinance.gui.customswing.ModalFrame;
-import com.donny.dendrofinance.gui.customswing.RegisterFrame;
 import com.donny.dendrofinance.instance.Instance;
-import com.sun.tools.javac.Main;
 
 import javax.swing.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.util.concurrent.TimeUnit;
 
 public class UnkPasswordGui extends ModalFrame {
     private final EncryptionHandler ENC_HAND;
@@ -81,13 +77,13 @@ public class UnkPasswordGui extends ModalFrame {
     }
 
     private EncryptionHandler getEncryptionHandler() {
-        return defaultPassword ? CURRENT_INSTANCE.ENCRYPTION_HANDLER : ENC_HAND.keysSet() ? ENC_HAND : null;
+        return defaultPassword ? CURRENT_INSTANCE.ENCRYPTION_HANDLER : ENC_HAND.keysInitiated() ? ENC_HAND : null;
     }
 
     private void enterPressed() {
         ENC_HAND.changeKey(PASSWORD.getPassword());
         PASSWORD.setText("");
-        if (!ENC_HAND.keysSet()) {
+        if (!ENC_HAND.keysInitiated()) {
             CURRENT_INSTANCE.LOG_HANDLER.fatal(getClass(), "Password failed to set");
         }
         dispose();

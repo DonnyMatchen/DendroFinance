@@ -168,7 +168,7 @@ public class ExchangeEditGui extends BackingEditGui<Exchange> {
             if (!needed.isEmpty()) {
                 CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "You have removed exchange accounts that are in use:\n" + Arrays.toString(needed.toArray()));
                 sText.setBackground(DendroFactory.WRONG);
-                throw new ValidationFailedException();
+                throw new ValidationFailedException("invalid removal");
             }
             Exchange exchange;
             if (tText.getText().equals("")) {
@@ -193,7 +193,7 @@ public class ExchangeEditGui extends BackingEditGui<Exchange> {
                     } catch (NumberFormatException | ArrayIndexOutOfBoundsException | JsonFormattingException ex) {
                         CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Bad Staking List");
                         tText.setBackground(DendroFactory.WRONG);
-                        throw new ValidationFailedException();
+                        throw new ValidationFailedException("This field is not a valid staking list");
                     }
                 }
                 exchange = new Exchange(
@@ -214,7 +214,7 @@ public class ExchangeEditGui extends BackingEditGui<Exchange> {
             }
             dispose();
         } catch (ValidationFailedException ex) {
-            CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "You did a badness!");
+            CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "You did a badness!  " + ex.getMessage());
         }
     }
 }

@@ -150,7 +150,7 @@ public class PasswordGui extends JFrame {
         }
         CURRENT_INSTANCE.ENCRYPTION_HANDLER.changeKey(PASSWORD.getPassword());
         PASSWORD.setText("");
-        if (CURRENT_INSTANCE.ENCRYPTION_HANDLER.keysSet() && CURRENT_INSTANCE.ENCRYPTION_HANDLER.checkPassword()) {
+        if (CURRENT_INSTANCE.ENCRYPTION_HANDLER.keysInitiated() && CURRENT_INSTANCE.ENCRYPTION_HANDLER.checkPassword()) {
             done = true;
             setVisible(false);
         } else {

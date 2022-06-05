@@ -7,8 +7,15 @@ v0.6.1
   * fixed one instance where require was not used and should have been
   * precision updated for LMath.cubeRoot()
   * removed unused class Partitioner
+  -> replaced date with .export() in json exports
 * updated readme
 * added Serializable where appropriate, though exporting to JSON is more compact
+-> added export to entry totals
+  * added export to OrderBookEntry
+  -> added export to Position
+    -> added export to PositionElement
+* added primitive type constructors for JsonDecimal
+  -> used primitive constructors
 
 v0.6.0
 * minor fixes and improvements

@@ -19,6 +19,30 @@ public class JsonDecimal extends JsonItem {
         decimal = dec;
     }
 
+    public JsonDecimal(long l) {
+        this(BigDecimal.valueOf(l));
+    }
+
+    public JsonDecimal(int i) {
+        this(BigDecimal.valueOf(i));
+    }
+
+    public JsonDecimal(double d) {
+        this(BigDecimal.valueOf(d));
+    }
+
+    public JsonDecimal(float f) {
+        this(BigDecimal.valueOf(f));
+    }
+
+    public JsonDecimal(short s) {
+        this(BigDecimal.valueOf(s));
+    }
+
+    public JsonDecimal(byte b) {
+        this(BigDecimal.valueOf(b));
+    }
+
     public JsonDecimal() {
         this(BigDecimal.ZERO);
     }

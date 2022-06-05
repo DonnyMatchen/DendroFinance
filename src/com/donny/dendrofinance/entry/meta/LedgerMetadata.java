@@ -64,7 +64,7 @@ public class LedgerMetadata {
 
     public JsonObject export() throws JsonFormattingException {
         JsonObject obj = new JsonObject();
-        obj.put("date", new JsonDecimal(BigDecimal.valueOf(DATE.getTime())));
+        obj.put("date", DATE.export());
         obj.put("from-cur", new JsonString(FROM.toString()));
         obj.put("to-cur", new JsonString(TO.toString()));
         obj.put("from-amnt", new JsonDecimal(FROM_AMNT));

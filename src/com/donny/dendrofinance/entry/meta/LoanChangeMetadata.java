@@ -33,7 +33,7 @@ public class LoanChangeMetadata {
 
     public JsonObject export() throws JsonFormattingException {
         JsonObject obj = new JsonObject();
-        obj.put("date", new JsonDecimal(BigDecimal.valueOf(DATE.getTime())));
+        obj.put("date", DATE.export());
         obj.put("name", new JsonString(NAME));
         obj.put("change", new JsonDecimal(CHANGE));
         return obj;

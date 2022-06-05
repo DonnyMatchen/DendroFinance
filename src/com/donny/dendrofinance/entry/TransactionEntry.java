@@ -489,7 +489,7 @@ public class TransactionEntry extends Entry implements Comparable<TransactionEnt
     @Override
     public JsonObject export() throws JsonFormattingException {
         JsonObject obj = super.export();
-        obj.put("date", new JsonDecimal(BigDecimal.valueOf(date.getTime())));
+        obj.put("date", date.export());
         obj.put("entity", new JsonString(entity));
         obj.put("items", new JsonString(items));
         obj.put("description", new JsonString(description));

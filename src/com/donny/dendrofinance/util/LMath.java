@@ -10,7 +10,7 @@ public class LMath {
 
     public static BigDecimal cubeRoot(BigDecimal value, MathContext precision) {
         BigDecimal x = new BigDecimal("1", precision);
-        for (int i = 0; i < 1000; i++) {
+        for (int i = 0; i < precision.getPrecision() + 1; i++) {
             x = x.subtract(
                     x.pow(3, precision)
                             .subtract(value, precision)

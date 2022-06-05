@@ -150,7 +150,7 @@ public class PasswordGui extends JFrame {
         }
         CURRENT_INSTANCE.ENCRYPTION_HANDLER.changeKey(PASSWORD.getPassword());
         PASSWORD.setText("");
-        if (CURRENT_INSTANCE.ENCRYPTION_HANDLER.keysSet() && CURRENT_INSTANCE.ENCRYPTION_HANDLER.checkPassword()) {
+        if (CURRENT_INSTANCE.ENCRYPTION_HANDLER.keysInitiated() && CURRENT_INSTANCE.ENCRYPTION_HANDLER.checkPassword()) {
             done = true;
             setVisible(false);
         } else {
@@ -207,7 +207,7 @@ public class PasswordGui extends JFrame {
         CURRENT_INSTANCE.day = false;
         config.put("flags", new JsonString("lxAd"));
         CURRENT_INSTANCE.precision = new MathContext(20);
-        config.put("precision", new JsonDecimal(BigDecimal.valueOf(20)));
+        config.put("precision", new JsonDecimal(20));
         CURRENT_INSTANCE.logLevel = new LogHandler.LogLevel("info");
         config.put("log", new JsonString("info"));
         CURRENT_INSTANCE.mainTicker = "USD";

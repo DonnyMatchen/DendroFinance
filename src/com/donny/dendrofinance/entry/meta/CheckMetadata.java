@@ -43,8 +43,8 @@ public class CheckMetadata implements ExportableToJson {
 
     public JsonObject export() throws JsonFormattingException {
         JsonObject obj = new JsonObject();
-        obj.put("issued", new JsonDecimal(BigDecimal.valueOf(ISSUED.getTime())));
-        obj.put("cashed", new JsonDecimal(BigDecimal.valueOf(CASHED.getTime())));
+        obj.put("issued", ISSUED.export());
+        obj.put("cashed", CASHED.export());
         obj.put("number", new JsonString(CHECK_NUMBER));
         obj.put("value", new JsonDecimal(VALUE));
         return obj;

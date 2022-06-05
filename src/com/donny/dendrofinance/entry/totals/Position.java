@@ -2,16 +2,18 @@ package com.donny.dendrofinance.entry.totals;
 
 import com.donny.dendrofinance.currency.LCurrency;
 import com.donny.dendrofinance.instance.Instance;
+import com.donny.dendrofinance.json.*;
 import com.donny.dendrofinance.types.LDate;
+import com.donny.dendrofinance.util.ExportableToJson;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Position {
+public class Position implements ExportableToJson {
+    private final Instance CURRENT_INSTANCE;
     public final LCurrency ASSET;
     public final ArrayList<PositionElement> ELEMENTS;
-    private final Instance CURRENT_INSTANCE;
 
     public Position(LCurrency asset, Instance curInst) {
         CURRENT_INSTANCE = curInst;
@@ -22,6 +24,13 @@ public class Position {
     public Position(Position base) {
         this(base.ASSET, base.CURRENT_INSTANCE);
         ELEMENTS.addAll(base.ELEMENTS);
+    }
+
+    public Position(JsonObject object, Instance curInst) {
+        this(curInst.getLCurrency(object.getString("asset").getString()), curInst);
+        for (JsonObject element : object.getArray("elements").getObjectArray()) {
+            ELEMENTS.add(new PositionElement(element, CURRENT_INSTANCE));
+        }
     }
 
     public void sort() {
@@ -99,6 +108,14 @@ public class Position {
         } else {
             return new BigDecimal[]{vol, cost, cost.divide(vol, CURRENT_INSTANCE.precision)};
         }
+    }
+
+    @Override
+    public JsonObject export() throws JsonFormattingException {
+        JsonObject object = new JsonObject();
+        object.put("asset", new JsonString(ASSET.toString()));
+        object.put("elements", new JsonArray(ELEMENTS, CURRENT_INSTANCE));
+        return object;
     }
 
     @Override

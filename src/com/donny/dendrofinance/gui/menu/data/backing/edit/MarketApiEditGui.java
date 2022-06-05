@@ -287,7 +287,7 @@ public class MarketApiEditGui extends BackingEditGui<LMarketApi> {
 
             dispose();
         } catch (ValidationFailedException ex) {
-            CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "You did a badness!");
+            CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "You did a badness!  " + ex.getMessage());
         }
     }
 }

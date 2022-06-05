@@ -271,7 +271,7 @@ public class LDate implements ExportableToJson, Comparable<LDate> {
 
     @Override
     public JsonDecimal export() {
-        return new JsonDecimal(BigDecimal.valueOf(DATE.getTime()));
+        return new JsonDecimal(DATE.getTime());
     }
 
     @Override

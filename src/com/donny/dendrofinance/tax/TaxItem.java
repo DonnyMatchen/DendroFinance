@@ -3,10 +3,11 @@ package com.donny.dendrofinance.tax;
 import com.donny.dendrofinance.json.*;
 import com.donny.dendrofinance.util.ExportableToJson;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 
-public class TaxItem implements ExportableToJson {
+public class TaxItem implements ExportableToJson, Serializable {
     public final String NAME;
     public final boolean BOUNDED;
     public final BigDecimal BOUND, EXEMPTION;

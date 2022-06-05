@@ -796,7 +796,7 @@ public class NewTransactionEntryGui extends ModalFrame {
                     new LAccountSet(aArr, CURRENT_INSTANCE)
             );
         } catch (ValidationFailedException ex) {
-            CURRENT_INSTANCE.LOG_HANDLER.warn(getClass(), "You did a badness!");
+            CURRENT_INSTANCE.LOG_HANDLER.warn(getClass(), "You did a badness!  " + ex.getMessage());
         } catch (JsonFormattingException ex) {
             CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Somehow, the strings in account dropdowns are broken.\nThis should not be happening.  What did you do?");
         }
@@ -829,7 +829,7 @@ public class NewTransactionEntryGui extends ModalFrame {
             MAIN.updateTable();
             dispose();
         } catch (ValidationFailedException ex) {
-            CURRENT_INSTANCE.LOG_HANDLER.warn(getClass(), "You did a badness!");
+            CURRENT_INSTANCE.LOG_HANDLER.warn(getClass(), "You did a badness!  " + ex.getMessage());
         }
     }
 
@@ -992,9 +992,9 @@ public class NewTransactionEntryGui extends ModalFrame {
                                                 || tableAccess.getValueAt(i, 0).toString().equalsIgnoreCase("null")
                                                 || tableAccess.getValueAt(i, 0).toString().equalsIgnoreCase("outstanding")
                                 ) {
-                                    obj.put("cashed", new JsonDecimal(BigDecimal.valueOf(new LDate(0, CURRENT_INSTANCE).getTime())));
+                                    obj.put("cashed", new JsonDecimal(new LDate(0, CURRENT_INSTANCE).getTime()));
                                 } else {
-                                    obj.put("cashed", new JsonDecimal(BigDecimal.valueOf(new LDate(tableAccess.getValueAt(i, 0).toString(), CURRENT_INSTANCE).getTime())));
+                                    obj.put("cashed", new JsonDecimal(new LDate(tableAccess.getValueAt(i, 0).toString(), CURRENT_INSTANCE).getTime()));
                                 }
                                 obj.put("number", new JsonString(tableAccess.getValueAt(i, 1).toString()));
                                 obj.put("value", new JsonDecimal(CURRENT_INSTANCE.cleanNumber(tableAccess.getValueAt(i, 2).toString())));

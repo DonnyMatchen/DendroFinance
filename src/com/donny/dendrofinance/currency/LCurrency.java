@@ -11,10 +11,11 @@ import com.donny.dendrofinance.json.JsonString;
 import com.donny.dendrofinance.types.LDate;
 import com.donny.dendrofinance.util.ExportableToJson;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 
-public class LCurrency implements ExportableToJson {
+public class LCurrency implements ExportableToJson, Serializable {
     protected final Instance CURRENT_INSTANCE;
     private final String NAME, TIC, SYMBOL, ALT_NAME;
     private final int PLACES;
@@ -189,7 +190,7 @@ public class LCurrency implements ExportableToJson {
         obj.put("name", new JsonString(NAME));
         obj.put("tic", new JsonString(TIC));
         obj.put("symbol", new JsonString(SYMBOL));
-        obj.put("places", new JsonDecimal(BigDecimal.valueOf(PLACES)));
+        obj.put("places", new JsonDecimal(PLACES));
         obj.put("alt", new JsonString(ALT_NAME));
         if (FACTOR.compareTo(BigDecimal.ONE) != 0) {
             obj.put("factor", new JsonDecimal(FACTOR));

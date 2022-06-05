@@ -98,7 +98,7 @@ public class LInventory extends LCurrency {
         obj.put("name", new JsonString(getName()));
         obj.put("tic", new JsonString(getTicker()));
         obj.put("symbol", new JsonString(getSymbol().replace("§", "")));
-        obj.put("places", new JsonDecimal(BigDecimal.valueOf(getPlaces())));
+        obj.put("places", new JsonDecimal(getPlaces()));
         if (COMMODITY || MERCHANDISE) {
             String q = "";
             if (COMMODITY) {

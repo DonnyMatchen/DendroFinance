@@ -80,7 +80,7 @@ public class LoanMetadata {
 
     public JsonObject export() throws JsonFormattingException {
         JsonObject obj = new JsonObject();
-        obj.put("date", new JsonDecimal(BigDecimal.valueOf(DATE.getTime())));
+        obj.put("date", DATE.export());
         obj.put("name", new JsonString(NAME));
         obj.put("desc", new JsonString(DESC));
         obj.put("cur", new JsonString(CUR.toString()));

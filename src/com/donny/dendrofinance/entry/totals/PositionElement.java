@@ -24,7 +24,7 @@ public class PositionElement implements ExportableToJson {
         UNIT = unit;
     }
 
-    public PositionElement(JsonObject object, Instance curInst){
+    public PositionElement(JsonObject object, Instance curInst) {
         this(
                 object.getDecimal("ref").decimal.longValue(),
                 new LDate(object.getDecimal("date"), curInst),

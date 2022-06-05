@@ -101,7 +101,7 @@ public class JsonArray extends JsonItem {
         ARRAY = new ArrayList<>();
     }
 
-    public JsonArray(ArrayList<? extends JsonItem> list){
+    public JsonArray(ArrayList<? extends JsonItem> list) {
         this();
         ARRAY.addAll(list);
     }
@@ -111,7 +111,7 @@ public class JsonArray extends JsonItem {
         list.forEach(el -> {
             try {
                 ARRAY.add(el.export());
-            }catch(JsonFormattingException ex){
+            } catch (JsonFormattingException ex) {
                 curInst.LOG_HANDLER.error(getClass(), "Malformed object: " + ex.getMessage());
             }
         });

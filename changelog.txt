@@ -9,7 +9,7 @@ v0.6.1
   * removed unused class Partitioner
   * Exchange constructors put in order
   * JsonArray now supports construction with ArrayList of objects implementing ExportableToJson
-  -> replaced date with .export() in json exports
+  * replaced date with .export() in json exports
 * updated readme
 * added Serializable where appropriate, though exporting to JSON is more compact
 * added export to entry totals

@@ -26,7 +26,7 @@ public class Position implements ExportableToJson {
         ELEMENTS.addAll(base.ELEMENTS);
     }
 
-    public Position(JsonObject object, Instance curInst){
+    public Position(JsonObject object, Instance curInst) {
         this(curInst.getLCurrency(object.getString("asset").getString()), curInst);
         for (JsonObject element : object.getArray("elements").getObjectArray()) {
             ELEMENTS.add(new PositionElement(element, CURRENT_INSTANCE));

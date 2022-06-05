@@ -9,9 +9,10 @@ import com.donny.dendrofinance.json.JsonObject;
 import com.donny.dendrofinance.json.JsonString;
 import com.donny.dendrofinance.util.ExportableToJson;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 
-public class Account implements ExportableToJson {
+public class Account implements ExportableToJson, Serializable {
     public final boolean EXPORT;
     public final Exchange EXCHANGE;
     private final Instance CURRENT_INSTANCE;

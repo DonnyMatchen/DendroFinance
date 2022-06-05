@@ -3,6 +3,8 @@ This application is designed for management of personal finance and small busine
 The recommended maximum number of transactions is between 65,000 - 75,000 depending on the commonality of metadata<br>
 for help with milliseconds since epoch, this site is an option: <a href="https://www.unixtimestamp.com/">UnixTimeStamp.com</a>
 <br>
+This application was not designed for use with files greater than 2,147,483,647 bytes (1 byte less than 2 GB).  Similarly, this application was not designed for use with api calls greater than that size as well.<br>
+<br>
 <h1>COMPATIBILITY</h1><br>
 This application requires Java 18 or a later version compatible with it.<br>
 Torsocks seems to interfere with this application's ability to read and write files and access APIs.  The latter may be due to many APIs blocking TOR nodes.<br>

@@ -5,11 +5,12 @@ import com.donny.dendrofinance.json.*;
 import com.donny.dendrofinance.types.LDate;
 import com.donny.dendrofinance.util.ExportableToJson;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-public class LMarketApi implements ExportableToJson {
+public class LMarketApi implements ExportableToJson, Serializable {
     public final String NAME, TYPES, BASE_URL, BASE_URL_HISTORY, KEY;
     private final Instance CURRENT_INSTANCE;
     private final ArrayList<String> PARSE_PATH, PARSE_PATH_HISTORY, NATS, EXCEPTS;

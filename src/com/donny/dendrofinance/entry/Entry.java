@@ -7,9 +7,10 @@ import com.donny.dendrofinance.json.JsonFormattingException;
 import com.donny.dendrofinance.json.JsonObject;
 import com.donny.dendrofinance.util.ExportableToJson;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 
-public abstract class Entry implements ExportableToJson {
+public abstract class Entry implements ExportableToJson, Serializable {
     protected final Instance CURRENT_INSTANCE;
     private final long UUID;
     public boolean clashing;

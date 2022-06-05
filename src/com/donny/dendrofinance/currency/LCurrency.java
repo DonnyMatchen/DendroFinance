@@ -11,10 +11,11 @@ import com.donny.dendrofinance.json.JsonString;
 import com.donny.dendrofinance.types.LDate;
 import com.donny.dendrofinance.util.ExportableToJson;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 
-public class LCurrency implements ExportableToJson {
+public class LCurrency implements ExportableToJson, Serializable {
     protected final Instance CURRENT_INSTANCE;
     private final String NAME, TIC, SYMBOL, ALT_NAME;
     private final int PLACES;

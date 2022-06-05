@@ -5,6 +5,10 @@ v0.6.1
   * added more clarity to ValidationFailedException
     * added messages to all throws
   * fixed one instance where require was not used and should have been
+  * precision updated for LMath.cubeRoot()
+  * removed unused class Partitioner
+* updated readme
+* added Serializable where appropriate, though exporting to JSON is more compact
 
 v0.6.0
 * minor fixes and improvements

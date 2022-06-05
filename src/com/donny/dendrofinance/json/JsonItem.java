@@ -1,6 +1,8 @@
 package com.donny.dendrofinance.json;
 
-public abstract class JsonItem {
+import java.io.Serializable;
+
+public abstract class JsonItem implements Serializable {
     public final JsonType TYPE;
 
     public JsonItem(JsonType type) {

@@ -16,10 +16,29 @@ import java.util.ArrayList;
 import java.util.Comparator;
 
 public class Exchange implements ExportableToJson, Serializable {
+    private final Instance CURRENT_INSTANCE;
     public final String NAME, ALT;
     public final ArrayList<String> SUPPORTED;
     public final ArrayList<JsonObject> STAKING;
     public final boolean EXPORT;
+
+    public Exchange(String name, String alt, ArrayList<String> sup, Instance curInst, boolean export) {
+        CURRENT_INSTANCE = curInst;
+        NAME = name;
+        ALT = alt;
+        SUPPORTED = new ArrayList<>(sup);
+        STAKING = new ArrayList<>();
+        EXPORT = export;
+    }
+
+    public Exchange(String name, String alt, Instance curInst, boolean export) {
+        this(name, alt, new ArrayList<>(), curInst, export);
+    }
+
+    public Exchange(String name, String alt, ArrayList<String> sup, ArrayList<JsonObject> stak, Instance curInst, boolean export) {
+        this(name, alt, sup, curInst, export);
+        STAKING.addAll(stak);
+    }
 
     public Exchange(JsonObject obj, Instance curInst, boolean export) {
         this(obj.getString("name").getString(), obj.getString("alt").getString(), curInst, export);
@@ -29,23 +48,6 @@ public class Exchange implements ExportableToJson, Serializable {
         if (obj.containsKey("staking")) {
             STAKING.addAll(obj.getArray("staking").getObjectArray());
         }
-    }
-
-    public Exchange(String name, String alt, Instance curInst, boolean export) {
-        this(name, alt, new ArrayList<>(), curInst, export);
-    }
-
-    public Exchange(String name, String alt, ArrayList<String> sup, Instance curInst, boolean export) {
-        NAME = name;
-        ALT = alt;
-        SUPPORTED = new ArrayList<>(sup);
-        STAKING = new ArrayList<>();
-        EXPORT = export;
-    }
-
-    public Exchange(String name, String alt, ArrayList<String> sup, ArrayList<JsonObject> stak, Instance curInst, boolean export) {
-        this(name, alt, sup, curInst, export);
-        STAKING.addAll(stak);
     }
 
     public boolean supports(LCurrency currency) {

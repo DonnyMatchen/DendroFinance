@@ -1,5 +1,8 @@
 package com.donny.dendrofinance.json;
 
+import com.donny.dendrofinance.instance.Instance;
+import com.donny.dendrofinance.util.ExportableToJson;
+
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -98,9 +101,20 @@ public class JsonArray extends JsonItem {
         ARRAY = new ArrayList<>();
     }
 
-    public JsonArray(ArrayList<? extends JsonItem> list) {
+    public JsonArray(ArrayList<? extends JsonItem> list){
         this();
         ARRAY.addAll(list);
+    }
+
+    public JsonArray(ArrayList<? extends ExportableToJson> list, Instance curInst) {
+        this();
+        list.forEach(el -> {
+            try {
+                ARRAY.add(el.export());
+            }catch(JsonFormattingException ex){
+                curInst.LOG_HANDLER.error(getClass(), "Malformed object: " + ex.getMessage());
+            }
+        });
     }
 
     public ArrayList<JsonItem> getArray() {

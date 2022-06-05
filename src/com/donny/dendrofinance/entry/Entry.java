@@ -54,7 +54,7 @@ public abstract class Entry implements ExportableToJson, Serializable {
 
     public JsonObject export() throws JsonFormattingException {
         JsonObject obj = new JsonObject();
-        obj.put("_uuid", new JsonDecimal(BigDecimal.valueOf(UUID)));
+        obj.put("_uuid", new JsonDecimal(UUID));
         return obj;
     }
 

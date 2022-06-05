@@ -992,9 +992,9 @@ public class NewTransactionEntryGui extends ModalFrame {
                                                 || tableAccess.getValueAt(i, 0).toString().equalsIgnoreCase("null")
                                                 || tableAccess.getValueAt(i, 0).toString().equalsIgnoreCase("outstanding")
                                 ) {
-                                    obj.put("cashed", new JsonDecimal(BigDecimal.valueOf(new LDate(0, CURRENT_INSTANCE).getTime())));
+                                    obj.put("cashed", new JsonDecimal(new LDate(0, CURRENT_INSTANCE).getTime()));
                                 } else {
-                                    obj.put("cashed", new JsonDecimal(BigDecimal.valueOf(new LDate(tableAccess.getValueAt(i, 0).toString(), CURRENT_INSTANCE).getTime())));
+                                    obj.put("cashed", new JsonDecimal(new LDate(tableAccess.getValueAt(i, 0).toString(), CURRENT_INSTANCE).getTime()));
                                 }
                                 obj.put("number", new JsonString(tableAccess.getValueAt(i, 1).toString()));
                                 obj.put("value", new JsonDecimal(CURRENT_INSTANCE.cleanNumber(tableAccess.getValueAt(i, 2).toString())));

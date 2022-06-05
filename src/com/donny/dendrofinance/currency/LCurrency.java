@@ -190,7 +190,7 @@ public class LCurrency implements ExportableToJson, Serializable {
         obj.put("name", new JsonString(NAME));
         obj.put("tic", new JsonString(TIC));
         obj.put("symbol", new JsonString(SYMBOL));
-        obj.put("places", new JsonDecimal(BigDecimal.valueOf(PLACES)));
+        obj.put("places", new JsonDecimal(PLACES));
         obj.put("alt", new JsonString(ALT_NAME));
         if (FACTOR.compareTo(BigDecimal.ONE) != 0) {
             obj.put("factor", new JsonDecimal(FACTOR));

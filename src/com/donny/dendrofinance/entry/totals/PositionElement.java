@@ -1,8 +1,11 @@
 package com.donny.dendrofinance.entry.totals;
 
 import com.donny.dendrofinance.currency.LCurrency;
+import com.donny.dendrofinance.instance.Instance;
+import com.donny.dendrofinance.json.JsonDecimal;
 import com.donny.dendrofinance.json.JsonFormattingException;
 import com.donny.dendrofinance.json.JsonItem;
+import com.donny.dendrofinance.json.JsonObject;
 import com.donny.dendrofinance.types.LDate;
 import com.donny.dendrofinance.util.ExportableToJson;
 
@@ -21,6 +24,15 @@ public class PositionElement implements ExportableToJson {
         UNIT = unit;
     }
 
+    public PositionElement(JsonObject object, Instance curInst){
+        this(
+                object.getDecimal("ref").decimal.longValue(),
+                new LDate(object.getDecimal("date"), curInst),
+                object.getDecimal("vol").decimal,
+                object.getDecimal("unit").decimal
+        );
+    }
+
     public BigDecimal cost() {
         return volume.multiply(UNIT);
     }
@@ -34,12 +46,17 @@ public class PositionElement implements ExportableToJson {
     }
 
     @Override
-    public String toString() {
-        return "{" + UUID + "} \\ (" + DATE + ") \\ volume=" + volume + ", cost=" + volume.multiply(UNIT) + ", unit=" + UNIT;
+    public JsonObject export() throws JsonFormattingException {
+        JsonObject object = new JsonObject();
+        object.put("ref", new JsonDecimal(UUID));
+        object.put("date", DATE.export());
+        object.put("vol", new JsonDecimal(volume));
+        object.put("unit", new JsonDecimal(UNIT));
+        return object;
     }
 
     @Override
-    public JsonItem export() throws JsonFormattingException {
-        return null;
+    public String toString() {
+        return "{" + UUID + "} \\ (" + DATE + ") \\ volume=" + volume + ", cost=" + volume.multiply(UNIT) + ", unit=" + UNIT;
     }
 }

@@ -1,5 +1,8 @@
 package com.donny.dendrofinance.gui.menu.trading;
 
+import com.donny.dendrofinance.currency.LCurrency;
+import com.donny.dendrofinance.currency.LInventory;
+import com.donny.dendrofinance.currency.LStock;
 import com.donny.dendrofinance.entry.totals.Position;
 import com.donny.dendrofinance.gui.MainGui;
 import com.donny.dendrofinance.gui.customswing.RegisterFrame;
@@ -79,7 +82,6 @@ public class PositionGui extends RegisterFrame {
         while (TABLE_ACCESS.getRowCount() > 0) {
             TABLE_ACCESS.removeRow(0);
         }
-        ArrayList<Position> positions;
         boolean useDate;
         LDate point = LDate.now(CURRENT_INSTANCE);
         if (DATE.getText().equals("")) {
@@ -94,21 +96,68 @@ public class PositionGui extends RegisterFrame {
             }
         }
         BigDecimal tCost = BigDecimal.ZERO, tVal = BigDecimal.ZERO;
-        for (Position p : useDate ? CURRENT_INSTANCE.DATA_HANDLER.getPositions(point) : CURRENT_INSTANCE.DATA_HANDLER.getPositions()) {
-            BigDecimal[] analog = p.collapse();
-            if (analog[0].compareTo(BigDecimal.ONE.divide(BigDecimal.TEN.pow(p.ASSET.getPlaces() - 1), CURRENT_INSTANCE.precision)) > 0) {
-                BigDecimal val = useDate ? p.ASSET.getTotal(analog[0], point) : p.ASSET.getTotal(analog[0]);
-                tCost = tCost.add(analog[1]);
-                tVal = tVal.add(val);
-                TABLE_ACCESS.addRow(new String[]{
-                        p.ASSET.toString(),
-                        p.ASSET.encode(analog[0]),
-                        CURRENT_INSTANCE.$$(analog[1]),
-                        CURRENT_INSTANCE.$$(analog[2]),
-                        CURRENT_INSTANCE.$$(val),
-                        CURRENT_INSTANCE.$$(val.divide(analog[0], CURRENT_INSTANCE.precision)),
-                        CURRENT_INSTANCE.$$(val.add(analog[1]))
-                });
+        ArrayList<Position> positions = useDate ? CURRENT_INSTANCE.DATA_HANDLER.getPositions(point) : CURRENT_INSTANCE.DATA_HANDLER.getPositions();
+        for (LStock stock : CURRENT_INSTANCE.STOCKS) {
+            for (Position p : positions) {
+                if (p.ASSET.equals(stock)) {
+                    BigDecimal[] analog = p.collapse();
+                    if (analog[0].compareTo(BigDecimal.ONE.divide(BigDecimal.TEN.pow(p.ASSET.getPlaces() - 1), CURRENT_INSTANCE.precision)) > 0) {
+                        BigDecimal val = useDate ? p.ASSET.getTotal(analog[0], point) : p.ASSET.getTotal(analog[0]);
+                        tCost = tCost.add(analog[1]);
+                        tVal = tVal.add(val);
+                        TABLE_ACCESS.addRow(new String[]{
+                                p.ASSET.toString(),
+                                p.ASSET.encode(analog[0]),
+                                CURRENT_INSTANCE.$$(analog[1]),
+                                CURRENT_INSTANCE.$$(analog[2]),
+                                CURRENT_INSTANCE.$$(val),
+                                CURRENT_INSTANCE.$$(val.divide(analog[0], CURRENT_INSTANCE.precision)),
+                                CURRENT_INSTANCE.$$(val.add(analog[1]))
+                        });
+                    }
+                }
+            }
+        }
+        for (LCurrency currency : CURRENT_INSTANCE.CURRENCIES) {
+            for (Position p : positions) {
+                if (p.ASSET.equals(currency)) {
+                    BigDecimal[] analog = p.collapse();
+                    if (analog[0].compareTo(BigDecimal.ONE.divide(BigDecimal.TEN.pow(p.ASSET.getPlaces() - 1), CURRENT_INSTANCE.precision)) > 0) {
+                        BigDecimal val = useDate ? p.ASSET.getTotal(analog[0], point) : p.ASSET.getTotal(analog[0]);
+                        tCost = tCost.add(analog[1]);
+                        tVal = tVal.add(val);
+                        TABLE_ACCESS.addRow(new String[]{
+                                p.ASSET.toString(),
+                                p.ASSET.encode(analog[0]),
+                                CURRENT_INSTANCE.$$(analog[1]),
+                                CURRENT_INSTANCE.$$(analog[2]),
+                                CURRENT_INSTANCE.$$(val),
+                                CURRENT_INSTANCE.$$(val.divide(analog[0], CURRENT_INSTANCE.precision)),
+                                CURRENT_INSTANCE.$$(val.add(analog[1]))
+                        });
+                    }
+                }
+            }
+        }
+        for (LInventory inventory : CURRENT_INSTANCE.INVENTORIES) {
+            for (Position p : positions) {
+                if (p.ASSET.equals(inventory)) {
+                    BigDecimal[] analog = p.collapse();
+                    if (analog[0].compareTo(BigDecimal.ONE.divide(BigDecimal.TEN.pow(p.ASSET.getPlaces() - 1), CURRENT_INSTANCE.precision)) > 0) {
+                        BigDecimal val = useDate ? p.ASSET.getTotal(analog[0], point) : p.ASSET.getTotal(analog[0]);
+                        tCost = tCost.add(analog[1]);
+                        tVal = tVal.add(val);
+                        TABLE_ACCESS.addRow(new String[]{
+                                p.ASSET.toString(),
+                                p.ASSET.encode(analog[0]),
+                                CURRENT_INSTANCE.$$(analog[1]),
+                                CURRENT_INSTANCE.$$(analog[2]),
+                                CURRENT_INSTANCE.$$(val),
+                                CURRENT_INSTANCE.$$(val.divide(analog[0], CURRENT_INSTANCE.precision)),
+                                CURRENT_INSTANCE.$$(val.add(analog[1]))
+                        });
+                    }
+                }
             }
         }
         TABLE_ACCESS.addRow(new String[]{

@@ -1,6 +1,5 @@
 package com.donny.dendrofinance.gui.customswing;
 
-import com.donny.dendrofinance.gui.menu.util.taxgui.TaxGui;
 import com.donny.dendrofinance.instance.Instance;
 
 import javax.swing.*;

@@ -8,6 +8,7 @@ import com.donny.dendrofinance.util.ExportableToJson;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 public class Position implements ExportableToJson {
@@ -34,7 +35,7 @@ public class Position implements ExportableToJson {
     }
 
     public void sort() {
-        ELEMENTS.sort((el1, el2) -> el1.DATE.compareTo(el2.DATE));
+        ELEMENTS.sort(Comparator.comparing(el -> el.DATE));
     }
 
     public ArrayList<OrderBookEntry> change(long uuid, LDate date, LCurrency cur, BigDecimal amount, BigDecimal cost) {

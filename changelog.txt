@@ -1,3 +1,15 @@
+v0.6.2
+* fixed trade in DataHandler
+* ordered entries in PositionGui
+* minor optimizations and fixes
+  * AccountMetaGui field accounts is now ACCOUNTS and final
+  * redundant 'throws' clause removed from PositionElement.export()
+  * commented code removed from ImportHandler
+  * redundant 'static' modifier removed from inner enum ImportHandler.ImportMode
+  * nine unused imports removed
+  * lambda replaced with Comparator.comparing() in DataHandler and Position
+  * lambda replaced with method reference in MainGui
+
 v0.6.1
 * minor fixes
   * EncryptionHandler.getKeys is now a static method

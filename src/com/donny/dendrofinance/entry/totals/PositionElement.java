@@ -4,7 +4,6 @@ import com.donny.dendrofinance.currency.LCurrency;
 import com.donny.dendrofinance.instance.Instance;
 import com.donny.dendrofinance.json.JsonDecimal;
 import com.donny.dendrofinance.json.JsonFormattingException;
-import com.donny.dendrofinance.json.JsonItem;
 import com.donny.dendrofinance.json.JsonObject;
 import com.donny.dendrofinance.types.LDate;
 import com.donny.dendrofinance.util.ExportableToJson;
@@ -46,7 +45,7 @@ public class PositionElement implements ExportableToJson {
     }
 
     @Override
-    public JsonObject export() throws JsonFormattingException {
+    public JsonObject export() {
         JsonObject object = new JsonObject();
         object.put("ref", new JsonDecimal(UUID));
         object.put("date", DATE.export());

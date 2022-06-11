@@ -18,7 +18,7 @@ public class AccountMetaGui extends RegisterFrame {
     private final JButton SAVE;
 
     private JsonObject accountObject;
-    private File accounts;
+    private final File ACCOUNTS;
 
     public AccountMetaGui(MainGui caller, Instance curInst) {
         super(caller, "Accounts Metadata Edit", curInst);
@@ -78,9 +78,9 @@ public class AccountMetaGui extends RegisterFrame {
                 );
             }
 
-            accounts = new File(CURRENT_INSTANCE.data.getPath() + File.separator + "Accounts" + File.separator + "accounts.json");
+            ACCOUNTS = new File(CURRENT_INSTANCE.data.getPath() + File.separator + "Accounts" + File.separator + "accounts.json");
             try {
-                accountObject = (JsonObject) JsonItem.sanitizeDigest(CURRENT_INSTANCE.FILE_HANDLER.read(accounts));
+                accountObject = (JsonObject) JsonItem.sanitizeDigest(CURRENT_INSTANCE.FILE_HANDLER.read(ACCOUNTS));
                 GIFT.setText(accountObject.getArray("gift-cards").toString());
                 BRAVE.setText(accountObject.getArray("brave-mobile").toString());
             } catch (JsonFormattingException ex) {
@@ -95,7 +95,7 @@ public class AccountMetaGui extends RegisterFrame {
         try {
             accountObject.put("gift-cards", JsonItem.sanitizeDigest(GIFT.getText()));
             accountObject.put("brave-mobile", JsonItem.sanitizeDigest(BRAVE.getText()));
-            CURRENT_INSTANCE.FILE_HANDLER.write(accounts, accountObject.print());
+            CURRENT_INSTANCE.FILE_HANDLER.write(ACCOUNTS, accountObject.print());
             dispose();
         } catch (JsonFormattingException ex) {
             CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Accounts.json seems to be damaged: " + ex);

@@ -16,7 +16,7 @@ import java.io.File;
 public class ImportHandler {
     private final Instance CURRENT_INSTANCE;
 
-    public static enum ImportMode {
+    public enum ImportMode {
         /*
          * IGNORE: if there is a UUID clash, don't add the new one
          * KEEP: if there is a UUID clash, add the new one with a new UUID
@@ -31,13 +31,6 @@ public class ImportHandler {
         }
 
         public static ImportMode fromString(String string) {
-            /*
-
-            MODE.addItem("Keep Both");
-            MODE.addItem("Ignore New");
-            MODE.addItem("Replace Old");
-
-             */
             return switch (string.toUpperCase()) {
                 case "IGNORE", "IGNORE NEW" -> IGNORE;
                 case "OVERWRITE", "REPLACE OLD" -> OVERWRITE;

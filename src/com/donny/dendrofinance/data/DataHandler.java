@@ -20,6 +20,7 @@ import com.donny.dendrofinance.util.Curation;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 
 public class DataHandler {
@@ -488,7 +489,7 @@ public class DataHandler {
                 correct.add(entry);
             }
         }
-        correct.sort((t1, t2) -> t1.getDate().compareTo(t2.getDate()));
+        correct.sort(Comparator.comparing(TransactionEntry::getDate));
         return correct;
     }
 
@@ -994,7 +995,7 @@ public class DataHandler {
             }
             TransactionEntry entry = new TransactionEntry(CURRENT_INSTANCE);
             Position temp = getPosition(fc);
-            ArrayList<OrderBookEntry> orders = temp.change(entry.getUUID(), date, fc, fromAmount.multiply(BigDecimal.valueOf(-1)), cost);
+            ArrayList<OrderBookEntry> orders = temp.change(entry.getUUID(), date, fc, fromAmount, cost);
             BigDecimal profit = BigDecimal.ZERO;
             for (OrderBookEntry order : orders) {
                 profit = profit.add(order.profit());

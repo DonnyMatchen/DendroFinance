@@ -2,10 +2,8 @@ package com.donny.dendrofinance.types;
 
 import com.donny.dendrofinance.instance.Instance;
 import com.donny.dendrofinance.json.JsonDecimal;
-import com.donny.dendrofinance.json.JsonItem;
 import com.donny.dendrofinance.util.ExportableToJson;
 
-import java.math.BigDecimal;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;

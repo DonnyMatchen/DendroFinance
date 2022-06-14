@@ -8,9 +8,12 @@
 * {->} added type specific gain/loss
   * specified tax gain/loss accounts in defaults
     * added long run gain/loss accounts to defaults
-  * {X} updated `DataHandler` special adder methods
-    * {X} added support for specific gain/loss accounts
-    * {X} added support for LR vs SR
+  * {->} updated `DataHandler` special adder methods
+    * added support for specific gain/loss accounts
+    * added support for LR vs SR
+    * {->} added support for mining income
+      * added `DataHandler.minInc()`
+      * {X} added mining income support to special insert
 
 ## v0.6.3
 * updated `README.md`

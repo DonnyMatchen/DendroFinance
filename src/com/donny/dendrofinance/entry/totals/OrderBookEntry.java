@@ -42,6 +42,10 @@ public class OrderBookEntry implements ExportableToJson {
         return SOLD.add(COST);
     }
 
+    public boolean longTerm() {
+        return END.getTime() - START.getTime() >= 31622400000L;
+    }
+
     @Override
     public JsonObject export() throws JsonFormattingException {
         JsonObject object = new JsonObject();

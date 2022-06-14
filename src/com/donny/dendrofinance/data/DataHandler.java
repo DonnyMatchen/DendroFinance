@@ -777,13 +777,46 @@ public class DataHandler {
             } else if (amount.compareTo(BigDecimal.ZERO) < 0) {
                 Position temp = getPosition(c);
                 ArrayList<OrderBookEntry> orders = temp.change(entry.getUUID(), date, c, amount, cost);
-                BigDecimal profit = BigDecimal.ZERO;
+                BigDecimal profitSR = BigDecimal.ZERO, profitLR = BigDecimal.ZERO;
                 for (OrderBookEntry order : orders) {
-                    profit = profit.add(order.profit());
+                    if (order.longTerm()) {
+                        profitLR = profitLR.add(order.profit());
+                    } else {
+                        profitSR = profitSR.add(order.profit());
+                    }
                 }
-                String gl = "Gain";
-                if (profit.compareTo(BigDecimal.ZERO) < 0) {
-                    gl = "Loss";
+                String gl = "";
+                if (profitSR.compareTo(BigDecimal.ZERO) != 0) {
+                    gl += ", G!Tax_";
+                    if (c instanceof LStock) {
+                        gl += "Stock_Cap";
+                    } else if (c instanceof LInventory) {
+                        gl += "Inventory_Cap";
+                    } else {
+                        if (c.isFiat()) {
+                            gl += "Fiat_Cap";
+                        } else {
+                            gl += "Crypto_Cap";
+                        }
+                    }
+                    gl += profitSR.compareTo(BigDecimal.ZERO) > 0 ? "Gain(" : "Loss(";
+                    gl += profitSR.abs().setScale(CURRENT_INSTANCE.main.getPlaces(), RoundingMode.HALF_UP) + ")";
+                }
+                if (profitLR.compareTo(BigDecimal.ZERO) != 0) {
+                    gl += ", G!Tax_";
+                    if (c instanceof LStock) {
+                        gl += "Stock_Cap";
+                    } else if (c instanceof LInventory) {
+                        gl += "Inventory_Cap";
+                    } else {
+                        if (c.isFiat()) {
+                            gl += "Fiat_Cap";
+                        } else {
+                            gl += "Crypto_Cap";
+                        }
+                    }
+                    gl += profitLR.compareTo(BigDecimal.ZERO) > 0 ? "Gain_LR(" : "Loss_LR(";
+                    gl += profitLR.abs().setScale(CURRENT_INSTANCE.main.getPlaces(), RoundingMode.HALF_UP) + ")";
                 }
                 entry.insert(
                         date,
@@ -795,8 +828,7 @@ public class DataHandler {
                                 + cost + "), C!" + acc + "("
                                 + cost + "), C!Trading_Income("
                                 + cost + "), T!" + e.NAME + "_" + c.getTicker() + "("
-                                + amount + "), G!Tax_Cap" + gl + "("
-                                + profit.abs() + ")", CURRENT_INSTANCE)
+                                + amount + ")" + gl, CURRENT_INSTANCE)
                 );
                 entry.addLedgerMeta(c, CURRENT_INSTANCE.main, amount, cost, cost);
                 addTransaction(entry);
@@ -857,6 +889,49 @@ public class DataHandler {
                                 + amount + ")", CURRENT_INSTANCE)
                 );
                 entry.addLedgerMeta(c, CURRENT_INSTANCE.main, amount, BigDecimal.ZERO, cost);
+                addTransaction(entry);
+                return true;
+            } else {
+                return false;
+            }
+        } catch (NumberFormatException e) {
+            return false;
+        }
+    }
+
+    public boolean minInc(LDate date, String description, BigDecimal amount, BigDecimal unit, String account) {
+        try {
+            unit = unit.abs();
+            BigDecimal cost = amount.multiply(unit).setScale(CURRENT_INSTANCE.main.getPlaces(), RoundingMode.HALF_UP).abs();
+            Account a = CURRENT_INSTANCE.ACCOUNTS.getElement(account);
+            if (a == null) {
+                return false;
+            }
+            LCurrency c = a.getCurrency();
+            if (c == null) {
+                return false;
+            }
+            String acc = "Crypto";
+            if (c instanceof LStock) {
+                acc = "Stock";
+            } else if (c instanceof LInventory) {
+                acc = "Held_Inventory";
+            } else if (c.isFiat()) {
+                acc = "Other_Cash";
+            }
+            TransactionEntry entry = new TransactionEntry(CURRENT_INSTANCE);
+            if (amount.compareTo(BigDecimal.ZERO) > 0) {
+                entry.insert(
+                        date,
+                        c.getName(),
+                        c.toString(),
+                        description,
+                        new LAccountSet("D!" + acc + "("
+                                + cost + "), C!Portfolio("
+                                + cost + "), T!" + a.getName() + "(" + amount + ")"
+                                + ", G!Tax_SelfInc(" + cost + ")", CURRENT_INSTANCE)
+                );
+                entry.addLedgerMeta(CURRENT_INSTANCE.main, c, cost.multiply(BigDecimal.valueOf(-1)), amount, cost);
                 addTransaction(entry);
                 return true;
             } else {
@@ -996,13 +1071,46 @@ public class DataHandler {
             TransactionEntry entry = new TransactionEntry(CURRENT_INSTANCE);
             Position temp = getPosition(fc);
             ArrayList<OrderBookEntry> orders = temp.change(entry.getUUID(), date, fc, fromAmount, cost);
-            BigDecimal profit = BigDecimal.ZERO;
+            BigDecimal profitSR = BigDecimal.ZERO, profitLR = BigDecimal.ZERO;
             for (OrderBookEntry order : orders) {
-                profit = profit.add(order.profit());
+                if (order.longTerm()) {
+                    profitLR = profitLR.add(order.profit());
+                } else {
+                    profitSR = profitSR.add(order.profit());
+                }
             }
-            String gl = "Gain";
-            if (profit.compareTo(BigDecimal.ZERO) < 0) {
-                gl = "Loss";
+            String gl = "";
+            if (profitSR.compareTo(BigDecimal.ZERO) != 0) {
+                gl += ", G!Tax_";
+                if (fc instanceof LStock) {
+                    gl += "Stock_Cap";
+                } else if (fc instanceof LInventory) {
+                    gl += "Inventory_Cap";
+                } else {
+                    if (fc.isFiat()) {
+                        gl += "Fiat_Cap";
+                    } else {
+                        gl += "Crypto_Cap";
+                    }
+                }
+                gl += profitSR.compareTo(BigDecimal.ZERO) > 0 ? "Gain(" : "Loss(";
+                gl += profitSR.abs().setScale(CURRENT_INSTANCE.main.getPlaces(), RoundingMode.HALF_UP) + ")";
+            }
+            if (profitLR.compareTo(BigDecimal.ZERO) != 0) {
+                gl += ", G!Tax_";
+                if (fc instanceof LStock) {
+                    gl += "Stock_Cap";
+                } else if (fc instanceof LInventory) {
+                    gl += "Inventory_Cap";
+                } else {
+                    if (fc.isFiat()) {
+                        gl += "Fiat_Cap";
+                    } else {
+                        gl += "Crypto_Cap";
+                    }
+                }
+                gl += profitLR.compareTo(BigDecimal.ZERO) > 0 ? "Gain_LR(" : "Loss_LR(";
+                gl += profitLR.abs().setScale(CURRENT_INSTANCE.main.getPlaces(), RoundingMode.HALF_UP) + ")";
             }
             entry.insert(
                     date,
@@ -1011,8 +1119,7 @@ public class DataHandler {
                     "Trade (" + fc + " -> " + tc + ")",
                     new LAccountSet("T!" + e.NAME + "_" + fc.getTicker() + "("
                             + fromAmount + "), T!" + e.NAME + "_" + tc.getTicker() + "("
-                            + toAmount + "), G!Tax_Cap" + gl + "("
-                            + profit.setScale(CURRENT_INSTANCE.main.getPlaces(), RoundingMode.HALF_UP) + ")", CURRENT_INSTANCE)
+                            + toAmount + ")" + gl, CURRENT_INSTANCE)
             );
             entry.addLedgerMeta(fc, tc, fromAmount, toAmount, cost);
             addTransaction(entry);

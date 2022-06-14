@@ -1,7 +1,9 @@
 ## v0.6.4
 * {->} Minor bug fixes
   * changed Monero (XMR) places from 8 to 12
-  * {X} conversion of derivatives to parents for trading ledger metadata
+  * conversion of derivatives to parents
+    * added `LCurrency.getRoot()`
+    * added root conversion in `DataHandler.minInc()`
 * added more options to `BalanceSheetGui` search
   * added account currency
   * added account type

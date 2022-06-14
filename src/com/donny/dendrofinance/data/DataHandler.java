@@ -902,7 +902,6 @@ public class DataHandler {
     public boolean minInc(LDate date, String description, BigDecimal amount, BigDecimal unit, String account) {
         try {
             unit = unit.abs();
-            BigDecimal cost = amount.multiply(unit).setScale(CURRENT_INSTANCE.main.getPlaces(), RoundingMode.HALF_UP).abs();
             Account a = CURRENT_INSTANCE.ACCOUNTS.getElement(account);
             if (a == null) {
                 return false;
@@ -911,6 +910,12 @@ public class DataHandler {
             if (c == null) {
                 return false;
             }
+            LCurrency nw = c.getRoot();
+            if (nw == null) {
+                return false;
+            }
+            BigDecimal adjAmount = CURRENT_INSTANCE.convert(amount, c, nw);
+            BigDecimal cost = adjAmount.multiply(unit).setScale(CURRENT_INSTANCE.main.getPlaces(), RoundingMode.HALF_UP).abs();
             String acc = "Crypto";
             if (c instanceof LStock) {
                 acc = "Stock";
@@ -931,7 +936,7 @@ public class DataHandler {
                                 + cost + "), T!" + a.getName() + "(" + amount + ")"
                                 + ", G!Tax_SelfInc(" + cost + ")", CURRENT_INSTANCE)
                 );
-                entry.addLedgerMeta(CURRENT_INSTANCE.main, c, cost.multiply(BigDecimal.valueOf(-1)), amount, cost);
+                entry.addLedgerMeta(CURRENT_INSTANCE.main, nw, cost.multiply(BigDecimal.valueOf(-1)), adjAmount, cost);
                 addTransaction(entry);
                 return true;
             } else {

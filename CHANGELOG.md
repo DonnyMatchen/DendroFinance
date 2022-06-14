@@ -1,19 +1,20 @@
 ## v0.6.4
-* Minor bug fixes
+* {->} Minor bug fixes
   * changed Monero (XMR) places from 8 to 12
+  * {X} conversion of derivatives to parents for trading ledger metadata
 * added more options to `BalanceSheetGui` search
   * added account currency
   * added account type
   * added broad account type
-* {->} added type specific gain/loss
+* added type specific gain/loss
   * specified tax gain/loss accounts in defaults
     * added long run gain/loss accounts to defaults
-  * {->} updated `DataHandler` special adder methods
+  * updated `DataHandler` special adder methods
     * added support for specific gain/loss accounts
     * added support for LR vs SR
-    * {->} added support for mining income
+    * added support for mining income
       * added `DataHandler.minInc()`
-      * {X} added mining income support to special insert
+      * added mining income support to `SpecialTransactionEntryGui`
 
 ## v0.6.3
 * updated `README.md`

@@ -1,9 +1,11 @@
 ## v0.6.4
 * Minor bug fixes
   * changed Monero (XMR) places from 8 to 12
-* {X} added currency to balance sheet search
-  * {X} added explanation of search artifact in `Examples`
-* {X} added type specific gain/loss
+* added more options to `BalanceSheetGui` search
+  * added account currency
+  * added account type
+  * added broad account type
+* {->} added type specific gain/loss
   * specified tax gain/loss accounts in defaults
     * added long run gain/loss accounts to defaults
   * {X} updated `DataHandler` special adder methods

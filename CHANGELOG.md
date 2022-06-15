@@ -1,5 +1,5 @@
 ## v0.7.0
-* {->} Minor bug fixes
+* Minor bug fixes
   * changed Monero (XMR) places from 8 to 12
   * conversion of derivatives to parents
     * added `LCurrency.getRoot()`
@@ -13,7 +13,7 @@
       * changed `Instance.getTaxAccountsAsStrings()` to `Instance.getGhostAccountsAsStrings()`
       * fixed old code
   * added folder insure for `Instance.data` in `Instance.ensureFolders()`
-  * {X} corrected `Validation.validateJson()`
+  * corrected `Validation.validateJson()`
 * added more options to `BalanceSheetGui` search
   * added account currency
   * added account type

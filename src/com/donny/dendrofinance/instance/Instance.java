@@ -265,6 +265,81 @@ public class Instance {
             for (JsonObject obj : array.getObjectArray()) {
                 ACCOUNTS.add(new Account(obj, this));
             }
+
+            //adding special account identifiers
+            {
+                JsonObject notAccObj = accountObj.getObject("notable-accounts");
+
+                Account.portfolioName = notAccObj.getString("portfolio").getString();
+
+                Account.stockName = notAccObj.getString("stock").getString();
+                Account.inventoryName = notAccObj.getString("inventory").getString();
+                Account.fiatName = notAccObj.getString("fiat").getString();
+                Account.cryptoName = notAccObj.getString("crypto").getString();
+
+                Account.tradIncName = notAccObj.getString("trading-income").getString();
+                Account.tradExpName = notAccObj.getString("trading-expense").getString();
+
+                Account.cgStockName = notAccObj.getString("stock-gain").getString();
+                Account.cgInventoryName = notAccObj.getString("inventory-gain").getString();
+                Account.cgFiatName = notAccObj.getString("fiat-gain").getString();
+                Account.cgCryptoName = notAccObj.getString("crypto-gain").getString();
+
+                Account.clStockName = notAccObj.getString("stock-loss").getString();
+                Account.clInventoryName = notAccObj.getString("inventory-loss").getString();
+                Account.clFiatName = notAccObj.getString("fiat-loss").getString();
+                Account.clCryptoName = notAccObj.getString("crypto-loss").getString();
+
+                if (notAccObj.containsKey("stock-gain-long-term")) {
+                    Account.cgltStockName = notAccObj.getString("stock-gain-long-term").getString();
+                } else {
+                    Account.cgltStockName = Account.cgStockName;
+                }
+                if (notAccObj.containsKey("inventory-gain-long-term")) {
+                    Account.cgltInventoryName = notAccObj.getString("inventory-gain-long-term").getString();
+                } else {
+                    Account.cgltInventoryName = Account.cgInventoryName;
+                }
+                if (notAccObj.containsKey("fiat-gain-long-term")) {
+                    Account.cgltFiatName = notAccObj.getString("fiat-gain-long-term").getString();
+                } else {
+                    Account.cgltFiatName = Account.cgFiatName;
+                }
+                if (notAccObj.containsKey("crypto-gain-long-term")) {
+                    Account.cgltCryptoName = notAccObj.getString("crypto-gain-long-term").getString();
+                } else {
+                    Account.cgltCryptoName = Account.cgCryptoName;
+                }
+                if (notAccObj.containsKey("stock-loss-long-term")) {
+                    Account.clltStockName = notAccObj.getString("stock-loss-long-term").getString();
+                } else {
+                    Account.clltStockName = Account.clStockName;
+                }
+                if (notAccObj.containsKey("inventory-loss-long-term")) {
+                    Account.clltInventoryName = notAccObj.getString("inventory-loss-long-term").getString();
+                } else {
+                    Account.clltInventoryName = Account.clInventoryName;
+                }
+                if (notAccObj.containsKey("fiat-loss-long-term")) {
+                    Account.clltFiatName = notAccObj.getString("fiat-loss-long-term").getString();
+                } else {
+                    Account.clltFiatName = Account.clFiatName;
+                }
+                if (notAccObj.containsKey("crypto-loss-long-term")) {
+                    Account.clltCryptoName = notAccObj.getString("crypto-loss-long-term").getString();
+                } else {
+                    Account.clltCryptoName = Account.clCryptoName;
+                }
+
+                Account.selfIncName = notAccObj.getString("self-employment-income").getString();
+
+                Account.fixedAssetsTypeName = notAccObj.getString("fixed-assets-type").getString();
+                Account.receiveTypeName = notAccObj.getString("receivables-type").getString();
+
+                Account.appreciationName = notAccObj.getString("appreciation").getString();
+                Account.depreciationName = notAccObj.getString("depreciation").getString();
+            }
+
             int x = accountObj.getDecimal("tracking-prefix").decimal.intValue(), y = accountObj.getDecimal("asset-prefix").decimal.intValue();
             for (Account a : ACCOUNTS) {
                 if (a.getBroadAccountType() == BroadAccountType.ASSET && a.getAid() > y) {

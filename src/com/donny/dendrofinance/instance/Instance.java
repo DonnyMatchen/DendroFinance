@@ -756,7 +756,7 @@ public class Instance {
         return out;
     }
 
-    public ArrayList<String> getTaxAccountsAsStrings() {
+    public ArrayList<String> getGhostAccountsAsStrings() {
         ArrayList<String> out = new ArrayList<>();
         ACCOUNTS.forEach(a -> {
             if (a.getBroadAccountType() == BroadAccountType.GHOST) {

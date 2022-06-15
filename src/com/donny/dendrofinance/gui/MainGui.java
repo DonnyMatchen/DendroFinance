@@ -75,7 +75,7 @@ public class MainGui extends JFrame {
             C = new JLabel("Search");
 
             TABLE_PANE = DendroFactory.getTable(new String[]{
-                    "UUID", "Date", "Entity", "Items", "Description", "Account", "Debit", "Credit", "Tracking", "Ghost", "Meta"
+                    "UUID", "Date", "Entity", "Items", "Description", "Account", "Debit", "Credit", "Ghost", "Tracking", "Meta"
             }, new Object[][]{}, false);
             TABLE_PANE.getVerticalScrollBar().addAdjustmentListener(this::tablePaneScrolled);
             TABLE = (JTable) TABLE_PANE.getViewport().getView();

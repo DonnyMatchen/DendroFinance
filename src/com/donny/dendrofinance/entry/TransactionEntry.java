@@ -452,12 +452,12 @@ public class TransactionEntry extends Entry implements Comparable<TransactionEnt
                     if (i == 0) {
                         layers.add(new String[]{
                                 "" + getUUID(), date.toString(), entity, items, description,
-                                wrapper.ACCOUNT.getName(), "", "", "", wrapper.ACCOUNT.getCurrency().encode(wrapper.VALUE), getFlags()
+                                wrapper.ACCOUNT.getName(), "", "", wrapper.ACCOUNT.getCurrency().encode(wrapper.VALUE), "", getFlags()
                         });
                     } else {
                         layers.add(new String[]{
                                 "", "", "", "", "",
-                                wrapper.ACCOUNT.getName(), "", "", "", wrapper.ACCOUNT.getCurrency().encode(wrapper.VALUE)
+                                wrapper.ACCOUNT.getName(), "", "", wrapper.ACCOUNT.getCurrency().encode(wrapper.VALUE), ""
                         });
                     }
                 }
@@ -465,14 +465,14 @@ public class TransactionEntry extends Entry implements Comparable<TransactionEnt
                     if (i == 0) {
                         layers.add(new String[]{
                                 "" + getUUID(), date.toString(), entity, items, description,
-                                wrapper.ACCOUNT.getName(), "", "",
-                                wrapper.ACCOUNT.getCurrency().encode(wrapper.VALUE), "", getFlags()
+                                wrapper.ACCOUNT.getName(), "", "", "",
+                                wrapper.ACCOUNT.getCurrency().encode(wrapper.VALUE), getFlags()
                         });
                     } else {
                         layers.add(new String[]{
                                 "", "", "", "", "",
-                                wrapper.ACCOUNT.getName(), "", "",
-                                wrapper.ACCOUNT.getCurrency().encode(wrapper.VALUE), ""
+                                wrapper.ACCOUNT.getName(), "", "", "",
+                                wrapper.ACCOUNT.getCurrency().encode(wrapper.VALUE)
                         });
                     }
                 }

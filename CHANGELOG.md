@@ -1,9 +1,18 @@
 ## v0.6.4
-* {->} Minor bug fixes
+* Minor bug fixes
   * changed Monero (XMR) places from 8 to 12
   * conversion of derivatives to parents
     * added `LCurrency.getRoot()`
     * added root conversion in `DataHandler.minInc()`
+  * fixed tracking and ghost account order
+    * fixed column order in `MainGui`
+    * fixed column order in `TransactionEntry.display()`
+    * fixed column order in `AWColumn`;
+      * added `LAccountSet.sort()` to `LAccountSet(JsonArray, Instance)`
+    * fixed `NewTransactionEntryGui`
+      * changed `Instance.getTaxAccountsAsStrings()` to `Instance.getGhostAccountsAsStrings()`
+      * fixed old code
+* {X} added list of required account names
 * added more options to `BalanceSheetGui` search
   * added account currency
   * added account type

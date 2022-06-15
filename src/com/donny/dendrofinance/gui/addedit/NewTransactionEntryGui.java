@@ -92,27 +92,27 @@ public class NewTransactionEntryGui extends ModalFrame {
                 A6 = new SearchBox("Account 6", CURRENT_INSTANCE.getDCAccountsAsStrings());
 
                 B1 = new JComboBox<>();
-                B1.setModel(new DefaultComboBoxModel<>(new String[]{"Debit", "Credit", "Tax", "Tracking"}));
+                B1.setModel(new DefaultComboBoxModel<>(new String[]{"Debit", "Credit", "Ghost", "Tracking"}));
                 B1.addItemListener(event -> bChanged(B1, A1));
 
                 B2 = new JComboBox<>();
-                B2.setModel(new DefaultComboBoxModel<>(new String[]{"Debit", "Credit", "Tax", "Tracking"}));
+                B2.setModel(new DefaultComboBoxModel<>(new String[]{"Debit", "Credit", "Ghost", "Tracking"}));
                 B2.addItemListener(event -> bChanged(B2, A2));
 
                 B3 = new JComboBox<>();
-                B3.setModel(new DefaultComboBoxModel<>(new String[]{"Debit", "Credit", "Tax", "Tracking"}));
+                B3.setModel(new DefaultComboBoxModel<>(new String[]{"Debit", "Credit", "Ghost", "Tracking"}));
                 B3.addItemListener(event -> bChanged(B3, A3));
 
                 B4 = new JComboBox<>();
-                B4.setModel(new DefaultComboBoxModel<>(new String[]{"Debit", "Credit", "Tax", "Tracking"}));
+                B4.setModel(new DefaultComboBoxModel<>(new String[]{"Debit", "Credit", "Ghost", "Tracking"}));
                 B4.addItemListener(event -> bChanged(B4, A4));
 
                 B5 = new JComboBox<>();
-                B5.setModel(new DefaultComboBoxModel<>(new String[]{"Debit", "Credit", "Tax", "Tracking"}));
+                B5.setModel(new DefaultComboBoxModel<>(new String[]{"Debit", "Credit", "Ghost", "Tracking"}));
                 B5.addItemListener(event -> bChanged(B5, A5));
 
                 B6 = new JComboBox<>();
-                B6.setModel(new DefaultComboBoxModel<>(new String[]{"Debit", "Credit", "Tax", "Tracking"}));
+                B6.setModel(new DefaultComboBoxModel<>(new String[]{"Debit", "Credit", "Ghost", "Tracking"}));
                 B6.addItemListener(event -> bChanged(B6, A6));
 
                 //group layout
@@ -587,13 +587,10 @@ public class NewTransactionEntryGui extends ModalFrame {
 
     public void bChanged(JComboBox<String> b, SearchBox a) {
         String column = (String) b.getSelectedItem();
-        if (column.equals("Tracking")) {
-            column = "B";
-        }
         int index = a.getSelectedIndex();
         switch (AWColumn.fromString("" + column.charAt(0))) {
             case DEBIT, CREDIT -> a.setMaster(CURRENT_INSTANCE.getDCAccountsAsStrings());
-            case GHOST -> a.setMaster(CURRENT_INSTANCE.getTaxAccountsAsStrings());
+            case GHOST -> a.setMaster(CURRENT_INSTANCE.getGhostAccountsAsStrings());
             case TRACKER -> a.setMaster(CURRENT_INSTANCE.getTrackingAccountsAsStrings());
         }
         if (index < a.getListSize()) {

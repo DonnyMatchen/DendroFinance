@@ -765,7 +765,7 @@ public class DataHandler {
                         currency + " Purchase",
                         new LAccountSet(
                                 "D!" + acc + "("
-                                        + cost.abs() + "), D!" + Account.tradExpName  + "("
+                                        + cost.abs() + "), D!" + Account.tradExpName + "("
                                         + cost.abs() + "), C!" + e.NAME + "_" + CURRENT_INSTANCE.main.getTicker() + "("
                                         + cost.abs() + "), C!" + Account.portfolioName + "("
                                         + cost.abs() + "), T!" + e.NAME + "_" + c.getTicker() + "("

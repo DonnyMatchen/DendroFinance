@@ -122,11 +122,11 @@ public class AssetStatusGui extends RegisterFrame {
                         } else {
                             if (a.getCurrency().isFiat()) {
                                 if (a.getCurrency().equals(CURRENT_INSTANCE.main)) {
-                                    if(a.getAccountType().NAME.equalsIgnoreCase(Account.fixedAssetsTypeName)){
+                                    if (a.getAccountType().NAME.equalsIgnoreCase(Account.fixedAssetsTypeName)) {
                                         nf = nf.add(acc.get(a));
-                                    }else if(a.getAccountType().NAME.equalsIgnoreCase(Account.receiveTypeName)){
+                                    } else if (a.getAccountType().NAME.equalsIgnoreCase(Account.receiveTypeName)) {
                                         rec = rec.add(acc.get(a));
-                                    }else{
+                                    } else {
                                         main = main.add(acc.get(a));
                                     }
                                 } else {

@@ -115,7 +115,7 @@ public class Instance {
                 exp = new File(data.getPath() + File.separator + "Exports"),
                 imp = new File(data.getPath() + File.separator + "Imports");
         while (!archive.exists() || !pStock.exists() || !exp.exists() || !imp.exists()) {
-            if(!data.exists()){
+            if (!data.exists()) {
                 data.mkdir();
             }
             if (!archive.exists()) {

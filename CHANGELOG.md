@@ -1,4 +1,4 @@
-## v0.6.4
+## v0.7.0
 * Minor bug fixes
   * changed Monero (XMR) places from 8 to 12
   * conversion of derivatives to parents
@@ -13,7 +13,6 @@
       * changed `Instance.getTaxAccountsAsStrings()` to `Instance.getGhostAccountsAsStrings()`
       * fixed old code
   * added folder insure for `Instance.data` in `Instance.ensureFolders()`
-* {X} added list of required account names
 * added more options to `BalanceSheetGui` search
   * added account currency
   * added account type
@@ -27,6 +26,12 @@
     * added support for mining income
       * added `DataHandler.minInc()`
       * added mining income support to `SpecialTransactionEntryGui`
+* {->} gave more flexibility to accounts in programs
+  * fixed `DataHandler`
+  * fixed `AssetStatusGui`
+  * fixed `AppDepGui`
+  * {X} added imports to `Instance`
+  * {X} added identifiers to `AccountMetaGui`
 
 ## v0.6.3
 * updated `README.md`

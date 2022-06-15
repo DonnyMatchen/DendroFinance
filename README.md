@@ -55,6 +55,6 @@ Example:
 # ESSENTIAL ELEMENTS
 Account and Exchange names must be unique, and cannot contain spaces.
 
-Most accounts within the default set of accounts are required, and should probably not be deleted or renamed.
+If accounts are renamed, any counterpart(s) in `notable-accounts` should also be changed to match.
 
 More specific information can be found under Examples.

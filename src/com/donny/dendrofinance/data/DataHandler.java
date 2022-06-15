@@ -748,13 +748,13 @@ public class DataHandler {
             if (!e.supports(c)) {
                 return false;
             }
-            String acc = "Crypto";
+            String acc = Account.cryptoName;
             if (c instanceof LStock) {
-                acc = "Stock";
+                acc = Account.stockName;
             } else if (c instanceof LInventory) {
-                acc = "Held_Inventory";
+                acc = Account.inventoryName;
             } else if (c.isFiat()) {
-                acc = "Other_Cash";
+                acc = Account.fiatName;
             }
             TransactionEntry entry = new TransactionEntry(CURRENT_INSTANCE);
             if (amount.compareTo(BigDecimal.ZERO) > 0) {
@@ -765,9 +765,9 @@ public class DataHandler {
                         currency + " Purchase",
                         new LAccountSet(
                                 "D!" + acc + "("
-                                        + cost.abs() + "), D!Trading_Expenses("
-                                        + cost.abs() + "), C!" + e.NAME + "_USD("
-                                        + cost.abs() + "), C!Portfolio("
+                                        + cost.abs() + "), D!" + Account.tradExpName  + "("
+                                        + cost.abs() + "), C!" + e.NAME + "_" + CURRENT_INSTANCE.main.getTicker() + "("
+                                        + cost.abs() + "), C!" + Account.portfolioName + "("
                                         + cost.abs() + "), T!" + e.NAME + "_" + c.getTicker() + "("
                                         + amount + ")", CURRENT_INSTANCE)
                 );
@@ -787,46 +787,44 @@ public class DataHandler {
                 }
                 String gl = "";
                 if (profitSR.compareTo(BigDecimal.ZERO) != 0) {
-                    gl += ", G!Tax_";
+                    gl += ", G!";
                     if (c instanceof LStock) {
-                        gl += "Stock_Cap";
+                        gl += profitSR.compareTo(BigDecimal.ZERO) > 0 ? Account.cgStockName : Account.clStockName;
                     } else if (c instanceof LInventory) {
-                        gl += "Inventory_Cap";
+                        gl += profitSR.compareTo(BigDecimal.ZERO) > 0 ? Account.cgInventoryName : Account.clInventoryName;
                     } else {
                         if (c.isFiat()) {
-                            gl += "Fiat_Cap";
+                            gl += profitSR.compareTo(BigDecimal.ZERO) > 0 ? Account.cgFiatName : Account.clFiatName;
                         } else {
-                            gl += "Crypto_Cap";
+                            gl += profitSR.compareTo(BigDecimal.ZERO) > 0 ? Account.cgCryptoName : Account.clCryptoName;
                         }
                     }
-                    gl += profitSR.compareTo(BigDecimal.ZERO) > 0 ? "Gain(" : "Loss(";
-                    gl += profitSR.abs().setScale(CURRENT_INSTANCE.main.getPlaces(), RoundingMode.HALF_UP) + ")";
+                    gl += "(" + profitSR.abs().setScale(CURRENT_INSTANCE.main.getPlaces(), RoundingMode.HALF_UP) + ")";
                 }
                 if (profitLR.compareTo(BigDecimal.ZERO) != 0) {
-                    gl += ", G!Tax_";
+                    gl += ", G!";
                     if (c instanceof LStock) {
-                        gl += "Stock_Cap";
+                        gl += profitSR.compareTo(BigDecimal.ZERO) > 0 ? Account.cgltStockName : Account.clltStockName;
                     } else if (c instanceof LInventory) {
-                        gl += "Inventory_Cap";
+                        gl += profitSR.compareTo(BigDecimal.ZERO) > 0 ? Account.cgltInventoryName : Account.clltInventoryName;
                     } else {
                         if (c.isFiat()) {
-                            gl += "Fiat_Cap";
+                            gl += profitSR.compareTo(BigDecimal.ZERO) > 0 ? Account.cgltFiatName : Account.clltFiatName;
                         } else {
-                            gl += "Crypto_Cap";
+                            gl += profitSR.compareTo(BigDecimal.ZERO) > 0 ? Account.cgltCryptoName : Account.clltCryptoName;
                         }
                     }
-                    gl += profitLR.compareTo(BigDecimal.ZERO) > 0 ? "Gain_LR(" : "Loss_LR(";
-                    gl += profitLR.abs().setScale(CURRENT_INSTANCE.main.getPlaces(), RoundingMode.HALF_UP) + ")";
+                    gl += "(" + profitSR.abs().setScale(CURRENT_INSTANCE.main.getPlaces(), RoundingMode.HALF_UP) + ")";
                 }
                 entry.insert(
                         date,
                         e.NAME,
                         c.toString(),
                         currency + " Sale",
-                        new LAccountSet("D!" + e.NAME + "_USD("
-                                + cost + "), D!Portfolio("
+                        new LAccountSet("D!" + e.NAME + "_" + CURRENT_INSTANCE.main.getTicker() + "("
+                                + cost + "), D!" + Account.portfolioName + "("
                                 + cost + "), C!" + acc + "("
-                                + cost + "), C!Trading_Income("
+                                + cost + "), C!" + Account.tradIncName + "("
                                 + cost + "), T!" + e.NAME + "_" + c.getTicker() + "("
                                 + amount + ")" + gl, CURRENT_INSTANCE)
                 );
@@ -854,13 +852,13 @@ public class DataHandler {
                 return false;
             }
             boolean s = e.stakes(c) > -1;
-            String acc = "Crypto";
+            String acc = Account.cryptoName;
             if (c instanceof LStock) {
-                acc = "Stock";
+                acc = Account.stockName;
             } else if (c instanceof LInventory) {
-                acc = "Held_Inventory";
+                acc = Account.inventoryName;
             } else if (c.isFiat()) {
-                acc = "Other_Cash";
+                acc = Account.fiatName;
             }
             TransactionEntry entry = new TransactionEntry(CURRENT_INSTANCE);
             if (amount.compareTo(BigDecimal.ZERO) > 0) {
@@ -870,7 +868,7 @@ public class DataHandler {
                         currency,
                         description,
                         new LAccountSet("D!" + acc + "("
-                                + cost + "), C!Portfolio("
+                                + cost + "), C!" + Account.portfolioName + "("
                                 + cost + "), T!" + e.NAME + "_" + c.getTicker() + (s ? "_S" : "") + "("
                                 + amount + ")", CURRENT_INSTANCE)
                 );
@@ -883,7 +881,7 @@ public class DataHandler {
                         exchange,
                         currency,
                         description,
-                        new LAccountSet("D!Portfolio("
+                        new LAccountSet("D!" + Account.portfolioName + "("
                                 + cost + "), C!" + acc + "("
                                 + cost + "), T!" + e.NAME + "_" + c.getTicker() + "("
                                 + amount + ")", CURRENT_INSTANCE)
@@ -916,13 +914,13 @@ public class DataHandler {
             }
             BigDecimal adjAmount = CURRENT_INSTANCE.convert(amount, c, nw);
             BigDecimal cost = adjAmount.multiply(unit).setScale(CURRENT_INSTANCE.main.getPlaces(), RoundingMode.HALF_UP).abs();
-            String acc = "Crypto";
+            String acc = Account.cryptoName;
             if (c instanceof LStock) {
-                acc = "Stock";
+                acc = Account.stockName;
             } else if (c instanceof LInventory) {
-                acc = "Held_Inventory";
+                acc = Account.inventoryName;
             } else if (c.isFiat()) {
-                acc = "Other_Cash";
+                acc = Account.fiatName;
             }
             TransactionEntry entry = new TransactionEntry(CURRENT_INSTANCE);
             if (amount.compareTo(BigDecimal.ZERO) > 0) {
@@ -932,9 +930,9 @@ public class DataHandler {
                         c.toString(),
                         description,
                         new LAccountSet("D!" + acc + "("
-                                + cost + "), C!Portfolio("
+                                + cost + "), C!" + Account.portfolioName + "("
                                 + cost + "), T!" + a.getName() + "(" + amount + ")"
-                                + ", G!Tax_SelfInc(" + cost + ")", CURRENT_INSTANCE)
+                                + ", G!" + Account.selfIncName + "(" + cost + ")", CURRENT_INSTANCE)
                 );
                 entry.addLedgerMeta(CURRENT_INSTANCE.main, nw, cost.multiply(BigDecimal.valueOf(-1)), adjAmount, cost);
                 addTransaction(entry);
@@ -964,13 +962,13 @@ public class DataHandler {
             if (!ef.supports(c) || !et.supports(c)) {
                 return false;
             }
-            String acc = "Crypto";
+            String acc = Account.cryptoName;
             if (c instanceof LStock) {
-                acc = "Stock";
+                acc = Account.stockName;
             } else if (c instanceof LInventory) {
-                acc = "Held_Inventory";
+                acc = Account.inventoryName;
             } else if (c.isFiat()) {
-                acc = "Other_Cash";
+                acc = Account.fiatName;
             }
             String ent;
             if (ef.NAME.equalsIgnoreCase("Personal")) {
@@ -986,7 +984,7 @@ public class DataHandler {
                     ent,
                     c.toString(),
                     c + " Transfer",
-                    new LAccountSet("D!Portfolio("
+                    new LAccountSet("D!" + Account.portfolioName + "("
                             + cost + "), C!" + acc + "("
                             + cost + "), T!" + ef.NAME + "_" + c.getTicker() + "("
                             + fromAmount + "), T!" + et.NAME + "_" + c.getTicker() + "("
@@ -1036,8 +1034,8 @@ public class DataHandler {
                     ent,
                     tc + ", " + fc,
                     tc + " Transfer",
-                    new LAccountSet("D!Portfolio("
-                            + cost + "), C!Crypto("
+                    new LAccountSet("D!" + Account.portfolioName + "("
+                            + cost + "), C!" + Account.cryptoName + "("
                             + cost + "), T!" + ef.NAME + "_" + tc.getTicker() + "("
                             + fromAmount + "), T!" + ef.NAME + "_" + fc.getTicker() + "("
                             + fee + "), T!" + et.NAME + "_" + tc.getTicker() + "("
@@ -1086,36 +1084,34 @@ public class DataHandler {
             }
             String gl = "";
             if (profitSR.compareTo(BigDecimal.ZERO) != 0) {
-                gl += ", G!Tax_";
+                gl += ", G!";
                 if (fc instanceof LStock) {
-                    gl += "Stock_Cap";
+                    gl += profitSR.compareTo(BigDecimal.ZERO) > 0 ? Account.cgStockName : Account.clStockName;
                 } else if (fc instanceof LInventory) {
-                    gl += "Inventory_Cap";
+                    gl += profitSR.compareTo(BigDecimal.ZERO) > 0 ? Account.cgInventoryName : Account.clInventoryName;
                 } else {
                     if (fc.isFiat()) {
-                        gl += "Fiat_Cap";
+                        gl += profitSR.compareTo(BigDecimal.ZERO) > 0 ? Account.cgFiatName : Account.clFiatName;
                     } else {
-                        gl += "Crypto_Cap";
+                        gl += profitSR.compareTo(BigDecimal.ZERO) > 0 ? Account.cgCryptoName : Account.clCryptoName;
                     }
                 }
-                gl += profitSR.compareTo(BigDecimal.ZERO) > 0 ? "Gain(" : "Loss(";
-                gl += profitSR.abs().setScale(CURRENT_INSTANCE.main.getPlaces(), RoundingMode.HALF_UP) + ")";
+                gl += "(" + profitSR.abs().setScale(CURRENT_INSTANCE.main.getPlaces(), RoundingMode.HALF_UP) + ")";
             }
             if (profitLR.compareTo(BigDecimal.ZERO) != 0) {
-                gl += ", G!Tax_";
+                gl += ", G!";
                 if (fc instanceof LStock) {
-                    gl += "Stock_Cap";
+                    gl += profitSR.compareTo(BigDecimal.ZERO) > 0 ? Account.cgltStockName : Account.clltStockName;
                 } else if (fc instanceof LInventory) {
-                    gl += "Inventory_Cap";
+                    gl += profitSR.compareTo(BigDecimal.ZERO) > 0 ? Account.cgltInventoryName : Account.clltInventoryName;
                 } else {
                     if (fc.isFiat()) {
-                        gl += "Fiat_Cap";
+                        gl += profitSR.compareTo(BigDecimal.ZERO) > 0 ? Account.cgltFiatName : Account.clltFiatName;
                     } else {
-                        gl += "Crypto_Cap";
+                        gl += profitSR.compareTo(BigDecimal.ZERO) > 0 ? Account.cgltCryptoName : Account.clltCryptoName;
                     }
                 }
-                gl += profitLR.compareTo(BigDecimal.ZERO) > 0 ? "Gain_LR(" : "Loss_LR(";
-                gl += profitLR.abs().setScale(CURRENT_INSTANCE.main.getPlaces(), RoundingMode.HALF_UP) + ")";
+                gl += "(" + profitSR.abs().setScale(CURRENT_INSTANCE.main.getPlaces(), RoundingMode.HALF_UP) + ")";
             }
             entry.insert(
                     date,

@@ -13,6 +13,17 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 
 public class Account implements ExportableToJson, Serializable {
+    public static String portfolioName,
+            stockName, inventoryName, fiatName, cryptoName,
+            tradIncName, tradExpName,
+            cgStockName, cgInventoryName, cgFiatName, cgCryptoName,
+            clStockName, clInventoryName, clFiatName, clCryptoName,
+            cgltStockName, cgltInventoryName, cgltFiatName, cgltCryptoName,
+            clltStockName, clltInventoryName, clltFiatName, clltCryptoName,
+            selfIncName,
+            fixedAssetsTypeName, receiveTypeName,
+            appreciationName, depreciationName;
+
     public final boolean EXPORT;
     public final Exchange EXCHANGE;
     private final Instance CURRENT_INSTANCE;

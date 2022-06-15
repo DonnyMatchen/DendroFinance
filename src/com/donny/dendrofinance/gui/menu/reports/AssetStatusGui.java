@@ -107,8 +107,8 @@ public class AssetStatusGui extends RegisterFrame {
                 }
                 if (acc.get(a).compareTo(compare) >= 0 || acc.get(a).compareTo(compare.multiply(BigDecimal.valueOf(-1))) <= 0) {
                     if ((a.getBroadAccountType() == BroadAccountType.ASSET || a.getBroadAccountType() == BroadAccountType.TRACKING)
-                            && (!a.getName().equalsIgnoreCase("Crypto") && !a.getName().equalsIgnoreCase("Stock")
-                            && !a.getName().equalsIgnoreCase("Held_Inventory") && !a.getName().equalsIgnoreCase("Other_Cash"))) {
+                            && (!a.getName().equalsIgnoreCase(Account.cryptoName) && !a.getName().equalsIgnoreCase(Account.stockName)
+                            && !a.getName().equalsIgnoreCase(Account.inventoryName) && !a.getName().equalsIgnoreCase(Account.fiatName))) {
                         if (prices.get(a.getCurrency()) == null) {
                             CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Missing price: " + a.getCurrency());
                         }
@@ -122,15 +122,12 @@ public class AssetStatusGui extends RegisterFrame {
                         } else {
                             if (a.getCurrency().isFiat()) {
                                 if (a.getCurrency().equals(CURRENT_INSTANCE.main)) {
-                                    switch (a.getName()) {
-                                        case "Equipment", "Furniture", "Buildings", "Land" -> nf = nf.add(acc.get(a));
-                                        default -> {
-                                            if (a.getName().contains("Receivable")) {
-                                                rec = rec.add(acc.get(a));
-                                            } else {
-                                                main = main.add(acc.get(a));
-                                            }
-                                        }
+                                    if(a.getAccountType().NAME.equalsIgnoreCase(Account.fixedAssetsTypeName)){
+                                        nf = nf.add(acc.get(a));
+                                    }else if(a.getAccountType().NAME.equalsIgnoreCase(Account.receiveTypeName)){
+                                        rec = rec.add(acc.get(a));
+                                    }else{
+                                        main = main.add(acc.get(a));
                                     }
                                 } else {
                                     fiat = fiat.add(acc.get(a).multiply(prices.get(a.getCurrency())));

@@ -12,6 +12,7 @@
     * fixed `NewTransactionEntryGui`
       * changed `Instance.getTaxAccountsAsStrings()` to `Instance.getGhostAccountsAsStrings()`
       * fixed old code
+  * added folder insure for `Instance.data` in `Instance.ensureFolders()`
 * {X} added list of required account names
 * added more options to `BalanceSheetGui` search
   * added account currency

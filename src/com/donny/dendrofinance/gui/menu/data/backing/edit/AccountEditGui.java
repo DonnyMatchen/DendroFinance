@@ -146,6 +146,9 @@ public class AccountEditGui extends BackingEditGui<Account> {
                     CURRENT_INSTANCE,
                     true
             );
+            if (TABLE.getElement(INDEX).inSpecial()) {
+                Account.changeSpecial(TABLE.getElement(INDEX).getName(), temp.getName());
+            }
             if (INDEX >= 0) {
                 TABLE.replace(INDEX, temp);
             } else {

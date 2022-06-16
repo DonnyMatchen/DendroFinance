@@ -27,12 +27,13 @@
     * added support for mining income
       * added `DataHandler.minInc()`
       * added mining income support to `SpecialTransactionEntryGui`
-* {->} gave more flexibility to accounts in programs
+* gave more flexibility to accounts in programs
   * fixed `DataHandler`
   * fixed `AssetStatusGui`
   * fixed `AppDepGui`
+  * added `special.json`
   * added imports to `Instance`
-  * {X} added identifiers to `AccountMetaGui`
+  * editing a special account edits the special account name
 
 ## v0.6.3
 * updated `README.md`

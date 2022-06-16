@@ -141,7 +141,8 @@ public class Instance {
                 accounts = new File(data.getPath() + File.separator + "Accounts" + File.separator + "accounts.json"),
                 accTyp = new File(data.getPath() + File.separator + "Accounts" + File.separator + "account-types.json"),
                 taxItm = new File(data.getPath() + File.separator + "Accounts" + File.separator + "tax-items.json"),
-                marApi = new File(data.getPath() + File.separator + "Currencies" + File.separator + "market-apis.json");
+                marApi = new File(data.getPath() + File.separator + "Currencies" + File.separator + "market-apis.json"),
+                spec = new File(data.getPath() + File.separator + "Accounts" + File.separator + "special.json");
         //Hang to prevent File IO problems
         boolean loaded = false;
         while (!loaded) {
@@ -176,6 +177,9 @@ public class Instance {
                 if (!taxItm.exists()) {
                     FILE_HANDLER.write(taxItm, new String(FILE_HANDLER.getTemplate("Accounts/tax-items.json"), Charset.forName("unicode")));
                 }
+                if (!spec.exists()) {
+                    FILE_HANDLER.write(spec, new String(FILE_HANDLER.getTemplate("Accounts/special.json"), Charset.forName("unicode")));
+                }
             }
         }
         LOG_HANDLER.trace(getClass(), "Defaults set where necessary");
@@ -190,7 +194,8 @@ public class Instance {
                 accounts = new File(data.getPath() + File.separator + "Accounts" + File.separator + "accounts.json"),
                 accTyp = new File(data.getPath() + File.separator + "Accounts" + File.separator + "account-types.json"),
                 taxItm = new File(data.getPath() + File.separator + "Accounts" + File.separator + "tax-items.json"),
-                marApi = new File(data.getPath() + File.separator + "Currencies" + File.separator + "market-apis.json");
+                marApi = new File(data.getPath() + File.separator + "Currencies" + File.separator + "market-apis.json"),
+                spec = new File(data.getPath() + File.separator + "Accounts" + File.separator + "special.json");
         //LCurrency
         {
             CURRENCIES.clear();
@@ -268,7 +273,7 @@ public class Instance {
 
             //adding special account identifiers
             {
-                JsonObject notAccObj = accountObj.getObject("notable-accounts");
+                JsonObject notAccObj = (JsonObject) JsonItem.sanitizeDigest(FILE_HANDLER.read(spec));
 
                 Account.portfolioName = notAccObj.getString("portfolio").getString();
 
@@ -486,7 +491,8 @@ public class Instance {
                 exchanges = new File(data.getPath() + File.separator + "Accounts" + File.separator + "exchanges.json"),
                 accounts = new File(data.getPath() + File.separator + "Accounts" + File.separator + "accounts.json"),
                 accTyp = new File(data.getPath() + File.separator + "Accounts" + File.separator + "account-types.json"),
-                taxItm = new File(data.getPath() + File.separator + "Accounts" + File.separator + "tax-items.json");
+                taxItm = new File(data.getPath() + File.separator + "Accounts" + File.separator + "tax-items.json"),
+                spec = new File(data.getPath() + File.separator + "Accounts" + File.separator + "special.json");
         if (CURRENCIES.changed) {
             FILE_HANDLER.write(currencies, CURRENCIES.export().print());
         }
@@ -507,6 +513,13 @@ public class Instance {
         }
         if (TAX_ITEMS.changed) {
             FILE_HANDLER.write(taxItm, TAX_ITEMS.export().print());
+        }
+        if (Account.specialAltered) {
+            try {
+                FILE_HANDLER.write(spec, Account.specialExport().print());
+            } catch (JsonFormattingException ex) {
+                LOG_HANDLER.error(getClass(), "Malformed Special Account Name.  " + ex.getMessage());
+            }
         }
     }
 

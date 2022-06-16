@@ -280,34 +280,34 @@ public class Account implements ExportableToJson, Serializable {
     }
 
     public boolean inSpecial() {
-        if (NAME.equalsIgnoreCase(portfolioName)) return true;
-        if (NAME.equalsIgnoreCase(stockName)) return true;
-        if (NAME.equalsIgnoreCase(inventoryName)) return true;
-        if (NAME.equalsIgnoreCase(fiatName)) return true;
-        if (NAME.equalsIgnoreCase(cryptoName)) return true;
-        if (NAME.equalsIgnoreCase(tradIncName)) return true;
-        if (NAME.equalsIgnoreCase(tradExpName)) return true;
-        if (NAME.equalsIgnoreCase(cgStockName)) return true;
-        if (NAME.equalsIgnoreCase(cgInventoryName)) return true;
-        if (NAME.equalsIgnoreCase(cgFiatName)) return true;
-        if (NAME.equalsIgnoreCase(cgCryptoName)) return true;
-        if (NAME.equalsIgnoreCase(clStockName)) return true;
-        if (NAME.equalsIgnoreCase(clInventoryName)) return true;
-        if (NAME.equalsIgnoreCase(clFiatName)) return true;
-        if (NAME.equalsIgnoreCase(clCryptoName)) return true;
-        if (NAME.equalsIgnoreCase(cgltStockName)) return true;
-        if (NAME.equalsIgnoreCase(cgltInventoryName)) return true;
-        if (NAME.equalsIgnoreCase(cgltFiatName)) return true;
-        if (NAME.equalsIgnoreCase(cgltCryptoName)) return true;
-        if (NAME.equalsIgnoreCase(clltStockName)) return true;
-        if (NAME.equalsIgnoreCase(clltInventoryName)) return true;
-        if (NAME.equalsIgnoreCase(clltFiatName)) return true;
-        if (NAME.equalsIgnoreCase(clltCryptoName)) return true;
-        if (NAME.equalsIgnoreCase(selfIncName)) return true;
-        if (NAME.equalsIgnoreCase(fixedAssetsTypeName)) return true;
-        if (NAME.equalsIgnoreCase(receiveTypeName)) return true;
-        if (NAME.equalsIgnoreCase(appreciationName)) return true;
-        if (NAME.equalsIgnoreCase(depreciationName)) return true;
+        if (NAME.equals(portfolioName)) return true;
+        if (NAME.equals(stockName)) return true;
+        if (NAME.equals(inventoryName)) return true;
+        if (NAME.equals(fiatName)) return true;
+        if (NAME.equals(cryptoName)) return true;
+        if (NAME.equals(tradIncName)) return true;
+        if (NAME.equals(tradExpName)) return true;
+        if (NAME.equals(cgStockName)) return true;
+        if (NAME.equals(cgInventoryName)) return true;
+        if (NAME.equals(cgFiatName)) return true;
+        if (NAME.equals(cgCryptoName)) return true;
+        if (NAME.equals(clStockName)) return true;
+        if (NAME.equals(clInventoryName)) return true;
+        if (NAME.equals(clFiatName)) return true;
+        if (NAME.equals(clCryptoName)) return true;
+        if (NAME.equals(cgltStockName)) return true;
+        if (NAME.equals(cgltInventoryName)) return true;
+        if (NAME.equals(cgltFiatName)) return true;
+        if (NAME.equals(cgltCryptoName)) return true;
+        if (NAME.equals(clltStockName)) return true;
+        if (NAME.equals(clltInventoryName)) return true;
+        if (NAME.equals(clltFiatName)) return true;
+        if (NAME.equals(clltCryptoName)) return true;
+        if (NAME.equals(selfIncName)) return true;
+        if (NAME.equals(fixedAssetsTypeName)) return true;
+        if (NAME.equals(receiveTypeName)) return true;
+        if (NAME.equals(appreciationName)) return true;
+        if (NAME.equals(depreciationName)) return true;
         return false;
     }
 

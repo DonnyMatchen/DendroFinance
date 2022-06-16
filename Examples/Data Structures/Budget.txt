@@ -1,0 +1,5 @@
+The budget.json file is an array of strings.
+
+The strings are in order.  Strings in the accounts.json file for budgets associated with a revenue or expense account must be contained in this file.
+
+Budget types are case sensitive.

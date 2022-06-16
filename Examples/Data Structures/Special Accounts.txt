@@ -1,0 +1,5 @@
+the file special.json contains a JSON object consisting of a key and a value.  The long-term keys are optional, but all others are required.
+
+These accounts are used in one or more of the automated transaction production functionalities.
+
+If a long-term key is missing, the short term account will be substituted.  This is for jurisdictions where capitol gains are not measure in long or short term.

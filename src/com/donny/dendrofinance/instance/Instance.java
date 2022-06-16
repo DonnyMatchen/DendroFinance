@@ -84,6 +84,9 @@ public class Instance {
             }
         }
 
+        //data handler
+        DATA_HANDLER = new DataHandler(this);
+
         //ensure folders and data files are set up
         ensureFolders();
         ensureBackingFiles();
@@ -97,7 +100,6 @@ public class Instance {
         checkCurToMain();
 
         //Data
-        DATA_HANDLER = new DataHandler(this);
         reloadEntries();
         IMPORT_HANDLER = new ImportHandler(this);
         EXPORT_HANDLER = new ExportHandler(this);

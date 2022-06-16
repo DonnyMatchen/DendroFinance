@@ -1,5 +1,6 @@
 package com.donny.dendrofinance.gui.menu.util.acc;
 
+import com.donny.dendrofinance.account.Account;
 import com.donny.dendrofinance.entry.TransactionEntry;
 import com.donny.dendrofinance.gui.MainGui;
 import com.donny.dendrofinance.gui.customswing.RegisterFrame;
@@ -36,10 +37,10 @@ public class AppDepGui extends RegisterFrame {
                 public void insertUpdate(DocumentEvent documentEvent) {
                     try {
                         LDate date = new LDate(DATE.getText(), CURRENT_INSTANCE);
-                        STOCK_CURRENT.setText(CURRENT_INSTANCE.DATA_HANDLER.accountAsOf("Stock", date).toString());
-                        CRYPTO_CURRENT.setText(CURRENT_INSTANCE.DATA_HANDLER.accountAsOf("Crypto", date).toString());
-                        INV_CURRENT.setText(CURRENT_INSTANCE.DATA_HANDLER.accountAsOf("Held_Inventory", date).toString());
-                        FIAT_CURRENT.setText(CURRENT_INSTANCE.DATA_HANDLER.accountAsOf("Other_Cash", date).toString());
+                        STOCK_CURRENT.setText(CURRENT_INSTANCE.DATA_HANDLER.accountAsOf(Account.stockName, date).toString());
+                        CRYPTO_CURRENT.setText(CURRENT_INSTANCE.DATA_HANDLER.accountAsOf(Account.cryptoName, date).toString());
+                        INV_CURRENT.setText(CURRENT_INSTANCE.DATA_HANDLER.accountAsOf(Account.inventoryName, date).toString());
+                        FIAT_CURRENT.setText(CURRENT_INSTANCE.DATA_HANDLER.accountAsOf(Account.fiatName, date).toString());
                     } catch (ArrayIndexOutOfBoundsException | NumberFormatException ex) {
                     }
                 }
@@ -320,25 +321,25 @@ public class AppDepGui extends RegisterFrame {
         x = x.add(stock).add(crypto).add(inventory).add(fiat);
         LDate date = new LDate(DATE.getText(), CURRENT_INSTANCE);
         TransactionEntry entry = new TransactionEntry(CURRENT_INSTANCE);
-        String accs = (stock.compareTo(BigDecimal.ZERO) == 0 ? "" : stock.compareTo(BigDecimal.ZERO) > 0 ? "D!Stock(" + stock + "), " : "C!Stock(" + stock.abs() + "), ")
-                + (crypto.compareTo(BigDecimal.ZERO) == 0 ? "" : crypto.compareTo(BigDecimal.ZERO) > 0 ? "D!Crypto(" + crypto + "), " : "C!Crypto(" + crypto.abs() + "), ")
-                + (inventory.compareTo(BigDecimal.ZERO) == 0 ? "" : inventory.compareTo(BigDecimal.ZERO) > 0 ? "D!Held_Inventory(" + inventory + "), " : "C!Held_Inventory(" + inventory.abs() + "), ")
-                + (fiat.compareTo(BigDecimal.ZERO) == 0 ? "" : fiat.compareTo(BigDecimal.ZERO) > 0 ? "D!Other_Cash(" + fiat + "), " : "C!Other_Cash(" + fiat.abs() + "), ");
+        String accs = (stock.compareTo(BigDecimal.ZERO) == 0 ? "" : stock.compareTo(BigDecimal.ZERO) > 0 ? "D!" + Account.stockName + "(" + stock + "), " : "C!" + Account.stockName + "(" + stock.abs() + "), ")
+                + (crypto.compareTo(BigDecimal.ZERO) == 0 ? "" : crypto.compareTo(BigDecimal.ZERO) > 0 ? "D!" + Account.cryptoName + "(" + crypto + "), " : "C!" + Account.cryptoName + "(" + crypto.abs() + "), ")
+                + (inventory.compareTo(BigDecimal.ZERO) == 0 ? "" : inventory.compareTo(BigDecimal.ZERO) > 0 ? "D!" + Account.inventoryName + "(" + inventory + "), " : "C!" + Account.inventoryName + "(" + inventory.abs() + "), ")
+                + (fiat.compareTo(BigDecimal.ZERO) == 0 ? "" : fiat.compareTo(BigDecimal.ZERO) > 0 ? "D!" + Account.fiatName + "(" + fiat + "), " : "C!" + Account.fiatName + "(" + fiat.abs() + "), ");
         if (x.compareTo(BigDecimal.ZERO) >= 0) {
             entry.insert(
                     date,
                     "ACC",
                     "",
-                    "Appreciation (" + date.getYear() + "-" + (date.getMonth() < 10 ? "0" : "") + date.getMonth() + ")",
-                    new LAccountSet("C!Appreciation(" + x + "), " + accs, CURRENT_INSTANCE)
+                    Account.appreciationName + " (" + date.getYear() + "-" + (date.getMonth() < 10 ? "0" : "") + date.getMonth() + ")",
+                    new LAccountSet("C!" + Account.appreciationName + "(" + x + "), " + accs, CURRENT_INSTANCE)
             );
         } else {
             entry.insert(
                     date,
                     "ACC",
                     "",
-                    "Depreciation (" + date.getYear() + "-" + (date.getMonth() < 10 ? "0" : "") + date.getMonth() + ")",
-                    new LAccountSet("D!Depreciation(" + x.abs() + "), " + accs, CURRENT_INSTANCE)
+                    Account.depreciationName + " (" + date.getYear() + "-" + (date.getMonth() < 10 ? "0" : "") + date.getMonth() + ")",
+                    new LAccountSet("D!" + Account.depreciationName + "(" + x.abs() + "), " + accs, CURRENT_INSTANCE)
             );
         }
         CURRENT_INSTANCE.DATA_HANDLER.addTransaction(entry);

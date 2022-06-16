@@ -184,6 +184,26 @@ public class LCurrency implements ExportableToJson, Serializable {
         return false;
     }
 
+    public LCurrency getRoot() {
+        if (toString().contains("!")) {
+            return this;
+        } else {
+            LCurrency nw;
+            if (this instanceof LStock) {
+                nw = CURRENT_INSTANCE.getLCurrency("S!" + getTicker());
+            } else if (this instanceof LInventory) {
+                nw = CURRENT_INSTANCE.getLCurrency("I!" + getTicker());
+            } else {
+                if (isFiat()) {
+                    nw = CURRENT_INSTANCE.getLCurrency("F!" + getTicker());
+                } else {
+                    nw = CURRENT_INSTANCE.getLCurrency("C!" + getTicker());
+                }
+            }
+            return nw;
+        }
+    }
+
     @Override
     public JsonObject export() throws JsonFormattingException {
         JsonObject obj = new JsonObject();

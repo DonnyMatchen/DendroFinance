@@ -1,3 +1,47 @@
+## v0.7.0
+* Minor bug fixes
+  * changed Monero (XMR) places from 8 to 12
+  * conversion of derivatives to parents
+    * added `LCurrency.getRoot()`
+    * added root conversion in `DataHandler.minInc()`
+  * fixed tracking and ghost account order
+    * fixed column order in `MainGui`
+    * fixed column order in `TransactionEntry.display()`
+    * fixed column order in `AWColumn`;
+      * added `LAccountSet.sort()` to `LAccountSet(JsonArray, Instance)`
+    * fixed `NewTransactionEntryGui`
+      * changed `Instance.getTaxAccountsAsStrings()` to `Instance.getGhostAccountsAsStrings()`
+      * fixed old code
+  * added folder insure for `Instance.data` in `Instance.ensureFolders()`
+  * corrected `Validation.validateJson()`
+* added more options to `BalanceSheetGui` search
+  * added account currency
+  * added account type
+  * added broad account type
+* added type specific gain/loss
+  * specified tax gain/loss accounts in defaults
+    * added long run gain/loss accounts to defaults
+  * updated `DataHandler` special adder methods
+    * added support for specific gain/loss accounts
+    * added support for LR vs SR
+    * added support for mining income
+      * added `DataHandler.minInc()`
+      * added mining income support to `SpecialTransactionEntryGui`
+* gave more flexibility to accounts in programs
+  * fixed `DataHandler`
+  * fixed `AssetStatusGui`
+  * fixed `AppDepGui`
+  * added `special.json`
+  * added imports to `Instance`
+  * editing a special account edits the special account name
+  * added `special.json` to `Examples`
+* added budget type list
+  * updated `DataHandler.getBudgetTypes()`
+  * added `budget.json`
+  * removed placeholder account
+  * added gui for editing budget types
+  * added `budget.json` to `Examples`
+
 ## v0.6.3
 * updated `README.md`
 * `changelog.txt` reformatted and changed to `CHANGELOG.md`

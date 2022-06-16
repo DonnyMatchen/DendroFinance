@@ -1,14 +1,14 @@
 package com.donny.dendrofinance.account;
 
 public enum AWColumn {
-    DEBIT, CREDIT, TRACKER, GHOST;
+    DEBIT, CREDIT, GHOST, TRACKER;
 
     public static AWColumn fromString(String s) {
         return switch (s) {
             case "D" -> DEBIT;
             case "C" -> CREDIT;
-            case "T" -> TRACKER;
-            default -> GHOST;
+            case "G" -> GHOST;
+            default -> TRACKER;
         };
     }
 

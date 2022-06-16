@@ -105,7 +105,9 @@ public class Validation {
     }
 
     public static JsonItem validateJson(JTextArea field) throws ValidationFailedException {
-        require(field);
+        if (field.getText().equals("")) {
+            throw new ValidationFailedException("JSONs cannot be blank");
+        }
         try {
             field.setBackground(DendroFactory.CONTENT);
             return JsonItem.sanitizeDigest(field.getText());

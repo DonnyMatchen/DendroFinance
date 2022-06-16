@@ -120,7 +120,13 @@ public class BalanceSheetGui extends RegisterFrame {
                 if (acc.get(a).compareTo(compare) >= 0 || acc.get(a).compareTo(compare.multiply(BigDecimal.valueOf(-1))) <= 0) {
                     typ.add(a.getBroadAccountType(), acc.get(a));
                     accTyp.add(a.getAccountType(), acc.get(a));
-                    if (a.getName().toLowerCase().contains(SEARCH.getText().toLowerCase())) {
+                    String search = SEARCH.getText();
+                    if (
+                            a.getName().toLowerCase().contains(SEARCH.getText().toLowerCase()) ||
+                                    a.getCurrency().toString().toLowerCase().contains(SEARCH.getText().toLowerCase()) ||
+                                    a.getAccountType().toString().toLowerCase().contains(SEARCH.getText().toLowerCase()) ||
+                                    a.getBroadAccountType().toString().toLowerCase().contains(SEARCH.getText().toLowerCase())
+                    ) {
                         switch (a.getBroadAccountType()) {
                             case ASSET, EQUITY_MINUS, EXPENSE -> TABLE_ACCESS.addRow(new String[]{
                                     a.getName(), a.getCurrency().encode(acc.get(a)), "", "", ""

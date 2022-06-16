@@ -29,6 +29,7 @@ public class LAccountSet implements ExportableToJson, Comparable<LAccountSet>, I
                 REGISTRY.add(new AccountWrapper(obj, CURRENT_INSTANCE));
             }
         }
+        sort();
     }
 
     public LAccountSet(String raw, Instance curInst) {

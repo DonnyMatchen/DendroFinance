@@ -10,6 +10,7 @@ import com.donny.dendrofinance.gui.addedit.SpecialTransactionEntryGui;
 import com.donny.dendrofinance.gui.customswing.DendroFactory;
 import com.donny.dendrofinance.gui.customswing.RegisterFrame;
 import com.donny.dendrofinance.gui.menu.data.AccountMetaGui;
+import com.donny.dendrofinance.gui.menu.data.BudgetTypeGui;
 import com.donny.dendrofinance.gui.menu.data.StatisticsGui;
 import com.donny.dendrofinance.gui.menu.data.backing.BackingTableGui;
 import com.donny.dendrofinance.gui.menu.file.ChangePasswordGui;
@@ -75,7 +76,7 @@ public class MainGui extends JFrame {
             C = new JLabel("Search");
 
             TABLE_PANE = DendroFactory.getTable(new String[]{
-                    "UUID", "Date", "Entity", "Items", "Description", "Account", "Debit", "Credit", "Tracking", "Ghost", "Meta"
+                    "UUID", "Date", "Entity", "Items", "Description", "Account", "Debit", "Credit", "Ghost", "Tracking", "Meta"
             }, new Object[][]{}, false);
             TABLE_PANE.getVerticalScrollBar().addAdjustmentListener(this::tablePaneScrolled);
             TABLE = (JTable) TABLE_PANE.getViewport().getView();
@@ -191,6 +192,8 @@ public class MainGui extends JFrame {
 
                 JMenuItem accountMeta = new JMenuItem("Account Metadata");
                 accountMeta.addActionListener(event -> new AccountMetaGui(this, CURRENT_INSTANCE).setVisible(true));
+                JMenuItem budgetTyp = new JMenuItem("Budget Types");
+                budgetTyp.addActionListener(event -> new BudgetTypeGui(this, CURRENT_INSTANCE).setVisible(true));
                 JMenuItem stats = new JMenuItem("Statistics");
                 stats.addActionListener(event -> new StatisticsGui(this, CURRENT_INSTANCE).setVisible(true));
 
@@ -203,6 +206,7 @@ public class MainGui extends JFrame {
                 data.add(mApiLst);
                 data.add(new JSeparator());
                 data.add(accountMeta);
+                data.add(budgetTyp);
                 data.add(stats);
 
                 //reports

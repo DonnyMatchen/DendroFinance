@@ -15,14 +15,12 @@ import com.donny.dendrofinance.json.JsonFormattingException;
 import com.donny.dendrofinance.types.LAccountSet;
 import com.donny.dendrofinance.types.LDate;
 import com.donny.dendrofinance.util.Aggregation;
-import com.donny.dendrofinance.util.Curation;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.LinkedList;
 
 public class DataHandler {
     protected final Instance CURRENT_INSTANCE;
@@ -503,6 +501,11 @@ public class DataHandler {
 
     public void addBudgetType(String budgetType) {
         BUDGET_TYPES.add(budgetType);
+    }
+
+    public void resetBudgetTypes(ArrayList<String> newTypes) {
+        BUDGET_TYPES.clear();
+        BUDGET_TYPES.addAll(newTypes);
     }
 
     public ArrayList<String> tokenize(String raw) {

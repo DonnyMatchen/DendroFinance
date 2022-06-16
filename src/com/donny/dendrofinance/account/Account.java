@@ -210,7 +210,12 @@ public class Account implements ExportableToJson, Serializable {
             EXCHANGE = null;
         }
         if (obj.containsKey("budget") && (TYPE.TYPE == BroadAccountType.REVENUE || TYPE.TYPE == BroadAccountType.EXPENSE)) {
-            BUDGET = obj.getString("budget").getString();
+            String candidate = obj.getString("budget").getString();
+            if (CURRENT_INSTANCE.DATA_HANDLER.getBudgetTypes().contains(candidate)) {
+                BUDGET = candidate;
+            } else {
+                BUDGET = "";
+            }
         } else {
             BUDGET = "";
         }

@@ -34,6 +34,11 @@
   * added `special.json`
   * added imports to `Instance`
   * editing a special account edits the special account name
+* added budget type list
+  * updated `DataHandler.getBudgetTypes()`
+  * added `budget.json`
+  * removed placeholder account
+  * {X} added gui for editing budget types
 
 ## v0.6.3
 * updated `README.md`

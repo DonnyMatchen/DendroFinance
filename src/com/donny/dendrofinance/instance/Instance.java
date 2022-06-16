@@ -142,7 +142,8 @@ public class Instance {
                 accTyp = new File(data.getPath() + File.separator + "Accounts" + File.separator + "account-types.json"),
                 taxItm = new File(data.getPath() + File.separator + "Accounts" + File.separator + "tax-items.json"),
                 marApi = new File(data.getPath() + File.separator + "Currencies" + File.separator + "market-apis.json"),
-                spec = new File(data.getPath() + File.separator + "Accounts" + File.separator + "special.json");
+                spec = new File(data.getPath() + File.separator + "Accounts" + File.separator + "special.json"),
+                budg = new File(data.getPath() + File.separator + "Accounts" + File.separator + "budget.json");
         //Hang to prevent File IO problems
         boolean loaded = false;
         while (!loaded) {
@@ -180,6 +181,9 @@ public class Instance {
                 if (!spec.exists()) {
                     FILE_HANDLER.write(spec, new String(FILE_HANDLER.getTemplate("Accounts/special.json"), Charset.forName("unicode")));
                 }
+                if (!budg.exists()) {
+                    FILE_HANDLER.write(budg, new String(FILE_HANDLER.getTemplate("Accounts/budget.json"), Charset.forName("unicode")));
+                }
             }
         }
         LOG_HANDLER.trace(getClass(), "Defaults set where necessary");
@@ -195,7 +199,8 @@ public class Instance {
                 accTyp = new File(data.getPath() + File.separator + "Accounts" + File.separator + "account-types.json"),
                 taxItm = new File(data.getPath() + File.separator + "Accounts" + File.separator + "tax-items.json"),
                 marApi = new File(data.getPath() + File.separator + "Currencies" + File.separator + "market-apis.json"),
-                spec = new File(data.getPath() + File.separator + "Accounts" + File.separator + "special.json");
+                spec = new File(data.getPath() + File.separator + "Accounts" + File.separator + "special.json"),
+                budg = new File(data.getPath() + File.separator + "Accounts" + File.separator + "budget.json");
         //LCurrency
         {
             CURRENCIES.clear();
@@ -265,6 +270,10 @@ public class Instance {
         //Accounts
         {
             ACCOUNTS.clear();
+            JsonArray budgets = (JsonArray) JsonItem.sanitizeDigest(FILE_HANDLER.read(budg));
+            for (JsonString string : budgets.getStringArray()) {
+                DATA_HANDLER.addBudgetType(string.getString());
+            }
             JsonObject accountObj = (JsonObject) JsonItem.sanitizeDigest(FILE_HANDLER.read(accounts));
             JsonArray array = accountObj.getArray("accounts");
             for (JsonObject obj : array.getObjectArray()) {
@@ -492,7 +501,8 @@ public class Instance {
                 accounts = new File(data.getPath() + File.separator + "Accounts" + File.separator + "accounts.json"),
                 accTyp = new File(data.getPath() + File.separator + "Accounts" + File.separator + "account-types.json"),
                 taxItm = new File(data.getPath() + File.separator + "Accounts" + File.separator + "tax-items.json"),
-                spec = new File(data.getPath() + File.separator + "Accounts" + File.separator + "special.json");
+                spec = new File(data.getPath() + File.separator + "Accounts" + File.separator + "special.json"),
+                budg = new File(data.getPath() + File.separator + "Accounts" + File.separator + "budget.json");
         if (CURRENCIES.changed) {
             FILE_HANDLER.write(currencies, CURRENCIES.export().print());
         }
@@ -519,6 +529,17 @@ public class Instance {
                 FILE_HANDLER.write(spec, Account.specialExport().print());
             } catch (JsonFormattingException ex) {
                 LOG_HANDLER.error(getClass(), "Malformed Special Account Name.  " + ex.getMessage());
+            }
+        }
+        if (DATA_HANDLER.budgetTypesChanged) {
+            try {
+                JsonArray array = new JsonArray();
+                for (String budget : DATA_HANDLER.getBudgetTypes()) {
+                    array.add(new JsonString(budget));
+                }
+                FILE_HANDLER.write(budg, array.print());
+            } catch (JsonFormattingException ex) {
+                LOG_HANDLER.error(getClass(), ex.getMessage());
             }
         }
     }

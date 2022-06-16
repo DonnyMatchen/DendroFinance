@@ -22,16 +22,20 @@ import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.LinkedList;
 
 public class DataHandler {
     protected final Instance CURRENT_INSTANCE;
     protected final DataSet<TransactionEntry> TRANSACTIONS;
     protected final DataSet<BudgetEntry> BUDGETS;
+    protected final ArrayList<String> BUDGET_TYPES;
+    public boolean budgetTypesChanged = false;
 
     public DataHandler(Instance curInst) {
         CURRENT_INSTANCE = curInst;
         TRANSACTIONS = new DataSet<>("Transactions", EntryType.TRANSACTION, CURRENT_INSTANCE);
         BUDGETS = new DataSet<>("Budgets", EntryType.BUDGET, CURRENT_INSTANCE);
+        BUDGET_TYPES = new ArrayList<>();
         CURRENT_INSTANCE.LOG_HANDLER.trace(getClass(), "DataHandler Initiated");
     }
 
@@ -494,13 +498,11 @@ public class DataHandler {
     }
 
     public ArrayList<String> getBudgetTypes() {
-        Curation<String> out = new Curation<>();
-        for (Account a : CURRENT_INSTANCE.ACCOUNTS) {
-            if (a.getBroadAccountType() == BroadAccountType.EXPENSE) {
-                out.add(a.getBudgetType());
-            }
-        }
-        return out;
+        return new ArrayList<>(BUDGET_TYPES);
+    }
+
+    public void addBudgetType(String budgetType) {
+        BUDGET_TYPES.add(budgetType);
     }
 
     public ArrayList<String> tokenize(String raw) {

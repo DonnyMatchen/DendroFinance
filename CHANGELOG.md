@@ -1,3 +1,8 @@
+## v0.7.1
+* {->} added fee currencies to exchanges
+  * added backend
+  * {X} added gui tab
+
 ## v0.7.0
 * Minor bug fixes
   * changed Monero (XMR) places from 8 to 12

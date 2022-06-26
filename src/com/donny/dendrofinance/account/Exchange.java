@@ -19,6 +19,7 @@ public class Exchange implements ExportableToJson, Serializable {
     private final Instance CURRENT_INSTANCE;
     public final String NAME, ALT;
     public final ArrayList<String> SUPPORTED;
+    public final ArrayList<String> FEE;
     public final ArrayList<JsonObject> STAKING;
     public final boolean EXPORT;
 
@@ -27,6 +28,7 @@ public class Exchange implements ExportableToJson, Serializable {
         NAME = name;
         ALT = alt;
         SUPPORTED = new ArrayList<>(sup);
+        FEE = new ArrayList<>();
         STAKING = new ArrayList<>();
         EXPORT = export;
     }
@@ -44,6 +46,11 @@ public class Exchange implements ExportableToJson, Serializable {
         this(obj.getString("name").getString(), obj.getString("alt").getString(), curInst, export);
         for (JsonString string : obj.getArray("supported").getStringArray()) {
             SUPPORTED.add(string.getString());
+        }
+        if (obj.containsKey("fees")) {
+            for (JsonString string : obj.getArray("fees").getStringArray()) {
+                FEE.add(string.getString());
+            }
         }
         if (obj.containsKey("staking")) {
             STAKING.addAll(obj.getArray("staking").getObjectArray());
@@ -87,6 +94,20 @@ public class Exchange implements ExportableToJson, Serializable {
                 return false;
             }
         }
+    }
+
+    public boolean supportsFee(LCurrency currency) {
+        String check = currency.toString();
+        for (String ticker : FEE) {
+            if (check.equalsIgnoreCase(ticker)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean hasFees() {
+        return !FEE.isEmpty();
     }
 
     public int stakes(LCurrency currency) {
@@ -164,6 +185,13 @@ public class Exchange implements ExportableToJson, Serializable {
             array.add(new JsonString(ticker));
         }
         obj.put("supported", array);
+        if (!FEE.isEmpty()) {
+            array = new JsonArray();
+            for (String ticker : FEE) {
+                array.add(new JsonString(ticker));
+            }
+            obj.put("fees", array);
+        }
         if (!STAKING.isEmpty()) {
             obj.put("staking", new JsonArray(STAKING));
         }

@@ -844,6 +844,40 @@ public class Instance {
         return out;
     }
 
+    public ArrayList<String> getFeeExchangesAsStrings() {
+        ArrayList<String> out = new ArrayList<>();
+        EXCHANGES.forEach(e -> {
+            if (e.hasFees()) {
+                out.add(e.NAME);
+            }
+        });
+        return out;
+    }
+
+    public ArrayList<String> getAllFeesAsStrings(Exchange e) {
+        if (e == null) {
+            return new ArrayList<>();
+        } else {
+            ArrayList<String> out = new ArrayList<>();
+            CURRENCIES.getBaseline().forEach(c -> {
+                if (e.supportsFee(c)) {
+                    out.add(c.toString());
+                }
+            });
+            STOCKS.forEach((s -> {
+                if (e.supportsFee(s)) {
+                    out.add(s.toString());
+                }
+            }));
+            INVENTORIES.forEach((i -> {
+                if (e.supportsFee(i)) {
+                    out.add(i.toString());
+                }
+            }));
+            return out;
+        }
+    }
+
     public ArrayList<String> getAccountsAsStrings() {
         ArrayList<String> out = new ArrayList<>();
         ACCOUNTS.forEach(a -> out.add(a.getName()));

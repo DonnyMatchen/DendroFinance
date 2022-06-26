@@ -2,12 +2,14 @@ Exchange{
   "alt": string
   "name": string {unique}
   "supported": array(string)
+  "fees": array(string) {optional}
   "staking": array(StakingObject) {optional}
 }
 
 * alt: the identifier for the exchange used by coingecko if applicable.
 * name: the name of the exchange used in the construction of auto-generation of accounts.
 * supported: an array of identifiers of currencies, stocks, and or inventories that the exchange supports.
+* fees: an array of identifiers of currencies, stocks, and or inventories that the exchange supports for fees.
 * staking: an optional array of identifiers of cryptocurrencies for exchanges that stake cryptocurrencies in a separate account.
 
 StakingObject{

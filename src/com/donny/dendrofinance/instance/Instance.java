@@ -878,6 +878,10 @@ public class Instance {
         }
     }
 
+    public ArrayList<String> getAllFeesAsStrings(SearchBox e) {
+        return getAllFeesAsStrings(EXCHANGES.getElement(e.getSelectedItem()));
+    }
+
     public ArrayList<String> getAccountsAsStrings() {
         ArrayList<String> out = new ArrayList<>();
         ACCOUNTS.forEach(a -> out.add(a.getName()));

@@ -1,7 +1,7 @@
 ## v0.7.1
-* {->} added fee currencies to exchanges
+* added fee currencies to exchanges
   * added backend
-  * {X} added gui tab
+  * added gui tab
 
 ## v0.7.0
 * Minor bug fixes

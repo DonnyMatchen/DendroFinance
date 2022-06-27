@@ -125,13 +125,13 @@ public class MainGui extends JFrame {
                     updateTable();
                 }
             });
-            GEN_INSERT = DendroFactory.getButton("New (General)");
+            GEN_INSERT = DendroFactory.getButton("New Transaction");
             GEN_INSERT.addActionListener(event -> new NewTransactionEntryGui(this, CURRENT_INSTANCE).setVisible(true));
-            SPEC_INSERT = DendroFactory.getButton("New (Specific)");
+            SPEC_INSERT = DendroFactory.getButton("New Special Transaction");
             SPEC_INSERT.addActionListener(event -> new SpecialTransactionEntryGui(this, CURRENT_INSTANCE).setVisible(true));
-            EDIT = DendroFactory.getButton("Edit");
+            EDIT = DendroFactory.getButton("Edit Transaction");
             EDIT.addActionListener(event -> new NewTransactionEntryGui(this, getUUID(TABLE.getSelectedRow()), CURRENT_INSTANCE).setVisible(true));
-            DELETE = DendroFactory.getButton("Delete");
+            DELETE = DendroFactory.getButton("Delete Transaction");
             DELETE.addActionListener(event -> new DeleteEntryGui(this, getUUID(TABLE.getSelectedRow()), CURRENT_INSTANCE).setVisible(true));
 
             //menus

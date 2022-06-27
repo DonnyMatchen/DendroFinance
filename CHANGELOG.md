@@ -2,6 +2,8 @@
 * added fee currencies to exchanges
   * added backend
   * added gui tab
+* bug fixes
+  * `MainGui` buttons made clearer
 
 ## v0.7.0
 * Minor bug fixes

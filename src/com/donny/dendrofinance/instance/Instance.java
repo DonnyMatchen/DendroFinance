@@ -517,6 +517,7 @@ public class Instance {
         if (ACCOUNTS.changed) {
             FILE_HANDLER.write(accounts, ACCOUNTS.export().print());
         }
+        System.out.println(EXCHANGES.changed);
         if (EXCHANGES.changed) {
             FILE_HANDLER.write(exchanges, EXCHANGES.export().print());
         }

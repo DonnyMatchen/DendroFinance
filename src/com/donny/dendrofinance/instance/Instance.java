@@ -517,6 +517,7 @@ public class Instance {
         if (ACCOUNTS.changed) {
             FILE_HANDLER.write(accounts, ACCOUNTS.export().print());
         }
+        System.out.println(EXCHANGES.changed);
         if (EXCHANGES.changed) {
             FILE_HANDLER.write(exchanges, EXCHANGES.export().print());
         }
@@ -842,6 +843,44 @@ public class Instance {
         ArrayList<String> out = new ArrayList<>();
         EXCHANGES.forEach(e -> out.add(e.NAME));
         return out;
+    }
+
+    public ArrayList<String> getFeeExchangesAsStrings() {
+        ArrayList<String> out = new ArrayList<>();
+        EXCHANGES.forEach(e -> {
+            if (e.hasFees()) {
+                out.add(e.NAME);
+            }
+        });
+        return out;
+    }
+
+    public ArrayList<String> getAllFeesAsStrings(Exchange e) {
+        if (e == null) {
+            return new ArrayList<>();
+        } else {
+            ArrayList<String> out = new ArrayList<>();
+            CURRENCIES.getBaseline().forEach(c -> {
+                if (e.supportsFee(c)) {
+                    out.add(c.toString());
+                }
+            });
+            STOCKS.forEach((s -> {
+                if (e.supportsFee(s)) {
+                    out.add(s.toString());
+                }
+            }));
+            INVENTORIES.forEach((i -> {
+                if (e.supportsFee(i)) {
+                    out.add(i.toString());
+                }
+            }));
+            return out;
+        }
+    }
+
+    public ArrayList<String> getAllFeesAsStrings(SearchBox e) {
+        return getAllFeesAsStrings(EXCHANGES.getElement(e.getSelectedItem()));
     }
 
     public ArrayList<String> getAccountsAsStrings() {

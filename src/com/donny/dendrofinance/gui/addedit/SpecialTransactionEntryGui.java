@@ -15,26 +15,30 @@ import java.util.ArrayList;
 public class SpecialTransactionEntryGui extends ModalFrame {
     private final MainGui MAIN;
     private final JTabbedPane BACK;
-    private final JPanel BS, IP, MN, CT, TT, TD;
-    private final JLabel A, B, C,
-            D, E, F, G,
-            H, I, J, K, L,
-            M, N, O, P,
-            Q, R, S, T, U, V,
-            W, X, Y, Z;
+    private final JPanel BS, BF, IP, MN, CT, TT, TD;
+    private final JLabel BS_A, BS_B, BS_C,
+            BF_A, BF_B, BF_C, BF_D, BF_E,
+            IP_A, IP_B, IP_C, IP_D,
+            MN_A, MN_B, MN_C, MN_D, MN_E,
+            CT_A, CT_B, CT_C, CT_D,
+            TT_A, TT_B, TT_C, TT_D, TT_E, TT_F,
+            TD_A, TD_B, TD_C, TD_D;
     private final JTextField BS_DATE, BS_AMOUNT, BS_COST,
+            BF_DATE, BF_AMOUNT, BF_COST, BF_FEE, BF_UNIT,
             IP_DATE, IP_DESC, IP_AMouNT, IP_UNIT,
             MN_DATE, MN_DESC, MN_CUR, MN_AMouNT, MN_UNIT,
             CT_DATE, CT_F_AMOUNT, CT_T_AMOUNT, CT_UNIT,
             TT_DATE, TT_F_AMOUNT, TT_T_AMOUNT, TT_FEE, TT_L_UNIT, TT_F_UNIT,
             TD_DATE, TD_F_AMOUNT, TD_T_AMOUNT, TD_UNIT;
     private final SearchBox BS_EXCHANGE, BS_CUR,
+            BF_EXCHANGE, BF_CUR, BF_FEE_CUR,
             IP_EXCHANGE, IP_CUR,
             MN_ACCOUNT,
             CT_F_EXCHANGE, CT_T_EXCHANGE, CT_CUR,
             TT_F_EXCHANGE, TT_T_EXCHANGE, TT_L_CUR, TT_F_CUR,
             TD_EXCHANGE, TD_F_CUR, TD_T_CUR;
     private final JButton BS_CANCEL, BS_SAVE,
+            BF_CANCEL, BF_SAVE,
             IP_CANCEL, IP_SAVE,
             MN_CANCEL, MN_SAVE,
             CT_CANCEL, CT_SAVE,
@@ -52,9 +56,9 @@ public class SpecialTransactionEntryGui extends ModalFrame {
             {
                 BS = new JPanel();
                 BS.setBorder(null);
-                A = new JLabel("Date");
-                B = new JLabel("Cost");
-                C = new JLabel("Amount");
+                BS_A = new JLabel("Date");
+                BS_B = new JLabel("Cost");
+                BS_C = new JLabel("Amount");
                 BS_DATE = new JTextField();
                 BS_AMOUNT = new JTextField();
                 BS_COST = new JTextField();
@@ -77,11 +81,11 @@ public class SpecialTransactionEntryGui extends ModalFrame {
                                     main.createParallelGroup(GroupLayout.Alignment.CENTER).addGroup(
                                             main.createSequentialGroup().addGroup(
                                                     main.createParallelGroup(GroupLayout.Alignment.TRAILING).addComponent(
-                                                            A, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                                            BS_A, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                                     ).addComponent(
-                                                            B, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                                            BS_B, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                                     ).addComponent(
-                                                            C, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                                            BS_C, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                                     )
                                             ).addGap(DendroFactory.SMALL_GAP).addGroup(
                                                     main.createParallelGroup(GroupLayout.Alignment.LEADING).addComponent(
@@ -112,19 +116,19 @@ public class SpecialTransactionEntryGui extends ModalFrame {
                     main.setVerticalGroup(
                             main.createSequentialGroup().addContainerGap().addGroup(
                                     main.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(
-                                            A, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                            BS_A, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                     ).addComponent(
                                             BS_DATE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                     )
                             ).addGap(DendroFactory.SMALL_GAP).addGroup(
                                     main.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(
-                                            B, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                            BS_B, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                     ).addComponent(
                                             BS_COST, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                     )
                             ).addGap(DendroFactory.SMALL_GAP).addGroup(
                                     main.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(
-                                            C, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                            BS_C, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                     ).addComponent(
                                             BS_AMOUNT, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                     )
@@ -144,14 +148,143 @@ public class SpecialTransactionEntryGui extends ModalFrame {
             }
             BACK.addTab("Buy/Sell", BS);
 
+            //buy sell with fee
+            {
+                BF = new JPanel();
+                BF.setBorder(null);
+                BF_A = new JLabel("Date");
+                BF_B = new JLabel("Cost");
+                BF_C = new JLabel("Amount");
+                BF_D = new JLabel("Fee Amount");
+                BF_E = new JLabel("Fee Unit");
+                BF_DATE = new JTextField();
+                BF_AMOUNT = new JTextField();
+                BF_COST = new JTextField();
+                BF_FEE = new JTextField();
+                BF_UNIT = new JTextField();
+                BF_CUR = new SearchBox("Transaction Currency", new ArrayList<>());
+                BF_FEE_CUR = new SearchBox("Fee Currency", new ArrayList<>());
+                BF_EXCHANGE = new SearchBox("Exchange", CURRENT_INSTANCE.getFeeExchangesAsStrings());
+                BF_EXCHANGE.addListSelectionListener(event -> {
+                    updateCur(BF_CUR, BF_EXCHANGE);
+                    updateFeeCur(BF_FEE_CUR, BF_EXCHANGE);
+                });
+                updateCur(BF_CUR, BF_EXCHANGE);
+                updateFeeCur(BF_FEE_CUR, BF_EXCHANGE);
+
+                BF_CANCEL = DendroFactory.getButton("Cancel");
+                BF_CANCEL.addActionListener(event -> dispose());
+                BF_SAVE = DendroFactory.getButton("Save");
+                BF_SAVE.addActionListener(event -> bfSaveAction());
+
+                //buy sell layout
+                {
+                    GroupLayout main = new GroupLayout(BF);
+                    BF.setLayout(main);
+                    main.setHorizontalGroup(
+                            main.createSequentialGroup().addContainerGap().addGroup(
+                                    main.createParallelGroup(GroupLayout.Alignment.CENTER).addGroup(
+                                            main.createSequentialGroup().addGroup(
+                                                    main.createParallelGroup(GroupLayout.Alignment.TRAILING).addComponent(
+                                                            BF_A, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                                    ).addComponent(
+                                                            BF_B, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                                    ).addComponent(
+                                                            BF_C, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                                    ).addComponent(
+                                                            BF_D, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                                    ).addComponent(
+                                                            BF_E, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                                    )
+                                            ).addGap(DendroFactory.SMALL_GAP).addGroup(
+                                                    main.createParallelGroup(GroupLayout.Alignment.LEADING).addComponent(
+                                                            BF_DATE, GroupLayout.PREFERRED_SIZE, 250, Short.MAX_VALUE
+                                                    ).addComponent(
+                                                            BF_COST, GroupLayout.PREFERRED_SIZE, 250, Short.MAX_VALUE
+                                                    ).addComponent(
+                                                            BF_AMOUNT, GroupLayout.PREFERRED_SIZE, 250, Short.MAX_VALUE
+                                                    ).addComponent(
+                                                            BF_FEE, GroupLayout.PREFERRED_SIZE, 250, Short.MAX_VALUE
+                                                    ).addComponent(
+                                                            BF_UNIT, GroupLayout.PREFERRED_SIZE, 250, Short.MAX_VALUE
+                                                    )
+                                            )
+                                    ).addGroup(
+                                            main.createParallelGroup(GroupLayout.Alignment.LEADING).addComponent(
+                                                    BF_EXCHANGE, GroupLayout.PREFERRED_SIZE, 250, Short.MAX_VALUE
+                                            ).addComponent(
+                                                    BF_CUR, GroupLayout.PREFERRED_SIZE, 250, Short.MAX_VALUE
+                                            ).addComponent(
+                                                    BF_FEE_CUR, GroupLayout.PREFERRED_SIZE, 250, Short.MAX_VALUE
+                                            )
+                                    ).addGroup(
+                                            main.createSequentialGroup().addComponent(
+                                                    BF_CANCEL, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                            ).addGap(
+                                                    DendroFactory.SMALL_GAP, DendroFactory.SMALL_GAP, Short.MAX_VALUE
+                                            ).addComponent(
+                                                    BF_SAVE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                            )
+                                    )
+                            ).addContainerGap()
+                    );
+                    main.setVerticalGroup(
+                            main.createSequentialGroup().addContainerGap().addGroup(
+                                    main.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(
+                                            BF_A, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                    ).addComponent(
+                                            BF_DATE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                    )
+                            ).addGap(DendroFactory.SMALL_GAP).addGroup(
+                                    main.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(
+                                            BF_B, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                    ).addComponent(
+                                            BF_COST, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                    )
+                            ).addGap(DendroFactory.SMALL_GAP).addGroup(
+                                    main.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(
+                                            BF_C, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                    ).addComponent(
+                                            BF_AMOUNT, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                    )
+                            ).addGap(DendroFactory.SMALL_GAP).addGroup(
+                                    main.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(
+                                            BF_D, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                    ).addComponent(
+                                            BF_FEE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                    )
+                            ).addGap(DendroFactory.SMALL_GAP).addGroup(
+                                    main.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(
+                                            BF_E, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                    ).addComponent(
+                                            BF_UNIT, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                    )
+                            ).addGap(DendroFactory.SMALL_GAP).addComponent(
+                                    BF_EXCHANGE, 150, 150, 150
+                            ).addGap(DendroFactory.SMALL_GAP).addComponent(
+                                    BF_CUR, 150, 150, 150
+                            ).addGap(DendroFactory.SMALL_GAP).addComponent(
+                                    BF_FEE_CUR, 150, 150, 150
+                            ).addGap(DendroFactory.MEDIUM_GAP).addGroup(
+                                    main.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(
+                                            BF_CANCEL, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                    ).addComponent(
+                                            BF_SAVE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                    )
+                            ).addContainerGap()
+                    );
+                }
+            }
+            BACK.addTab("Buy/Sell + Fee", BF);
+
             //income payment
             {
                 IP = new JPanel();
                 IP.setBorder(null);
-                D = new JLabel("Date");
-                E = new JLabel("Desc");
-                F = new JLabel("Unit");
-                G = new JLabel("Amount");
+                IP_A = new JLabel("Date");
+                IP_B = new JLabel("Desc");
+                IP_C = new JLabel("Unit");
+                IP_D = new JLabel("Amount");
                 IP_DATE = new JTextField();
                 IP_DESC = new JTextField();
                 IP_AMouNT = new JTextField();
@@ -174,13 +307,13 @@ public class SpecialTransactionEntryGui extends ModalFrame {
                                     main.createParallelGroup(GroupLayout.Alignment.CENTER).addGroup(
                                             main.createSequentialGroup().addGroup(
                                                     main.createParallelGroup(GroupLayout.Alignment.TRAILING).addComponent(
-                                                            D, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                                            IP_A, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                                     ).addComponent(
-                                                            E, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                                            IP_B, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                                     ).addComponent(
-                                                            F, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                                            IP_C, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                                     ).addComponent(
-                                                            G, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                                            IP_D, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                                     )
                                             ).addGap(DendroFactory.SMALL_GAP).addGroup(
                                                     main.createParallelGroup(GroupLayout.Alignment.LEADING).addComponent(
@@ -213,25 +346,25 @@ public class SpecialTransactionEntryGui extends ModalFrame {
                     main.setVerticalGroup(
                             main.createSequentialGroup().addContainerGap().addGroup(
                                     main.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(
-                                            D, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                            IP_A, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                     ).addComponent(
                                             IP_DATE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                     )
                             ).addGap(DendroFactory.SMALL_GAP).addGroup(
                                     main.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(
-                                            E, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                            IP_B, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                     ).addComponent(
                                             IP_DESC, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                     )
                             ).addGap(DendroFactory.SMALL_GAP).addGroup(
                                     main.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(
-                                            F, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                            IP_C, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                     ).addComponent(
                                             IP_UNIT, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                     )
                             ).addGap(DendroFactory.SMALL_GAP).addGroup(
                                     main.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(
-                                            G, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                            IP_D, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                     ).addComponent(
                                             IP_AMouNT, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                     )
@@ -255,11 +388,11 @@ public class SpecialTransactionEntryGui extends ModalFrame {
             {
                 MN = new JPanel();
                 MN.setBorder(null);
-                H = new JLabel("Date");
-                I = new JLabel("Desc");
-                J = new JLabel("Unit");
-                K = new JLabel("Amount");
-                L = new JLabel("Currency");
+                MN_A = new JLabel("Date");
+                MN_B = new JLabel("Desc");
+                MN_C = new JLabel("Unit");
+                MN_D = new JLabel("Amount");
+                MN_E = new JLabel("Currency");
                 MN_DATE = new JTextField();
                 MN_DESC = new JTextField();
                 MN_AMouNT = new JTextField();
@@ -290,15 +423,15 @@ public class SpecialTransactionEntryGui extends ModalFrame {
                                     main.createParallelGroup(GroupLayout.Alignment.CENTER).addGroup(
                                             main.createSequentialGroup().addGroup(
                                                     main.createParallelGroup(GroupLayout.Alignment.TRAILING).addComponent(
-                                                            H, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                                            MN_A, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                                     ).addComponent(
-                                                            I, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                                            MN_B, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                                     ).addComponent(
-                                                            J, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                                            MN_C, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                                     ).addComponent(
-                                                            K, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                                            MN_D, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                                     ).addComponent(
-                                                            L, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                                            MN_E, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                                     )
                                             ).addGap(DendroFactory.SMALL_GAP).addGroup(
                                                     main.createParallelGroup(GroupLayout.Alignment.LEADING).addComponent(
@@ -329,31 +462,31 @@ public class SpecialTransactionEntryGui extends ModalFrame {
                     main.setVerticalGroup(
                             main.createSequentialGroup().addContainerGap().addGroup(
                                     main.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(
-                                            H, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                            MN_A, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                     ).addComponent(
                                             MN_DATE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                     )
                             ).addGap(DendroFactory.SMALL_GAP).addGroup(
                                     main.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(
-                                            I, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                            MN_B, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                     ).addComponent(
                                             MN_DESC, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                     )
                             ).addGap(DendroFactory.SMALL_GAP).addGroup(
                                     main.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(
-                                            J, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                            MN_C, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                     ).addComponent(
                                             MN_UNIT, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                     )
                             ).addGap(DendroFactory.SMALL_GAP).addGroup(
                                     main.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(
-                                            K, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                            MN_D, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                     ).addComponent(
                                             MN_AMouNT, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                     )
                             ).addGap(DendroFactory.SMALL_GAP).addGroup(
                                     main.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(
-                                            L, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                            MN_E, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                     ).addComponent(
                                             MN_CUR, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                     )
@@ -375,10 +508,10 @@ public class SpecialTransactionEntryGui extends ModalFrame {
             {
                 CT = new JPanel();
                 CT.setBorder(null);
-                M = new JLabel("Date");
-                N = new JLabel("From Amount");
-                O = new JLabel("To Amount");
-                P = new JLabel("Unit Price");
+                CT_A = new JLabel("Date");
+                CT_B = new JLabel("From Amount");
+                CT_C = new JLabel("To Amount");
+                CT_D = new JLabel("Unit Price");
                 CT_DATE = new JTextField();
                 CT_F_AMOUNT = new JTextField();
                 CT_T_AMOUNT = new JTextField();
@@ -403,13 +536,13 @@ public class SpecialTransactionEntryGui extends ModalFrame {
                                     main.createParallelGroup(GroupLayout.Alignment.CENTER).addGroup(
                                             main.createSequentialGroup().addGroup(
                                                     main.createParallelGroup(GroupLayout.Alignment.TRAILING).addComponent(
-                                                            M, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                                            CT_A, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                                     ).addComponent(
-                                                            N, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                                            CT_B, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                                     ).addComponent(
-                                                            O, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                                            CT_C, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                                     ).addComponent(
-                                                            P, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                                            CT_D, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                                     )
                                             ).addGap(DendroFactory.SMALL_GAP).addGroup(
                                                     main.createParallelGroup(GroupLayout.Alignment.LEADING).addComponent(
@@ -444,25 +577,25 @@ public class SpecialTransactionEntryGui extends ModalFrame {
                     main.setVerticalGroup(
                             main.createSequentialGroup().addContainerGap().addGroup(
                                     main.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(
-                                            M, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                            CT_A, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                     ).addComponent(
                                             CT_DATE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                     )
                             ).addGap(DendroFactory.SMALL_GAP).addGroup(
                                     main.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(
-                                            N, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                            CT_B, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                     ).addComponent(
                                             CT_F_AMOUNT, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                     )
                             ).addGap(DendroFactory.SMALL_GAP).addGroup(
                                     main.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(
-                                            O, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                            CT_C, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                     ).addComponent(
                                             CT_T_AMOUNT, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                     )
                             ).addGap(DendroFactory.SMALL_GAP).addGroup(
                                     main.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(
-                                            P, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                            CT_D, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                     ).addComponent(
                                             CT_UNIT, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                     )
@@ -488,12 +621,12 @@ public class SpecialTransactionEntryGui extends ModalFrame {
             {
                 TT = new JPanel();
                 TT.setBorder(null);
-                Q = new JLabel("Date");
-                R = new JLabel("From Amount");
-                S = new JLabel("To Amount");
-                T = new JLabel("Fee Amount");
-                U = new JLabel("Transfer Unit");
-                V = new JLabel("Fee Unit");
+                TT_A = new JLabel("Date");
+                TT_B = new JLabel("From Amount");
+                TT_C = new JLabel("To Amount");
+                TT_D = new JLabel("Fee Amount");
+                TT_E = new JLabel("Transfer Unit");
+                TT_F = new JLabel("Fee Unit");
                 TT_DATE = new JTextField();
                 TT_F_AMOUNT = new JTextField();
                 TT_T_AMOUNT = new JTextField();
@@ -521,17 +654,17 @@ public class SpecialTransactionEntryGui extends ModalFrame {
                                     main.createParallelGroup(GroupLayout.Alignment.CENTER).addGroup(
                                             main.createSequentialGroup().addGroup(
                                                     main.createParallelGroup(GroupLayout.Alignment.TRAILING).addComponent(
-                                                            Q, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                                            TT_A, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                                     ).addComponent(
-                                                            R, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                                            TT_B, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                                     ).addComponent(
-                                                            S, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                                            TT_C, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                                     ).addComponent(
-                                                            T, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                                            TT_D, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                                     ).addComponent(
-                                                            U, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                                            TT_E, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                                     ).addComponent(
-                                                            V, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                                            TT_F, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                                     )
                                             ).addGap(DendroFactory.SMALL_GAP).addGroup(
                                                     main.createParallelGroup(GroupLayout.Alignment.LEADING).addComponent(
@@ -572,37 +705,37 @@ public class SpecialTransactionEntryGui extends ModalFrame {
                     main.setVerticalGroup(
                             main.createSequentialGroup().addContainerGap().addGroup(
                                     main.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(
-                                            Q, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                            TT_A, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                     ).addComponent(
                                             TT_DATE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                     )
                             ).addGap(DendroFactory.SMALL_GAP).addGroup(
                                     main.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(
-                                            R, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                            TT_B, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                     ).addComponent(
                                             TT_F_AMOUNT, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                     )
                             ).addGap(DendroFactory.SMALL_GAP).addGroup(
                                     main.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(
-                                            S, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                            TT_C, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                     ).addComponent(
                                             TT_T_AMOUNT, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                     )
                             ).addGap(DendroFactory.SMALL_GAP).addGroup(
                                     main.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(
-                                            T, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                            TT_D, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                     ).addComponent(
                                             TT_FEE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                     )
                             ).addGap(DendroFactory.SMALL_GAP).addGroup(
                                     main.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(
-                                            U, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                            TT_E, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                     ).addComponent(
                                             TT_L_UNIT, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                     )
                             ).addGap(DendroFactory.SMALL_GAP).addGroup(
                                     main.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(
-                                            V, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                            TT_F, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                     ).addComponent(
                                             TT_F_UNIT, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                     )
@@ -630,10 +763,10 @@ public class SpecialTransactionEntryGui extends ModalFrame {
             {
                 TD = new JPanel();
                 TD.setBorder(null);
-                W = new JLabel("Date");
-                X = new JLabel("From Amount");
-                Y = new JLabel("To Amount");
-                Z = new JLabel("From Unit");
+                TD_A = new JLabel("Date");
+                TD_B = new JLabel("From Amount");
+                TD_C = new JLabel("To Amount");
+                TD_D = new JLabel("From Unit");
                 TD_DATE = new JTextField();
                 TD_F_AMOUNT = new JTextField();
                 TD_T_AMOUNT = new JTextField();
@@ -657,13 +790,13 @@ public class SpecialTransactionEntryGui extends ModalFrame {
                                     main.createParallelGroup(GroupLayout.Alignment.CENTER).addGroup(
                                             main.createSequentialGroup().addGroup(
                                                     main.createParallelGroup(GroupLayout.Alignment.TRAILING).addComponent(
-                                                            W, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                                            TD_A, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                                     ).addComponent(
-                                                            X, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                                            TD_B, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                                     ).addComponent(
-                                                            Y, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                                            TD_C, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                                     ).addComponent(
-                                                            Z, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                                            TD_D, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                                     )
                                             ).addGap(DendroFactory.SMALL_GAP).addGroup(
                                                     main.createParallelGroup(GroupLayout.Alignment.LEADING).addComponent(
@@ -698,25 +831,25 @@ public class SpecialTransactionEntryGui extends ModalFrame {
                     main.setVerticalGroup(
                             main.createSequentialGroup().addContainerGap().addGroup(
                                     main.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(
-                                            W, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                            TD_A, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                     ).addComponent(
                                             TD_DATE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                     )
                             ).addGap(DendroFactory.SMALL_GAP).addGroup(
                                     main.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(
-                                            X, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                            TD_B, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                     ).addComponent(
                                             TD_F_AMOUNT, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                     )
                             ).addGap(DendroFactory.SMALL_GAP).addGroup(
                                     main.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(
-                                            Y, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                            TD_C, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                     ).addComponent(
                                             TD_T_AMOUNT, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                     )
                             ).addGap(DendroFactory.SMALL_GAP).addGroup(
                                     main.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(
-                                            Z, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                            TD_D, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                     ).addComponent(
                                             TD_UNIT, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                     )
@@ -758,6 +891,10 @@ public class SpecialTransactionEntryGui extends ModalFrame {
         cur.setMaster(CURRENT_INSTANCE.getAllAssetsAsStrings(exchange));
     }
 
+    private void updateFeeCur(SearchBox cur, SearchBox exchange) {
+        cur.setMaster(CURRENT_INSTANCE.getAllFeesAsStrings(exchange));
+    }
+
     private void updateToken(SearchBox cur, SearchBox exchange1, SearchBox exchange2) {
         cur.setMaster(CURRENT_INSTANCE.getAllTokensAsStrings(exchange1, exchange2));
     }
@@ -780,6 +917,30 @@ public class SpecialTransactionEntryGui extends ModalFrame {
             } else {
                 BS_EXCHANGE.setListBackground(DendroFactory.WRONG);
                 BS_CUR.setListBackground(DendroFactory.WRONG);
+            }
+        } catch (ValidationFailedException ex) {
+            CURRENT_INSTANCE.LOG_HANDLER.warn(getClass(), "You did a badness.");
+        }
+    }
+
+    private void bfSaveAction() {
+        try {
+            if (CURRENT_INSTANCE.DATA_HANDLER.buySellFee(
+                    Validation.validateDate(BF_DATE, null, CURRENT_INSTANCE),
+                    Validation.validateDecimal(BF_AMOUNT),
+                    Validation.validateDecimal(BF_COST),
+                    Validation.validateDecimal(BF_FEE),
+                    Validation.validateDecimal(BF_UNIT),
+                    BF_EXCHANGE.getSelectedItem(),
+                    BF_CUR.getSelectedItem(),
+                    BF_FEE_CUR.getSelectedItem())
+            ) {
+                MAIN.updateTable();
+                dispose();
+            } else {
+                BF_EXCHANGE.setListBackground(DendroFactory.WRONG);
+                BF_CUR.setListBackground(DendroFactory.WRONG);
+                BF_FEE_CUR.setListBackground(DendroFactory.WRONG);
             }
         } catch (ValidationFailedException ex) {
             CURRENT_INSTANCE.LOG_HANDLER.warn(getClass(), "You did a badness.");

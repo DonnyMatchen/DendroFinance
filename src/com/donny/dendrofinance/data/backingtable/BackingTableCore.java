@@ -134,6 +134,7 @@ public abstract class BackingTableCore<E extends ExportableToJson> implements It
             deleteElement(j);
             TABLE.add(j, x);
             TABLE.add(i, y);
+            changed = true;
             return true;
         } else {
             return false;
@@ -147,6 +148,7 @@ public abstract class BackingTableCore<E extends ExportableToJson> implements It
     public void replace(int index, E element) {
         TABLE.remove(index);
         TABLE.add(index, element);
+        changed = true;
     }
 
     @Override

@@ -19,9 +19,9 @@ import java.util.Arrays;
 
 public class ExchangeEditGui extends BackingEditGui<Exchange> {
     private JTextField name, alt;
-    private JScrollPane supports, stakes;
-    private JTextArea sText, tText;
-    private JLabel a, b, c, d;
+    private JScrollPane supports, stakes, fees;
+    private JTextArea sText, tText, fText;
+    private JLabel a, b, c, d, e;
     private JButton cancel, save;
 
     public ExchangeEditGui(BackingTableGui<Exchange> caller, BackingTableCore<Exchange> core, int index, Instance curInst) {
@@ -36,11 +36,14 @@ public class ExchangeEditGui extends BackingEditGui<Exchange> {
         sText = (JTextArea) supports.getViewport().getView();
         stakes = DendroFactory.getScrollField();
         tText = (JTextArea) stakes.getViewport().getView();
+        fees = DendroFactory.getScrollField();
+        fText = (JTextArea) fees.getViewport().getView();
 
         a = new JLabel("Exchange Name");
         b = new JLabel("API Name");
         c = new JLabel("Supported Assets");
         d = new JLabel("Separate Staking");
+        e = new JLabel("Separate Fees");
 
         cancel = DendroFactory.getButton("Cancel");
         cancel.addActionListener(event -> dispose());
@@ -62,7 +65,14 @@ public class ExchangeEditGui extends BackingEditGui<Exchange> {
                 for (JsonObject obj : exch.STAKING) {
                     sb.append(", ").append(obj.getString("cur")).append("_").append(obj.getDecimal("places").decimal.intValue());
                 }
-                sText.setText(sb.substring(2));
+                tText.setText(sb.substring(2));
+            }
+            if (exch.hasFees()) {
+                sb = new StringBuilder();
+                for (String s : exch.FEE) {
+                    sb.append(", ").append(s);
+                }
+                fText.setText(sb.substring(2));
             }
             if (exch.inUse(CURRENT_INSTANCE)) {
                 name.setEditable(false);
@@ -99,6 +109,10 @@ public class ExchangeEditGui extends BackingEditGui<Exchange> {
                                             d, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                     ).addComponent(
                                             stakes, 250, 250, Short.MAX_VALUE
+                                    ).addComponent(
+                                            e, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                    ).addComponent(
+                                            fees, 250, 250, Short.MAX_VALUE
                                     )
                             ).addGroup(
                                     main.createSequentialGroup().addComponent(
@@ -133,6 +147,10 @@ public class ExchangeEditGui extends BackingEditGui<Exchange> {
                                     d, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                             ).addGap(DendroFactory.SMALL_GAP).addComponent(
                                     stakes, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                            ).addGap(DendroFactory.SMALL_GAP).addComponent(
+                                    e, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                            ).addGap(DendroFactory.SMALL_GAP).addComponent(
+                                    fees, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                             )
                     ).addGap(DendroFactory.MEDIUM_GAP).addGroup(
                             main.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(
@@ -151,7 +169,7 @@ public class ExchangeEditGui extends BackingEditGui<Exchange> {
         tText.setBackground(DendroFactory.CONTENT);
         try {
             ArrayList<String> needed = TABLE.getElement(INDEX).aNamesInUse(CURRENT_INSTANCE);
-            for (String s : Validation.validateStringAllowEmpty(sText).replace(",", "").split(" ")) {
+            for (String s : Validation.validateStringAllowEmpty(sText).replace(" ", "").replace("\n", "").split(",")) {
                 String str = "";
                 if (!sText.getText().equals("")) {
                     for (String n : needed) {
@@ -176,14 +194,14 @@ public class ExchangeEditGui extends BackingEditGui<Exchange> {
                         Validation.validateString(name),
                         Validation.validateStringAllowEmpty(alt),
                         new ArrayList<>(Arrays.asList(
-                                Validation.validateString(sText).replace(",", "").split(" ")
+                                Validation.validateString(sText).replace(" ", "").replace("\n", "").split(",")
                         )),
                         CURRENT_INSTANCE,
                         true
                 );
             } else {
                 ArrayList<JsonObject> objs = new ArrayList<>();
-                for (String s : Validation.validateStringAllowEmpty(sText).replace(",", "").split(" ")) {
+                for (String s : Validation.validateStringAllowEmpty(tText).replace(" ", "").replace("\n", "").split(",")) {
                     try {
                         String[] parts = s.split("_");
                         JsonObject obj = new JsonObject();
@@ -200,12 +218,16 @@ public class ExchangeEditGui extends BackingEditGui<Exchange> {
                         Validation.validateString(name),
                         Validation.validateStringAllowEmpty(alt),
                         new ArrayList<>(Arrays.asList(
-                                Validation.validateString(sText).replace(",", "").split(" ")
+                                Validation.validateString(sText).replace(" ", "").replace("\n", "").split(",")
                         )),
                         objs,
                         CURRENT_INSTANCE,
                         true
                 );
+            }
+            if (!fText.getText().equals("")) {
+                exchange.FEE.clear();
+                exchange.FEE.addAll(Arrays.asList(Validation.validateString(fText).replace(" ", "").replace("\n", "").split(",")));
             }
             if (INDEX >= 0) {
                 TABLE.replace(INDEX, exchange);

@@ -85,6 +85,7 @@ public class TaxItemBTC extends BackingTableCore<TaxItem> {
     @Override
     public void sort() {
         TABLE.sort(Comparator.comparing(taxItem -> taxItem.NAME));
+        changed = true;
     }
 
     @Override

@@ -1,3 +1,7 @@
+## v0.7.2
+* {X} added manual inventory price history
+* {X} added currency control to private stock
+
 ## v0.7.1
 * added fee currencies to exchanges
   * added backend

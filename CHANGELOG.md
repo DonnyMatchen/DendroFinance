@@ -1,4 +1,6 @@
 ## v0.7.2
+* minor bug fixes
+  * fixed columns in `BalanceSheetGui`
 * {X} added manual inventory price history
 * {X} added currency control to private stock
 

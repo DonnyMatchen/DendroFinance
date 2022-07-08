@@ -3,14 +3,12 @@ package com.donny.dendrofinance.data;
 import com.donny.dendrofinance.gui.customswing.AlertGui;
 import com.donny.dendrofinance.gui.password.UnkPasswordGui;
 import com.donny.dendrofinance.instance.Instance;
-import com.donny.dendrofinance.json.JsonArray;
 import com.donny.dendrofinance.json.JsonFormattingException;
 import com.donny.dendrofinance.json.JsonItem;
 import com.donny.dendrofinance.json.JsonObject;
 
 import javax.swing.*;
 import java.io.*;
-import java.math.BigDecimal;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;

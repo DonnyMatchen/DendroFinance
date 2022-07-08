@@ -1,13 +1,9 @@
 package com.donny.dendrofinance.currency;
 
 import com.donny.dendrofinance.instance.Instance;
-import com.donny.dendrofinance.json.JsonArray;
 import com.donny.dendrofinance.json.JsonFormattingException;
 import com.donny.dendrofinance.json.JsonObject;
 import com.donny.dendrofinance.json.JsonString;
-import com.donny.dendrofinance.types.LDate;
-
-import java.math.BigDecimal;
 
 public class LStock extends LCurrency {
     private final boolean PUBLIC;

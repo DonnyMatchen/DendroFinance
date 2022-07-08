@@ -114,9 +114,10 @@ public class Instance {
     public void ensureFolders() {
         File archive = new File(data.getPath() + File.separator + "Archives"),
                 pStock = new File(data.getPath() + File.separator + "P_Stock"),
+                pInv = new File(data.getPath() + File.separator + "P_Inventory"),
                 exp = new File(data.getPath() + File.separator + "Exports"),
                 imp = new File(data.getPath() + File.separator + "Imports");
-        while (!archive.exists() || !pStock.exists() || !exp.exists() || !imp.exists()) {
+        while (!archive.exists() || !pStock.exists() || !pInv.exists() || !exp.exists() || !imp.exists()) {
             if (!data.exists()) {
                 data.mkdir();
             }
@@ -125,6 +126,9 @@ public class Instance {
             }
             if (!pStock.exists()) {
                 pStock.mkdir();
+            }
+            if (!pInv.exists()) {
+                pInv.mkdir();
             }
             if (!exp.exists()) {
                 exp.mkdir();
@@ -569,8 +573,67 @@ public class Instance {
     }
 
     public BigDecimal convert(BigDecimal amount, LCurrency a, LCurrency b) {
+        LStock aStock = null, bStock = null;
+        LInventory aInv = null, bInv = null;
+        boolean aPrivate = false, bPrivate = false;
+        if (a instanceof LStock) {
+            aStock = (LStock) a;
+        }
+        if (b instanceof LStock) {
+            bStock = (LStock) b;
+        }
+        if (a instanceof LInventory) {
+            aInv = (LInventory) a;
+        }
+        if (b instanceof LInventory) {
+            bInv = (LInventory) b;
+        }
+        if ((aStock != null && !aStock.isPublic()) || (aInv != null && !aInv.isPublic())) {
+            aPrivate = true;
+        }
+        if ((bStock != null && !bStock.isPublic()) || (bInv != null && !bInv.isPublic())) {
+            bPrivate = true;
+        }
         if (a.getTicker().equalsIgnoreCase(b.getTicker()) && a.getClass() == b.getClass() && a.isFiat() == b.isFiat()) {
             return amount.multiply(b.getFactor().divide(a.getFactor(), precision));
+        } else if (aPrivate || bPrivate) {
+            if (aPrivate) {
+                JsonObject history;
+                if (aStock != null) {
+                    history = FILE_HANDLER.getPrivateStock(a.getTicker());
+                } else {
+                    history = FILE_HANDLER.getPrivateInventory(a.getTicker());
+                }
+                LCurrency cur = getLCurrency(history.getString("currency").getString());
+                JsonArray arr = history.getArray("history");
+                BigDecimal price = BigDecimal.ZERO;
+                for (JsonObject obj : arr.getObjectArray()) {
+                    price = obj.getDecimal("price").decimal;
+                }
+                if (cur.equals(b)) {
+                    return price.multiply(amount);
+                } else {
+                    return convert(price.multiply(amount), cur, b);
+                }
+            } else {
+                JsonObject history;
+                if (aStock != null) {
+                    history = FILE_HANDLER.getPrivateStock(b.getTicker());
+                } else {
+                    history = FILE_HANDLER.getPrivateInventory(b.getTicker());
+                }
+                LCurrency cur = getLCurrency(history.getString("currency").getString());
+                JsonArray arr = history.getArray("history");
+                BigDecimal price = BigDecimal.ZERO;
+                for (JsonObject obj : arr.getObjectArray()) {
+                    price = obj.getDecimal("price").decimal;
+                }
+                if (cur.equals(a)) {
+                    return price.multiply(amount);
+                } else {
+                    return convert(price.multiply(amount), cur, a);
+                }
+            }
         } else {
             for (LMarketApi marketApi : MARKET_APIS) {
                 if (marketApi.canConvert(a, b)) {
@@ -603,8 +666,97 @@ public class Instance {
     }
 
     public BigDecimal convert(BigDecimal amount, LCurrency a, LCurrency b, LDate date) {
+        LStock aStock = null, bStock = null;
+        LInventory aInv = null, bInv = null;
+        boolean aPrivate = false, bPrivate = false;
+        if (a instanceof LStock) {
+            aStock = (LStock) a;
+        }
+        if (b instanceof LStock) {
+            bStock = (LStock) b;
+        }
+        if (a instanceof LInventory) {
+            aInv = (LInventory) a;
+        }
+        if (b instanceof LInventory) {
+            bInv = (LInventory) b;
+        }
+        if ((aStock != null && !aStock.isPublic()) || (aInv != null && !aInv.isPublic())) {
+            aPrivate = true;
+        }
+        if ((bStock != null && !bStock.isPublic()) || (bInv != null && !bInv.isPublic())) {
+            bPrivate = true;
+        }
         if (a.getTicker().equalsIgnoreCase(b.getTicker()) && a.getClass() == b.getClass() && a.isFiat() == b.isFiat()) {
             return amount.multiply(b.getFactor().divide(a.getFactor(), precision));
+        } else if (aPrivate || bPrivate) {
+            if (aPrivate) {
+                JsonObject history;
+                if (aStock != null) {
+                    history = FILE_HANDLER.getPrivateStock(a.getTicker());
+                } else {
+                    history = FILE_HANDLER.getPrivateInventory(a.getTicker());
+                }
+                LCurrency cur = getLCurrency(history.getString("currency").getString());
+                JsonArray arr = history.getArray("history");
+                BigDecimal price = BigDecimal.ZERO;
+                if (new LDate(arr.getObject(0).getString("date").getString(), this).compareTo(date) > 0) {
+                    price = arr.getObject(0).getDecimal("price").decimal;
+                } else {
+                    for (int i = 0; i < arr.size(); i++) {
+                        JsonObject obj = arr.getObject(i);
+                        LDate dateI = new LDate(obj.getString("date").getString(), this);
+                        if (i < arr.size() - 1) {
+                            LDate dateII = new LDate(arr.getObject(i + 1).getString("date").getString(), this);
+                            if (date.compareTo(dateI) >= 0 && date.compareTo(dateII) <= 0) {
+                                price = obj.getDecimal("price").decimal;
+                                break;
+                            }
+                        }
+                        if (i == arr.size() - 1) {
+                            price = obj.getDecimal("price").decimal;
+                        }
+                    }
+                }
+                if (cur.equals(b)) {
+                    return price.multiply(amount);
+                } else {
+                    return convert(price.multiply(amount), cur, b, date);
+                }
+            } else {
+                JsonObject history;
+                if (aStock != null) {
+                    history = FILE_HANDLER.getPrivateStock(b.getTicker());
+                } else {
+                    history = FILE_HANDLER.getPrivateInventory(b.getTicker());
+                }
+                LCurrency cur = getLCurrency(history.getString("currency").getString());
+                JsonArray arr = history.getArray("history");
+                BigDecimal price = BigDecimal.ZERO;
+                if (new LDate(arr.getObject(0).getString("date").getString(), this).compareTo(date) > 0) {
+                    price = arr.getObject(0).getDecimal("price").decimal;
+                } else {
+                    for (int i = 0; i < arr.size(); i++) {
+                        JsonObject obj = arr.getObject(i);
+                        LDate dateI = new LDate(obj.getString("date").getString(), this);
+                        if (i < arr.size() - 1) {
+                            LDate dateII = new LDate(arr.getObject(i + 1).getString("date").getString(), this);
+                            if (date.compareTo(dateI) >= 0 && date.compareTo(dateII) <= 0) {
+                                price = obj.getDecimal("price").decimal;
+                                break;
+                            }
+                        }
+                        if (i == arr.size() - 1) {
+                            price = obj.getDecimal("price").decimal;
+                        }
+                    }
+                }
+                if (cur.equals(a)) {
+                    return price.multiply(amount);
+                } else {
+                    return convert(price.multiply(amount), cur, a, date);
+                }
+            }
         } else {
             for (LMarketApi marketApi : MARKET_APIS) {
                 if (marketApi.canConvert(a, b)) {

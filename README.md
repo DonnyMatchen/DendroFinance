@@ -12,7 +12,8 @@ This application was not designed for use with files greater than 2,147,483,647 
 * Torsocks seems to interfere with this application's ability to read and write files and access APIs.  The latter may be due to many APIs blocking TOR nodes.
 * In Linux systems using the Nautilus filesystem interface or derivatives, there seems to be a problem when .jar files are run.  It seems to set the working directory to the home folder rather than the directory the .jar file is in.
   * Due to this, the Linux version of the software comes with a run script for convenience
-* Except for private stock history JSONs, all JSONs in the data directory are saved and read in Unicode/UTF16.  The application will crash if they are not saved in the correct format.  Edit them through the gui unless you can ensure you will save them correctly.
+* Except for private stock and inventory history JSONs, all JSONs in the data directory are saved and read in Unicode/UTF16.  The application will crash if they are not saved in the correct format.  Edit them through the gui unless you can ensure you will save them correctly.
+  * Private stock and inventory history JSONs are stored and read in UTF8 format.  Because these JSONs do not contain names, there is no need to use unicode for efficient storage of non-ASCII characters.
 
 # KNOWN PROBLEMS
 There is a tendency for some gui windows not to be sized correctly.  I'm not quite sure why this happens, and there doesn't seem to be a fix for it.

@@ -6,6 +6,7 @@ import com.donny.dendrofinance.instance.Instance;
 import com.donny.dendrofinance.json.JsonArray;
 import com.donny.dendrofinance.json.JsonFormattingException;
 import com.donny.dendrofinance.json.JsonItem;
+import com.donny.dendrofinance.json.JsonObject;
 
 import javax.swing.*;
 import java.io.*;
@@ -239,20 +240,15 @@ public class FileHandler {
         delete(root);
     }
 
-    public BigDecimal getLatestPrivateStock(String name) {
-        JsonArray brackets = getPrivateStock(name);
-        return brackets.getObject(brackets.size() - 1).getDecimal("price").decimal;
-    }
-
-    public JsonArray getPrivateStock(String name) {
+    public JsonObject getPrivateStock(String name) {
         File directory = new File(CURRENT_INSTANCE.data.getPath() + File.separator + "P_Stock");
-        JsonArray history = null;
+        JsonObject history = null;
         File[] directoryList = directory.listFiles();
         if (directory.exists() && directoryList != null) {
             for (File f : directoryList) {
                 if (f.getName().contains(name)) {
                     try {
-                        history = (JsonArray) JsonItem.sanitizeDigest(readPlain(f));
+                        history = (JsonObject) JsonItem.sanitizeDigest(readPlain(f));
                     } catch (JsonFormattingException e) {
                         CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Bad Private Stock File: " + f.getPath());
                     }
@@ -262,7 +258,30 @@ public class FileHandler {
         if (history != null) {
             return history;
         } else {
-            CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "No History File found!: " + name);
+            CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "No History File found: " + name);
+            return null;
+        }
+    }
+
+    public JsonObject getPrivateInventory(String id) {
+        File directory = new File(CURRENT_INSTANCE.data.getPath() + File.separator + "P_Inventory");
+        JsonObject history = null;
+        File[] directoryList = directory.listFiles();
+        if (directory.exists() && directoryList != null) {
+            for (File f : directoryList) {
+                if (f.getName().contains(id)) {
+                    try {
+                        history = (JsonObject) JsonItem.sanitizeDigest(readPlain(f));
+                    } catch (JsonFormattingException e) {
+                        CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Bad Private Inventory File: " + f.getPath());
+                    }
+                }
+            }
+        }
+        if (history != null) {
+            return history;
+        } else {
+            CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "No History File found: " + id);
             return null;
         }
     }

@@ -32,31 +32,6 @@ public class LStock extends LCurrency {
     }
 
     @Override
-    public BigDecimal getTotal(BigDecimal amount) {
-        if (!isPublic()) {
-            return amount.multiply(CURRENT_INSTANCE.FILE_HANDLER.getLatestPrivateStock(getName()));
-        } else {
-            return super.getTotal(amount);
-        }
-    }
-
-    @Override
-    public BigDecimal getTotal(BigDecimal amount, LDate date) {
-        if (!isPublic()) {
-            JsonArray arr = CURRENT_INSTANCE.FILE_HANDLER.getPrivateStock(getName());
-            BigDecimal ret = BigDecimal.ZERO;
-            for (JsonObject obj : arr.getObjectArray()) {
-                if (new LDate(obj.getString("date").getString(), CURRENT_INSTANCE).compareTo(date) <= 0) {
-                    ret = amount.multiply(obj.getDecimal("price").decimal);
-                }
-            }
-            return ret;
-        } else {
-            return super.getTotal(amount, date);
-        }
-    }
-
-    @Override
     public JsonObject export() throws JsonFormattingException {
         JsonObject obj = new JsonObject();
         obj.put("name", new JsonString(getName()));

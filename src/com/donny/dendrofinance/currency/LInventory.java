@@ -2,29 +2,28 @@ package com.donny.dendrofinance.currency;
 
 import com.donny.dendrofinance.entry.totals.Position;
 import com.donny.dendrofinance.instance.Instance;
-import com.donny.dendrofinance.json.JsonDecimal;
-import com.donny.dendrofinance.json.JsonFormattingException;
-import com.donny.dendrofinance.json.JsonObject;
-import com.donny.dendrofinance.json.JsonString;
+import com.donny.dendrofinance.json.*;
 import com.donny.dendrofinance.types.LDate;
 
 import java.math.BigDecimal;
 
 public class LInventory extends LCurrency {
     private final BigDecimal STATIC_VALUE;
-    private final boolean COMMODITY, MERCHANDISE;
+    private final boolean COMMODITY, MERCHANDISE, PUBLIC;
 
     public LInventory(String name, String ticker, String symbol, int places, BigDecimal val, boolean merch, Instance curInst) {
         super(name, ticker, false, symbol + "§", true, places, "", false, false, curInst);
         MERCHANDISE = merch;
         COMMODITY = false;
+        PUBLIC = false;
         STATIC_VALUE = val;
     }
 
-    public LInventory(String name, String ticker, String symbol, int places, boolean merch, Instance curInst) {
+    public LInventory(String name, String ticker, String symbol, int places, boolean merch, boolean pub, Instance curInst) {
         super(name, ticker, false, symbol + "§", true, places, "", false, false, curInst);
         MERCHANDISE = merch;
         COMMODITY = true;
+        PUBLIC = pub;
         STATIC_VALUE = BigDecimal.ZERO;
     }
 
@@ -32,6 +31,7 @@ public class LInventory extends LCurrency {
         super(name, "", false, "§", true, 0, "", false, false, curInst);
         MERCHANDISE = merch;
         COMMODITY = false;
+        PUBLIC = false;
         STATIC_VALUE = val;
     }
 
@@ -45,6 +45,11 @@ public class LInventory extends LCurrency {
         );
         MERCHANDISE = obj.getString("flags").getString().contains("M");
         COMMODITY = obj.getString("flags").getString().contains("C");
+        if (COMMODITY) {
+            PUBLIC = obj.getString("flags").getString().contains("P");
+        } else {
+            PUBLIC = false;
+        }
         STATIC_VALUE = COMMODITY || MERCHANDISE ? BigDecimal.ZERO : obj.getDecimal("value").decimal;
     }
 
@@ -58,6 +63,10 @@ public class LInventory extends LCurrency {
 
     public boolean isMerchandise() {
         return MERCHANDISE;
+    }
+
+    public boolean isPublic() {
+        return PUBLIC;
     }
 
     @Override
@@ -102,6 +111,9 @@ public class LInventory extends LCurrency {
         if (COMMODITY || MERCHANDISE) {
             String q = "";
             if (COMMODITY) {
+                if (PUBLIC) {
+                    q += "P";
+                }
                 q += "C";
             }
             if (MERCHANDISE) {

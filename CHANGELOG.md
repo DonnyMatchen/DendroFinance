@@ -1,8 +1,15 @@
 ## v0.7.2
 * minor bug fixes
   * fixed columns in `BalanceSheetGui`
-* {X} added manual inventory price history
-* {X} added currency control to private stock
+  * updated `README.md`
+* added manual inventory price history
+  * added private inventory
+    * updated `LInventory`
+    * updated `InventoryEditGui`
+    * added "P_Inventory" to `Instance.ensureFolders()`
+  * added simplifying code to `Instance.convert()`
+    * moved all "getTotal" methods to `Instance.convert()`
+    * `Instance.convert()` now supports private stock and inventory
 
 ## v0.7.1
 * added fee currencies to exchanges

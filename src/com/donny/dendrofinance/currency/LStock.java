@@ -1,13 +1,9 @@
 package com.donny.dendrofinance.currency;
 
 import com.donny.dendrofinance.instance.Instance;
-import com.donny.dendrofinance.json.JsonArray;
 import com.donny.dendrofinance.json.JsonFormattingException;
 import com.donny.dendrofinance.json.JsonObject;
 import com.donny.dendrofinance.json.JsonString;
-import com.donny.dendrofinance.types.LDate;
-
-import java.math.BigDecimal;
 
 public class LStock extends LCurrency {
     private final boolean PUBLIC;
@@ -29,31 +25,6 @@ public class LStock extends LCurrency {
 
     public boolean isPublic() {
         return PUBLIC;
-    }
-
-    @Override
-    public BigDecimal getTotal(BigDecimal amount) {
-        if (!isPublic()) {
-            return amount.multiply(CURRENT_INSTANCE.FILE_HANDLER.getLatestPrivateStock(getName()));
-        } else {
-            return super.getTotal(amount);
-        }
-    }
-
-    @Override
-    public BigDecimal getTotal(BigDecimal amount, LDate date) {
-        if (!isPublic()) {
-            JsonArray arr = CURRENT_INSTANCE.FILE_HANDLER.getPrivateStock(getName());
-            BigDecimal ret = BigDecimal.ZERO;
-            for (JsonObject obj : arr.getObjectArray()) {
-                if (new LDate(obj.getString("date").getString(), CURRENT_INSTANCE).compareTo(date) <= 0) {
-                    ret = amount.multiply(obj.getDecimal("price").decimal);
-                }
-            }
-            return ret;
-        } else {
-            return super.getTotal(amount, date);
-        }
     }
 
     @Override

@@ -12,7 +12,7 @@ import javax.swing.*;
 
 public class InventoryEditGui extends BackingEditGui<LInventory> {
     private JTextField name, ticker, symbol, places, val;
-    private JCheckBox merch, comod;
+    private JCheckBox merch, comod, publik;
     private JLabel a, b, c, d, e;
     private JButton save, cancel;
 
@@ -29,6 +29,7 @@ public class InventoryEditGui extends BackingEditGui<LInventory> {
         val = new JTextField();
         merch = new JCheckBox("Merchandise");
         comod = new JCheckBox("Commodity");
+        publik = new JCheckBox("Public");
 
         a = new JLabel("Inventory Name");
         b = new JLabel("Commodity Ticker");
@@ -51,6 +52,7 @@ public class InventoryEditGui extends BackingEditGui<LInventory> {
             val.setText(inv.getUnitValue().toString());
             merch.setSelected(inv.isMerchandise());
             comod.setSelected(inv.isCommodity());
+            publik.setSelected(inv.isPublic());
             if (inv.inAccount()) {
                 ticker.setEditable(false);
                 ticker.setBackground(DendroFactory.BACKDROP);
@@ -94,6 +96,8 @@ public class InventoryEditGui extends BackingEditGui<LInventory> {
                                             merch, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                     ).addComponent(
                                             comod, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                    ).addComponent(
+                                            publik, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                     )
                             ).addGroup(
                                     main.createSequentialGroup().addComponent(
@@ -141,6 +145,8 @@ public class InventoryEditGui extends BackingEditGui<LInventory> {
                             merch, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                     ).addGap(DendroFactory.SMALL_GAP).addComponent(
                             comod, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                    ).addGap(DendroFactory.SMALL_GAP).addComponent(
+                            publik, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                     ).addGap(DendroFactory.MEDIUM_GAP).addGroup(
                             main.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(
                                     cancel, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
@@ -163,6 +169,7 @@ public class InventoryEditGui extends BackingEditGui<LInventory> {
                         Validation.validateString(symbol),
                         Validation.validateInteger(places).intValue(),
                         merch.isSelected(),
+                        publik.isSelected(),
                         CURRENT_INSTANCE
                 );
             } else {

@@ -1,3 +1,10 @@
+## v0.7.3
+* minor bug fixes
+  * fixed `PositionGui` not handling situations where a currency or asset had no decimal places
+  * fixed `DataHandler.buySell` not handling longrun correctly
+  * fixed `Instance.reloadBackingElements` mismatched keys with JSON
+* updated `Examples`
+
 ## v0.7.2
 * minor bug fixes
   * fixed columns in `BalanceSheetGui`

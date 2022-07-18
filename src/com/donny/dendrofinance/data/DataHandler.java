@@ -806,17 +806,17 @@ public class DataHandler {
                 if (profitLR.compareTo(BigDecimal.ZERO) != 0) {
                     gl += ", G!";
                     if (c instanceof LStock) {
-                        gl += profitSR.compareTo(BigDecimal.ZERO) > 0 ? Account.cgltStockName : Account.clltStockName;
+                        gl += profitLR.compareTo(BigDecimal.ZERO) > 0 ? Account.cgltStockName : Account.clltStockName;
                     } else if (c instanceof LInventory) {
-                        gl += profitSR.compareTo(BigDecimal.ZERO) > 0 ? Account.cgltInventoryName : Account.clltInventoryName;
+                        gl += profitLR.compareTo(BigDecimal.ZERO) > 0 ? Account.cgltInventoryName : Account.clltInventoryName;
                     } else {
                         if (c.isFiat()) {
-                            gl += profitSR.compareTo(BigDecimal.ZERO) > 0 ? Account.cgltFiatName : Account.clltFiatName;
+                            gl += profitLR.compareTo(BigDecimal.ZERO) > 0 ? Account.cgltFiatName : Account.clltFiatName;
                         } else {
-                            gl += profitSR.compareTo(BigDecimal.ZERO) > 0 ? Account.cgltCryptoName : Account.clltCryptoName;
+                            gl += profitLR.compareTo(BigDecimal.ZERO) > 0 ? Account.cgltCryptoName : Account.clltCryptoName;
                         }
                     }
-                    gl += "(" + profitSR.abs().setScale(CURRENT_INSTANCE.main.getPlaces(), RoundingMode.HALF_UP) + ")";
+                    gl += "(" + profitLR.abs().setScale(CURRENT_INSTANCE.main.getPlaces(), RoundingMode.HALF_UP) + ")";
                 }
                 entry.insert(
                         date,

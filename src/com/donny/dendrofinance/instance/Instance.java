@@ -310,43 +310,43 @@ public class Instance {
                 Account.clFiatName = notAccObj.getString("fiat-loss").getString();
                 Account.clCryptoName = notAccObj.getString("crypto-loss").getString();
 
-                if (notAccObj.containsKey("stock-gain-long-term")) {
-                    Account.cgltStockName = notAccObj.getString("stock-gain-long-term").getString();
+                if (notAccObj.containsKey("stock-gain-long-run")) {
+                    Account.cgltStockName = notAccObj.getString("stock-gain-long-run").getString();
                 } else {
                     Account.cgltStockName = Account.cgStockName;
                 }
-                if (notAccObj.containsKey("inventory-gain-long-term")) {
-                    Account.cgltInventoryName = notAccObj.getString("inventory-gain-long-term").getString();
+                if (notAccObj.containsKey("inventory-gain-long-run")) {
+                    Account.cgltInventoryName = notAccObj.getString("inventory-gain-long-run").getString();
                 } else {
                     Account.cgltInventoryName = Account.cgInventoryName;
                 }
-                if (notAccObj.containsKey("fiat-gain-long-term")) {
-                    Account.cgltFiatName = notAccObj.getString("fiat-gain-long-term").getString();
+                if (notAccObj.containsKey("fiat-gain-long-run")) {
+                    Account.cgltFiatName = notAccObj.getString("fiat-gain-long-run").getString();
                 } else {
                     Account.cgltFiatName = Account.cgFiatName;
                 }
-                if (notAccObj.containsKey("crypto-gain-long-term")) {
-                    Account.cgltCryptoName = notAccObj.getString("crypto-gain-long-term").getString();
+                if (notAccObj.containsKey("crypto-gain-long-run")) {
+                    Account.cgltCryptoName = notAccObj.getString("crypto-gain-long-run").getString();
                 } else {
                     Account.cgltCryptoName = Account.cgCryptoName;
                 }
-                if (notAccObj.containsKey("stock-loss-long-term")) {
-                    Account.clltStockName = notAccObj.getString("stock-loss-long-term").getString();
+                if (notAccObj.containsKey("stock-loss-long-run")) {
+                    Account.clltStockName = notAccObj.getString("stock-loss-long-run").getString();
                 } else {
                     Account.clltStockName = Account.clStockName;
                 }
-                if (notAccObj.containsKey("inventory-loss-long-term")) {
-                    Account.clltInventoryName = notAccObj.getString("inventory-loss-long-term").getString();
+                if (notAccObj.containsKey("inventory-loss-long-run")) {
+                    Account.clltInventoryName = notAccObj.getString("inventory-loss-long-run").getString();
                 } else {
                     Account.clltInventoryName = Account.clInventoryName;
                 }
-                if (notAccObj.containsKey("fiat-loss-long-term")) {
-                    Account.clltFiatName = notAccObj.getString("fiat-loss-long-term").getString();
+                if (notAccObj.containsKey("fiat-loss-long-run")) {
+                    Account.clltFiatName = notAccObj.getString("fiat-loss-long-run").getString();
                 } else {
                     Account.clltFiatName = Account.clFiatName;
                 }
-                if (notAccObj.containsKey("crypto-loss-long-term")) {
-                    Account.clltCryptoName = notAccObj.getString("crypto-loss-long-term").getString();
+                if (notAccObj.containsKey("crypto-loss-long-run")) {
+                    Account.clltCryptoName = notAccObj.getString("crypto-loss-long-run").getString();
                 } else {
                     Account.clltCryptoName = Account.clCryptoName;
                 }

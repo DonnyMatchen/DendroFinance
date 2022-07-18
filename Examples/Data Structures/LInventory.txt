@@ -10,6 +10,7 @@ LInventory{
 *flags:
   * M: This inventory is merchandise
   * C: This inventory is a commodity
+  * P: This inventory is public and can be looked up in an API
 [Note: these flags are mutually exclusive, as they control how the value of the inventory is calculated.]
 * name: Name of the inventory
 * places: The number of decimal places to use when displaying accounts using this currency

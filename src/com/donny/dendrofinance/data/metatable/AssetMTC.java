@@ -48,11 +48,11 @@ public class AssetMTC extends MetaTableCore {
                         if (first) {
                             if (meta.isCurrent()) {
                                 out.add(new String[]{
-                                        "" + meta.ROOT_REF, meta.NAME, meta.DESC, cur.encode(values.get(cur)), counts.get(cur).toString(), meta.DATE.toString(), ""
+                                        Long.toUnsignedString(meta.ROOT_REF), meta.NAME, meta.DESC, cur.encode(values.get(cur)), counts.get(cur).toString(), meta.DATE.toString(), ""
                                 });
                             } else {
                                 out.add(new String[]{
-                                        "" + meta.ROOT_REF, meta.NAME, meta.DESC, cur.encode(values.get(cur)), counts.get(cur).toString(), meta.DATE.toString(), meta.EVENTS.get(meta.EVENTS.size() - 1).DATE.toString()
+                                        Long.toUnsignedString(meta.ROOT_REF), meta.NAME, meta.DESC, cur.encode(values.get(cur)), counts.get(cur).toString(), meta.DATE.toString(), meta.EVENTS.get(meta.EVENTS.size() - 1).DATE.toString()
                                 });
                             }
                         } else {
@@ -76,7 +76,7 @@ public class AssetMTC extends MetaTableCore {
     @Override
     public String print(String uuid, String name, LDate date) {
         for (AssetMetadata meta : CURRENT_INSTANCE.DATA_HANDLER.assetsAsOf(date)) {
-            if (meta.ROOT_REF == Long.parseLong(uuid) && meta.NAME.equals(name)) {
+            if (meta.ROOT_REF == Long.parseUnsignedLong(uuid) && meta.NAME.equals(name)) {
                 return meta.toString();
             }
         }

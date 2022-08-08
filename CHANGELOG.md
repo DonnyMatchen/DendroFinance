@@ -1,7 +1,8 @@
 ## v0.7.4
 * (X) minor bug fixes
   * changed UUIDs to unsigned
-  * (X) fixed capital gain/loss disparity checker
+  * fixed capital gain/loss disparity checker
+  * minor optimizations
 
 ## v0.7.3
 * minor bug fixes

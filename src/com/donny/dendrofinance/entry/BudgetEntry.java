@@ -71,6 +71,6 @@ public class BudgetEntry extends Entry {
 
     @Override
     public String toFlatString() {
-        return getUUID() + "\t" + name + "\t" + contents.toString();
+        return Long.toUnsignedString(getUUID()) + "\t" + name + "\t" + contents.toString();
     }
 }

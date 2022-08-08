@@ -66,14 +66,14 @@ public class LedgerGui extends RegisterFrame {
                 if (meta.FROM.equals(currency)) {
                     if (meta.TO_AMNT.compareTo(BigDecimal.ZERO) == 0) {
                         TABLE_ACCESS.addRow(new String[]{
-                                "" + meta.UUID, meta.DATE.toDateString(),
+                                Long.toUnsignedString(meta.UUID), meta.DATE.toDateString(),
                                 meta.FROM.encode(meta.FROM_AMNT), meta.TO.encode(meta.TO_AMNT),
                                 CURRENT_INSTANCE.$(meta.MAIN_VALUE),
                                 ""
                         });
                     } else {
                         TABLE_ACCESS.addRow(new String[]{
-                                "" + meta.UUID, meta.DATE.toDateString(),
+                                Long.toUnsignedString(meta.UUID), meta.DATE.toDateString(),
                                 meta.FROM.encode(meta.FROM_AMNT), meta.TO.encode(meta.TO_AMNT),
                                 CURRENT_INSTANCE.$(meta.MAIN_VALUE),
                                 meta.FROM.encode(BigDecimal.ONE) + " = " + meta.TO.encode(meta.TO_AMNT.divide(meta.FROM_AMNT, CURRENT_INSTANCE.precision).abs())
@@ -82,14 +82,14 @@ public class LedgerGui extends RegisterFrame {
                 } else {
                     if (meta.FROM_AMNT.compareTo(BigDecimal.ZERO) == 0) {
                         TABLE_ACCESS.addRow(new String[]{
-                                "" + meta.UUID, meta.DATE.toDateString(),
+                                Long.toUnsignedString(meta.UUID), meta.DATE.toDateString(),
                                 meta.FROM.encode(meta.FROM_AMNT), meta.TO.encode(meta.TO_AMNT),
                                 CURRENT_INSTANCE.$(meta.MAIN_VALUE),
                                 ""
                         });
                     } else {
                         TABLE_ACCESS.addRow(new String[]{
-                                "" + meta.UUID, meta.DATE.toDateString(),
+                                Long.toUnsignedString(meta.UUID), meta.DATE.toDateString(),
                                 meta.FROM.encode(meta.FROM_AMNT), meta.TO.encode(meta.TO_AMNT),
                                 CURRENT_INSTANCE.$(meta.MAIN_VALUE),
                                 meta.TO.encode(BigDecimal.ONE) + " = " + meta.FROM.encode(meta.FROM_AMNT.divide(meta.TO_AMNT, CURRENT_INSTANCE.precision).abs())

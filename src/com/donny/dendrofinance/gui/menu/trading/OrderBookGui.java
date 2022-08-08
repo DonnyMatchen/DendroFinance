@@ -125,9 +125,9 @@ public class OrderBookGui extends RegisterFrame {
                 }
                 if (flag) {
                     TABLE_ACCESS.addRow(new String[]{
-                            "" + entry.START_REF,
+                            Long.toUnsignedString(entry.START_REF),
                             entry.START.toDateString(),
-                            "" + entry.END_REF,
+                            Long.toUnsignedString(entry.END_REF),
                             entry.END.toDateString(),
                             entry.ASSET.toString(),
                             entry.ASSET.encode(entry.VOLUME),

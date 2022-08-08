@@ -1284,10 +1284,10 @@ public class DataHandler {
                 for (String cur : curAg.keySet()) {
                     if (!ledgAg.containsKey(cur)) {
                         if (curAg.get(cur).compareTo(BigDecimal.ZERO) != 0) {
-                            CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Damaged or missing ledger metadata for entry: " + entry.getUUID());
+                            CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Damaged or missing ledger metadata for entry: " + Long.toUnsignedString(entry.getUUID()));
                         }
                     } else if (curAg.get(cur).compareTo(ledgAg.get(cur)) != 0) {
-                        CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Damaged ledger metadata for entry: " + entry.getUUID());
+                        CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Damaged ledger metadata for entry: " + Long.toUnsignedString(entry.getUUID()));
                         CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Disparity: " + cur + ": " + curAg.get(cur) + " / " + ledgAg.get(cur));
                     }
                 }
@@ -1334,7 +1334,7 @@ public class DataHandler {
                 }
             }
             if (flag && !entry.equals(getPrior())) {
-                CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Sale missing Capital Gain/Loss: " + entry.getUUID());
+                CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Sale missing Capital Gain/Loss: " + Long.toUnsignedString(entry.getUUID()));
                 CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Value should be: " + map.get(uuid));
             }
         }

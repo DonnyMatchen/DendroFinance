@@ -1,3 +1,8 @@
+## v0.7.4
+* (X) minor bug fixes
+  * changed UUIDs to unsigned
+  * (X) fixed capital gain/loss disparity checker
+
 ## v0.7.3
 * minor bug fixes
   * fixed `PositionGui` not handling situations where a currency or asset had no decimal places

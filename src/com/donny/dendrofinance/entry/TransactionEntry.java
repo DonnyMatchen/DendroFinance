@@ -421,7 +421,7 @@ public class TransactionEntry extends Entry implements Comparable<TransactionEnt
                 case DEBIT -> {
                     if (i == 0) {
                         layers.add(new String[]{
-                                "" + getUUID(), date.toString(), entity, items, description,
+                                Long.toUnsignedString(getUUID()), date.toString(), entity, items, description,
                                 wrapper.ACCOUNT.getName(), wrapper.ACCOUNT.getCurrency().encode(wrapper.VALUE),
                                 "", "", "", getFlags()
                         });
@@ -436,7 +436,7 @@ public class TransactionEntry extends Entry implements Comparable<TransactionEnt
                 case CREDIT -> {
                     if (i == 0) {
                         layers.add(new String[]{
-                                "" + getUUID(), date.toString(), entity, items, description,
+                                Long.toUnsignedString(getUUID()), date.toString(), entity, items, description,
                                 wrapper.ACCOUNT.getName(), "", wrapper.ACCOUNT.getCurrency().encode(wrapper.VALUE),
                                 "", "", getFlags()
                         });
@@ -451,7 +451,7 @@ public class TransactionEntry extends Entry implements Comparable<TransactionEnt
                 case GHOST -> {
                     if (i == 0) {
                         layers.add(new String[]{
-                                "" + getUUID(), date.toString(), entity, items, description,
+                                Long.toUnsignedString(getUUID()), date.toString(), entity, items, description,
                                 wrapper.ACCOUNT.getName(), "", "", wrapper.ACCOUNT.getCurrency().encode(wrapper.VALUE), "", getFlags()
                         });
                     } else {
@@ -464,7 +464,7 @@ public class TransactionEntry extends Entry implements Comparable<TransactionEnt
                 case TRACKER -> {
                     if (i == 0) {
                         layers.add(new String[]{
-                                "" + getUUID(), date.toString(), entity, items, description,
+                                Long.toUnsignedString(getUUID()), date.toString(), entity, items, description,
                                 wrapper.ACCOUNT.getName(), "", "", "",
                                 wrapper.ACCOUNT.getCurrency().encode(wrapper.VALUE), getFlags()
                         });
@@ -500,13 +500,13 @@ public class TransactionEntry extends Entry implements Comparable<TransactionEnt
 
     @Override
     public String toFlatString() {
-        return getUUID() + "\t" + date + "\t" + entity + "\t" + items + "\t" + description + "\t" +
+        return Long.toUnsignedString(getUUID()) + "\t" + date + "\t" + entity + "\t" + items + "\t" + description + "\t" +
                 accounts.toString() + "\t" + metadata.toString();
     }
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder("UUID: ").append(getUUID())
+        StringBuilder sb = new StringBuilder("UUID: ").append(Long.toUnsignedString(getUUID()))
                 .append("\n\nDate: ").append(date)
                 .append("\n\nEntity: ").append(entity)
                 .append("\n\nItems: ").append(items)

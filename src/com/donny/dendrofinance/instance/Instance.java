@@ -450,7 +450,7 @@ public class Instance {
         DATA_HANDLER.reload();
         for (TransactionEntry entry : DATA_HANDLER.readTransactions()) {
             if (!entry.isBalanced()) {
-                LOG_HANDLER.error(getClass(), "Unbalanced entry: " + entry.getUUID());
+                LOG_HANDLER.error(getClass(), "Unbalanced entry: " + Long.toUnsignedString(entry.getUUID()));
             }
         }
         DATA_HANDLER.checkLedgers();

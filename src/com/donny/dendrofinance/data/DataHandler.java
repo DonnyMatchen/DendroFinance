@@ -19,6 +19,7 @@ import com.donny.dendrofinance.util.Aggregation;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
 
@@ -1284,10 +1285,10 @@ public class DataHandler {
                 for (String cur : curAg.keySet()) {
                     if (!ledgAg.containsKey(cur)) {
                         if (curAg.get(cur).compareTo(BigDecimal.ZERO) != 0) {
-                            CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Damaged or missing ledger metadata for entry: " + entry.getUUID());
+                            CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Damaged or missing ledger metadata for entry: " + Long.toUnsignedString(entry.getUUID()));
                         }
                     } else if (curAg.get(cur).compareTo(ledgAg.get(cur)) != 0) {
-                        CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Damaged ledger metadata for entry: " + entry.getUUID());
+                        CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Damaged ledger metadata for entry: " + Long.toUnsignedString(entry.getUUID()));
                         CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Disparity: " + cur + ": " + curAg.get(cur) + " / " + ledgAg.get(cur));
                     }
                 }
@@ -1296,46 +1297,45 @@ public class DataHandler {
     }
 
     public void checkCG() {
+        ArrayList<String> gains = new ArrayList<>(Arrays.asList(
+                Account.cgStockName, Account.cgInventoryName, Account.cgFiatName, Account.cgCryptoName,
+                Account.cgltStockName, Account.cgltInventoryName, Account.cgltFiatName, Account.cgltCryptoName
+        )), losses = new ArrayList<>(Arrays.asList(
+                Account.clStockName, Account.clInventoryName, Account.clFiatName, Account.clCryptoName,
+                Account.clltStockName, Account.clltInventoryName, Account.clltFiatName, Account.clltCryptoName
+        ));
         Aggregation<Long> map = new Aggregation<>();
         for (OrderBookEntry entry : getOrderBook()) {
             map.add(entry.END_REF, entry.profit());
         }
         for (Long uuid : map.keySet()) {
             TransactionEntry entry = getTransactionEntry(uuid);
-            boolean flag = true;
+            boolean flag = false;
+            BigDecimal total = BigDecimal.ZERO;
             if (entry.hasGhostAccounts()) {
                 for (AccountWrapper wrapper : entry.getAccounts()) {
                     if (wrapper.COLUMN == AWColumn.GHOST) {
-                        if (wrapper.ACCOUNT.getName().contains("CapGain") || wrapper.ACCOUNT.getName().contains("CapLoss")) {
-                            flag = false;
-                            BigDecimal negative = wrapper.VALUE.multiply(BigDecimal.valueOf(-1));
-                            if (map.get(uuid).compareTo(BigDecimal.ZERO) < 0) {
-                                if (wrapper.ACCOUNT.getName().equals("Tax_CapGain") ||
-                                        !CURRENT_INSTANCE.$(map.get(uuid).abs()).equals(CURRENT_INSTANCE.$(wrapper.VALUE))) {
-                                    CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Mismatched Capital Loss: " + uuid);
-                                    CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Disparity: " + CURRENT_INSTANCE.$(map.get(uuid)) + " : " +
-                                            (wrapper.ACCOUNT.getName().contains("CapGain") ? CURRENT_INSTANCE.$(wrapper.VALUE) :
-                                                    CURRENT_INSTANCE.$(negative))
-                                    );
-                                }
-                            } else if (map.get(uuid).compareTo(BigDecimal.ZERO) > 0) {
-                                if (wrapper.ACCOUNT.getName().equals("Tax_CapLoss") ||
-                                        !(CURRENT_INSTANCE.$(map.get(uuid).abs()).equals(CURRENT_INSTANCE.$(wrapper.VALUE)))
-                                ) {
-                                    CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Mismatched Capital Gain: " + uuid);
-                                    CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Disparity: " + CURRENT_INSTANCE.$(map.get(uuid)) + " : " +
-                                            (wrapper.ACCOUNT.getName().contains("CapGain") ? CURRENT_INSTANCE.$(wrapper.VALUE) :
-                                                    CURRENT_INSTANCE.$(negative))
-                                    );
-                                }
-                            }
+                        if (gains.contains(wrapper.ACCOUNT.getName())) {
+                            total = total.add(wrapper.VALUE);
+                            flag = true;
+                        } else if (losses.contains(wrapper.ACCOUNT.getName())) {
+                            total = total.subtract(wrapper.VALUE);
+                            flag = true;
                         }
                     }
                 }
             }
-            if (flag && !entry.equals(getPrior())) {
-                CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Sale missing Capital Gain/Loss: " + entry.getUUID());
-                CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Value should be: " + map.get(uuid));
+            if (flag) {
+                if (CURRENT_INSTANCE.$(total).compareTo(CURRENT_INSTANCE.$(map.get(uuid))) != 0) {
+                    CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Mismatched Capital Gain/Loss: " + Long.toUnsignedString(uuid));
+                    CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Expected:" + CURRENT_INSTANCE.$(map.get(uuid))
+                            + ", Found: " + CURRENT_INSTANCE.$(total)
+                    );
+                }
+            }
+            if (!flag && !entry.equals(getPrior())) {
+                CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Missing Capital Gain/Loss: " + Long.toUnsignedString(entry.getUUID()));
+                CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Expected: " + CURRENT_INSTANCE.$(map.get(uuid)));
             }
         }
     }

@@ -446,7 +446,7 @@ public class MainGui extends JFrame {
                 return 0;
             }
         } else {
-            return Long.parseLong((String) TABLE_ACCESS.getValueAt(cursor, 0));
+            return Long.parseUnsignedLong((String) TABLE_ACCESS.getValueAt(cursor, 0));
         }
     }
 

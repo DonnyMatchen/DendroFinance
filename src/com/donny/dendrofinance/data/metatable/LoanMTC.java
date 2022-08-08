@@ -41,11 +41,11 @@ public class LoanMTC extends MetaTableCore {
                 if (meta.NAME.toLowerCase().contains(search.toLowerCase()) || meta.DESC.toLowerCase().contains(search.toLowerCase())) {
                     if (meta.isCurrent()) {
                         out.add(new String[]{
-                                "" + meta.ROOT_REF, meta.NAME, meta.DESC, meta.CUR.encode(meta.principalRemaining()), CURRENT_INSTANCE.p(meta.RATE), meta.DATE.toString(), ""
+                                Long.toUnsignedString(meta.ROOT_REF), meta.NAME, meta.DESC, meta.CUR.encode(meta.principalRemaining()), CURRENT_INSTANCE.p(meta.RATE), meta.DATE.toString(), ""
                         });
                     } else {
                         out.add(new String[]{
-                                "" + meta.ROOT_REF, meta.NAME, meta.DESC, meta.CUR.encode(meta.principalRemaining()), CURRENT_INSTANCE.p(meta.RATE), meta.DATE.toString(), meta.EVENTS.get(meta.EVENTS.size() - 1).DATE.toString()
+                                Long.toUnsignedString(meta.ROOT_REF), meta.NAME, meta.DESC, meta.CUR.encode(meta.principalRemaining()), CURRENT_INSTANCE.p(meta.RATE), meta.DATE.toString(), meta.EVENTS.get(meta.EVENTS.size() - 1).DATE.toString()
                         });
                     }
                 }
@@ -62,7 +62,7 @@ public class LoanMTC extends MetaTableCore {
     @Override
     public String print(String uuid, String name, LDate date) {
         for (LoanMetadata meta : CURRENT_INSTANCE.DATA_HANDLER.loansAsOf(date)) {
-            if (meta.ROOT_REF == Long.parseLong(uuid) && meta.NAME.equals(name)) {
+            if (meta.ROOT_REF == Long.parseUnsignedLong(uuid) && meta.NAME.equals(name)) {
                 return meta.toString();
             }
         }

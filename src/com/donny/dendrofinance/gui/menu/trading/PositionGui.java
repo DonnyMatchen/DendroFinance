@@ -143,10 +143,10 @@ public class PositionGui extends RegisterFrame {
             for (Position p : positions) {
                 if (p.ASSET.equals(inventory)) {
                     BigDecimal[] analog = p.collapse();
-                    boolean over = false;
-                    if(p.ASSET.getPlaces() >= 1){
+                    boolean over;
+                    if (p.ASSET.getPlaces() >= 1) {
                         over = analog[0].compareTo(BigDecimal.ONE.divide(BigDecimal.TEN.pow(p.ASSET.getPlaces() - 1), CURRENT_INSTANCE.precision)) >= 0;
-                    }else {
+                    } else {
                         over = analog[0].compareTo(BigDecimal.ONE.divide(BigDecimal.TEN, CURRENT_INSTANCE.precision)) >= 0;
                     }
                     if (over) {

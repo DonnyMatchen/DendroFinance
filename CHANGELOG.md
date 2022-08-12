@@ -10,6 +10,9 @@
     * (X) for strings
     * (X) for files
     * (X) for encrypted files
+* updated `README.md`
+* moved `FileHandler` and `EncryptionHandler` from `com.donny.dendrofinance.data` to `com.donny.dendrofinance.fileio`
+* added `EncryptionOutputStream` and `DecryptionInputStream`
 
 ## v0.7.4
 * (X) minor bug fixes

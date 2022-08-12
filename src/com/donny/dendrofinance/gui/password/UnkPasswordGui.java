@@ -1,6 +1,6 @@
 package com.donny.dendrofinance.gui.password;
 
-import com.donny.dendrofinance.data.EncryptionHandler;
+import com.donny.dendrofinance.fileio.EncryptionHandler;
 import com.donny.dendrofinance.gui.customswing.DendroFactory;
 import com.donny.dendrofinance.gui.customswing.ModalFrame;
 import com.donny.dendrofinance.instance.Instance;

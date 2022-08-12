@@ -12,6 +12,8 @@ import com.donny.dendrofinance.currency.LStock;
 import com.donny.dendrofinance.data.*;
 import com.donny.dendrofinance.data.backingtable.*;
 import com.donny.dendrofinance.entry.TransactionEntry;
+import com.donny.dendrofinance.fileio.EncryptionHandler;
+import com.donny.dendrofinance.fileio.FileHandler;
 import com.donny.dendrofinance.gui.MainGui;
 import com.donny.dendrofinance.gui.password.PasswordGui;
 import com.donny.dendrofinance.gui.customswing.DendroFactory;

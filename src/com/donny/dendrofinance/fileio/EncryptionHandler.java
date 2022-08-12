@@ -1,4 +1,4 @@
-package com.donny.dendrofinance.data;
+package com.donny.dendrofinance.fileio;
 
 import com.donny.dendrofinance.instance.Instance;
 

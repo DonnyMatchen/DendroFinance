@@ -1,3 +1,16 @@
+## v0.8.0
+* implemented Jackson library
+  * removed janky JSON parsing code
+    * removed "raw" string constructors from JsonItems
+  * (->) Jackson used for Json input
+    * for strings
+    * for files
+    * (X) for encrypted files
+  * (->) Jackson used for JSON output
+    * (X) for strings
+    * (X) for files
+    * (X) for encrypted files
+
 ## v0.7.4
 * (X) minor bug fixes
   * changed UUIDs to unsigned

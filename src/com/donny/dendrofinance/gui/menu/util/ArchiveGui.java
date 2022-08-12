@@ -214,7 +214,7 @@ public class ArchiveGui extends RegisterFrame {
         if (ARCHIVES.getSelectedItem() != null) {
             if (new File(DIR.getPath() + File.separator + ARCHIVES.getSelectedItem() + ".xarc").exists()) {
                 try {
-                    JsonItem temp = JsonItem.sanitizeDigest(CURRENT_INSTANCE.FILE_HANDLER.readDecryptUnknownPassword(DIR, ARCHIVES.getSelectedItem() + ".xarc", this));
+                    JsonItem temp = JsonItem.digest(CURRENT_INSTANCE.FILE_HANDLER.readDecryptUnknownPassword(DIR, ARCHIVES.getSelectedItem() + ".xarc", this));
                     if (temp != null) {
                         CURRENT_INSTANCE.FILE_HANDLER.write(
                                 new File(CURRENT_INSTANCE.data.getPath() + File.separator + "Exports"),

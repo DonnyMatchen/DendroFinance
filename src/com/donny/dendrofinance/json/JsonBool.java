@@ -4,8 +4,12 @@ public class JsonBool extends JsonItem {
     public boolean bool;
 
     public JsonBool(String raw) {
+        this(raw.equalsIgnoreCase("true"));
+    }
+
+    public JsonBool(boolean bool) {
         super(JsonType.BOOL);
-        bool = raw.equalsIgnoreCase("true");
+        this.bool = bool;
     }
 
     public boolean getBool() {

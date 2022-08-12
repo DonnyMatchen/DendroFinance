@@ -210,7 +210,7 @@ public class Instance {
         //LCurrency
         {
             CURRENCIES.clear();
-            JsonArray array = (JsonArray) JsonItem.sanitizeDigest(FILE_HANDLER.read(currencies));
+            JsonArray array = (JsonArray) JsonItem.digest(currencies);
             for (JsonObject obj : array.getObjectArray()) {
                 LCurrency cur = new LCurrency(obj, this);
                 CURRENCIES.add(cur);
@@ -228,7 +228,7 @@ public class Instance {
         //LStock
         {
             STOCKS.clear();
-            JsonArray array = (JsonArray) JsonItem.sanitizeDigest(FILE_HANDLER.read(stocks));
+            JsonArray array = (JsonArray) JsonItem.digest(stocks);
             for (JsonObject obj : array.getObjectArray()) {
                 STOCKS.add(new LStock(obj, this));
             }
@@ -238,7 +238,7 @@ public class Instance {
         //Inventory
         {
             INVENTORIES.clear();
-            JsonArray array = (JsonArray) JsonItem.sanitizeDigest(FILE_HANDLER.read(inventories));
+            JsonArray array = (JsonArray) JsonItem.digest(inventories);
             for (JsonObject obj : array.getObjectArray()) {
                 INVENTORIES.add(new LInventory(obj, this));
             }
@@ -248,13 +248,13 @@ public class Instance {
         //Market APIs
         {
             MARKET_APIS.clear();
-            MARKET_APIS.load((JsonArray) JsonItem.sanitizeDigest(FILE_HANDLER.read(marApi)));
+            MARKET_APIS.load((JsonArray) JsonItem.digest(marApi));
             MARKET_APIS.changed = false;
         }
         //Account Types
         {
             ACCOUNT_TYPES.clear();
-            JsonArray array = (JsonArray) JsonItem.sanitizeDigest(FILE_HANDLER.read(accTyp));
+            JsonArray array = (JsonArray) JsonItem.digest(accTyp);
             for (JsonObject obj : array.getObjectArray()) {
                 ACCOUNT_TYPES.add(new AccountType(obj));
             }
@@ -266,7 +266,7 @@ public class Instance {
             EXCHANGES.clear();
             EXCHANGES.add(new Exchange("Personal", "", this, false));
             EXCHANGES.add(new Exchange("Cash", "", this, false));
-            JsonArray array = (JsonArray) JsonItem.sanitizeDigest(FILE_HANDLER.read(exchanges));
+            JsonArray array = (JsonArray) JsonItem.digest(exchanges);
             for (JsonObject obj : array.getObjectArray()) {
                 EXCHANGES.add(new Exchange(obj, this, true));
             }
@@ -276,11 +276,11 @@ public class Instance {
         //Accounts
         {
             ACCOUNTS.clear();
-            JsonArray budgets = (JsonArray) JsonItem.sanitizeDigest(FILE_HANDLER.read(budg));
+            JsonArray budgets = (JsonArray) JsonItem.digest(budg);
             for (JsonString string : budgets.getStringArray()) {
                 DATA_HANDLER.addBudgetType(string.getString());
             }
-            JsonObject accountObj = (JsonObject) JsonItem.sanitizeDigest(FILE_HANDLER.read(accounts));
+            JsonObject accountObj = (JsonObject) JsonItem.digest(accounts);
             JsonArray array = accountObj.getArray("accounts");
             for (JsonObject obj : array.getObjectArray()) {
                 ACCOUNTS.add(new Account(obj, this));
@@ -288,7 +288,7 @@ public class Instance {
 
             //adding special account identifiers
             {
-                JsonObject notAccObj = (JsonObject) JsonItem.sanitizeDigest(FILE_HANDLER.read(spec));
+                JsonObject notAccObj = (JsonObject) JsonItem.digest(spec);
 
                 Account.portfolioName = notAccObj.getString("portfolio").getString();
 
@@ -441,7 +441,7 @@ public class Instance {
         //Tax
         {
             TAX_ITEMS.clear();
-            JsonArray taxArray = (JsonArray) JsonItem.sanitizeDigest(FILE_HANDLER.read(taxItm));
+            JsonArray taxArray = (JsonArray) JsonItem.digest(taxItm);
             TAX_ITEMS.load(taxArray);
         }
     }
@@ -521,7 +521,6 @@ public class Instance {
         if (ACCOUNTS.changed) {
             FILE_HANDLER.write(accounts, ACCOUNTS.export().print());
         }
-        System.out.println(EXCHANGES.changed);
         if (EXCHANGES.changed) {
             FILE_HANDLER.write(exchanges, EXCHANGES.export().print());
         }

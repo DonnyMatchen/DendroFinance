@@ -110,7 +110,7 @@ public class Validation {
         }
         try {
             field.setBackground(DendroFactory.CONTENT);
-            return JsonItem.sanitizeDigest(field.getText());
+            return JsonItem.digest(field.getText());
         } catch (JsonFormattingException e) {
             field.setBackground(DendroFactory.WRONG);
             throw new ValidationFailedException("Field is not a valid JSON");

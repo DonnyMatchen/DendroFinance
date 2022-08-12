@@ -80,7 +80,7 @@ public class AccountMetaGui extends RegisterFrame {
 
             ACCOUNTS = new File(CURRENT_INSTANCE.data.getPath() + File.separator + "Accounts" + File.separator + "accounts.json");
             try {
-                accountObject = (JsonObject) JsonItem.sanitizeDigest(CURRENT_INSTANCE.FILE_HANDLER.read(ACCOUNTS));
+                accountObject = (JsonObject) JsonItem.digest(ACCOUNTS);
                 GIFT.setText(accountObject.getArray("gift-cards").toString());
                 BRAVE.setText(accountObject.getArray("brave-mobile").toString());
             } catch (JsonFormattingException ex) {
@@ -93,8 +93,8 @@ public class AccountMetaGui extends RegisterFrame {
 
     private void saveAction() {
         try {
-            accountObject.put("gift-cards", JsonItem.sanitizeDigest(GIFT.getText()));
-            accountObject.put("brave-mobile", JsonItem.sanitizeDigest(BRAVE.getText()));
+            accountObject.put("gift-cards", JsonItem.digest(GIFT.getText()));
+            accountObject.put("brave-mobile", JsonItem.digest(BRAVE.getText()));
             CURRENT_INSTANCE.FILE_HANDLER.write(ACCOUNTS, accountObject.print());
             dispose();
         } catch (JsonFormattingException ex) {

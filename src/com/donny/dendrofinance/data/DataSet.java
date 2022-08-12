@@ -32,7 +32,7 @@ public class DataSet<E extends Entry> {
             if (raw.contains("passwd")) {
                 raw = raw.substring(6);
             }
-            JsonArray entries = (JsonArray) JsonItem.sanitizeDigest(raw);
+            JsonArray entries = (JsonArray) JsonItem.digest(raw);
             for (JsonObject obj : entries.getObjectArray()) {
                 TABLE.add((E) Entry.get(TYPE, obj, CURRENT_INSTANCE));
             }

@@ -82,7 +82,7 @@ public class ImportHandler {
             );
             try {
                 if (!fields[5].equals("{}")) {
-                    entry.setMeta((JsonObject) JsonItem.sanitizeDigest(fields[6]));
+                    entry.setMeta((JsonObject) JsonItem.digest(fields[6]));
                 }
             } catch (JsonFormattingException e) {
                 CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Bad Metadata: " + fields[6]);
@@ -96,7 +96,7 @@ public class ImportHandler {
         boolean imported = false;
         if (file.getName().toLowerCase().contains("transaction")) {
             try {
-                JsonArray array = (JsonArray) JsonItem.sanitizeDigest(CURRENT_INSTANCE.FILE_HANDLER.read(file));
+                JsonArray array = (JsonArray) JsonItem.digest(file);
                 for (JsonObject obj : array.getObjectArray()) {
                     CURRENT_INSTANCE.DATA_HANDLER.addTransaction(new TransactionEntry(obj, mode, CURRENT_INSTANCE), mode);
                 }
@@ -106,7 +106,7 @@ public class ImportHandler {
             }
         } else if (file.getName().toLowerCase().contains("budget")) {
             try {
-                JsonArray array = (JsonArray) JsonItem.sanitizeDigest(CURRENT_INSTANCE.FILE_HANDLER.read(file));
+                JsonArray array = (JsonArray) JsonItem.digest(file);
                 for (JsonObject obj : array.getObjectArray()) {
                     CURRENT_INSTANCE.DATA_HANDLER.addBudget(new BudgetEntry(obj, mode, CURRENT_INSTANCE), mode);
                 }
@@ -128,7 +128,7 @@ public class ImportHandler {
                 CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Incorrect password for file: " + file.getPath());
             } else {
                 try {
-                    JsonArray array = (JsonArray) JsonItem.sanitizeDigest(raw.replace("passwd", ""));
+                    JsonArray array = (JsonArray) JsonItem.digest(raw.replace("passwd", ""));
                     for (JsonObject obj : array.getObjectArray()) {
                         CURRENT_INSTANCE.DATA_HANDLER.addTransaction(new TransactionEntry(obj, mode, CURRENT_INSTANCE));
                     }
@@ -140,7 +140,7 @@ public class ImportHandler {
         } else if (file.getName().toLowerCase().contains("budget")) {
             try {
                 String raw = CURRENT_INSTANCE.FILE_HANDLER.readDecryptUnknownPassword(file, caller);
-                JsonArray array = (JsonArray) JsonItem.sanitizeDigest(raw.replace("passwd", ""));
+                JsonArray array = (JsonArray) JsonItem.digest(raw.replace("passwd", ""));
                 for (JsonObject obj : array.getObjectArray()) {
                     CURRENT_INSTANCE.DATA_HANDLER.addBudget(new BudgetEntry(obj, mode, CURRENT_INSTANCE));
                 }

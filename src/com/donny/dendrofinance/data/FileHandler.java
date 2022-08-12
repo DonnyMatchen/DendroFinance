@@ -6,6 +6,7 @@ import com.donny.dendrofinance.instance.Instance;
 import com.donny.dendrofinance.json.JsonFormattingException;
 import com.donny.dendrofinance.json.JsonItem;
 import com.donny.dendrofinance.json.JsonObject;
+import com.fasterxml.jackson.core.JsonFactory;
 
 import javax.swing.*;
 import java.io.*;
@@ -128,6 +129,21 @@ public class FileHandler {
         }
     }
 
+    public JsonItem getJsonResource(String path) {
+        try (InputStream stream = getClass().getResourceAsStream("/com/donny/dendrofinance/resources/" + path)) {
+            return JsonItem.digest(new JsonFactory().createParser(stream));
+        } catch (IOException e) {
+            CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Resource not located: " + path);
+            return null;
+        } catch (NullPointerException ex) {
+            CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "No such resource: " + path);
+            return null;
+        } catch (JsonFormattingException e) {
+            CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Malformed resource: " + path);
+            return null;
+        }
+    }
+
     public void write(File file, String output) {
         ensure(file.getParentFile());
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(file, Charset.forName("unicode")))) {
@@ -246,7 +262,7 @@ public class FileHandler {
             for (File f : directoryList) {
                 if (f.getName().contains(name)) {
                     try {
-                        history = (JsonObject) JsonItem.sanitizeDigest(readPlain(f));
+                        history = (JsonObject) JsonItem.digest(f);
                     } catch (JsonFormattingException e) {
                         CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Bad Private Stock File: " + f.getPath());
                     }
@@ -269,7 +285,7 @@ public class FileHandler {
             for (File f : directoryList) {
                 if (f.getName().contains(id)) {
                     try {
-                        history = (JsonObject) JsonItem.sanitizeDigest(readPlain(f));
+                        history = (JsonObject) JsonItem.digest(f);
                     } catch (JsonFormattingException e) {
                         CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Bad Private Inventory File: " + f.getPath());
                     }
@@ -286,8 +302,8 @@ public class FileHandler {
 
     public JsonItem hit(String url) {
         try {
-            return JsonItem.sanitizeDigest(streamRaw(url));
-        } catch (JsonFormattingException e) {
+            return JsonItem.digest(new JsonFactory().createParser(new URL(url).openStream()));
+        } catch (JsonFormattingException | IOException e) {
             CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Bad Json at:" + url + "\n" + e);
             return null;
         }

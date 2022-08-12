@@ -52,7 +52,7 @@ public class PasswordGui extends JFrame {
             File file = new File(CURRENT_INSTANCE.data.getPath() + File.separator + "profiles.json");
             if (file.exists()) {
                 try {
-                    JsonArray array = (JsonArray) JsonItem.sanitizeDigest(CURRENT_INSTANCE.FILE_HANDLER.read(file));
+                    JsonArray array = (JsonArray) JsonItem.digest(file);
                     for (JsonObject obj : array.getObjectArray()) {
                         addProfile(obj, false);
                     }

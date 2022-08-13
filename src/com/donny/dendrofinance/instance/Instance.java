@@ -55,11 +55,12 @@ public class Instance {
 
     //flags, api keys, and other minor alterable things
     public MathContext precision;
-    public boolean log, american, day;
+    public boolean log, american, day, large;
     public String mainTicker, main__Ticker;
     public LogHandler.LogLevel logLevel;
     public LCurrency main;
     public LCurrency main__;
+    public int blockSize;
 
     public Instance(String iid, String[] args) {
         IID = iid;
@@ -208,11 +209,12 @@ public class Instance {
         {
             CURRENCIES.clear();
             JsonArray array = (JsonArray) FILE_HANDLER.readJson(currencies);
-            //TODO handle null
-            for (JsonObject obj : array.getObjectArray()) {
-                LCurrency cur = new LCurrency(obj, this);
-                CURRENCIES.add(cur);
+            if(array == null) {
+                LOG_HANDLER.fatal(getClass(), "currencies.json couldn't be loaded");
+                LOG_HANDLER.save();
+                System.exit(1);
             }
+            CURRENCIES.load(array);
             main = getLCurrency(mainTicker);
             main__ = getLCurrency(main__Ticker);
             if (main__ == null) {
@@ -227,10 +229,12 @@ public class Instance {
         {
             STOCKS.clear();
             JsonArray array = (JsonArray) FILE_HANDLER.readJson(stocks);
-            //TODO handle null
-            for (JsonObject obj : array.getObjectArray()) {
-                STOCKS.add(new LStock(obj, this));
+            if(array == null) {
+                LOG_HANDLER.fatal(getClass(), "stocks.json couldn't be loaded");
+                LOG_HANDLER.save();
+                System.exit(1);
             }
+            STOCKS.load(array);
             STOCKS.changed = false;
             LOG_HANDLER.trace(getClass(), "Stocks loaded");
         }
@@ -238,28 +242,38 @@ public class Instance {
         {
             INVENTORIES.clear();
             JsonArray array = (JsonArray) FILE_HANDLER.readJson(inventories);
-            //TODO handle null
-            for (JsonObject obj : array.getObjectArray()) {
-                INVENTORIES.add(new LInventory(obj, this));
+            if(array == null) {
+                LOG_HANDLER.fatal(getClass(), "inventories.json couldn't be loaded");
+                LOG_HANDLER.save();
+                System.exit(1);
             }
+            INVENTORIES.load(array);
             INVENTORIES.changed = false;
             LOG_HANDLER.trace(getClass(), "Inventories loaded");
         }
         //Market APIs
         {
             MARKET_APIS.clear();
-            //TODO handle null
-            MARKET_APIS.load((JsonArray) FILE_HANDLER.readJson(marApi));
+            JsonArray array = (JsonArray) FILE_HANDLER.readJson(marApi);
+            if(array == null) {
+                LOG_HANDLER.fatal(getClass(), "market-apis.json couldn't be loaded");
+                LOG_HANDLER.save();
+                System.exit(1);
+            }
+            MARKET_APIS.load(array);
             MARKET_APIS.changed = false;
+            LOG_HANDLER.trace(getClass(), "Market APIs loaded");
         }
         //Account Types
         {
             ACCOUNT_TYPES.clear();
             JsonArray array = (JsonArray) FILE_HANDLER.readJson(accTyp);
-            //TODO handle null
-            for (JsonObject obj : array.getObjectArray()) {
-                ACCOUNT_TYPES.add(new AccountType(obj));
+            if(array == null) {
+                LOG_HANDLER.fatal(getClass(), "account-types.json couldn't be loaded");
+                LOG_HANDLER.save();
+                System.exit(1);
             }
+            ACCOUNT_TYPES.load(array);
             ACCOUNT_TYPES.changed = false;
             LOG_HANDLER.trace(getClass(), "Account Types loaded");
         }
@@ -269,7 +283,11 @@ public class Instance {
             EXCHANGES.add(new Exchange("Personal", "", this, false));
             EXCHANGES.add(new Exchange("Cash", "", this, false));
             JsonArray array = (JsonArray) FILE_HANDLER.readJson(exchanges);
-            //TODO handle null
+            if(array == null) {
+                LOG_HANDLER.fatal(getClass(), "exchanges.json couldn't be loaded");
+                LOG_HANDLER.save();
+                System.exit(1);
+            }
             for (JsonObject obj : array.getObjectArray()) {
                 EXCHANGES.add(new Exchange(obj, this, true));
             }
@@ -280,11 +298,20 @@ public class Instance {
         {
             ACCOUNTS.clear();
             JsonArray budgets = (JsonArray) FILE_HANDLER.readJson(budg);
-            //TODO handle null
+            if(budgets == null) {
+                LOG_HANDLER.fatal(getClass(), "budget.json couldn't be loaded");
+                LOG_HANDLER.save();
+                System.exit(1);
+            }
             for (JsonString string : budgets.getStringArray()) {
                 DATA_HANDLER.addBudgetType(string.getString());
             }
             JsonObject accountObj = (JsonObject) FILE_HANDLER.readJson(accounts);
+            if(accountObj == null) {
+                LOG_HANDLER.fatal(getClass(), "accounts.json couldn't be loaded");
+                LOG_HANDLER.save();
+                System.exit(1);
+            }
             JsonArray array = accountObj.getArray("accounts");
             for (JsonObject obj : array.getObjectArray()) {
                 ACCOUNTS.add(new Account(obj, this));
@@ -293,6 +320,11 @@ public class Instance {
             //adding special account identifiers
             {
                 JsonObject notAccObj = (JsonObject) FILE_HANDLER.readJson(spec);
+                if(notAccObj == null) {
+                    LOG_HANDLER.fatal(getClass(), "special.json couldn't be loaded");
+                    LOG_HANDLER.save();
+                    System.exit(1);
+                }
 
                 Account.portfolioName = notAccObj.getString("portfolio").getString();
 
@@ -445,9 +477,15 @@ public class Instance {
         //Tax
         {
             TAX_ITEMS.clear();
-            //TODO handle null
-            JsonArray taxArray = (JsonArray) FILE_HANDLER.readJson(taxItm);
-            TAX_ITEMS.load(taxArray);
+            JsonArray array = (JsonArray) FILE_HANDLER.readJson(taxItm);
+            if(array == null) {
+                LOG_HANDLER.fatal(getClass(), "tax-items.json couldn't be loaded");
+                LOG_HANDLER.save();
+                System.exit(1);
+            }
+            TAX_ITEMS.load(array);
+            TAX_ITEMS.changed = false;
+            LOG_HANDLER.trace(getClass(), "Tax Items loaded");
         }
     }
 

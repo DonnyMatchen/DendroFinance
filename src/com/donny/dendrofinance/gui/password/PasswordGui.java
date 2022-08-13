@@ -12,6 +12,7 @@ import java.awt.event.KeyEvent;
 import java.io.File;
 import java.math.MathContext;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 
 /**
@@ -35,7 +36,6 @@ public class PasswordGui extends JFrame {
             setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
             A = new JLabel("Password");
-
             B = new JLabel("Profile");
 
             PASSWORD = new JPasswordField();
@@ -148,6 +148,7 @@ public class PasswordGui extends JFrame {
         }
         CURRENT_INSTANCE.ENCRYPTION_HANDLER.changeKey(PASSWORD.getPassword());
         PASSWORD.setText("");
+        System.out.println(new String(CURRENT_INSTANCE.ENCRYPTION_HANDLER.decrypt("y5UDilDzgjRqlunDXIEh7hJJqZiZFKH6RQs39NGZa8R9aiY0QzKb3E4dN9qFVNC3MFivBp5ALjYssutc3mwgp1DkV9oUV84oTWMKuLAjB2E8E7yJyrxO6Q==")));
         if (CURRENT_INSTANCE.ENCRYPTION_HANDLER.keysInitiated() && CURRENT_INSTANCE.ENCRYPTION_HANDLER.checkPassword()) {
             done = true;
             setVisible(false);
@@ -180,6 +181,12 @@ public class PasswordGui extends JFrame {
             if (flags.contains("D")) {
                 CURRENT_INSTANCE.day = true;
             }
+            if (flags.contains("X")) {
+                CURRENT_INSTANCE.large = true;
+            }
+            if (flags.contains("x")) {
+                CURRENT_INSTANCE.large = false;
+            }
         }
         if (config.containsKey("precision")) {
             CURRENT_INSTANCE.precision = new MathContext(config.getDecimal("precision").decimal.intValue());
@@ -195,6 +202,9 @@ public class PasswordGui extends JFrame {
                 CURRENT_INSTANCE.main__Ticker = CURRENT_INSTANCE.mainTicker + " Extra";
             }
         }
+        if( config.containsKey("block")) {
+            CURRENT_INSTANCE.blockSize = config.getDecimal("block").decimal.intValue();
+        }
     }
 
     public JsonObject getConfig(String name) throws JsonFormattingException {
@@ -203,7 +213,8 @@ public class PasswordGui extends JFrame {
         CURRENT_INSTANCE.log = false;
         CURRENT_INSTANCE.american = true;
         CURRENT_INSTANCE.day = false;
-        config.put("flags", new JsonString("lxAd"));
+        CURRENT_INSTANCE.large = false;
+        config.put("flags", new JsonString("lAdx"));
         CURRENT_INSTANCE.precision = new MathContext(20);
         config.put("precision", new JsonDecimal(20));
         CURRENT_INSTANCE.logLevel = new LogHandler.LogLevel("info");
@@ -212,6 +223,8 @@ public class PasswordGui extends JFrame {
         config.put("main", new JsonString("USD"));
         CURRENT_INSTANCE.main__Ticker = "USD Extra";
         config.put("main__", new JsonString("USD Extra"));
+        CURRENT_INSTANCE.blockSize = 4;
+        config.put("block", new JsonDecimal(4));
         return config;
     }
 

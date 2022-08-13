@@ -4,12 +4,13 @@ import com.donny.dendrofinance.instance.Instance;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class DecryptionInputStream extends FileInputStream {
     private final Instance CURRENT_INSTANCE;
     private final EncryptionHandler ENCRYPTION_HANDLER;
-    private final StringBuilder IN_BUFFER = new StringBuilder();
-    private final byte[] OUT_BUFFER = new byte[16];
+    private final StringBuilder INTAKE = new StringBuilder();
+    private byte[] buffer = null;
     private int cursor = 0;
     private boolean end = false;
     /*
@@ -80,44 +81,46 @@ public class DecryptionInputStream extends FileInputStream {
                     if (status == 0) {
                         status = 1;
                     } else {
-                        byte[] decod = CURRENT_INSTANCE.ENCRYPTION_HANDLER.decrypt(IN_BUFFER.toString());
-                        if (decod == null || decod.length != 16) {
+                        byte[] decod = ENCRYPTION_HANDLER.decrypt(INTAKE.toString());
+                        if (decod == null || decod.length < 6) {
                             CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Something went wrong: " + getStatus());
                             return -1;
                         }
-                        System.arraycopy(decod, 0, OUT_BUFFER, 0, 16);
-                        IN_BUFFER.setLength(0);
+                        buffer = decod;
+                        INTAKE.setLength(0);
                         if (status == 1) {
                             status = 2;
                             // "passwd" = 112 97 115 115 119 100
                             if (
-                                    OUT_BUFFER[0] == (byte) 112
-                                            && OUT_BUFFER[1] == (byte) 97
-                                            && OUT_BUFFER[2] == (byte) 115
-                                            && OUT_BUFFER[3] == (byte) 115
-                                            && OUT_BUFFER[4] == (byte) 119
-                                            && OUT_BUFFER[5] == (byte) 100
+                                    buffer[0] == (byte) 112
+                                            && buffer[1] == (byte) 97
+                                            && buffer[2] == (byte) 115
+                                            && buffer[3] == (byte) 115
+                                            && buffer[4] == (byte) 119
+                                            && buffer[5] == (byte) 100
                             ) {
                                 status = 3;
                                 cursor = 6;
+                            } else {
+                                System.out.println(Arrays.toString(buffer));
                             }
                         }
                         flag = false;
                     }
                 } else {
-                    IN_BUFFER.append((char) x);
+                    INTAKE.append((char) x);
                 }
             }
         }
         int read = cursor;
         cursor++;
-        if (cursor == 16) {
+        if (cursor == buffer.length) {
             cursor = 0;
         }
-        if (OUT_BUFFER[read] == 0 && end) {
+        if (buffer[read] == 0 && end) {
             boolean padding = true;
-            for (int i = read; i < OUT_BUFFER.length; i++) {
-                if (OUT_BUFFER[i] != 0) {
+            for (int i = read; i < buffer.length; i++) {
+                if (buffer[i] != 0) {
                     padding = false;
                     break;
                 }
@@ -126,7 +129,7 @@ public class DecryptionInputStream extends FileInputStream {
                 return -1;
             }
         }
-        return OUT_BUFFER[read];
+        return buffer[read];
     }
 
     @Override

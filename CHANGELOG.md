@@ -1,6 +1,7 @@
 ## v0.8.0
 * minor bug fixes
   * fixed `FileHandler.ensure()`
+  * `ImportHandler` now updates `MainGui`
 * implemented Jackson library
   * removed janky JSON parsing code
     * removed "raw" string constructors from JsonItems

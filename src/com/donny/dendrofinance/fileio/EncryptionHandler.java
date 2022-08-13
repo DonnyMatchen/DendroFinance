@@ -109,7 +109,7 @@ public class EncryptionHandler {
         if (directory.isDirectory() && directoryList != null) {
             for (File f : directoryList) {
                 if (f.getName().contains(".xtbl")) {
-                    try(DecryptionInputStream test = new DecryptionInputStream(f, CURRENT_INSTANCE)) {
+                    try (DecryptionInputStream test = new DecryptionInputStream(f, CURRENT_INSTANCE)) {
                         if (!test.check()) {
                             CURRENT_INSTANCE.LOG_HANDLER.warn(getClass(), "File: " + f + ", Status: " + test.getStatus());
                             return false;

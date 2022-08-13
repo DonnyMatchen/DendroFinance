@@ -221,10 +221,10 @@ public class ProfileGui extends ModalFrame {
             if (flags.contains("D")) {
                 DAY.setSelected(true);
             }
-            if(flags.contains("X")) {
+            if (flags.contains("X")) {
                 LARGE.setSelected(true);
             }
-            if(flags.contains("x")) {
+            if (flags.contains("x")) {
                 LARGE.setSelected(false);
             }
         }
@@ -240,7 +240,7 @@ public class ProfileGui extends ModalFrame {
         if (config.containsKey("main__")) {
             CUR2.setText(config.getString("main__").getString());
         }
-        if(config.containsKey("block")) {
+        if (config.containsKey("block")) {
             BLOCK.setText("" + config.getDecimal("block").decimal);
         }
     }
@@ -275,7 +275,7 @@ public class ProfileGui extends ModalFrame {
             }
             if (LARGE.isSelected()) {
                 flags += "X";
-            }else {
+            } else {
                 flags += "x";
             }
             config.put("flags", new JsonString(flags));

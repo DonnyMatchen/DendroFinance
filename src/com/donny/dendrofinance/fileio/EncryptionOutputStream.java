@@ -19,7 +19,7 @@ public class EncryptionOutputStream extends FileOutputStream {
         super(name);
         CURRENT_INSTANCE = curInst;
         ENCRYPTION_HANDLER = handler;
-        BLOCK_SIZE = blockSize*16;
+        BLOCK_SIZE = blockSize * 16;
         BUFFER = new byte[BLOCK_SIZE];
     }
 
@@ -27,7 +27,7 @@ public class EncryptionOutputStream extends FileOutputStream {
         super(file);
         CURRENT_INSTANCE = curInst;
         ENCRYPTION_HANDLER = handler;
-        BLOCK_SIZE = blockSize*16;
+        BLOCK_SIZE = blockSize * 16;
         BUFFER = new byte[BLOCK_SIZE];
     }
 

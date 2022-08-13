@@ -102,7 +102,7 @@ public class DecryptionInputStream extends FileInputStream {
                                 status = 3;
                                 cursor = 6;
                             } else {
-                                System.out.println(Arrays.toString(buffer));
+                                CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Decryption failed\n" + Arrays.toString(buffer));
                             }
                         }
                         flag = false;

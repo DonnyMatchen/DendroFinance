@@ -12,7 +12,6 @@ import java.awt.event.KeyEvent;
 import java.io.File;
 import java.math.MathContext;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Comparator;
 
 /**
@@ -148,7 +147,6 @@ public class PasswordGui extends JFrame {
         }
         CURRENT_INSTANCE.ENCRYPTION_HANDLER.changeKey(PASSWORD.getPassword());
         PASSWORD.setText("");
-        System.out.println(new String(CURRENT_INSTANCE.ENCRYPTION_HANDLER.decrypt("y5UDilDzgjRqlunDXIEh7hJJqZiZFKH6RQs39NGZa8R9aiY0QzKb3E4dN9qFVNC3MFivBp5ALjYssutc3mwgp1DkV9oUV84oTWMKuLAjB2E8E7yJyrxO6Q==")));
         if (CURRENT_INSTANCE.ENCRYPTION_HANDLER.keysInitiated() && CURRENT_INSTANCE.ENCRYPTION_HANDLER.checkPassword()) {
             done = true;
             setVisible(false);
@@ -202,7 +200,7 @@ public class PasswordGui extends JFrame {
                 CURRENT_INSTANCE.main__Ticker = CURRENT_INSTANCE.mainTicker + " Extra";
             }
         }
-        if( config.containsKey("block")) {
+        if (config.containsKey("block")) {
             CURRENT_INSTANCE.blockSize = config.getDecimal("block").decimal.intValue();
         }
     }

@@ -1,11 +1,10 @@
 package com.donny.dendrofinance.util;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 
 public class Partitioner<E> {
     public static ArrayList<byte[]> partition(byte[] array, int partitionSize) {
-        if(partitionSize < 1) {
+        if (partitionSize < 1) {
             throw new IllegalArgumentException("Partition Size must be a positive number!");
         }
         ArrayList<byte[]> out = new ArrayList<>();
@@ -13,7 +12,7 @@ public class Partitioner<E> {
         byte[] current = null;
         for (byte b : array) {
             if (cursor == 0) {
-                if(current != null) {
+                if (current != null) {
                     out.add(current);
                 }
                 current = new byte[partitionSize];
@@ -25,19 +24,20 @@ public class Partitioner<E> {
             }
         }
         boolean flag = false;
-        for(byte b : current) {
+        for (byte b : current) {
             if (b != 0) {
                 flag = true;
                 break;
             }
         }
-        if(flag) {
+        if (flag) {
             out.add(current);
         }
         return out;
     }
+
     public static ArrayList<int[]> partition(int[] array, int partitionSize) {
-        if(partitionSize < 1) {
+        if (partitionSize < 1) {
             throw new IllegalArgumentException("Partition Size must be a positive number!");
         }
         ArrayList<int[]> out = new ArrayList<>();
@@ -45,7 +45,7 @@ public class Partitioner<E> {
         int[] current = null;
         for (int i : array) {
             if (cursor == 0) {
-                if(current != null) {
+                if (current != null) {
                     out.add(current);
                 }
                 current = new int[partitionSize];
@@ -57,19 +57,20 @@ public class Partitioner<E> {
             }
         }
         boolean flag = false;
-        for(int i : current) {
+        for (int i : current) {
             if (i != 0) {
                 flag = true;
                 break;
             }
         }
-        if(flag) {
+        if (flag) {
             out.add(current);
         }
         return out;
     }
+
     public static ArrayList<long[]> partition(long[] array, int partitionSize) {
-        if(partitionSize < 1) {
+        if (partitionSize < 1) {
             throw new IllegalArgumentException("Partition Size must be a positive number!");
         }
         ArrayList<long[]> out = new ArrayList<>();
@@ -77,7 +78,7 @@ public class Partitioner<E> {
         long[] current = null;
         for (long l : array) {
             if (cursor == 0) {
-                if(current != null) {
+                if (current != null) {
                     out.add(current);
                 }
                 current = new long[partitionSize];
@@ -89,19 +90,20 @@ public class Partitioner<E> {
             }
         }
         boolean flag = false;
-        for(long l : current) {
+        for (long l : current) {
             if (l != 0) {
                 flag = true;
                 break;
             }
         }
-        if(flag) {
+        if (flag) {
             out.add(current);
         }
         return out;
     }
+
     public static ArrayList<double[]> partition(double[] array, int partitionSize) {
-        if(partitionSize < 1) {
+        if (partitionSize < 1) {
             throw new IllegalArgumentException("Partition Size must be a positive number!");
         }
         ArrayList<double[]> out = new ArrayList<>();
@@ -109,7 +111,7 @@ public class Partitioner<E> {
         double[] current = null;
         for (double d : array) {
             if (cursor == 0) {
-                if(current != null) {
+                if (current != null) {
                     out.add(current);
                 }
                 current = new double[partitionSize];
@@ -121,20 +123,20 @@ public class Partitioner<E> {
             }
         }
         boolean flag = false;
-        for(double d : current) {
+        for (double d : current) {
             if (d != 0) {
                 flag = true;
                 break;
             }
         }
-        if(flag) {
+        if (flag) {
             out.add(current);
         }
         return out;
     }
 
     public ArrayList<E[]> partition(E[] array, int partitionSize, E def) {
-        if(partitionSize < 1) {
+        if (partitionSize < 1) {
             throw new IllegalArgumentException("Partition Size must be a positive number!");
         }
         ArrayList<E[]> out = new ArrayList<>();
@@ -142,7 +144,7 @@ public class Partitioner<E> {
         Object[] current = null;
         for (E e : array) {
             if (cursor == 0) {
-                if(current != null) {
+                if (current != null) {
                     out.add((E[]) current);
                 }
                 current = new Object[partitionSize];
@@ -154,13 +156,13 @@ public class Partitioner<E> {
             }
         }
         boolean flag = false;
-        for(Object o : current) {
+        for (Object o : current) {
             if (o != def) {
                 flag = true;
                 break;
             }
         }
-        if(flag) {
+        if (flag) {
             out.add((E[]) current);
         }
         return out;

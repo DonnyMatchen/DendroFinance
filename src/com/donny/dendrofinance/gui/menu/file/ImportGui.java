@@ -11,6 +11,7 @@ import java.io.File;
 
 public class ImportGui extends RegisterFrame {
     private final String DIR;
+    private final MainGui MAIN_GUI;
     private final JLabel A, B;
     private final JComboBox<String> MODE;
     private final JScrollPane PANE;
@@ -22,6 +23,7 @@ public class ImportGui extends RegisterFrame {
         super(caller, "Import", curInst);
 
         DIR = CURRENT_INSTANCE.data.getPath() + File.separator + "Imports";
+        MAIN_GUI = caller;
 
         //draw gui
         {
@@ -100,6 +102,7 @@ public class ImportGui extends RegisterFrame {
                     this,
                     ImportHandler.ImportMode.fromString((String) MODE.getSelectedItem()));
             updateList();
+            MAIN_GUI.updateTable();
         }
     }
 
@@ -111,6 +114,7 @@ public class ImportGui extends RegisterFrame {
                         ImportHandler.ImportMode.fromString((String) MODE.getSelectedItem()));
             }
             updateList();
+            MAIN_GUI.updateTable();
         }
     }
 

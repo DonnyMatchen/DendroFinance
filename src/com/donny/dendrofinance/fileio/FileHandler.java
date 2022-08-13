@@ -58,7 +58,7 @@ public class FileHandler {
         ensure(file.getParentFile());
         try {
             JsonItem item;
-            if(CURRENT_INSTANCE.large) {
+            if (CURRENT_INSTANCE.large) {
                 item = JsonItem.digest(new JsonFactory().createParser(file));
             } else {
                 item = JsonItem.digest(new JsonFactory().createParser(read(file)));
@@ -82,19 +82,19 @@ public class FileHandler {
         ensure(file.getParentFile());
         try {
             JsonItem item;
-            if(CURRENT_INSTANCE.large) {
+            if (CURRENT_INSTANCE.large) {
                 item = JsonItem.digest(new JsonFactory().createParser(new DecryptionInputStream(file, CURRENT_INSTANCE)));
             } else {
                 String code = read(file);
                 String[] codes = code.split(" ");
                 ArrayList<Byte> bytes = new ArrayList<>();
-                for(String cod : codes) {
-                    for(byte b : CURRENT_INSTANCE.ENCRYPTION_HANDLER.decrypt(cod)) {
+                for (String cod : codes) {
+                    for (byte b : CURRENT_INSTANCE.ENCRYPTION_HANDLER.decrypt(cod)) {
                         bytes.add(b);
                     }
                 }
                 byte[] raw = new byte[bytes.size()];
-                for(int i = 0; i < bytes.size(); i++) {
+                for (int i = 0; i < bytes.size(); i++) {
                     raw[i] = bytes.get(i);
                 }
                 item = JsonItem.digest(new JsonFactory().createParser(new String(raw, Instance.CHARSET).substring(6)));
@@ -120,19 +120,19 @@ public class FileHandler {
         if (decrypt != null) {
             try {
                 JsonItem item;
-                if(CURRENT_INSTANCE.large) {
+                if (CURRENT_INSTANCE.large) {
                     item = JsonItem.digest(new JsonFactory().createParser(new DecryptionInputStream(file, decrypt, CURRENT_INSTANCE)));
                 } else {
                     String code = read(file);
                     String[] codes = code.split(" ");
                     ArrayList<Byte> bytes = new ArrayList<>();
-                    for(String cod : codes) {
-                        for(byte b : decrypt.decrypt(cod)) {
+                    for (String cod : codes) {
+                        for (byte b : decrypt.decrypt(cod)) {
                             bytes.add(b);
                         }
                     }
                     byte[] raw = new byte[bytes.size()];
-                    for(int i = 0; i < bytes.size(); i++) {
+                    for (int i = 0; i < bytes.size(); i++) {
                         raw[i] = bytes.get(i);
                     }
                     item = JsonItem.digest(new JsonFactory().createParser(new String(raw, Instance.CHARSET).substring(6)));
@@ -179,7 +179,7 @@ public class FileHandler {
     public void writeJson(File file, JsonItem item) {
         ensure(file.getParentFile());
         try (FileWriter writer = new FileWriter(file, Instance.CHARSET)) {
-            if(CURRENT_INSTANCE.large) {
+            if (CURRENT_INSTANCE.large) {
                 JsonItem.save(item, writer);
             } else {
                 write(file, item.print());
@@ -196,7 +196,7 @@ public class FileHandler {
 
     public void writeEncryptJson(File file, JsonItem item) {
         ensure(file.getParentFile());
-        if(CURRENT_INSTANCE.large) {
+        if (CURRENT_INSTANCE.large) {
             try (EncryptionOutputStream stream = new EncryptionOutputStream(file, CURRENT_INSTANCE)) {
                 stream.write("passwd".getBytes(Instance.CHARSET));
                 JsonItem.saveEncrypt(item, stream);
@@ -207,7 +207,7 @@ public class FileHandler {
         } else {
             String json = "passwd" + item.toString();
             StringBuilder out = new StringBuilder();
-            for(byte[] segment : Partitioner.partition(json.getBytes(Instance.CHARSET), CURRENT_INSTANCE.blockSize*16)){
+            for (byte[] segment : Partitioner.partition(json.getBytes(Instance.CHARSET), CURRENT_INSTANCE.blockSize * 16)) {
                 out.append(" ").append(CURRENT_INSTANCE.ENCRYPTION_HANDLER.encrypt(segment));
             }
             write(file, out.toString());
@@ -223,7 +223,7 @@ public class FileHandler {
         ensure(file.getParentFile());
         EncryptionHandler encrypt = UnkPasswordGui.getTestPassword(caller, file.getName(), CURRENT_INSTANCE);
         if (encrypt != null) {
-            if(CURRENT_INSTANCE.large) {
+            if (CURRENT_INSTANCE.large) {
                 try (EncryptionOutputStream stream = new EncryptionOutputStream(file, encrypt, CURRENT_INSTANCE)) {
                     stream.write("passwd".getBytes(Instance.CHARSET));
                     JsonItem.saveEncrypt(item, stream);
@@ -234,7 +234,7 @@ public class FileHandler {
             } else {
                 String json = "passwd" + item.toString();
                 StringBuilder out = new StringBuilder();
-                for(byte[] segment : Partitioner.partition(json.getBytes(Instance.CHARSET), CURRENT_INSTANCE.blockSize*16)){
+                for (byte[] segment : Partitioner.partition(json.getBytes(Instance.CHARSET), CURRENT_INSTANCE.blockSize * 16)) {
                     out.append(" ").append(encrypt.encrypt(segment));
                 }
                 write(file, out.toString());

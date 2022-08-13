@@ -1,5 +1,10 @@
 package com.donny.dendrofinance.json;
 
+import com.donny.dendrofinance.fileio.EncryptionOutputStream;
+import com.donny.dendrofinance.instance.Instance;
+
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 
@@ -9,97 +14,6 @@ public class JsonObject extends JsonItem {
     public JsonObject() {
         super(JsonType.OBJECT);
         CONTENTS = new LinkedHashMap<>();
-    }
-
-    public JsonObject(String raw) throws JsonFormattingException {
-        this();
-        if (!raw.equals("{}")) {
-            raw = raw.substring(1, raw.length() - 1);
-            ArrayList<String> rawValues = new ArrayList<>();
-            ArrayList<String> keys = new ArrayList<>();
-            int array = 0, object = 0;
-            boolean itemd = false, string = false, escape = false;
-            StringBuilder sb = new StringBuilder();
-            for (char c : raw.toCharArray()) {
-                if (c == ']' && !string) {
-                    array--;
-                } else if (c == '}' && !string) {
-                    object--;
-                } else if (c == '[' && !string) {
-                    array++;
-                } else if (c == '{' && !string) {
-                    object++;
-                } else if (c == '"') {
-                    if (!escape) {
-                        string = !string;
-                    }
-                }
-                if (c == ':' && !itemd) {
-                    itemd = true;
-                    keys.add(sb.toString().replace("\"", ""));
-                    sb = new StringBuilder();
-                } else if (c == ',' && itemd && array + object == 0 && !string) {
-                    rawValues.add(sb.toString());
-                    sb = new StringBuilder();
-                    itemd = false;
-                } else {
-                    if (escape || c != '\\') {
-                        if (escape) {
-                            switch (c) {
-                                case 'n' -> {
-                                    sb.append("\n");
-                                    escape = false;
-                                }
-                                case 'r' -> {
-                                    sb.append("\r");
-                                    escape = false;
-                                }
-                                case 't' -> {
-                                    sb.append("\t");
-                                    escape = false;
-                                }
-                                case 's' -> {
-                                    sb.append("\s");
-                                    escape = false;
-                                }
-                                case 'f' -> {
-                                    sb.append("\f");
-                                    escape = false;
-                                }
-                                case '\'' -> {
-                                    sb.append("'");
-                                    escape = false;
-                                }
-                                case 'b' -> {
-                                    sb.append("\b");
-                                    escape = false;
-                                }
-                                case '"' -> {
-                                    sb.append("\"");
-                                    escape = false;
-                                }
-                                case '\\' -> {
-                                    sb.append("\\");
-                                    escape = false;
-                                }
-                            }
-                        } else {
-                            sb.append(c);
-                        }
-                    }
-                }
-                if (escape) {
-                    throw new JsonFormattingException("Invalid Escape");
-                }
-                if (c == '\\') {
-                    escape = true;
-                }
-            }
-            rawValues.add(sb.toString());
-            for (int i = 0; i < keys.size(); i++) {
-                CONTENTS.put(keys.get(i), JsonItem.digest(rawValues.get(i)));
-            }
-        }
     }
 
     public JsonItem get(String key) {
@@ -167,6 +81,46 @@ public class JsonObject extends JsonItem {
                 sb.append("\n").append(indent(internal)).append("\"").append(key).append("\": ").append(CONTENTS.get(key).print(internal)).append(",");
             }
             return sb.deleteCharAt(sb.length() - 1).append("\n").append(indent(scope)).append("}").toString();
+        }
+    }
+
+    @Override
+    protected void stream(FileWriter writer) throws IOException {
+        if (CONTENTS.keySet().size() == 0) {
+            writer.write("{}");
+        } else {
+            writer.write("{");
+            ArrayList<String> keys = new ArrayList<>(CONTENTS.keySet());
+            int x = keys.size();
+            for (int i = 0; i < x; i++) {
+                writer.write('"' + keys.get(i) + "\":");
+                CONTENTS.get(keys.get(i)).stream(writer);
+                if (i < x - 1) {
+                    writer.write(",");
+                } else {
+                    writer.write("}");
+                }
+            }
+        }
+    }
+
+    @Override
+    protected void streamEncrypt(EncryptionOutputStream stream) throws IOException {
+        if (CONTENTS.keySet().size() == 0) {
+            stream.write("{}".getBytes(Instance.CHARSET));
+        } else {
+            stream.write("{".getBytes(Instance.CHARSET));
+            ArrayList<String> keys = new ArrayList<>(CONTENTS.keySet());
+            int x = keys.size();
+            for (int i = 0; i < x; i++) {
+                stream.write(('"' + keys.get(i) + "\":").getBytes(Instance.CHARSET));
+                CONTENTS.get(keys.get(i)).streamEncrypt(stream);
+                if (i < x - 1) {
+                    stream.write(",".getBytes(Instance.CHARSET));
+                } else {
+                    stream.write("}".getBytes(Instance.CHARSET));
+                }
+            }
         }
     }
 }

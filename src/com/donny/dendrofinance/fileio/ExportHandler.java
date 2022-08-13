@@ -1,4 +1,4 @@
-package com.donny.dendrofinance.data;
+package com.donny.dendrofinance.fileio;
 
 import com.donny.dendrofinance.entry.BudgetEntry;
 import com.donny.dendrofinance.entry.TransactionEntry;
@@ -7,7 +7,6 @@ import com.donny.dendrofinance.json.JsonArray;
 import com.donny.dendrofinance.json.JsonFormattingException;
 import com.donny.dendrofinance.types.LDate;
 
-import javax.swing.*;
 import java.io.File;
 
 public class ExportHandler {
@@ -20,15 +19,12 @@ public class ExportHandler {
         CURRENT_INSTANCE.LOG_HANDLER.trace(getClass(), "ExportHandler initiated");
     }
 
-    public void export(String extension, String name, JFrame caller) {
-        if (!DIR.exists()) {
-            DIR.mkdir();
-        }
+    public void export(String extension, String name) {
         LDate now = LDate.now(CURRENT_INSTANCE);
         File directory = new File(DIR.getPath() +
                 File.separator + now.toDateString().replace("/", "-") +
                 File.separator + now.toTimeString().replace(":", "-"));
-        directory.mkdir();
+        CURRENT_INSTANCE.FILE_HANDLER.ensure(directory);
         switch (extension) {
             case "JSON" -> {
                 File transactions = new File(directory.getPath() + File.separator + name + "-Transactions.json");
@@ -40,7 +36,7 @@ public class ExportHandler {
                         CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Damaged Transaction Entry: " + entry.getUUID());
                     }
                 }
-                CURRENT_INSTANCE.FILE_HANDLER.write(transactions, array.toString());
+                CURRENT_INSTANCE.FILE_HANDLER.writeJson(transactions, array);
 
                 File budgets = new File(directory.getPath() + File.separator + name + "-Budgets.json");
                 array = new JsonArray();
@@ -51,7 +47,7 @@ public class ExportHandler {
                         CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Damaged Budget Entry: " + entry.getUUID());
                     }
                 }
-                CURRENT_INSTANCE.FILE_HANDLER.write(budgets, array.toString());
+                CURRENT_INSTANCE.FILE_HANDLER.writeJson(budgets, array);
             }
             case "XTBL" -> {
                 File transactions = new File(directory.getPath() + File.separator + name + "-Transactions.xtbl");
@@ -63,7 +59,7 @@ public class ExportHandler {
                         CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Damaged Transaction Entry: " + entry.getUUID());
                     }
                 }
-                CURRENT_INSTANCE.FILE_HANDLER.writeEncryptUnknownPassword(transactions, "passwd" + array, caller);
+                CURRENT_INSTANCE.FILE_HANDLER.writeEncryptJson(transactions, array);
 
                 File budgets = new File(directory.getPath() + File.separator + name + "-Budgets.xtbl");
                 array = new JsonArray();
@@ -74,7 +70,7 @@ public class ExportHandler {
                         CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Damaged Budget Entry: " + entry.getUUID());
                     }
                 }
-                CURRENT_INSTANCE.FILE_HANDLER.writeEncryptUnknownPassword(budgets, "passwd" + array, caller);
+                CURRENT_INSTANCE.FILE_HANDLER.writeEncryptJson(budgets, array);
             }
         }
     }

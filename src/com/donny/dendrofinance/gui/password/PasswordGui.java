@@ -35,7 +35,6 @@ public class PasswordGui extends JFrame {
             setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
             A = new JLabel("Password");
-
             B = new JLabel("Profile");
 
             PASSWORD = new JPasswordField();
@@ -51,15 +50,14 @@ public class PasswordGui extends JFrame {
             PROFILE = new JComboBox<>();
             File file = new File(CURRENT_INSTANCE.data.getPath() + File.separator + "profiles.json");
             if (file.exists()) {
-                try {
-                    JsonArray array = (JsonArray) JsonItem.sanitizeDigest(CURRENT_INSTANCE.FILE_HANDLER.read(file));
-                    for (JsonObject obj : array.getObjectArray()) {
-                        addProfile(obj, false);
-                    }
-                } catch (JsonFormattingException e) {
-                    CURRENT_INSTANCE.LOG_HANDLER.fatal(getClass(), "Mis-formatted Profiles!\n" + e);
+                JsonArray array = (JsonArray) CURRENT_INSTANCE.FILE_HANDLER.readJson(file);
+                if (array == null) {
+                    CURRENT_INSTANCE.LOG_HANDLER.fatal(getClass(), "Mis-formatted Profiles");
                     CURRENT_INSTANCE.LOG_HANDLER.save();
                     System.exit(1);
+                }
+                for (JsonObject obj : array.getObjectArray()) {
+                    addProfile(obj, false);
                 }
             }
 
@@ -181,6 +179,12 @@ public class PasswordGui extends JFrame {
             if (flags.contains("D")) {
                 CURRENT_INSTANCE.day = true;
             }
+            if (flags.contains("X")) {
+                CURRENT_INSTANCE.large = true;
+            }
+            if (flags.contains("x")) {
+                CURRENT_INSTANCE.large = false;
+            }
         }
         if (config.containsKey("precision")) {
             CURRENT_INSTANCE.precision = new MathContext(config.getDecimal("precision").decimal.intValue());
@@ -196,6 +200,9 @@ public class PasswordGui extends JFrame {
                 CURRENT_INSTANCE.main__Ticker = CURRENT_INSTANCE.mainTicker + " Extra";
             }
         }
+        if (config.containsKey("block")) {
+            CURRENT_INSTANCE.blockSize = config.getDecimal("block").decimal.intValue();
+        }
     }
 
     public JsonObject getConfig(String name) throws JsonFormattingException {
@@ -204,7 +211,8 @@ public class PasswordGui extends JFrame {
         CURRENT_INSTANCE.log = false;
         CURRENT_INSTANCE.american = true;
         CURRENT_INSTANCE.day = false;
-        config.put("flags", new JsonString("lxAd"));
+        CURRENT_INSTANCE.large = false;
+        config.put("flags", new JsonString("lAdx"));
         CURRENT_INSTANCE.precision = new MathContext(20);
         config.put("precision", new JsonDecimal(20));
         CURRENT_INSTANCE.logLevel = new LogHandler.LogLevel("info");
@@ -213,6 +221,8 @@ public class PasswordGui extends JFrame {
         config.put("main", new JsonString("USD"));
         CURRENT_INSTANCE.main__Ticker = "USD Extra";
         config.put("main__", new JsonString("USD Extra"));
+        CURRENT_INSTANCE.blockSize = 4;
+        config.put("block", new JsonDecimal(4));
         return config;
     }
 

@@ -1,5 +1,27 @@
+## v0.8.0
+* minor bug fixes
+  * fixed `FileHandler.ensure()`
+  * `ImportHandler` now updates `MainGui`
+* implemented Jackson library
+  * removed janky JSON parsing code
+    * removed "raw" string constructors from JsonItems
+  * Jackson used for Json input
+    * for strings
+    * for files
+    * for encrypted files
+* Json output is now independent of stringification
+  * for files
+  * for encrypted files
+  * handle fatal conditions related to damaged JSONs
+* updated `README.md`
+* streamlined `FileHandler`, removing redundant methods
+* moved `FileHandler`, `ExportHandler`, `ImportHandler` and `EncryptionHandler` from `com.donny.dendrofinance.data` to `com.donny.dendrofinance.fileio`
+* added `EncryptionOutputStream` and `DecryptionInputStream`
+* changed over to UTF-8 as sole Charset
+* added a flag for "large" and block size to `Instance`;
+
 ## v0.7.4
-* (X) minor bug fixes
+* minor bug fixes
   * changed UUIDs to unsigned
   * fixed capital gain/loss disparity checker
   * minor optimizations

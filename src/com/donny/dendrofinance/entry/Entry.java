@@ -1,6 +1,6 @@
 package com.donny.dendrofinance.entry;
 
-import com.donny.dendrofinance.data.ImportHandler;
+import com.donny.dendrofinance.fileio.ImportHandler;
 import com.donny.dendrofinance.instance.Instance;
 import com.donny.dendrofinance.json.JsonDecimal;
 import com.donny.dendrofinance.json.JsonFormattingException;

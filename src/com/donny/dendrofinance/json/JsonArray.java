@@ -1,100 +1,16 @@
 package com.donny.dendrofinance.json;
 
+import com.donny.dendrofinance.fileio.EncryptionOutputStream;
 import com.donny.dendrofinance.instance.Instance;
 import com.donny.dendrofinance.util.ExportableToJson;
 
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 
 public class JsonArray extends JsonItem {
     private final ArrayList<JsonItem> ARRAY;
-
-    public JsonArray(String raw) throws JsonFormattingException {
-        this();
-        if (!raw.equals("[]")) {
-            raw = raw.substring(1, raw.length() - 1);
-            ArrayList<String> temp = new ArrayList<>();
-            int array = 0, object = 0;
-            boolean string = false;
-            boolean escape = false;
-            StringBuilder sb = new StringBuilder();
-            for (char c : raw.toCharArray()) {
-                if (c == ']' && !string) {
-                    array--;
-                } else if (c == '}' && !string) {
-                    object--;
-                } else if (c == '[' && !string) {
-                    array++;
-                } else if (c == '{' && !string) {
-                    object++;
-                } else if (c == '"') {
-                    if (!escape) {
-                        string = !string;
-                    }
-                }
-                if (c == ',' && array + object == 0 && !string) {
-                    temp.add(sb.toString());
-                    sb = new StringBuilder();
-                } else {
-                    if (escape || c != '\\') {
-                        if (escape) {
-                            switch (c) {
-                                case 'n' -> {
-                                    sb.append("\n");
-                                    escape = false;
-                                }
-                                case 'r' -> {
-                                    sb.append("\r");
-                                    escape = false;
-                                }
-                                case 't' -> {
-                                    sb.append("\t");
-                                    escape = false;
-                                }
-                                case 's' -> {
-                                    sb.append("\s");
-                                    escape = false;
-                                }
-                                case 'f' -> {
-                                    sb.append("\f");
-                                    escape = false;
-                                }
-                                case '\'' -> {
-                                    sb.append("'");
-                                    escape = false;
-                                }
-                                case 'b' -> {
-                                    sb.append("\b");
-                                    escape = false;
-                                }
-                                case '"' -> {
-                                    sb.append("\"");
-                                    escape = false;
-                                }
-                                case '\\' -> {
-                                    sb.append("\\");
-                                    escape = false;
-                                }
-                            }
-                        } else {
-                            sb.append(c);
-                        }
-                    }
-                }
-                if (escape) {
-                    throw new JsonFormattingException("Invalid Escape");
-                }
-                if (c == '\\') {
-                    escape = true;
-                }
-            }
-            temp.add(sb.toString());
-            for (String item : temp) {
-                ARRAY.add(JsonItem.digest(item));
-            }
-        }
-
-    }
 
     public JsonArray() {
         super(JsonType.ARRAY);
@@ -230,6 +146,42 @@ public class JsonArray extends JsonItem {
                 sb.append("\n").append(indent(internal)).append(item.print(internal)).append(",");
             }
             return sb.deleteCharAt(sb.length() - 1).append("\n").append(indent(scope)).append("]").toString();
+        }
+    }
+
+    @Override
+    protected void stream(FileWriter writer) throws IOException {
+        if (ARRAY.size() == 0) {
+            writer.write("[]");
+        } else {
+            writer.write("[");
+            int x = ARRAY.size();
+            for (int i = 0; i < x; i++) {
+                ARRAY.get(i).stream(writer);
+                if (i < x - 1) {
+                    writer.write(",");
+                } else {
+                    writer.write("]");
+                }
+            }
+        }
+    }
+
+    @Override
+    protected void streamEncrypt(EncryptionOutputStream stream) throws IOException {
+        if (ARRAY.size() == 0) {
+            stream.write("[]".getBytes(Instance.CHARSET));
+        } else {
+            stream.write("[".getBytes(Instance.CHARSET));
+            int x = ARRAY.size();
+            for (int i = 0; i < x; i++) {
+                ARRAY.get(i).streamEncrypt(stream);
+                if (i < x - 1) {
+                    stream.write(",".getBytes(Instance.CHARSET));
+                } else {
+                    stream.write("]".getBytes(Instance.CHARSET));
+                }
+            }
         }
     }
 }

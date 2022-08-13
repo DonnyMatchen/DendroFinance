@@ -10,7 +10,6 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
 
 public class DendroFactory {
     public static final Color WRONG = new Color(100, 20, 20),
@@ -71,10 +70,10 @@ public class DendroFactory {
             ge.registerFont(font);
             unifont = new Font("Unifont", Font.PLAIN, 15);
             verdana = new Font("Verdana", Font.PLAIN, 15);
-            JsonItem ui = JsonItem.sanitizeDigest(new String(curInst.FILE_HANDLER.getResource("ui.json"), StandardCharsets.US_ASCII));
+            JsonItem ui = curInst.FILE_HANDLER.getResource("ui.json");
             setUI((JsonArray) ui);
             curInst.LOG_HANDLER.trace(DendroFactory.class, "DendroFactory initiated");
-        } catch (FontFormatException | IOException | JsonFormattingException e) {
+        } catch (FontFormatException | IOException e) {
             e.printStackTrace();
         }
     }

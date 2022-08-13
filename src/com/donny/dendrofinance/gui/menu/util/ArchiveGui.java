@@ -187,7 +187,7 @@ public class ArchiveGui extends RegisterFrame {
                 }
             }
             String name = min.toDateString().replace("/", "-") + " == " + max.toDateString().replace("/", "-") + ".xarc";
-            CURRENT_INSTANCE.FILE_HANDLER.writeEncryptUnknownPassword(DIR, name, arr.toString(), this);
+            CURRENT_INSTANCE.FILE_HANDLER.writeEncryptJsonUnknownPassword(DIR, name, arr, this);
             Curation<Integer> years = new Curation<>();
             for (TransactionEntry entry : CURRENT_INSTANCE.DATA_HANDLER.readTransactions()) {
                 if (!entry.getEntity().equals("PRIOR")) {
@@ -213,17 +213,15 @@ public class ArchiveGui extends RegisterFrame {
     private void export() {
         if (ARCHIVES.getSelectedItem() != null) {
             if (new File(DIR.getPath() + File.separator + ARCHIVES.getSelectedItem() + ".xarc").exists()) {
-                try {
-                    JsonItem temp = JsonItem.sanitizeDigest(CURRENT_INSTANCE.FILE_HANDLER.readDecryptUnknownPassword(DIR, ARCHIVES.getSelectedItem() + ".xarc", this));
-                    if (temp != null) {
-                        CURRENT_INSTANCE.FILE_HANDLER.write(
-                                new File(CURRENT_INSTANCE.data.getPath() + File.separator + "Exports"),
-                                "Archive (" + ARCHIVES.getSelectedItem() + ").json",
-                                temp.print());
-                    }
-                } catch (JsonFormattingException ex) {
-                    CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Your archive is borked");
-                    CURRENT_INSTANCE.LOG_HANDLER.debug(getClass(), ex.getMessage());
+                JsonItem temp = CURRENT_INSTANCE.FILE_HANDLER.readDecryptJsonUnknownPassword(
+                        new File(DIR.getPath() + File.separator + ARCHIVES.getSelectedItem() + ".xarc"),
+                        this
+                );
+                if (temp != null) {
+                    CURRENT_INSTANCE.FILE_HANDLER.write(
+                            new File(CURRENT_INSTANCE.data.getPath() + File.separator + "Exports"),
+                            "Archive (" + ARCHIVES.getSelectedItem() + ").json",
+                            temp.print());
                 }
             }
         }

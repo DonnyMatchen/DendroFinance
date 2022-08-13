@@ -1,6 +1,12 @@
 package com.donny.dendrofinance.json;
 
-import java.io.Serializable;
+import com.donny.dendrofinance.fileio.EncryptionOutputStream;
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonToken;
+
+import java.io.*;
 
 public abstract class JsonItem implements Serializable {
     public final JsonType TYPE;
@@ -9,37 +15,77 @@ public abstract class JsonItem implements Serializable {
         TYPE = type;
     }
 
-    public static JsonItem digest(String raw) throws JsonFormattingException {
-        if (raw.length() == 0) {
+    public static JsonItem digest(JsonParser parser) throws JsonFormattingException {
+        try {
+            JsonToken token = parser.nextToken();
+            if (token == null) {
+                return null;
+            } else {
+                switch (token) {
+                    case END_ARRAY -> {
+                        return null;
+                    }
+                    case START_OBJECT -> {
+                        JsonObject object = new JsonObject();
+                        boolean flag = true;
+                        while (flag) {
+                            JsonToken field = parser.nextToken();
+                            if (field == JsonToken.END_OBJECT) {
+                                flag = false;
+                            } else {
+                                if (field != JsonToken.FIELD_NAME || parser.getCurrentName() == null) {
+                                    throw new JsonFormattingException("Malformed Object");
+                                }
+                                object.put(parser.getCurrentName(), JsonItem.digest(parser));
+                            }
+                        }
+                        return object;
+                    }
+                    case START_ARRAY -> {
+                        JsonArray array = new JsonArray();
+                        boolean flag = true;
+                        while (flag) {
+                            JsonItem item = JsonItem.digest(parser);
+                            if (item == null) {
+                                flag = false;
+                            } else {
+                                array.add(item);
+                            }
+                        }
+                        return array;
+                    }
+                    case VALUE_NULL, NOT_AVAILABLE, END_OBJECT, FIELD_NAME -> {
+                        return new JsonNull();
+                    }
+                    case VALUE_TRUE -> {
+                        return new JsonBool(true);
+                    }
+                    case VALUE_FALSE -> {
+                        return new JsonBool(false);
+                    }
+                    case VALUE_NUMBER_FLOAT, VALUE_NUMBER_INT -> {
+                        return new JsonDecimal(parser.getDecimalValue());
+                    }
+                    case VALUE_STRING -> {
+                        return new JsonString(parser.getValueAsString());
+                    }
+                    default -> throw new UnsupportedOperationException();
+                }
+            }
+        } catch (JsonParseException e) {
+            e.printStackTrace();
+            return null;
+        } catch (IOException e) {
+            return null;
+        }
+    }
+
+    public static JsonItem digest(String jsonString) throws JsonFormattingException {
+        try {
+            return digest(new JsonFactory().createParser(jsonString));
+        } catch (IOException e) {
             return new JsonNull();
-        } else {
-            return switch (raw.charAt(0)) {
-                case '{' -> new JsonObject(raw);
-                case '[' -> new JsonArray(raw);
-                case '"' -> new JsonString(raw);
-                case 'T', 't', 'F', 'f' -> new JsonBool(raw);
-                case 'n' -> new JsonNull();
-                default -> new JsonDecimal(raw);
-            };
         }
-    }
-
-    public static String sanitize(String raw) {
-        boolean string = false;
-        StringBuilder sb = new StringBuilder();
-        for (char c : raw.toCharArray()) {
-            if (c == '"') {
-                string = !string;
-            }
-            if (string || (c != ' ' && c != '\n' && c != '\t' && c != '\r')) {
-                sb.append(c);
-            }
-        }
-        return sb.toString();
-    }
-
-    public static JsonItem sanitizeDigest(String raw) throws JsonFormattingException {
-        return digest(sanitize(raw));
     }
 
     public JsonType getType() {
@@ -58,5 +104,17 @@ public abstract class JsonItem implements Serializable {
         } else {
             return " ".repeat(2 * scope);
         }
+    }
+
+    protected abstract void stream(FileWriter writer) throws IOException;
+
+    protected abstract void streamEncrypt(EncryptionOutputStream stream) throws IOException;
+
+    public static void save(JsonItem item, FileWriter writer) throws IOException {
+        item.stream(writer);
+    }
+
+    public static void saveEncrypt(JsonItem item, EncryptionOutputStream stream) throws IOException {
+        item.streamEncrypt(stream);
     }
 }

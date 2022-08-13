@@ -31,7 +31,6 @@ import com.donny.dendrofinance.gui.menu.util.acc.NetIncomeGui;
 import com.donny.dendrofinance.gui.menu.util.acc.TaxZeroGui;
 import com.donny.dendrofinance.gui.menu.util.taxgui.TaxGui;
 import com.donny.dendrofinance.instance.Instance;
-import com.donny.dendrofinance.json.JsonFormattingException;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
@@ -143,12 +142,8 @@ public class MainGui extends JFrame {
 
                 JMenuItem rel = new JMenuItem("Reload");
                 rel.addActionListener(event -> {
-                    try {
-                        CURRENT_INSTANCE.reloadBackingElements();
-                        CURRENT_INSTANCE.reloadEntries();
-                    } catch (JsonFormattingException ex) {
-                        CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Malformed JSON in reload");
-                    }
+                    CURRENT_INSTANCE.reloadBackingElements();
+                    CURRENT_INSTANCE.reloadEntries();
                 });
                 JMenuItem save = new JMenuItem("Save");
                 save.addActionListener(event -> CURRENT_INSTANCE.save());

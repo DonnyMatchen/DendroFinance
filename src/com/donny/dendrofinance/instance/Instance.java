@@ -2,7 +2,6 @@ package com.donny.dendrofinance.instance;
 
 import com.donny.dendrofinance.DendroFinance;
 import com.donny.dendrofinance.account.Account;
-import com.donny.dendrofinance.account.AccountType;
 import com.donny.dendrofinance.account.BroadAccountType;
 import com.donny.dendrofinance.account.Exchange;
 import com.donny.dendrofinance.currency.LCurrency;
@@ -12,6 +11,7 @@ import com.donny.dendrofinance.currency.LStock;
 import com.donny.dendrofinance.data.*;
 import com.donny.dendrofinance.data.backingtable.*;
 import com.donny.dendrofinance.entry.TransactionEntry;
+import com.donny.dendrofinance.fileio.*;
 import com.donny.dendrofinance.gui.MainGui;
 import com.donny.dendrofinance.gui.password.PasswordGui;
 import com.donny.dendrofinance.gui.customswing.DendroFactory;
@@ -24,11 +24,13 @@ import java.io.File;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
 public class Instance {
+    public static final Charset CHARSET = StandardCharsets.UTF_8;
 
     //Major managing objects and handling lists
     public final String IID;
@@ -52,11 +54,12 @@ public class Instance {
 
     //flags, api keys, and other minor alterable things
     public MathContext precision;
-    public boolean log, american, day;
+    public boolean log, american, day, large;
     public String mainTicker, main__Ticker;
     public LogHandler.LogLevel logLevel;
     public LCurrency main;
     public LCurrency main__;
+    public int blockSize;
 
     public Instance(String iid, String[] args) {
         IID = iid;
@@ -90,13 +93,7 @@ public class Instance {
         //ensure folders and data files are set up
         ensureFolders();
         ensureBackingFiles();
-        try {
-            reloadBackingElements();
-        } catch (JsonFormattingException e) {
-            LOG_HANDLER.fatal(getClass(), "Mis-formatted data!\n" + e);
-            LOG_HANDLER.save();
-            System.exit(1);
-        }
+        reloadBackingElements();
         checkCurToMain();
 
         //Data
@@ -158,44 +155,44 @@ public class Instance {
             //Currencies
             {
                 if (!currencies.exists()) {
-                    FILE_HANDLER.write(currencies, new String(FILE_HANDLER.getTemplate("Currencies/currencies.json"), Charset.forName("unicode")));
+                    FILE_HANDLER.writeJson(currencies, FILE_HANDLER.getTemplate("Currencies/currencies.json"));
                 }
                 if (!stocks.exists()) {
-                    FILE_HANDLER.write(stocks, new String(FILE_HANDLER.getTemplate("Currencies/stocks.json"), Charset.forName("unicode")));
+                    FILE_HANDLER.writeJson(stocks, FILE_HANDLER.getTemplate("Currencies/stocks.json"));
                 }
                 if (!inventories.exists()) {
-                    FILE_HANDLER.write(inventories, new String(FILE_HANDLER.getTemplate("Currencies/inventories.json"), Charset.forName("unicode")));
+                    FILE_HANDLER.writeJson(inventories, FILE_HANDLER.getTemplate("Currencies/inventories.json"));
                 }
                 if (!marApi.exists()) {
-                    FILE_HANDLER.write(marApi, new String(FILE_HANDLER.getTemplate("Currencies/market-apis.json"), Charset.forName("unicode")));
+                    FILE_HANDLER.writeJson(marApi, FILE_HANDLER.getTemplate("Currencies/market-apis.json"));
                 }
             }
             //Accounts
             {
                 if (!exchanges.exists()) {
-                    FILE_HANDLER.write(exchanges, new String(FILE_HANDLER.getTemplate("Accounts/exchanges.json"), Charset.forName("unicode")));
+                    FILE_HANDLER.writeJson(exchanges, FILE_HANDLER.getTemplate("Accounts/exchanges.json"));
                 }
                 if (!accounts.exists()) {
-                    FILE_HANDLER.write(accounts, new String(FILE_HANDLER.getTemplate("Accounts/accounts.json"), Charset.forName("unicode")));
+                    FILE_HANDLER.writeJson(accounts, FILE_HANDLER.getTemplate("Accounts/accounts.json"));
                 }
                 if (!accTyp.exists()) {
-                    FILE_HANDLER.write(accTyp, new String(FILE_HANDLER.getTemplate("Accounts/account-types.json"), Charset.forName("unicode")));
+                    FILE_HANDLER.writeJson(accTyp, FILE_HANDLER.getTemplate("Accounts/account-types.json"));
                 }
                 if (!taxItm.exists()) {
-                    FILE_HANDLER.write(taxItm, new String(FILE_HANDLER.getTemplate("Accounts/tax-items.json"), Charset.forName("unicode")));
+                    FILE_HANDLER.writeJson(taxItm, FILE_HANDLER.getTemplate("Accounts/tax-items.json"));
                 }
                 if (!spec.exists()) {
-                    FILE_HANDLER.write(spec, new String(FILE_HANDLER.getTemplate("Accounts/special.json"), Charset.forName("unicode")));
+                    FILE_HANDLER.writeJson(spec, FILE_HANDLER.getTemplate("Accounts/special.json"));
                 }
                 if (!budg.exists()) {
-                    FILE_HANDLER.write(budg, new String(FILE_HANDLER.getTemplate("Accounts/budget.json"), Charset.forName("unicode")));
+                    FILE_HANDLER.writeJson(budg, FILE_HANDLER.getTemplate("Accounts/budget.json"));
                 }
             }
         }
         LOG_HANDLER.trace(getClass(), "Defaults set where necessary");
     }
 
-    public void reloadBackingElements() throws JsonFormattingException {
+    public void reloadBackingElements() {
         //establishing data files
         File currencies = new File(data.getPath() + File.separator + "Currencies" + File.separator + "currencies.json"),
                 stocks = new File(data.getPath() + File.separator + "Currencies" + File.separator + "stocks.json"),
@@ -210,11 +207,13 @@ public class Instance {
         //LCurrency
         {
             CURRENCIES.clear();
-            JsonArray array = (JsonArray) JsonItem.sanitizeDigest(FILE_HANDLER.read(currencies));
-            for (JsonObject obj : array.getObjectArray()) {
-                LCurrency cur = new LCurrency(obj, this);
-                CURRENCIES.add(cur);
+            JsonArray array = (JsonArray) FILE_HANDLER.readJson(currencies);
+            if (array == null) {
+                LOG_HANDLER.fatal(getClass(), "currencies.json couldn't be loaded");
+                LOG_HANDLER.save();
+                System.exit(1);
             }
+            CURRENCIES.load(array);
             main = getLCurrency(mainTicker);
             main__ = getLCurrency(main__Ticker);
             if (main__ == null) {
@@ -228,36 +227,52 @@ public class Instance {
         //LStock
         {
             STOCKS.clear();
-            JsonArray array = (JsonArray) JsonItem.sanitizeDigest(FILE_HANDLER.read(stocks));
-            for (JsonObject obj : array.getObjectArray()) {
-                STOCKS.add(new LStock(obj, this));
+            JsonArray array = (JsonArray) FILE_HANDLER.readJson(stocks);
+            if (array == null) {
+                LOG_HANDLER.fatal(getClass(), "stocks.json couldn't be loaded");
+                LOG_HANDLER.save();
+                System.exit(1);
             }
+            STOCKS.load(array);
             STOCKS.changed = false;
             LOG_HANDLER.trace(getClass(), "Stocks loaded");
         }
         //Inventory
         {
             INVENTORIES.clear();
-            JsonArray array = (JsonArray) JsonItem.sanitizeDigest(FILE_HANDLER.read(inventories));
-            for (JsonObject obj : array.getObjectArray()) {
-                INVENTORIES.add(new LInventory(obj, this));
+            JsonArray array = (JsonArray) FILE_HANDLER.readJson(inventories);
+            if (array == null) {
+                LOG_HANDLER.fatal(getClass(), "inventories.json couldn't be loaded");
+                LOG_HANDLER.save();
+                System.exit(1);
             }
+            INVENTORIES.load(array);
             INVENTORIES.changed = false;
             LOG_HANDLER.trace(getClass(), "Inventories loaded");
         }
         //Market APIs
         {
             MARKET_APIS.clear();
-            MARKET_APIS.load((JsonArray) JsonItem.sanitizeDigest(FILE_HANDLER.read(marApi)));
+            JsonArray array = (JsonArray) FILE_HANDLER.readJson(marApi);
+            if (array == null) {
+                LOG_HANDLER.fatal(getClass(), "market-apis.json couldn't be loaded");
+                LOG_HANDLER.save();
+                System.exit(1);
+            }
+            MARKET_APIS.load(array);
             MARKET_APIS.changed = false;
+            LOG_HANDLER.trace(getClass(), "Market APIs loaded");
         }
         //Account Types
         {
             ACCOUNT_TYPES.clear();
-            JsonArray array = (JsonArray) JsonItem.sanitizeDigest(FILE_HANDLER.read(accTyp));
-            for (JsonObject obj : array.getObjectArray()) {
-                ACCOUNT_TYPES.add(new AccountType(obj));
+            JsonArray array = (JsonArray) FILE_HANDLER.readJson(accTyp);
+            if (array == null) {
+                LOG_HANDLER.fatal(getClass(), "account-types.json couldn't be loaded");
+                LOG_HANDLER.save();
+                System.exit(1);
             }
+            ACCOUNT_TYPES.load(array);
             ACCOUNT_TYPES.changed = false;
             LOG_HANDLER.trace(getClass(), "Account Types loaded");
         }
@@ -266,7 +281,12 @@ public class Instance {
             EXCHANGES.clear();
             EXCHANGES.add(new Exchange("Personal", "", this, false));
             EXCHANGES.add(new Exchange("Cash", "", this, false));
-            JsonArray array = (JsonArray) JsonItem.sanitizeDigest(FILE_HANDLER.read(exchanges));
+            JsonArray array = (JsonArray) FILE_HANDLER.readJson(exchanges);
+            if (array == null) {
+                LOG_HANDLER.fatal(getClass(), "exchanges.json couldn't be loaded");
+                LOG_HANDLER.save();
+                System.exit(1);
+            }
             for (JsonObject obj : array.getObjectArray()) {
                 EXCHANGES.add(new Exchange(obj, this, true));
             }
@@ -276,11 +296,21 @@ public class Instance {
         //Accounts
         {
             ACCOUNTS.clear();
-            JsonArray budgets = (JsonArray) JsonItem.sanitizeDigest(FILE_HANDLER.read(budg));
+            JsonArray budgets = (JsonArray) FILE_HANDLER.readJson(budg);
+            if (budgets == null) {
+                LOG_HANDLER.fatal(getClass(), "budget.json couldn't be loaded");
+                LOG_HANDLER.save();
+                System.exit(1);
+            }
             for (JsonString string : budgets.getStringArray()) {
                 DATA_HANDLER.addBudgetType(string.getString());
             }
-            JsonObject accountObj = (JsonObject) JsonItem.sanitizeDigest(FILE_HANDLER.read(accounts));
+            JsonObject accountObj = (JsonObject) FILE_HANDLER.readJson(accounts);
+            if (accountObj == null) {
+                LOG_HANDLER.fatal(getClass(), "accounts.json couldn't be loaded");
+                LOG_HANDLER.save();
+                System.exit(1);
+            }
             JsonArray array = accountObj.getArray("accounts");
             for (JsonObject obj : array.getObjectArray()) {
                 ACCOUNTS.add(new Account(obj, this));
@@ -288,7 +318,12 @@ public class Instance {
 
             //adding special account identifiers
             {
-                JsonObject notAccObj = (JsonObject) JsonItem.sanitizeDigest(FILE_HANDLER.read(spec));
+                JsonObject notAccObj = (JsonObject) FILE_HANDLER.readJson(spec);
+                if (notAccObj == null) {
+                    LOG_HANDLER.fatal(getClass(), "special.json couldn't be loaded");
+                    LOG_HANDLER.save();
+                    System.exit(1);
+                }
 
                 Account.portfolioName = notAccObj.getString("portfolio").getString();
 
@@ -441,8 +476,15 @@ public class Instance {
         //Tax
         {
             TAX_ITEMS.clear();
-            JsonArray taxArray = (JsonArray) JsonItem.sanitizeDigest(FILE_HANDLER.read(taxItm));
-            TAX_ITEMS.load(taxArray);
+            JsonArray array = (JsonArray) FILE_HANDLER.readJson(taxItm);
+            if (array == null) {
+                LOG_HANDLER.fatal(getClass(), "tax-items.json couldn't be loaded");
+                LOG_HANDLER.save();
+                System.exit(1);
+            }
+            TAX_ITEMS.load(array);
+            TAX_ITEMS.changed = false;
+            LOG_HANDLER.trace(getClass(), "Tax Items loaded");
         }
     }
 
@@ -521,7 +563,6 @@ public class Instance {
         if (ACCOUNTS.changed) {
             FILE_HANDLER.write(accounts, ACCOUNTS.export().print());
         }
-        System.out.println(EXCHANGES.changed);
         if (EXCHANGES.changed) {
             FILE_HANDLER.write(exchanges, EXCHANGES.export().print());
         }

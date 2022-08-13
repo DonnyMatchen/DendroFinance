@@ -17,7 +17,7 @@ public class AccountMetaGui extends RegisterFrame {
     private final JLabel A, B;
     private final JButton SAVE;
 
-    private JsonObject accountObject;
+    private final JsonObject ACCOUNT_OBJECT;
     private final File ACCOUNTS;
 
     public AccountMetaGui(MainGui caller, Instance curInst) {
@@ -79,13 +79,9 @@ public class AccountMetaGui extends RegisterFrame {
             }
 
             ACCOUNTS = new File(CURRENT_INSTANCE.data.getPath() + File.separator + "Accounts" + File.separator + "accounts.json");
-            try {
-                accountObject = (JsonObject) JsonItem.sanitizeDigest(CURRENT_INSTANCE.FILE_HANDLER.read(ACCOUNTS));
-                GIFT.setText(accountObject.getArray("gift-cards").toString());
-                BRAVE.setText(accountObject.getArray("brave-mobile").toString());
-            } catch (JsonFormattingException ex) {
-                CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Accounts.json seems to be damaged: " + ex);
-            }
+            ACCOUNT_OBJECT = (JsonObject) CURRENT_INSTANCE.FILE_HANDLER.readJson(ACCOUNTS);
+            GIFT.setText(ACCOUNT_OBJECT.getArray("gift-cards").toString());
+            BRAVE.setText(ACCOUNT_OBJECT.getArray("brave-mobile").toString());
 
             pack();
         }
@@ -93,9 +89,9 @@ public class AccountMetaGui extends RegisterFrame {
 
     private void saveAction() {
         try {
-            accountObject.put("gift-cards", JsonItem.sanitizeDigest(GIFT.getText()));
-            accountObject.put("brave-mobile", JsonItem.sanitizeDigest(BRAVE.getText()));
-            CURRENT_INSTANCE.FILE_HANDLER.write(ACCOUNTS, accountObject.print());
+            ACCOUNT_OBJECT.put("gift-cards", JsonItem.digest(GIFT.getText()));
+            ACCOUNT_OBJECT.put("brave-mobile", JsonItem.digest(BRAVE.getText()));
+            CURRENT_INSTANCE.FILE_HANDLER.write(ACCOUNTS, ACCOUNT_OBJECT.print());
             dispose();
         } catch (JsonFormattingException ex) {
             CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Accounts.json seems to be damaged: " + ex);

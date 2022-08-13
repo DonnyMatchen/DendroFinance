@@ -3,17 +3,37 @@ This application is designed for management of personal finance and small busine
 
 The recommended maximum number of transactions is between 65,000 - 75,000 depending on the commonality of metadata
 
-For help with milliseconds since epoch, this site is an option: [UnixTimeStamp.com](https://www.unixtimestamp.com/)
+It is recommended that the number of items in a json array not exceed 2,147,483,647.
 
-This application was not designed for use with files greater than 2,147,483,647 bytes (1 byte less than 2 GB).  Similarly, this application was not designed for use with api calls greater than that size as well.
+For help with milliseconds since epoch, this site is an option: [UnixTimeStamp.com](https://www.unixtimestamp.com/)
 
 # COMPATIBILITY
 * This application requires Java 18 or a later version compatible with it.
+* This application expects all input data to be in UTF-8 or ASCII formats
 * Torsocks seems to interfere with this application's ability to read and write files and access APIs.  The latter may be due to many APIs blocking TOR nodes.
 * In Linux systems using the Nautilus filesystem interface or derivatives, there seems to be a problem when .jar files are run.  It seems to set the working directory to the home folder rather than the directory the .jar file is in.
   * Due to this, the Linux version of the software comes with a run script for convenience
-* Except for private stock and inventory history JSONs, all JSONs in the data directory are saved and read in Unicode/UTF16.  The application will crash if they are not saved in the correct format.  Edit them through the gui unless you can ensure you will save them correctly.
-  * Private stock and inventory history JSONs are stored and read in UTF8 format.  Because these JSONs do not contain names, there is no need to use unicode for efficient storage of non-ASCII characters.
+
+# CONFIGURATION
+the following is an explanation of configuration options available for each profile
+* US Date Format: if checked, February 21 will appear as 02/21/2016 and 21/02/2016 if unchecked.
+  * default: checked
+* Log: if checked, the application will save log files when closed normally.  If fatal conditions are encountered, log files will be saved regardless of this setting.
+  * default: unchecked
+* Use Day Not Time: if checked, LDate objects will be displayed without a time.
+  * default: unchecked
+* Large: if checked, the application will assume that files are potentially too large to be assimilated and processed as a whole.  Unless you are dealing with very large files (greater than 2 GB), this option is not recommended as it is generally slower.
+  * default: unchecked
+* Precision: the precision of mathematical calculations.
+  * default: 20
+* Log Level: the level at which logs will print in the console and be saved in a log file.
+  * Default: info
+* Main Currency: the currency of your region in which your standard accounting is required to be kept.
+  * Default: USD
+* Main Extra: the version of the Main Currency with extra decimal places
+  * Default: USD Extra
+* Block Size: the number of 16 byte blocks of data to be encrypted at a time when saving encrypted files.
+  * Default: 4 (64 bytes)
 
 # KNOWN PROBLEMS
 There is a tendency for some gui windows not to be sized correctly.  I'm not quite sure why this happens, and there doesn't seem to be a fix for it.

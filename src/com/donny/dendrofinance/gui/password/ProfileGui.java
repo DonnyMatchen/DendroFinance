@@ -15,10 +15,10 @@ import java.math.BigDecimal;
 
 public class ProfileGui extends ModalFrame {
     private final JPanel FLAGS;
-    private final JLabel A, B, C, D, E, F;
-    private final JCheckBox LOG, AMER, DAY;
+    private final JLabel A, B, C, D, E, F, G;
+    private final JCheckBox LOG, AMER, DAY, LARGE;
     private final JButton SAVE, CANCEL;
-    private final JTextField NAME, PRECISION, LOG_LEVEL, CUR, CUR2;
+    private final JTextField NAME, PRECISION, LOG_LEVEL, CUR, CUR2, BLOCK;
     private final PasswordGui CALLER;
 
     public ProfileGui(PasswordGui caller, JsonObject config, Instance curInst) {
@@ -35,21 +35,24 @@ public class ProfileGui extends ModalFrame {
             D = new JLabel("Log Level");
             E = new JLabel("Main Currency");
             F = new JLabel("Main Extra");
+            G = new JLabel("Block Size");
 
             LOG = new JCheckBox("Log");
             AMER = new JCheckBox("US Date Format");
-            DAY = new JCheckBox("Use day not time");
-
-            SAVE = DendroFactory.getButton("Save");
-            SAVE.addActionListener(event -> save());
-            CANCEL = DendroFactory.getButton("Cancel");
-            CANCEL.addActionListener(event -> dispose());
+            DAY = new JCheckBox("Use Day Not Time");
+            LARGE = new JCheckBox("Large");
 
             NAME = new JTextField();
             PRECISION = new JTextField();
             LOG_LEVEL = new JTextField();
             CUR = new JTextField();
             CUR2 = new JTextField();
+            BLOCK = new JTextField();
+
+            SAVE = DendroFactory.getButton("Save");
+            SAVE.addActionListener(event -> save());
+            CANCEL = DendroFactory.getButton("Cancel");
+            CANCEL.addActionListener(event -> dispose());
 
             //group layouts
             {
@@ -67,8 +70,8 @@ public class ProfileGui extends ModalFrame {
                             ).addGap(DendroFactory.SMALL_GAP).addGroup(
                                     flags.createParallelGroup(GroupLayout.Alignment.LEADING).addComponent(
                                             LOG, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
-                                    ).addGap(
-                                            DendroFactory.SMALL_GAP, DendroFactory.SMALL_GAP, Short.MAX_VALUE
+                                    ).addComponent(
+                                            LARGE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                     )
                             )
                     );
@@ -82,8 +85,8 @@ public class ProfileGui extends ModalFrame {
                             ).addGap(DendroFactory.SMALL_GAP).addGroup(
                                     flags.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(
                                             DAY, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
-                                    ).addGap(
-                                            DendroFactory.SMALL_GAP, DendroFactory.SMALL_GAP, Short.MAX_VALUE
+                                    ).addComponent(
+                                            LARGE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                     )
                             ).addContainerGap()
                     );
@@ -107,6 +110,8 @@ public class ProfileGui extends ModalFrame {
                                                         E, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                                 ).addComponent(
                                                         F, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                                ).addComponent(
+                                                        G, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                                 )
                                         ).addGap(DendroFactory.SMALL_GAP).addGroup(
                                                 main.createParallelGroup(GroupLayout.Alignment.LEADING).addComponent(
@@ -121,6 +126,8 @@ public class ProfileGui extends ModalFrame {
                                                         CUR, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
                                                 ).addComponent(
                                                         CUR2, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
+                                                ).addComponent(
+                                                        BLOCK, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
                                                 )
                                         )
                                 ).addGroup(
@@ -172,6 +179,12 @@ public class ProfileGui extends ModalFrame {
                                         ).addComponent(
                                                 CUR2, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                         )
+                                ).addGap(DendroFactory.SMALL_GAP).addGroup(
+                                        main.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(
+                                                G, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                        ).addComponent(
+                                                BLOCK, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                        )
                                 )
                         ).addGap(DendroFactory.MEDIUM_GAP).addGroup(
                                 main.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(
@@ -208,6 +221,12 @@ public class ProfileGui extends ModalFrame {
             if (flags.contains("D")) {
                 DAY.setSelected(true);
             }
+            if (flags.contains("X")) {
+                LARGE.setSelected(true);
+            }
+            if (flags.contains("x")) {
+                LARGE.setSelected(false);
+            }
         }
         if (config.containsKey("precision")) {
             PRECISION.setText("" + config.getDecimal("precision").decimal);
@@ -220,6 +239,9 @@ public class ProfileGui extends ModalFrame {
         }
         if (config.containsKey("main__")) {
             CUR2.setText(config.getString("main__").getString());
+        }
+        if (config.containsKey("block")) {
+            BLOCK.setText("" + config.getDecimal("block").decimal);
         }
     }
 
@@ -235,27 +257,33 @@ public class ProfileGui extends ModalFrame {
         try {
             JsonObject config = new JsonObject();
             config.put("name", new JsonString(Validation.validateString(NAME)));
-            String flagsS = "";
+            String flags = "";
             if (LOG.isSelected()) {
-                flagsS += "L";
+                flags += "L";
             } else {
-                flagsS += "l";
+                flags += "l";
             }
             if (AMER.isSelected()) {
-                flagsS += "A";
+                flags += "A";
             } else {
-                flagsS += "a";
+                flags += "a";
             }
             if (DAY.isSelected()) {
-                flagsS += "D";
+                flags += "D";
             } else {
-                flagsS += "d";
+                flags += "d";
             }
-            config.put("flags", new JsonString(flagsS));
+            if (LARGE.isSelected()) {
+                flags += "X";
+            } else {
+                flags += "x";
+            }
+            config.put("flags", new JsonString(flags));
             config.put("precision", new JsonDecimal(new BigDecimal(Validation.validateInteger(PRECISION))));
             config.put("log", new JsonString(Validation.validateString(LOG_LEVEL)));
             config.put("main", new JsonString(Validation.validateString(CUR)));
             config.put("main__", new JsonString(Validation.validateString(CUR2)));
+            config.put("block", new JsonDecimal(new BigDecimal(Validation.validateInteger(BLOCK))));
             CALLER.addProfile(config, true);
             dispose();
         } catch (JsonFormattingException e) {

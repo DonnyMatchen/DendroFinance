@@ -836,7 +836,7 @@ public class NewTransactionEntryGui extends ModalFrame {
 
     public void mUpdateAction() {
         try {
-            metaObject = (JsonObject) JsonItem.sanitizeDigest(META_TEXT.getText());
+            metaObject = (JsonObject) JsonItem.digest(META_TEXT.getText());
             META.setText(metaObject.print());
         } catch (JsonFormattingException ex) {
             CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Malformed Json on Json tab");

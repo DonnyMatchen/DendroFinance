@@ -5,7 +5,6 @@ import com.donny.dendrofinance.entry.EntryType;
 import com.donny.dendrofinance.instance.Instance;
 import com.donny.dendrofinance.json.JsonArray;
 import com.donny.dendrofinance.json.JsonFormattingException;
-import com.donny.dendrofinance.json.JsonItem;
 import com.donny.dendrofinance.json.JsonObject;
 
 import java.io.File;
@@ -25,14 +24,10 @@ public class DataSet<E extends Entry> {
         TABLE = new ArrayList<>();
     }
 
-    public void reload() throws JsonFormattingException {
+    public void reload() {
         TABLE.clear();
         if (ARCHIVE.exists()) {
-            String raw = CURRENT_INSTANCE.FILE_HANDLER.readDecrypt(ARCHIVE);
-            if (raw.contains("passwd")) {
-                raw = raw.substring(6);
-            }
-            JsonArray entries = (JsonArray) JsonItem.sanitizeDigest(raw);
+            JsonArray entries = (JsonArray) CURRENT_INSTANCE.FILE_HANDLER.readDecryptJson(ARCHIVE);
             for (JsonObject obj : entries.getObjectArray()) {
                 TABLE.add((E) Entry.get(TYPE, obj, CURRENT_INSTANCE));
             }
@@ -48,7 +43,7 @@ public class DataSet<E extends Entry> {
                     uuid = entry.getUUID();
                     array.add(entry.export());
                 }
-                CURRENT_INSTANCE.FILE_HANDLER.writeEncrypt(ARCHIVE, "passwd" + array);
+                CURRENT_INSTANCE.FILE_HANDLER.writeEncryptJson(ARCHIVE, array);
             } catch (JsonFormattingException ex) {
                 CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Entry " + uuid + " Failed formatting!");
             }

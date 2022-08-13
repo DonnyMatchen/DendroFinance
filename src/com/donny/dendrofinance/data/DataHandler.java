@@ -10,6 +10,7 @@ import com.donny.dendrofinance.entry.TransactionEntry;
 import com.donny.dendrofinance.entry.meta.*;
 import com.donny.dendrofinance.entry.totals.OrderBookEntry;
 import com.donny.dendrofinance.entry.totals.Position;
+import com.donny.dendrofinance.fileio.ImportHandler;
 import com.donny.dendrofinance.instance.Instance;
 import com.donny.dendrofinance.json.JsonFormattingException;
 import com.donny.dendrofinance.types.LAccountSet;
@@ -40,12 +41,8 @@ public class DataHandler {
 
     public void reload() {
         CURRENT_INSTANCE.UUID_HANDLER.UUIDS.clear();
-        try {
-            TRANSACTIONS.reload();
-            BUDGETS.reload();
-        } catch (JsonFormattingException e) {
-            CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Error loading datasets: " + e);
-        }
+        TRANSACTIONS.reload();
+        BUDGETS.reload();
     }
 
     public boolean addTransaction(TransactionEntry entry, ImportHandler.ImportMode mode) {

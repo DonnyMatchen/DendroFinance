@@ -39,7 +39,7 @@ public class ProfileGui extends ModalFrame {
 
             LOG = new JCheckBox("Log");
             AMER = new JCheckBox("US Date Format");
-            DAY = new JCheckBox("Use day not time");
+            DAY = new JCheckBox("Use Day Not Time");
             LARGE = new JCheckBox("Large");
 
             NAME = new JTextField();

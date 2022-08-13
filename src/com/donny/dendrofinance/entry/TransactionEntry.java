@@ -5,7 +5,7 @@ import com.donny.dendrofinance.account.Account;
 import com.donny.dendrofinance.account.AccountWrapper;
 import com.donny.dendrofinance.account.BroadAccountType;
 import com.donny.dendrofinance.currency.LCurrency;
-import com.donny.dendrofinance.data.ImportHandler;
+import com.donny.dendrofinance.fileio.ImportHandler;
 import com.donny.dendrofinance.entry.meta.*;
 import com.donny.dendrofinance.instance.Instance;
 import com.donny.dendrofinance.json.*;

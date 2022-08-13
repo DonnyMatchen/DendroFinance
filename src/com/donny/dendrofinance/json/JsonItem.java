@@ -1,12 +1,12 @@
 package com.donny.dendrofinance.json;
 
+import com.donny.dendrofinance.fileio.EncryptionOutputStream;
 import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.Serializable;
+import java.io.*;
 
 public abstract class JsonItem implements Serializable {
     public final JsonType TYPE;
@@ -72,22 +72,17 @@ public abstract class JsonItem implements Serializable {
                     default -> throw new UnsupportedOperationException();
                 }
             }
+        } catch (JsonParseException e) {
+            e.printStackTrace();
+            return null;
         } catch (IOException e) {
-            return new JsonNull();
+            return null;
         }
     }
 
-    public static JsonItem digest(String raw) throws JsonFormattingException {
+    public static JsonItem digest(String jsonString) throws JsonFormattingException {
         try {
-            return digest(new JsonFactory().createParser(raw));
-        } catch (IOException e) {
-            return new JsonNull();
-        }
-    }
-
-    public static JsonItem digest(File file) throws JsonFormattingException {
-        try {
-            return digest(new JsonFactory().createParser(file));
+            return digest(new JsonFactory().createParser(jsonString));
         } catch (IOException e) {
             return new JsonNull();
         }
@@ -109,5 +104,17 @@ public abstract class JsonItem implements Serializable {
         } else {
             return " ".repeat(2 * scope);
         }
+    }
+
+    protected abstract void stream(FileWriter writer) throws IOException;
+
+    protected abstract void streamEncrypt(EncryptionOutputStream stream) throws IOException;
+
+    public static void save(JsonItem item, FileWriter writer) throws IOException {
+        item.stream(writer);
+    }
+
+    public static void saveEncrypt(JsonItem item, EncryptionOutputStream stream) throws IOException {
+        item.streamEncrypt(stream);
     }
 }

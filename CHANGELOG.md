@@ -1,18 +1,22 @@
 ## v0.8.0
+* minor bug fixes
+  * fixed `FileHandler.ensure()`
 * implemented Jackson library
   * removed janky JSON parsing code
     * removed "raw" string constructors from JsonItems
-  * (->) Jackson used for Json input
+  * Jackson used for Json input
     * for strings
     * for files
-    * (X) for encrypted files
-  * (->) Jackson used for JSON output
-    * (X) for strings
-    * (X) for files
-    * (X) for encrypted files
+    * for encrypted files
+* Json output is now independent of stringification
+  * for files
+  * for encrypted files
+  * (->) handle fatal conditions related to damaged JSONs
 * updated `README.md`
-* moved `FileHandler` and `EncryptionHandler` from `com.donny.dendrofinance.data` to `com.donny.dendrofinance.fileio`
+* streamlined `FileHandler`, removing redundant methods
+* moved `FileHandler`, `ExportHandler`, `ImportHandler` and `EncryptionHandler` from `com.donny.dendrofinance.data` to `com.donny.dendrofinance.fileio`
 * added `EncryptionOutputStream` and `DecryptionInputStream`
+* changed over to UTF-8 as sole Charset
 
 ## v0.7.4
 * (X) minor bug fixes

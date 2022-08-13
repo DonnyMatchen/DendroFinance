@@ -77,7 +77,7 @@ public class ExportGui extends RegisterFrame {
     }
 
     private void exportAction() {
-        CURRENT_INSTANCE.EXPORT_HANDLER.export((String) TYPE.getSelectedItem(), NAME.getText(), this);
+        CURRENT_INSTANCE.EXPORT_HANDLER.export((String) TYPE.getSelectedItem(), NAME.getText());
         dispose();
     }
 }

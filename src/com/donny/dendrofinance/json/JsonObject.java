@@ -1,5 +1,10 @@
 package com.donny.dendrofinance.json;
 
+import com.donny.dendrofinance.fileio.EncryptionOutputStream;
+import com.donny.dendrofinance.instance.Instance;
+
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 
@@ -76,6 +81,46 @@ public class JsonObject extends JsonItem {
                 sb.append("\n").append(indent(internal)).append("\"").append(key).append("\": ").append(CONTENTS.get(key).print(internal)).append(",");
             }
             return sb.deleteCharAt(sb.length() - 1).append("\n").append(indent(scope)).append("}").toString();
+        }
+    }
+
+    @Override
+    protected void stream(FileWriter writer) throws IOException {
+        if (CONTENTS.keySet().size() == 0) {
+            writer.write("{}");
+        } else {
+            writer.write("{");
+            ArrayList<String> keys = new ArrayList<>(CONTENTS.keySet());
+            int x = keys.size();
+            for (int i = 0; i < x; i++) {
+                writer.write('"' + keys.get(i) + "\":");
+                CONTENTS.get(keys.get(i)).stream(writer);
+                if (i < x - 1) {
+                    writer.write(",");
+                } else {
+                    writer.write("}");
+                }
+            }
+        }
+    }
+
+    @Override
+    protected void streamEncrypt(EncryptionOutputStream stream) throws IOException {
+        if (CONTENTS.keySet().size() == 0) {
+            stream.write("{}".getBytes(Instance.CHARSET));
+        } else {
+            stream.write("{".getBytes(Instance.CHARSET));
+            ArrayList<String> keys = new ArrayList<>(CONTENTS.keySet());
+            int x = keys.size();
+            for (int i = 0; i < x; i++) {
+                stream.write(('"' + keys.get(i) + "\":").getBytes(Instance.CHARSET));
+                CONTENTS.get(keys.get(i)).streamEncrypt(stream);
+                if (i < x - 1) {
+                    stream.write(",".getBytes(Instance.CHARSET));
+                } else {
+                    stream.write("}".getBytes(Instance.CHARSET));
+                }
+            }
         }
     }
 }

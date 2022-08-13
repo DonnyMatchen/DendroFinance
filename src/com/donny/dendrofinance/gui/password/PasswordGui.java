@@ -51,15 +51,14 @@ public class PasswordGui extends JFrame {
             PROFILE = new JComboBox<>();
             File file = new File(CURRENT_INSTANCE.data.getPath() + File.separator + "profiles.json");
             if (file.exists()) {
-                try {
-                    JsonArray array = (JsonArray) JsonItem.digest(file);
-                    for (JsonObject obj : array.getObjectArray()) {
-                        addProfile(obj, false);
-                    }
-                } catch (JsonFormattingException e) {
-                    CURRENT_INSTANCE.LOG_HANDLER.fatal(getClass(), "Mis-formatted Profiles!\n" + e);
+                JsonArray array = (JsonArray) CURRENT_INSTANCE.FILE_HANDLER.readJson(file);
+                if (array == null) {
+                    CURRENT_INSTANCE.LOG_HANDLER.fatal(getClass(), "Mis-formatted Profiles");
                     CURRENT_INSTANCE.LOG_HANDLER.save();
                     System.exit(1);
+                }
+                for (JsonObject obj : array.getObjectArray()) {
+                    addProfile(obj, false);
                 }
             }
 

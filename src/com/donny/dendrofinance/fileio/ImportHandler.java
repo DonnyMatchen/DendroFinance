@@ -1,4 +1,4 @@
-package com.donny.dendrofinance.data;
+package com.donny.dendrofinance.fileio;
 
 import com.donny.dendrofinance.entry.BudgetEntry;
 import com.donny.dendrofinance.entry.TransactionEntry;
@@ -69,7 +69,7 @@ public class ImportHandler {
     }
 
     public void loadCSV(File file) {
-        String raw = CURRENT_INSTANCE.FILE_HANDLER.readPlain(file);
+        String raw = CURRENT_INSTANCE.FILE_HANDLER.read(file);
         for (String line : raw.replace("\r", "").split("\n")) {
             String[] fields = line.split("\t");
             TransactionEntry entry = new TransactionEntry(CURRENT_INSTANCE);
@@ -95,25 +95,17 @@ public class ImportHandler {
     public void loadJSON(File file, ImportMode mode) {
         boolean imported = false;
         if (file.getName().toLowerCase().contains("transaction")) {
-            try {
-                JsonArray array = (JsonArray) JsonItem.digest(file);
-                for (JsonObject obj : array.getObjectArray()) {
-                    CURRENT_INSTANCE.DATA_HANDLER.addTransaction(new TransactionEntry(obj, mode, CURRENT_INSTANCE), mode);
-                }
-                imported = true;
-            } catch (JsonFormattingException e) {
-                CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Malformed Import File:\n" + file.getPath());
+            JsonArray array = (JsonArray) CURRENT_INSTANCE.FILE_HANDLER.readJson(file);
+            for (JsonObject obj : array.getObjectArray()) {
+                CURRENT_INSTANCE.DATA_HANDLER.addTransaction(new TransactionEntry(obj, mode, CURRENT_INSTANCE), mode);
             }
+            imported = true;
         } else if (file.getName().toLowerCase().contains("budget")) {
-            try {
-                JsonArray array = (JsonArray) JsonItem.digest(file);
-                for (JsonObject obj : array.getObjectArray()) {
-                    CURRENT_INSTANCE.DATA_HANDLER.addBudget(new BudgetEntry(obj, mode, CURRENT_INSTANCE), mode);
-                }
-                imported = true;
-            } catch (JsonFormattingException e) {
-                CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Malformed Import File:\n" + file.getPath());
+            JsonArray array = (JsonArray) CURRENT_INSTANCE.FILE_HANDLER.readJson(file);
+            for (JsonObject obj : array.getObjectArray()) {
+                CURRENT_INSTANCE.DATA_HANDLER.addBudget(new BudgetEntry(obj, mode, CURRENT_INSTANCE), mode);
             }
+            imported = true;
         }
         if (imported) {
             CURRENT_INSTANCE.FILE_HANDLER.delete(file);
@@ -123,30 +115,26 @@ public class ImportHandler {
     public void loadXTBL(File file, JFrame caller, ImportMode mode) {
         boolean imported = false;
         if (file.getName().toLowerCase().contains("transaction") || file.getName().toLowerCase().contains(".xarc")) {
-            String raw = CURRENT_INSTANCE.FILE_HANDLER.readDecryptUnknownPassword(file, caller);
-            if (raw == null) {
+            JsonItem item = CURRENT_INSTANCE.FILE_HANDLER.readDecryptJsonUnknownPassword(file, caller);
+            if (item == null) {
                 CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Incorrect password for file: " + file.getPath());
             } else {
-                try {
-                    JsonArray array = (JsonArray) JsonItem.digest(raw.replace("passwd", ""));
-                    for (JsonObject obj : array.getObjectArray()) {
-                        CURRENT_INSTANCE.DATA_HANDLER.addTransaction(new TransactionEntry(obj, mode, CURRENT_INSTANCE));
-                    }
-                    imported = true;
-                } catch (JsonFormattingException e) {
-                    CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Malformed Import File:\n" + file.getPath());
+                JsonArray array = (JsonArray) item;
+                for (JsonObject obj : array.getObjectArray()) {
+                    CURRENT_INSTANCE.DATA_HANDLER.addTransaction(new TransactionEntry(obj, mode, CURRENT_INSTANCE));
                 }
+                imported = true;
             }
         } else if (file.getName().toLowerCase().contains("budget")) {
-            try {
-                String raw = CURRENT_INSTANCE.FILE_HANDLER.readDecryptUnknownPassword(file, caller);
-                JsonArray array = (JsonArray) JsonItem.digest(raw.replace("passwd", ""));
+            JsonItem item = CURRENT_INSTANCE.FILE_HANDLER.readDecryptJsonUnknownPassword(file, caller);
+            if (item == null) {
+                CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Incorrect password for file: " + file.getPath());
+            } else {
+                JsonArray array = (JsonArray) item;
                 for (JsonObject obj : array.getObjectArray()) {
                     CURRENT_INSTANCE.DATA_HANDLER.addBudget(new BudgetEntry(obj, mode, CURRENT_INSTANCE));
                 }
                 imported = true;
-            } catch (JsonFormattingException e) {
-                CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Malformed Import File:\n" + file.getPath());
             }
         }
         if (imported) {

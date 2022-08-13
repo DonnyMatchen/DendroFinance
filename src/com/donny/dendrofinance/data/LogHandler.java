@@ -39,8 +39,8 @@ public class LogHandler {
         }
         Date now = new Date();
         DateFormat format = new SimpleDateFormat("yyyy-MM-dd_HH;mm;ss_z");
-        CURRENT_INSTANCE.FILE_HANDLER.writePlain(dir, format.format(now) + ".log", LOG.toString());
-        CURRENT_INSTANCE.FILE_HANDLER.writePlain(dir, format.format(now) + ".trace.log", TRACE.toString());
+        CURRENT_INSTANCE.FILE_HANDLER.write(dir, format.format(now) + ".log", LOG.toString());
+        CURRENT_INSTANCE.FILE_HANDLER.write(dir, format.format(now) + ".trace.log", TRACE.toString());
     }
 
     public void fatal(Class cause, String message) {

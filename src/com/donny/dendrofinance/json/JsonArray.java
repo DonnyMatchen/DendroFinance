@@ -1,8 +1,11 @@
 package com.donny.dendrofinance.json;
 
+import com.donny.dendrofinance.fileio.EncryptionOutputStream;
 import com.donny.dendrofinance.instance.Instance;
 import com.donny.dendrofinance.util.ExportableToJson;
 
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -143,6 +146,42 @@ public class JsonArray extends JsonItem {
                 sb.append("\n").append(indent(internal)).append(item.print(internal)).append(",");
             }
             return sb.deleteCharAt(sb.length() - 1).append("\n").append(indent(scope)).append("]").toString();
+        }
+    }
+
+    @Override
+    protected void stream(FileWriter writer) throws IOException {
+        if (ARRAY.size() == 0) {
+            writer.write("[]");
+        } else {
+            writer.write("[");
+            int x = ARRAY.size();
+            for (int i = 0; i < x; i++) {
+                ARRAY.get(i).stream(writer);
+                if (i < x - 1) {
+                    writer.write(",");
+                } else {
+                    writer.write("]");
+                }
+            }
+        }
+    }
+
+    @Override
+    protected void streamEncrypt(EncryptionOutputStream stream) throws IOException {
+        if (ARRAY.size() == 0) {
+            stream.write("[]".getBytes(Instance.CHARSET));
+        } else {
+            stream.write("[".getBytes(Instance.CHARSET));
+            int x = ARRAY.size();
+            for (int i = 0; i < x; i++) {
+                ARRAY.get(i).streamEncrypt(stream);
+                if (i < x - 1) {
+                    stream.write(",".getBytes(Instance.CHARSET));
+                } else {
+                    stream.write("]".getBytes(Instance.CHARSET));
+                }
+            }
         }
     }
 }

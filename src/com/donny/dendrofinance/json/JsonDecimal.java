@@ -1,5 +1,10 @@
 package com.donny.dendrofinance.json;
 
+import com.donny.dendrofinance.fileio.EncryptionOutputStream;
+import com.donny.dendrofinance.instance.Instance;
+
+import java.io.FileWriter;
+import java.io.IOException;
 import java.math.BigDecimal;
 
 public class JsonDecimal extends JsonItem {
@@ -55,5 +60,15 @@ public class JsonDecimal extends JsonItem {
     @Override
     public String print(int scope) {
         return toString();
+    }
+
+    @Override
+    protected void stream(FileWriter writer) throws IOException {
+        writer.write(decimal.toString());
+    }
+
+    @Override
+    protected void streamEncrypt(EncryptionOutputStream stream) throws IOException {
+        stream.write(decimal.toString().getBytes(Instance.CHARSET));
     }
 }

@@ -70,8 +70,8 @@ public class DendroFactory {
             ge.registerFont(font);
             unifont = new Font("Unifont", Font.PLAIN, 15);
             verdana = new Font("Verdana", Font.PLAIN, 15);
-            JsonItem ui = curInst.FILE_HANDLER.getJsonResource("ui.json");
-            System.out.println(ui == null);
+            JsonItem ui = curInst.FILE_HANDLER.getResource("ui.json");
+            setUI((JsonArray) ui);
             curInst.LOG_HANDLER.trace(DendroFactory.class, "DendroFactory initiated");
         } catch (FontFormatException | IOException e) {
             e.printStackTrace();

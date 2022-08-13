@@ -12,8 +12,7 @@ import com.donny.dendrofinance.currency.LStock;
 import com.donny.dendrofinance.data.*;
 import com.donny.dendrofinance.data.backingtable.*;
 import com.donny.dendrofinance.entry.TransactionEntry;
-import com.donny.dendrofinance.fileio.EncryptionHandler;
-import com.donny.dendrofinance.fileio.FileHandler;
+import com.donny.dendrofinance.fileio.*;
 import com.donny.dendrofinance.gui.MainGui;
 import com.donny.dendrofinance.gui.password.PasswordGui;
 import com.donny.dendrofinance.gui.customswing.DendroFactory;
@@ -26,11 +25,13 @@ import java.io.File;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
 public class Instance {
+    public static final Charset CHARSET = StandardCharsets.UTF_8;
 
     //Major managing objects and handling lists
     public final String IID;
@@ -92,13 +93,7 @@ public class Instance {
         //ensure folders and data files are set up
         ensureFolders();
         ensureBackingFiles();
-        try {
-            reloadBackingElements();
-        } catch (JsonFormattingException e) {
-            LOG_HANDLER.fatal(getClass(), "Mis-formatted data!\n" + e);
-            LOG_HANDLER.save();
-            System.exit(1);
-        }
+        reloadBackingElements();
         checkCurToMain();
 
         //Data
@@ -160,44 +155,44 @@ public class Instance {
             //Currencies
             {
                 if (!currencies.exists()) {
-                    FILE_HANDLER.write(currencies, new String(FILE_HANDLER.getTemplate("Currencies/currencies.json"), Charset.forName("unicode")));
+                    FILE_HANDLER.writeJson(currencies, FILE_HANDLER.getTemplate("Currencies/currencies.json"));
                 }
                 if (!stocks.exists()) {
-                    FILE_HANDLER.write(stocks, new String(FILE_HANDLER.getTemplate("Currencies/stocks.json"), Charset.forName("unicode")));
+                    FILE_HANDLER.writeJson(stocks, FILE_HANDLER.getTemplate("Currencies/stocks.json"));
                 }
                 if (!inventories.exists()) {
-                    FILE_HANDLER.write(inventories, new String(FILE_HANDLER.getTemplate("Currencies/inventories.json"), Charset.forName("unicode")));
+                    FILE_HANDLER.writeJson(inventories, FILE_HANDLER.getTemplate("Currencies/inventories.json"));
                 }
                 if (!marApi.exists()) {
-                    FILE_HANDLER.write(marApi, new String(FILE_HANDLER.getTemplate("Currencies/market-apis.json"), Charset.forName("unicode")));
+                    FILE_HANDLER.writeJson(marApi, FILE_HANDLER.getTemplate("Currencies/market-apis.json"));
                 }
             }
             //Accounts
             {
                 if (!exchanges.exists()) {
-                    FILE_HANDLER.write(exchanges, new String(FILE_HANDLER.getTemplate("Accounts/exchanges.json"), Charset.forName("unicode")));
+                    FILE_HANDLER.writeJson(exchanges, FILE_HANDLER.getTemplate("Accounts/exchanges.json"));
                 }
                 if (!accounts.exists()) {
-                    FILE_HANDLER.write(accounts, new String(FILE_HANDLER.getTemplate("Accounts/accounts.json"), Charset.forName("unicode")));
+                    FILE_HANDLER.writeJson(accounts, FILE_HANDLER.getTemplate("Accounts/accounts.json"));
                 }
                 if (!accTyp.exists()) {
-                    FILE_HANDLER.write(accTyp, new String(FILE_HANDLER.getTemplate("Accounts/account-types.json"), Charset.forName("unicode")));
+                    FILE_HANDLER.writeJson(accTyp, FILE_HANDLER.getTemplate("Accounts/account-types.json"));
                 }
                 if (!taxItm.exists()) {
-                    FILE_HANDLER.write(taxItm, new String(FILE_HANDLER.getTemplate("Accounts/tax-items.json"), Charset.forName("unicode")));
+                    FILE_HANDLER.writeJson(taxItm, FILE_HANDLER.getTemplate("Accounts/tax-items.json"));
                 }
                 if (!spec.exists()) {
-                    FILE_HANDLER.write(spec, new String(FILE_HANDLER.getTemplate("Accounts/special.json"), Charset.forName("unicode")));
+                    FILE_HANDLER.writeJson(spec, FILE_HANDLER.getTemplate("Accounts/special.json"));
                 }
                 if (!budg.exists()) {
-                    FILE_HANDLER.write(budg, new String(FILE_HANDLER.getTemplate("Accounts/budget.json"), Charset.forName("unicode")));
+                    FILE_HANDLER.writeJson(budg, FILE_HANDLER.getTemplate("Accounts/budget.json"));
                 }
             }
         }
         LOG_HANDLER.trace(getClass(), "Defaults set where necessary");
     }
 
-    public void reloadBackingElements() throws JsonFormattingException {
+    public void reloadBackingElements() {
         //establishing data files
         File currencies = new File(data.getPath() + File.separator + "Currencies" + File.separator + "currencies.json"),
                 stocks = new File(data.getPath() + File.separator + "Currencies" + File.separator + "stocks.json"),
@@ -212,7 +207,8 @@ public class Instance {
         //LCurrency
         {
             CURRENCIES.clear();
-            JsonArray array = (JsonArray) JsonItem.digest(currencies);
+            JsonArray array = (JsonArray) FILE_HANDLER.readJson(currencies);
+            //TODO handle null
             for (JsonObject obj : array.getObjectArray()) {
                 LCurrency cur = new LCurrency(obj, this);
                 CURRENCIES.add(cur);
@@ -230,7 +226,8 @@ public class Instance {
         //LStock
         {
             STOCKS.clear();
-            JsonArray array = (JsonArray) JsonItem.digest(stocks);
+            JsonArray array = (JsonArray) FILE_HANDLER.readJson(stocks);
+            //TODO handle null
             for (JsonObject obj : array.getObjectArray()) {
                 STOCKS.add(new LStock(obj, this));
             }
@@ -240,7 +237,8 @@ public class Instance {
         //Inventory
         {
             INVENTORIES.clear();
-            JsonArray array = (JsonArray) JsonItem.digest(inventories);
+            JsonArray array = (JsonArray) FILE_HANDLER.readJson(inventories);
+            //TODO handle null
             for (JsonObject obj : array.getObjectArray()) {
                 INVENTORIES.add(new LInventory(obj, this));
             }
@@ -250,13 +248,15 @@ public class Instance {
         //Market APIs
         {
             MARKET_APIS.clear();
-            MARKET_APIS.load((JsonArray) JsonItem.digest(marApi));
+            //TODO handle null
+            MARKET_APIS.load((JsonArray) FILE_HANDLER.readJson(marApi));
             MARKET_APIS.changed = false;
         }
         //Account Types
         {
             ACCOUNT_TYPES.clear();
-            JsonArray array = (JsonArray) JsonItem.digest(accTyp);
+            JsonArray array = (JsonArray) FILE_HANDLER.readJson(accTyp);
+            //TODO handle null
             for (JsonObject obj : array.getObjectArray()) {
                 ACCOUNT_TYPES.add(new AccountType(obj));
             }
@@ -268,7 +268,8 @@ public class Instance {
             EXCHANGES.clear();
             EXCHANGES.add(new Exchange("Personal", "", this, false));
             EXCHANGES.add(new Exchange("Cash", "", this, false));
-            JsonArray array = (JsonArray) JsonItem.digest(exchanges);
+            JsonArray array = (JsonArray) FILE_HANDLER.readJson(exchanges);
+            //TODO handle null
             for (JsonObject obj : array.getObjectArray()) {
                 EXCHANGES.add(new Exchange(obj, this, true));
             }
@@ -278,11 +279,12 @@ public class Instance {
         //Accounts
         {
             ACCOUNTS.clear();
-            JsonArray budgets = (JsonArray) JsonItem.digest(budg);
+            JsonArray budgets = (JsonArray) FILE_HANDLER.readJson(budg);
+            //TODO handle null
             for (JsonString string : budgets.getStringArray()) {
                 DATA_HANDLER.addBudgetType(string.getString());
             }
-            JsonObject accountObj = (JsonObject) JsonItem.digest(accounts);
+            JsonObject accountObj = (JsonObject) FILE_HANDLER.readJson(accounts);
             JsonArray array = accountObj.getArray("accounts");
             for (JsonObject obj : array.getObjectArray()) {
                 ACCOUNTS.add(new Account(obj, this));
@@ -290,7 +292,7 @@ public class Instance {
 
             //adding special account identifiers
             {
-                JsonObject notAccObj = (JsonObject) JsonItem.digest(spec);
+                JsonObject notAccObj = (JsonObject) FILE_HANDLER.readJson(spec);
 
                 Account.portfolioName = notAccObj.getString("portfolio").getString();
 
@@ -443,7 +445,8 @@ public class Instance {
         //Tax
         {
             TAX_ITEMS.clear();
-            JsonArray taxArray = (JsonArray) JsonItem.digest(taxItm);
+            //TODO handle null
+            JsonArray taxArray = (JsonArray) FILE_HANDLER.readJson(taxItm);
             TAX_ITEMS.load(taxArray);
         }
     }

@@ -1,5 +1,11 @@
 package com.donny.dendrofinance.json;
 
+import com.donny.dendrofinance.fileio.EncryptionOutputStream;
+import com.donny.dendrofinance.instance.Instance;
+
+import java.io.FileWriter;
+import java.io.IOException;
+
 public class JsonBool extends JsonItem {
     public boolean bool;
 
@@ -28,5 +34,23 @@ public class JsonBool extends JsonItem {
     @Override
     public String print(int scope) {
         return toString();
+    }
+
+    @Override
+    protected void stream(FileWriter writer) throws IOException {
+        if (bool) {
+            writer.write("true");
+        } else {
+            writer.write("false");
+        }
+    }
+
+    @Override
+    protected void streamEncrypt(EncryptionOutputStream stream) throws IOException {
+        if (bool) {
+            stream.write("true".getBytes(Instance.CHARSET));
+        } else {
+            stream.write("false".getBytes(Instance.CHARSET));
+        }
     }
 }

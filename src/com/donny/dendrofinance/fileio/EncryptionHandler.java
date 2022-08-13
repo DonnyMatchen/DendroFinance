@@ -8,7 +8,9 @@ import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.spec.SecretKeySpec;
 import java.io.File;
-import java.nio.charset.Charset;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.security.InvalidKeyException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -24,7 +26,7 @@ public class EncryptionHandler {
      */
     public static SecretKeySpec[] getKeys(char[] key) {
         try {
-            byte[] hash = new String(key).getBytes(Charset.forName("unicode"));
+            byte[] hash = new String(key).getBytes(StandardCharsets.UTF_16);
             MessageDigest sha = MessageDigest.getInstance("SHA-512");
             hash = sha.digest(hash);
             byte[] aesRawKey = new byte[32];
@@ -66,14 +68,14 @@ public class EncryptionHandler {
         return aesKey != null && bflKey != null;
     }
 
-    public String encrypt(String text) {
+    public String encrypt(byte[] bytes) {
         if (keysInitiated()) {
             try {
                 Cipher aesCipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
                 Cipher bflCipher = Cipher.getInstance("Blowfish");
                 aesCipher.init(Cipher.ENCRYPT_MODE, aesKey);
                 bflCipher.init(Cipher.ENCRYPT_MODE, bflKey);
-                return Base64.getEncoder().encodeToString(bflCipher.doFinal(aesCipher.doFinal(text.getBytes(Charset.forName("unicode")))));
+                return Base64.getEncoder().encodeToString(bflCipher.doFinal(aesCipher.doFinal(bytes)));
             } catch (BadPaddingException | IllegalBlockSizeException | InvalidKeyException | NoSuchPaddingException |
                      NoSuchAlgorithmException ex) {
                 CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Something went wrong attempting to encrypt");
@@ -83,14 +85,14 @@ public class EncryptionHandler {
         return null;
     }
 
-    public String decrypt(String text) {
+    public byte[] decrypt(String text) {
         if (keysInitiated()) {
             try {
                 Cipher aesCipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
                 Cipher bflCipher = Cipher.getInstance("Blowfish");
                 aesCipher.init(Cipher.DECRYPT_MODE, aesKey);
                 bflCipher.init(Cipher.DECRYPT_MODE, bflKey);
-                return new String(aesCipher.doFinal(bflCipher.doFinal(Base64.getDecoder().decode(text))), Charset.forName("Unicode"));
+                return aesCipher.doFinal(bflCipher.doFinal(Base64.getDecoder().decode(text)));
             } catch (BadPaddingException | NoSuchPaddingException | NoSuchAlgorithmException |
                      IllegalBlockSizeException |
                      InvalidKeyException ex) {
@@ -103,24 +105,25 @@ public class EncryptionHandler {
 
     public boolean checkPassword() {
         File directory = new File(CURRENT_INSTANCE.data.getPath() + File.separator + "Entries");
-        boolean flag = true, noTB = false;
         File[] directoryList = directory.listFiles();
         if (directory.isDirectory() && directoryList != null) {
             for (File f : directoryList) {
                 if (f.getName().contains(".xtbl")) {
-                    String plain = decrypt(CURRENT_INSTANCE.FILE_HANDLER.read(f));
-                    if (plain != null) {
-                        if (plain.indexOf("passwd") != 0) {
-                            flag = false;
-                            break;
+                    try(DecryptionInputStream test = new DecryptionInputStream(f, CURRENT_INSTANCE)) {
+                        if (!test.check()) {
+                            CURRENT_INSTANCE.LOG_HANDLER.warn(getClass(), "File: " + f + ", Status: " + test.getStatus());
+                            return false;
                         }
-                    } else {
-                        flag = false;
-                        break;
+                    } catch (FileNotFoundException e) {
+                        CURRENT_INSTANCE.LOG_HANDLER.fatal(getClass(), "Something has gone horribly wrong");
+                        return false;
+                    } catch (IOException e) {
+                        CURRENT_INSTANCE.LOG_HANDLER.fatal(getClass(), "An error occured while testing password\n" + e);
+                        return false;
                     }
                 }
             }
-            return flag;
+            return true;
         }
         return true;
     }

@@ -1,6 +1,5 @@
 package com.donny.dendrofinance.fileio;
 
-import com.donny.dendrofinance.gui.customswing.AlertGui;
 import com.donny.dendrofinance.gui.password.UnkPasswordGui;
 import com.donny.dendrofinance.instance.Instance;
 import com.donny.dendrofinance.json.JsonFormattingException;
@@ -11,8 +10,6 @@ import com.fasterxml.jackson.core.JsonFactory;
 import javax.swing.*;
 import java.io.*;
 import java.net.URL;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 
 public class FileHandler {
     private final Instance CURRENT_INSTANCE;
@@ -25,7 +22,7 @@ public class FileHandler {
     public String read(File file) {
         ensure(file.getParentFile());
         StringBuilder output = new StringBuilder();
-        try (BufferedReader reader = new BufferedReader(new FileReader(file, Charset.forName("unicode")))) {
+        try (BufferedReader reader = new BufferedReader(new FileReader(file, Instance.CHARSET))) {
             boolean flag = true;
             while (flag) {
                 int x = reader.read();
@@ -51,102 +48,9 @@ public class FileHandler {
         return read(new File(dir.getPath() + File.separator + file));
     }
 
-    public String readPlain(File file) {
-        ensure(file.getParentFile());
-        StringBuilder output = new StringBuilder();
-        try (BufferedReader reader = new BufferedReader(new FileReader(file, StandardCharsets.US_ASCII))) {
-            boolean flag = true;
-            while (flag) {
-                int x = reader.read();
-                if (x != -1) {
-                    output.append((char) x);
-                } else {
-                    flag = false;
-                }
-            }
-            reader.close();
-            CURRENT_INSTANCE.LOG_HANDLER.debug(getClass(), "file read: " + file.getAbsolutePath());
-            return output.toString().replace("\r", "");
-        } catch (IOException e) {
-            CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), file.getPath() + " could not be read from");
-            return "";
-        }
-    }
-
-    public String readPlain(File dir, String file) {
-        return readPlain(new File(dir.getPath() + File.separator + file));
-    }
-
-    public String readDecrypt(File file) {
-        ensure(file.getParentFile());
-        String str = CURRENT_INSTANCE.ENCRYPTION_HANDLER.decrypt(read(file));
-        if (str == null) {
-            return null;
-        } else {
-            return str.replace("\r", "");
-        }
-    }
-
-    public String readDecrypt(File dir, String file) {
-        return readDecrypt(new File(dir.getPath() + File.separator + file));
-    }
-
-    public String readDecryptUnknownPassword(File file, JFrame caller) {
-        ensure(file.getParentFile());
-        EncryptionHandler decrypt = UnkPasswordGui.getTestPassword(caller, file.getName(), CURRENT_INSTANCE);
-        if (decrypt != null) {
-            String str = decrypt.decrypt(read(file));
-            if (str == null) {
-                new AlertGui(caller, "Password Incorrect", CURRENT_INSTANCE).setVisible(true);
-                return null;
-            } else {
-                new AlertGui(caller, "Password Correct", CURRENT_INSTANCE).setVisible(true);
-                return str.replace("\r", "");
-            }
-        } else {
-            CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Password Entry Failed");
-            return null;
-        }
-    }
-
-    public String readDecryptUnknownPassword(File dir, String file, JFrame caller) {
-        return readDecryptUnknownPassword(new File(dir.getPath() + File.separator + file), caller);
-    }
-
-    public byte[] getTemplate(String path) {
-        return getResource("templates/" + path);
-    }
-
-    public byte[] getResource(String path) {
-        try (InputStream stream = getClass().getResourceAsStream("/com/donny/dendrofinance/resources/" + path)) {
-            return stream.readAllBytes();
-        } catch (IOException e) {
-            CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Resource not located: " + path);
-            return null;
-        } catch (NullPointerException ex) {
-            CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "No such resource: " + path);
-            return null;
-        }
-    }
-
-    public JsonItem getJsonResource(String path) {
-        try (InputStream stream = getClass().getResourceAsStream("/com/donny/dendrofinance/resources/" + path)) {
-            return JsonItem.digest(new JsonFactory().createParser(stream));
-        } catch (IOException e) {
-            CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Resource not located: " + path);
-            return null;
-        } catch (NullPointerException ex) {
-            CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "No such resource: " + path);
-            return null;
-        } catch (JsonFormattingException e) {
-            CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Malformed resource: " + path);
-            return null;
-        }
-    }
-
     public void write(File file, String output) {
         ensure(file.getParentFile());
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(file, Charset.forName("unicode")))) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(file, Instance.CHARSET))) {
             writer.write(output);
             writer.close();
             CURRENT_INSTANCE.LOG_HANDLER.debug(getClass(), "file written: " + file.getAbsolutePath());
@@ -160,51 +64,9 @@ public class FileHandler {
         write(new File(dir.getPath() + File.separator + file), output);
     }
 
-    public void writePlain(File file, String output) {
-        ensure(file.getParentFile());
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(file, StandardCharsets.US_ASCII))) {
-            writer.write(output);
-            writer.close();
-            CURRENT_INSTANCE.LOG_HANDLER.debug(getClass(), "file written: " + file.getAbsolutePath());
-        } catch (IOException e) {
-            CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), file.getPath() + " could not be written to");
-            CURRENT_INSTANCE.LOG_HANDLER.debug(getClass(), output);
-        }
-    }
-
-    public void writePlain(File dir, String file, String output) {
-        writePlain(new File(dir.getPath() + File.separator + file), output);
-    }
-
-    public void writeEncrypt(File file, String output) {
-        ensure(file.getParentFile());
-        String str = CURRENT_INSTANCE.ENCRYPTION_HANDLER.encrypt(output);
-        if (str != null) {
-            write(file, str);
-        }
-    }
-
-    public void writeEncrypt(File dir, String file, String output) {
-        writeEncrypt(new File(dir.getPath() + File.separator + file), output);
-    }
-
-    public void writeEncryptUnknownPassword(File file, String output, JFrame caller) {
-        ensure(file.getParentFile());
-        EncryptionHandler encrypt = UnkPasswordGui.getTestPassword(caller, file.getName(), CURRENT_INSTANCE);
-        if (encrypt != null) {
-            write(file, encrypt.encrypt(output));
-        } else {
-            CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Password Entry Failed");
-        }
-    }
-
-    public void writeEncryptUnknownPassword(File dir, String file, String output, JFrame caller) {
-        writeEncryptUnknownPassword(new File(dir.getPath() + File.separator + file), output, caller);
-    }
-
     public void append(File file, String output) {
         ensure(file.getParentFile());
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(file, Charset.forName("unicode"), true))) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(file, Instance.CHARSET, true))) {
             writer.write(output);
             writer.close();
             CURRENT_INSTANCE.LOG_HANDLER.debug(getClass(), "file appended: " + file.getAbsolutePath());
@@ -216,22 +78,6 @@ public class FileHandler {
 
     public void append(File dir, String file, String output) {
         append(new File(dir.getPath() + File.separator + file), output);
-    }
-
-    public void appendPlain(File file, String output) {
-        ensure(file.getParentFile());
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(file, StandardCharsets.US_ASCII, true))) {
-            writer.write(output);
-            writer.close();
-            CURRENT_INSTANCE.LOG_HANDLER.debug(getClass(), "file appended: " + file.getAbsolutePath());
-        } catch (IOException e) {
-            CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), file.getPath() + " could not be written to");
-            CURRENT_INSTANCE.LOG_HANDLER.debug(getClass(), output);
-        }
-    }
-
-    public void appendPlain(File dir, String file, String output) {
-        appendPlain(new File(dir.getPath() + File.separator + file), output);
     }
 
     public void delete(File file) {
@@ -254,6 +100,25 @@ public class FileHandler {
         delete(root);
     }
 
+    public JsonItem getResource(String path) {
+        try (InputStream stream = getClass().getResourceAsStream("/com/donny/dendrofinance/resources/" + path)) {
+            return JsonItem.digest(new JsonFactory().createParser(stream));
+        } catch (IOException e) {
+            CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Resource not located: " + path);
+            return null;
+        } catch (NullPointerException ex) {
+            CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "No such resource: " + path);
+            return null;
+        } catch (JsonFormattingException e) {
+            CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Malformed resource: " + path);
+            return null;
+        }
+    }
+
+    public JsonItem getTemplate(String path) {
+        return getResource("templates/" + path);
+    }
+
     public JsonObject getPrivateStock(String name) {
         File directory = new File(CURRENT_INSTANCE.data.getPath() + File.separator + "P_Stock");
         JsonObject history = null;
@@ -261,11 +126,7 @@ public class FileHandler {
         if (directory.exists() && directoryList != null) {
             for (File f : directoryList) {
                 if (f.getName().contains(name)) {
-                    try {
-                        history = (JsonObject) JsonItem.digest(f);
-                    } catch (JsonFormattingException e) {
-                        CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Bad Private Stock File: " + f.getPath());
-                    }
+                    history = (JsonObject) readJson(f);
                 }
             }
         }
@@ -284,11 +145,7 @@ public class FileHandler {
         if (directory.exists() && directoryList != null) {
             for (File f : directoryList) {
                 if (f.getName().contains(id)) {
-                    try {
-                        history = (JsonObject) JsonItem.digest(f);
-                    } catch (JsonFormattingException e) {
-                        CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Bad Private Inventory File: " + f.getPath());
-                    }
+                    history = (JsonObject) readJson(f);
                 }
             }
         }
@@ -309,31 +166,108 @@ public class FileHandler {
         }
     }
 
-    public String streamRaw(String url) {
-        int c = 0;
-        try (
-                InputStream stream = new URL(url).openStream();
-                BufferedReader reader = new BufferedReader(new InputStreamReader(stream, StandardCharsets.UTF_8))
-        ) {
-            StringBuilder sb = new StringBuilder();
-            while (c != -1) {
-                c = reader.read();
-                if (c != -1) {
-                    sb.append((char) c);
-                }
-            }
-            stream.close();
-            return sb.toString();
+    public JsonItem readJson(File file) {
+        ensure(file.getParentFile());
+        try {
+            return JsonItem.digest(new JsonFactory().createParser(file));
         } catch (IOException e) {
-            CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Could not connect to " + url + "\n" + e);
-            return "";
+            CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Something went wrong while trying to read json file: " + file + "\n" + e);
+            return null;
+        } catch (JsonFormattingException e) {
+            CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "The json file is malformed: " + file + "\n" + e);
+            return null;
         }
+    }
+
+    public JsonItem readDecryptJson(File file) {
+        ensure(file.getParentFile());
+        try {
+            return JsonItem.digest(new JsonFactory().createParser(new DecryptionInputStream(file, CURRENT_INSTANCE)));
+        } catch (JsonFormattingException e) {
+            CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "The json file is malformed: " + file + "\n" + e);
+            return null;
+        } catch (IOException e) {
+            CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Something went wrong while trying to read json file: " + file + "\n" + e);
+            return null;
+        }
+    }
+
+    public JsonItem readDecryptJsonUnknownPassword(File file, JFrame caller) {
+        ensure(file.getParentFile());
+        EncryptionHandler decrypt = UnkPasswordGui.getTestPassword(caller, file.getName(), CURRENT_INSTANCE);
+        if (decrypt != null) {
+            try {
+                return JsonItem.digest(new JsonFactory().createParser(new DecryptionInputStream(file, decrypt, CURRENT_INSTANCE)));
+            } catch (JsonFormattingException e) {
+                CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "The json file is malformed: " + file + "\n" + e);
+                return null;
+            } catch (IOException e) {
+                CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Something went wrong while trying to read json file: " + file + "\n" + e);
+                return null;
+            }
+        } else {
+            CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Password Entry Failed");
+            return null;
+        }
+    }
+
+    public void writeJson(File file, JsonItem item) {
+        ensure(file.getParentFile());
+        try (FileWriter writer = new FileWriter(file, Instance.CHARSET)) {
+            JsonItem.save(item, writer);
+            CURRENT_INSTANCE.LOG_HANDLER.debug(getClass(), "JSON file written: " + file.getAbsolutePath());
+        } catch (IOException e) {
+            CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Unable to write json file: " + file + "\n" + e);
+        }
+    }
+
+    public void writeJson(File dir, String name, JsonItem item) {
+        writeJson(new File(dir.getAbsoluteFile() + File.separator + name), item);
+    }
+
+    public void writeEncryptJson(File file, JsonItem item) {
+        ensure(file.getParentFile());
+        try (EncryptionOutputStream stream = new EncryptionOutputStream(file, CURRENT_INSTANCE)) {
+            stream.write("passwd".getBytes(Instance.CHARSET));
+            JsonItem.saveEncrypt(item, stream);
+            CURRENT_INSTANCE.LOG_HANDLER.debug(getClass(), "JSON file written: " + file.getAbsolutePath());
+        } catch (IOException e) {
+            CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Unable to write encrypted json file: " + file + "\n" + e);
+        }
+    }
+
+    public void writeEncryptJson(File dir, String name, JsonItem item) {
+        writeEncryptJson(new File(dir.getAbsoluteFile() + File.separator + name), item);
+    }
+
+    public void writeEncryptJsonUnknownPassword(File file, JsonItem item, JFrame caller) {
+        ensure(file.getParentFile());
+        EncryptionHandler encrypt = UnkPasswordGui.getTestPassword(caller, file.getName(), CURRENT_INSTANCE);
+        if (encrypt != null) {
+            try (EncryptionOutputStream stream = new EncryptionOutputStream(file, encrypt, CURRENT_INSTANCE)) {
+                stream.write("passwd".getBytes(Instance.CHARSET));
+                JsonItem.saveEncrypt(item, stream);
+                CURRENT_INSTANCE.LOG_HANDLER.debug(getClass(), "JSON file written: " + file.getAbsolutePath());
+            } catch (IOException e) {
+                CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Unable to write encrypted json file: " + file + "\n" + e);
+            }
+        } else {
+            CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Password Entry Failed");
+        }
+    }
+
+    public void writeEncryptJsonUnknownPassword(File dir, String name, JsonItem item, JFrame caller) {
+        writeEncryptJsonUnknownPassword(new File(dir.getAbsoluteFile() + File.separator + name), item, caller);
     }
 
     public void ensure(File file) {
         if (!file.exists()) {
             if (file.getParentFile().exists()) {
-                file.mkdir();
+                if (!file.mkdir()) {
+                    ensure(file);
+                } else {
+                    CURRENT_INSTANCE.LOG_HANDLER.debug(getClass(), "folder created: " + file.getAbsolutePath());
+                }
             } else {
                 ensure(file.getParentFile());
             }

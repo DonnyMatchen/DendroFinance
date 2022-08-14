@@ -67,7 +67,7 @@ public class DataSet<E extends Entry> {
         return removed;
     }
 
-    public ArrayList<E> read() throws JsonFormattingException {
+    public ArrayList<E> read() {
         if (TABLE.isEmpty() && !emptyDueToDeletion) {
             reload();
         }

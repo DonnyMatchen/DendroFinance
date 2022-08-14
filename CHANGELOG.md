@@ -1,3 +1,18 @@
+## v0.8.1
+* overhaul of encryption
+  * moved from ECB to CBC
+  * Moved from (AES -> BFL) to (AES)
+    * Double encryption doesn't buy much
+    * there are no longer trailing identical bytes attached to each block
+    * encrypted files are now even more compact
+  * changed encrypted file format to something more compact
+    * use raw bytes rather than Base64 encoding
+    * include block size in file
+* moved streams and encryption handler from `fileio` to `fileio.encryption`
+* overhaul of file handling
+  * More efficient file io used
+  * method flow streamlined
+
 ## v0.8.0
 * minor bug fixes
   * fixed `FileHandler.ensure()`

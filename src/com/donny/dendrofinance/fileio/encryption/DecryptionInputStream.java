@@ -1,4 +1,4 @@
-package com.donny.dendrofinance.fileio;
+package com.donny.dendrofinance.fileio.encryption;
 
 import com.donny.dendrofinance.instance.Instance;
 
@@ -9,8 +9,8 @@ import java.util.Arrays;
 public class DecryptionInputStream extends FileInputStream {
     private final Instance CURRENT_INSTANCE;
     private final EncryptionHandler ENCRYPTION_HANDLER;
-    private final StringBuilder INTAKE = new StringBuilder();
-    private byte[] buffer = null;
+    private final byte[] BUFFER, IN_BUFFER;
+    private final int BLOCK_SIZE;
     private int cursor = 0;
     private boolean end = false;
     /*
@@ -21,32 +21,37 @@ public class DecryptionInputStream extends FileInputStream {
      */
     private int status = 0;
 
-    public DecryptionInputStream(String name, EncryptionHandler handler, Instance curInst) throws FileNotFoundException {
+    public DecryptionInputStream(String name, EncryptionHandler handler, Instance curInst) throws IOException {
         super(name);
         CURRENT_INSTANCE = curInst;
         ENCRYPTION_HANDLER = handler;
+        BLOCK_SIZE = super.read() * 16;
+        BUFFER = new byte[BLOCK_SIZE];
+        IN_BUFFER = new byte[BLOCK_SIZE + 16];
     }
 
-    public DecryptionInputStream(File file, EncryptionHandler handler, Instance curInst) throws FileNotFoundException {
+    public DecryptionInputStream(File file, EncryptionHandler handler, Instance curInst) throws IOException {
         super(file);
         CURRENT_INSTANCE = curInst;
         ENCRYPTION_HANDLER = handler;
+        BLOCK_SIZE = super.read() * 16;
+        BUFFER = new byte[BLOCK_SIZE];
+        IN_BUFFER = new byte[BLOCK_SIZE + 16];
     }
 
-    public DecryptionInputStream(String name, Instance curInst) throws FileNotFoundException {
+    public DecryptionInputStream(String name, Instance curInst) throws IOException {
         this(name, curInst.ENCRYPTION_HANDLER, curInst);
     }
 
-    public DecryptionInputStream(File file, Instance curInst) throws FileNotFoundException {
+    public DecryptionInputStream(File file, Instance curInst) throws IOException {
         this(file, curInst.ENCRYPTION_HANDLER, curInst);
     }
 
     public String getStatus() {
         return switch (status) {
-            case 0 -> "NOT_INITIATED";
-            case 1 -> "INITIATED_AWAITING_TEST";
-            case 2 -> "INITIATED_FAILED_TEST";
-            case 3 -> "INITIATED_PASSED_TEST";
+            case 0 -> "AWAITING_TEST";
+            case 1 -> "FAILED_TEST";
+            case 2 -> "PASSED_TEST";
             default -> "UNKNOWN";
         };
     }
@@ -61,7 +66,7 @@ public class DecryptionInputStream extends FileInputStream {
                 return false;
             }
         }
-        return status > 2;
+        return status >= 2;
     }
 
     @Override
@@ -70,57 +75,51 @@ public class DecryptionInputStream extends FileInputStream {
             if (end) {
                 return -1;
             }
-            boolean flag = true;
-            while (flag) {
+            Arrays.fill(IN_BUFFER, (byte) 0);
+            for (int i = 0; i < BLOCK_SIZE + 16; i++) {
                 int x = super.read();
                 if (x == -1) {
                     end = true;
-                    x = ' ';
-                }
-                if (x == ' ') {
-                    if (status == 0) {
-                        status = 1;
-                    } else {
-                        byte[] decod = ENCRYPTION_HANDLER.decrypt(INTAKE.toString());
-                        if (decod == null || decod.length < 6) {
-                            CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Something went wrong: " + getStatus());
-                            return -1;
-                        }
-                        buffer = decod;
-                        INTAKE.setLength(0);
-                        if (status == 1) {
-                            status = 2;
-                            // "passwd" = 112 97 115 115 119 100
-                            if (
-                                    buffer[0] == (byte) 112
-                                            && buffer[1] == (byte) 97
-                                            && buffer[2] == (byte) 115
-                                            && buffer[3] == (byte) 115
-                                            && buffer[4] == (byte) 119
-                                            && buffer[5] == (byte) 100
-                            ) {
-                                status = 3;
-                                cursor = 6;
-                            } else {
-                                CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Decryption failed\n" + Arrays.toString(buffer));
-                            }
-                        }
-                        flag = false;
-                    }
+                    break;
                 } else {
-                    INTAKE.append((char) x);
+                    IN_BUFFER[i] = (byte) x;
                 }
+            }
+            byte[] decod = ENCRYPTION_HANDLER.decrypt(IN_BUFFER);
+            if (decod == null || decod.length < 6) {
+                CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Something went wrong: " + getStatus());
+                return -1;
+            }
+            System.arraycopy(decod, 0, BUFFER, 0, BLOCK_SIZE);
+            if (status == 0) {
+                status++;
+                // "passwd" = 112 97 115 115 119 100
+                if (
+                        BUFFER[0] == (byte) 112
+                                && BUFFER[1] == (byte) 97
+                                && BUFFER[2] == (byte) 115
+                                && BUFFER[3] == (byte) 115
+                                && BUFFER[4] == (byte) 119
+                                && BUFFER[5] == (byte) 100
+                ) {
+                    status++;
+                    cursor = 6;
+                } else {
+                    CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Decryption failed\n" + Arrays.toString(BUFFER));
+                }
+            } else if (status == 1) {
+                return -1;
             }
         }
         int read = cursor;
         cursor++;
-        if (cursor == buffer.length) {
+        if (cursor == BLOCK_SIZE) {
             cursor = 0;
         }
-        if (buffer[read] == 0 && end) {
+        if (BUFFER[read] == 0 && end) {
             boolean padding = true;
-            for (int i = read; i < buffer.length; i++) {
-                if (buffer[i] != 0) {
+            for (int i = read; i < BLOCK_SIZE; i++) {
+                if (BUFFER[i] != 0) {
                     padding = false;
                     break;
                 }
@@ -129,7 +128,7 @@ public class DecryptionInputStream extends FileInputStream {
                 return -1;
             }
         }
-        return buffer[read];
+        return BUFFER[read];
     }
 
     @Override

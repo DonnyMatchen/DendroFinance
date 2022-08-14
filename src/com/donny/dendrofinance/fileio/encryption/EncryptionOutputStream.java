@@ -1,9 +1,8 @@
-package com.donny.dendrofinance.fileio;
+package com.donny.dendrofinance.fileio.encryption;
 
 import com.donny.dendrofinance.instance.Instance;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
@@ -15,43 +14,45 @@ public class EncryptionOutputStream extends FileOutputStream {
     private final int BLOCK_SIZE;
     private int cursor = 0;
 
-    public EncryptionOutputStream(String name, EncryptionHandler handler, int blockSize, Instance curInst) throws FileNotFoundException {
+    public EncryptionOutputStream(String name, EncryptionHandler handler, int blockSize, Instance curInst) throws IOException {
         super(name);
         CURRENT_INSTANCE = curInst;
         ENCRYPTION_HANDLER = handler;
         BLOCK_SIZE = blockSize * 16;
         BUFFER = new byte[BLOCK_SIZE];
+        super.write((byte) blockSize & 255);
     }
 
-    public EncryptionOutputStream(File file, EncryptionHandler handler, int blockSize, Instance curInst) throws FileNotFoundException {
+    public EncryptionOutputStream(File file, EncryptionHandler handler, int blockSize, Instance curInst) throws IOException {
         super(file);
         CURRENT_INSTANCE = curInst;
         ENCRYPTION_HANDLER = handler;
         BLOCK_SIZE = blockSize * 16;
         BUFFER = new byte[BLOCK_SIZE];
+        super.write((byte) blockSize & 255);
     }
 
-    public EncryptionOutputStream(String name, int blockSize, Instance curInst) throws FileNotFoundException {
+    public EncryptionOutputStream(String name, int blockSize, Instance curInst) throws IOException {
         this(name, curInst.ENCRYPTION_HANDLER, blockSize, curInst);
     }
 
-    public EncryptionOutputStream(File file, int blockSize, Instance curInst) throws FileNotFoundException {
+    public EncryptionOutputStream(File file, int blockSize, Instance curInst) throws IOException {
         this(file, curInst.ENCRYPTION_HANDLER, blockSize, curInst);
     }
 
-    public EncryptionOutputStream(String name, EncryptionHandler handler, Instance curInst) throws FileNotFoundException {
+    public EncryptionOutputStream(String name, EncryptionHandler handler, Instance curInst) throws IOException {
         this(name, handler, curInst.blockSize, curInst);
     }
 
-    public EncryptionOutputStream(File file, EncryptionHandler handler, Instance curInst) throws FileNotFoundException {
+    public EncryptionOutputStream(File file, EncryptionHandler handler, Instance curInst) throws IOException {
         this(file, handler, curInst.blockSize, curInst);
     }
 
-    public EncryptionOutputStream(String name, Instance curInst) throws FileNotFoundException {
+    public EncryptionOutputStream(String name, Instance curInst) throws IOException {
         this(name, curInst.ENCRYPTION_HANDLER, curInst.blockSize, curInst);
     }
 
-    public EncryptionOutputStream(File file, Instance curInst) throws FileNotFoundException {
+    public EncryptionOutputStream(File file, Instance curInst) throws IOException {
         this(file, curInst.ENCRYPTION_HANDLER, curInst.blockSize, curInst);
     }
 
@@ -66,7 +67,7 @@ public class EncryptionOutputStream extends FileOutputStream {
         cursor++;
         if (cursor == BLOCK_SIZE) {
             cursor = 0;
-            super.write((" " + ENCRYPTION_HANDLER.encrypt(BUFFER)).getBytes(Instance.CHARSET));
+            super.write(ENCRYPTION_HANDLER.encrypt(BUFFER));
         }
     }
 
@@ -94,7 +95,7 @@ public class EncryptionOutputStream extends FileOutputStream {
             }
         }
         if (check) {
-            super.write((" " + ENCRYPTION_HANDLER.encrypt(BUFFER)).getBytes(Instance.CHARSET));
+            super.write(ENCRYPTION_HANDLER.encrypt(BUFFER));
         }
         super.close();
     }

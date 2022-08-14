@@ -1,5 +1,8 @@
 package com.donny.dendrofinance.fileio;
 
+import com.donny.dendrofinance.fileio.encryption.DecryptionInputStream;
+import com.donny.dendrofinance.fileio.encryption.EncryptionHandler;
+import com.donny.dendrofinance.fileio.encryption.EncryptionOutputStream;
 import com.donny.dendrofinance.gui.password.UnkPasswordGui;
 import com.donny.dendrofinance.instance.Instance;
 import com.donny.dendrofinance.json.JsonFormattingException;
@@ -25,28 +28,41 @@ public class FileHandler {
      *  READ
      */
 
-    public String read(File file) {
+    public byte[] readBytes(File file) {
         ensure(file.getParentFile());
-        StringBuilder output = new StringBuilder();
-        try (BufferedReader reader = new BufferedReader(new FileReader(file, Instance.CHARSET))) {
+        ArrayList<Byte> bytes = new ArrayList<>();
+        try (FileInputStream reader = new FileInputStream(file)) {
             boolean flag = true;
             while (flag) {
                 int x = reader.read();
                 if (x != -1) {
-                    output.append((char) x);
+                    bytes.add((byte) x);
                 } else {
                     flag = false;
                 }
             }
+            byte[] out = new byte[bytes.size()];
+            for (int i = 0; i < bytes.size(); i++) {
+                out[i] = bytes.get(i);
+            }
             CURRENT_INSTANCE.LOG_HANDLER.debug(getClass(), "file read: " + file.getAbsolutePath());
-            return output.toString().replace("\r", "");
+            return out;
         } catch (IOException e) {
             if (file.exists()) {
                 CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), file.getPath() + " could not be read from");
             } else {
                 CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), file.getPath() + " does not exist");
             }
-            return "";
+            return null;
+        }
+    }
+
+    public String read(File file) {
+        byte[] read = readBytes(file);
+        if (read == null) {
+            return null;
+        } else {
+            return new String(read, Instance.CHARSET).replace("\r", "");
         }
     }
 
@@ -85,10 +101,11 @@ public class FileHandler {
             if (CURRENT_INSTANCE.large) {
                 item = JsonItem.digest(new JsonFactory().createParser(new DecryptionInputStream(file, CURRENT_INSTANCE)));
             } else {
-                String code = read(file);
-                String[] codes = code.split(" ");
+                byte[] code = readBytes(file);
+                byte[] rest = new byte[code.length - 1];
+                System.arraycopy(code, 1, rest, 0, rest.length);
                 ArrayList<Byte> bytes = new ArrayList<>();
-                for (String cod : codes) {
+                for (byte[] cod : Partitioner.partition(rest, code[0] * 16 + 16)) {
                     for (byte b : CURRENT_INSTANCE.ENCRYPTION_HANDLER.decrypt(cod)) {
                         bytes.add(b);
                     }
@@ -123,10 +140,11 @@ public class FileHandler {
                 if (CURRENT_INSTANCE.large) {
                     item = JsonItem.digest(new JsonFactory().createParser(new DecryptionInputStream(file, decrypt, CURRENT_INSTANCE)));
                 } else {
-                    String code = read(file);
-                    String[] codes = code.split(" ");
+                    byte[] code = readBytes(file);
+                    byte[] rest = new byte[code.length - 1];
+                    System.arraycopy(code, 1, rest, 0, rest.length);
                     ArrayList<Byte> bytes = new ArrayList<>();
-                    for (String cod : codes) {
+                    for (byte[] cod : Partitioner.partition(rest, code[0] * 16 + 24)) {
                         for (byte b : decrypt.decrypt(cod)) {
                             bytes.add(b);
                         }
@@ -160,16 +178,18 @@ public class FileHandler {
      *  WRITE
      */
 
-    public void write(File file, String output) {
+    public void writeBytes(File file, byte[] bytes) {
         ensure(file.getParentFile());
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(file, Instance.CHARSET))) {
-            writer.write(output);
-            writer.close();
+        try (FileOutputStream writer = new FileOutputStream(file)) {
+            writer.write(bytes);
             CURRENT_INSTANCE.LOG_HANDLER.debug(getClass(), "file written: " + file.getAbsolutePath());
         } catch (IOException e) {
             CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), file.getPath() + " could not be written to");
-            CURRENT_INSTANCE.LOG_HANDLER.debug(getClass(), output);
         }
+    }
+
+    public void write(File file, String output) {
+        writeBytes(file, output.replace("\r", "").getBytes(Instance.CHARSET));
     }
 
     public void write(File dir, String file, String output) {
@@ -206,11 +226,18 @@ public class FileHandler {
             }
         } else {
             String json = "passwd" + item.toString();
-            StringBuilder out = new StringBuilder();
+            ArrayList<Byte> bytes = new ArrayList<>();
+            bytes.add((byte) (CURRENT_INSTANCE.blockSize & 255));
             for (byte[] segment : Partitioner.partition(json.getBytes(Instance.CHARSET), CURRENT_INSTANCE.blockSize * 16)) {
-                out.append(" ").append(CURRENT_INSTANCE.ENCRYPTION_HANDLER.encrypt(segment));
+                for (byte b : CURRENT_INSTANCE.ENCRYPTION_HANDLER.encrypt(segment)) {
+                    bytes.add(b);
+                }
             }
-            write(file, out.toString());
+            byte[] out = new byte[bytes.size()];
+            for (int i = 0; i < bytes.size(); i++) {
+                out[i] = bytes.get(i);
+            }
+            writeBytes(file, out);
             CURRENT_INSTANCE.LOG_HANDLER.debug(getClass(), "json file written and encrypted: " + file.getAbsolutePath());
         }
     }
@@ -233,11 +260,18 @@ public class FileHandler {
                 }
             } else {
                 String json = "passwd" + item.toString();
-                StringBuilder out = new StringBuilder();
+                ArrayList<Byte> bytes = new ArrayList<>();
+                bytes.add((byte) (CURRENT_INSTANCE.blockSize & 255));
                 for (byte[] segment : Partitioner.partition(json.getBytes(Instance.CHARSET), CURRENT_INSTANCE.blockSize * 16)) {
-                    out.append(" ").append(encrypt.encrypt(segment));
+                    for (byte b : encrypt.encrypt(segment)) {
+                        bytes.add(b);
+                    }
                 }
-                write(file, out.toString());
+                byte[] out = new byte[bytes.size()];
+                for (int i = 0; i < bytes.size(); i++) {
+                    out[i] = bytes.get(i);
+                }
+                writeBytes(file, out);
                 CURRENT_INSTANCE.LOG_HANDLER.debug(getClass(), "json file written and encrypted: " + file.getAbsolutePath());
             }
         } else {
@@ -253,16 +287,18 @@ public class FileHandler {
      *  APPEND
      */
 
-    public void append(File file, String output) {
+    public void appendBytes(File file, byte[] bytes) {
         ensure(file.getParentFile());
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(file, Instance.CHARSET, true))) {
-            writer.write(output);
-            writer.close();
+        try (FileOutputStream writer = new FileOutputStream(file, true)) {
+            writer.write(bytes);
             CURRENT_INSTANCE.LOG_HANDLER.debug(getClass(), "file appended to: " + file.getAbsolutePath());
         } catch (IOException e) {
             CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), file.getPath() + " could not be appended to");
-            CURRENT_INSTANCE.LOG_HANDLER.debug(getClass(), output);
         }
+    }
+
+    public void append(File file, String output) {
+        appendBytes(file, output.replace("\r", "").getBytes(Instance.CHARSET));
     }
 
     public void append(File dir, String file, String output) {
@@ -275,19 +311,22 @@ public class FileHandler {
 
     public void delete(File file) {
         ensure(file.getParentFile());
-        file.delete();
-        CURRENT_INSTANCE.LOG_HANDLER.debug(getClass(), "file deleted: " + file.getAbsolutePath());
+        if (file.delete()) {
+            CURRENT_INSTANCE.LOG_HANDLER.debug(getClass(), "file deleted: " + file.getAbsolutePath());
+        } else {
+            CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "file was not deleted: " + file.getAbsolutePath());
+        }
     }
 
     public void delete(File dir, String file) {
         delete(new File(dir.getPath() + File.separator + file));
     }
 
-    public void deleteR(File root) {
+    public void deleteRecursive(File root) {
         File[] rootList = root.listFiles();
         if (root.isDirectory() && rootList != null) {
             for (File f : rootList) {
-                deleteR(f);
+                deleteRecursive(f);
             }
         }
         delete(root);

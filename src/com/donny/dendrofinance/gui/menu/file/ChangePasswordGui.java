@@ -1,6 +1,6 @@
 package com.donny.dendrofinance.gui.menu.file;
 
-import com.donny.dendrofinance.fileio.EncryptionHandler;
+import com.donny.dendrofinance.fileio.encryption.EncryptionHandler;
 import com.donny.dendrofinance.gui.MainGui;
 import com.donny.dendrofinance.gui.customswing.AlertGui;
 import com.donny.dendrofinance.gui.customswing.DendroFactory;

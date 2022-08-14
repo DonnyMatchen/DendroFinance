@@ -1,6 +1,6 @@
 package com.donny.dendrofinance.json;
 
-import com.donny.dendrofinance.fileio.EncryptionOutputStream;
+import com.donny.dendrofinance.fileio.encryption.EncryptionOutputStream;
 import com.donny.dendrofinance.instance.Instance;
 import com.donny.dendrofinance.util.ExportableToJson;
 

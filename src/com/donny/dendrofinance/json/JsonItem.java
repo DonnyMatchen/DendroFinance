@@ -1,6 +1,6 @@
 package com.donny.dendrofinance.json;
 
-import com.donny.dendrofinance.fileio.EncryptionOutputStream;
+import com.donny.dendrofinance.fileio.encryption.EncryptionOutputStream;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonParser;
@@ -84,7 +84,7 @@ public abstract class JsonItem implements Serializable {
         try {
             return digest(new JsonFactory().createParser(jsonString));
         } catch (IOException e) {
-            return new JsonNull();
+            return null;
         }
     }
 

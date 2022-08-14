@@ -138,21 +138,11 @@ public class DataHandler {
     }
 
     public ArrayList<TransactionEntry> readTransactions() {
-        try {
-            return TRANSACTIONS.read();
-        } catch (JsonFormattingException e) {
-            CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Error loading datasets: " + e);
-            return new ArrayList<>();
-        }
+        return TRANSACTIONS.read();
     }
 
     public ArrayList<BudgetEntry> readBudgets() {
-        try {
-            return BUDGETS.read();
-        } catch (JsonFormattingException e) {
-            CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Error loading datasets: " + e);
-            return new ArrayList<>();
-        }
+        return BUDGETS.read();
     }
 
     public TransactionEntry getPrior() {

@@ -1,3 +1,7 @@
+## v0.8.2
+* minor optimizations
+  * removed unnecessary `& 255` in writing blockSize as a byte
+
 ## v0.8.1
 * overhaul of encryption
   * moved from ECB to CBC

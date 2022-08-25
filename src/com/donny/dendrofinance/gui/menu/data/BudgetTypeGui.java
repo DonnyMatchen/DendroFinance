@@ -10,21 +10,18 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 public class BudgetTypeGui extends RegisterFrame {
-    private final JLabel A;
-    private final JScrollPane SCROLL;
     private final JTextArea BUDGETS;
-    private final JButton SAVE;
 
     public BudgetTypeGui(MainGui caller, Instance curInst) {
         super(caller, "Budget Type Edit", curInst);
 
         //draw gui
         {
-            A = new JLabel("List of Budget Types");
-            SCROLL = DendroFactory.getScrollField();
-            BUDGETS = (JTextArea) SCROLL.getViewport().getView();
-            SAVE = DendroFactory.getButton("Save");
-            SAVE.addActionListener(event -> saveAction());
+            JLabel a = new JLabel("List of Budget Types");
+            JScrollPane scroll = DendroFactory.getScrollField();
+            BUDGETS = (JTextArea) scroll.getViewport().getView();
+            JButton save = DendroFactory.getButton("Save");
+            save.addActionListener(event -> saveAction());
             StringBuilder builder = new StringBuilder();
             CURRENT_INSTANCE.DATA_HANDLER.getBudgetTypes().forEach(type -> builder.append(type).append("\n"));
             BUDGETS.setText(builder.toString());
@@ -36,21 +33,21 @@ public class BudgetTypeGui extends RegisterFrame {
                 main.setHorizontalGroup(
                         main.createSequentialGroup().addContainerGap().addGroup(
                                 main.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(
-                                        A, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                        a, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                 ).addComponent(
-                                        SCROLL, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
+                                        scroll, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
                                 ).addComponent(
-                                        SAVE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                        save, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                 )
                         ).addContainerGap()
                 );
                 main.setVerticalGroup(
                         main.createSequentialGroup().addContainerGap().addComponent(
-                                A, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                a, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                         ).addGap(DendroFactory.SMALL_GAP).addComponent(
-                                SCROLL, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
+                                scroll, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
                         ).addGap(DendroFactory.MEDIUM_GAP).addComponent(
-                                SAVE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                save, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                         ).addContainerGap()
                 );
             }

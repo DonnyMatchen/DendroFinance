@@ -12,10 +12,7 @@ import javax.swing.*;
 
 public class CurrencyEditGui extends BackingEditGui<LCurrency> {
     private JTextField name, alt, ticker, symbol, places;
-    private JPanel flags;
     private JCheckBox fiat, extinct, token, forwards;
-    private JLabel a, b, c, d, e, f;
-    private JButton save, cancel;
 
     public CurrencyEditGui(BackingTableGui<LCurrency> caller, BackingTableCore<LCurrency> core, int index, Instance curInst) {
         super(caller, core, index, curInst);
@@ -28,22 +25,22 @@ public class CurrencyEditGui extends BackingEditGui<LCurrency> {
         ticker = new JTextField();
         symbol = new JTextField();
         places = new JTextField();
-        flags = new JPanel();
+        JPanel flags = new JPanel();
         fiat = new JCheckBox("Fiat");
         extinct = new JCheckBox("Extinct");
         token = new JCheckBox("Token");
         forwards = new JCheckBox("Forwards");
 
-        a = new JLabel("Currency Name");
-        b = new JLabel("Alternate Name");
-        c = new JLabel("Currency Ticker");
-        d = new JLabel("Currency Symbol");
-        e = new JLabel("Number of places");
-        f = new JLabel("Flags");
+        JLabel a = new JLabel("Currency Name");
+        JLabel b = new JLabel("Alternate Name");
+        JLabel c = new JLabel("Currency Ticker");
+        JLabel d = new JLabel("Currency Symbol");
+        JLabel e = new JLabel("Number of places");
+        JLabel f = new JLabel("Flags");
 
-        cancel = DendroFactory.getButton("Cancel");
+        JButton cancel = DendroFactory.getButton("Cancel");
         cancel.addActionListener(event -> dispose());
-        save = DendroFactory.getButton("Save");
+        JButton save = DendroFactory.getButton("Save");
         save.addActionListener(event -> saveAction());
 
         //populate if in edit mode

@@ -20,9 +20,7 @@ import java.util.Vector;
 
 public class RevExpGui extends RegisterFrame {
     private final JTextField START, END;
-    private final JLabel A, B, C, D;
     private final JComboBox<String> PERIOD, TYPE;
-    private final JScrollPane PANE;
     private final JTable TABLE;
 
     public RevExpGui(MainGui caller, Instance curInst) {
@@ -35,12 +33,12 @@ public class RevExpGui extends RegisterFrame {
             PERIOD.addItem("Semiannually");
             PERIOD.addItem("Quarterly");
             PERIOD.addItem("Monthly");
-            C = new JLabel("Period");
+            JLabel c = new JLabel("Period");
             PERIOD.addItemListener(event -> updateTable());
-            A = new JLabel("From");
+            JLabel a = new JLabel("From");
             START = new JTextField();
             START.setText(CURRENT_INSTANCE.DATA_HANDLER.getPrior().getDate().tomorrow().toDateString());
-            B = new JLabel("End");
+            JLabel b = new JLabel("End");
             END = new JTextField();
             END.setText(LDate.now(CURRENT_INSTANCE).toDateString());
             TYPE = new JComboBox<>();
@@ -48,15 +46,15 @@ public class RevExpGui extends RegisterFrame {
             for (String s : CURRENT_INSTANCE.DATA_HANDLER.getBudgetTypes()) {
                 TYPE.addItem(s);
             }
-            D = new JLabel("Budget");
+            JLabel d = new JLabel("Budget");
             TYPE.addItemListener(event -> updateTable());
             TABLE = new JTable();
             TABLE.setCellSelectionEnabled(true);
             TABLE.setColumnSelectionAllowed(true);
             TABLE.getTableHeader().setReorderingAllowed(false);
             TABLE.getColumnModel().getSelectionModel().setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-            PANE = DendroFactory.getScrollPane(false, true);
-            PANE.setViewportView(TABLE);
+            JScrollPane pane = DendroFactory.getScrollPane(false, true);
+            pane.setViewportView(TABLE);
             updateTable();
 
             //back layout
@@ -67,56 +65,56 @@ public class RevExpGui extends RegisterFrame {
                         main.createSequentialGroup().addContainerGap().addGroup(
                                 main.createParallelGroup(GroupLayout.Alignment.CENTER).addGroup(
                                         main.createSequentialGroup().addComponent(
-                                                A, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                                a, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                         ).addGap(DendroFactory.SMALL_GAP).addComponent(
                                                 START, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
                                         ).addGap(DendroFactory.LARGE_GAP).addComponent(
-                                                B, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                                b, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                         ).addGap(DendroFactory.SMALL_GAP).addComponent(
                                                 END, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
                                         )
                                 ).addGroup(
                                         main.createSequentialGroup().addComponent(
-                                                C, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                                c, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                         ).addGap(DendroFactory.SMALL_GAP).addComponent(
                                                 PERIOD, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
                                         )
                                 ).addGroup(
                                         main.createSequentialGroup().addComponent(
-                                                D, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                                d, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                         ).addGap(DendroFactory.SMALL_GAP).addComponent(
                                                 TYPE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
                                         )
                                 ).addComponent(
-                                        PANE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
+                                        pane, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
                                 )
                         ).addContainerGap()
                 );
                 main.setVerticalGroup(
                         main.createSequentialGroup().addContainerGap().addGroup(
                                 main.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(
-                                        A, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                        a, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                 ).addComponent(
                                         START, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                 ).addComponent(
-                                        B, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                        b, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                 ).addComponent(
                                         END, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                 )
                         ).addGap(DendroFactory.SMALL_GAP).addGroup(
                                 main.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(
-                                        C, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                        c, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                 ).addComponent(
                                         PERIOD, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                 )
                         ).addGap(DendroFactory.SMALL_GAP).addGroup(
                                 main.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(
-                                        D, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                        d, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                 ).addComponent(
                                         TYPE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                 )
                         ).addGap(DendroFactory.SMALL_GAP).addComponent(
-                                PANE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
+                                pane, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
                         ).addContainerGap()
                 );
             }

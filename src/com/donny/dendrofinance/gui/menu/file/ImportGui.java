@@ -12,12 +12,9 @@ import java.io.File;
 public class ImportGui extends RegisterFrame {
     private final String DIR;
     private final MainGui MAIN_GUI;
-    private final JLabel A, B;
     private final JComboBox<String> MODE;
-    private final JScrollPane PANE;
     private final JList<String> LIST;
     private final DefaultListModel<String> LIST_ACCESS;
-    private final JButton IMPORT, IMPORT_ALL;
 
     public ImportGui(MainGui caller, Instance curInst) {
         super(caller, "Import", curInst);
@@ -27,22 +24,22 @@ public class ImportGui extends RegisterFrame {
 
         //draw gui
         {
-            A = new JLabel("File");
-            B = new JLabel("Mode");
+            JLabel a = new JLabel("File");
+            JLabel b = new JLabel("Mode");
 
             MODE = new JComboBox<>();
             MODE.addItem("Keep Both");
             MODE.addItem("Ignore New");
             MODE.addItem("Replace Old");
 
-            PANE = DendroFactory.getScrollPane(false, true);
+            JScrollPane pane = DendroFactory.getScrollPane(false, true);
             LIST = DendroFactory.getList();
             LIST_ACCESS = (DefaultListModel<String>) LIST.getModel();
-            PANE.setViewportView(LIST);
-            IMPORT = DendroFactory.getButton("Import");
-            IMPORT.addActionListener(event -> importAction());
-            IMPORT_ALL = DendroFactory.getButton("Import All");
-            IMPORT_ALL.addActionListener(event -> importAllAction());
+            pane.setViewportView(LIST);
+            JButton importButton = DendroFactory.getButton("Import");
+            importButton.addActionListener(event -> importAction());
+            JButton importAll = DendroFactory.getButton("Import All");
+            importAll.addActionListener(event -> importAllAction());
 
             //group layout
             {
@@ -51,42 +48,42 @@ public class ImportGui extends RegisterFrame {
                 main.setHorizontalGroup(
                         main.createSequentialGroup().addContainerGap().addGroup(
                                 main.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(
-                                        A, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                        a, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                 ).addComponent(
-                                        PANE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
+                                        pane, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
                                 ).addGroup(
                                         main.createSequentialGroup().addComponent(
-                                                B, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                                b, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                         ).addGap(DendroFactory.SMALL_GAP).addComponent(
                                                 MODE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
                                         )
                                 ).addGroup(
                                         main.createSequentialGroup().addComponent(
-                                                IMPORT, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                                importButton, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                         ).addGap(
                                                 DendroFactory.SMALL_GAP, DendroFactory.SMALL_GAP, Short.MAX_VALUE
                                         ).addComponent(
-                                                IMPORT_ALL, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                                importAll, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                         )
                                 )
                         ).addContainerGap()
                 );
                 main.setVerticalGroup(
                         main.createSequentialGroup().addContainerGap().addComponent(
-                                A, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                a, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                         ).addGap(DendroFactory.SMALL_GAP).addComponent(
-                                PANE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
+                                pane, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
                         ).addGap(DendroFactory.SMALL_GAP).addGroup(
                                 main.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(
-                                        B, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                        b, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                 ).addComponent(
                                         MODE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                 )
                         ).addGap(DendroFactory.MEDIUM_GAP).addGroup(
                                 main.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(
-                                        IMPORT, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                        importButton, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                 ).addComponent(
-                                        IMPORT_ALL, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                        importAll, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                 )
                         ).addContainerGap()
                 );

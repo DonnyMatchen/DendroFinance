@@ -14,12 +14,8 @@ import java.util.Arrays;
 
 public class MarketApiEditGui extends BackingEditGui<LMarketApi> {
     private JTextField name;
-    private JScrollPane url, urlH, key, path, pathH, nats, excepts;
     private JTextArea url_, urlH_, key_, path_, pathH_, nats_, excepts_;
-    private JPanel flags;
     private JCheckBox fiat, crypto, stock, inventory;
-    private JLabel a, b, c, d, e, f, g, h, i;
-    private JButton cancel, save;
 
     public MarketApiEditGui(BackingTableGui<LMarketApi> caller, BackingTableCore<LMarketApi> core, int index, Instance curInst) {
         super(caller, core, index, curInst);
@@ -27,23 +23,23 @@ public class MarketApiEditGui extends BackingEditGui<LMarketApi> {
 
     @Override
     protected void initComponents() {
-        flags = new JPanel();
+        JPanel flags = new JPanel();
 
         name = new JTextField();
 
-        url = DendroFactory.getLongField();
+        JScrollPane url = DendroFactory.getLongField();
         url_ = (JTextArea) url.getViewport().getView();
-        urlH = DendroFactory.getLongField();
+        JScrollPane urlH = DendroFactory.getLongField();
         urlH_ = (JTextArea) urlH.getViewport().getView();
-        key = DendroFactory.getLongField();
+        JScrollPane key = DendroFactory.getLongField();
         key_ = (JTextArea) key.getViewport().getView();
-        path = DendroFactory.getLongField();
+        JScrollPane path = DendroFactory.getLongField();
         path_ = (JTextArea) path.getViewport().getView();
-        pathH = DendroFactory.getLongField();
+        JScrollPane pathH = DendroFactory.getLongField();
         pathH_ = (JTextArea) pathH.getViewport().getView();
-        nats = DendroFactory.getLongField();
+        JScrollPane nats = DendroFactory.getLongField();
         nats_ = (JTextArea) nats.getViewport().getView();
-        excepts = DendroFactory.getLongField();
+        JScrollPane excepts = DendroFactory.getLongField();
         excepts_ = (JTextArea) excepts.getViewport().getView();
 
         fiat = new JCheckBox("Forex");
@@ -51,19 +47,19 @@ public class MarketApiEditGui extends BackingEditGui<LMarketApi> {
         stock = new JCheckBox("Stocks");
         inventory = new JCheckBox("Commodity");
 
-        a = new JLabel("Name");
-        b = new JLabel("URL");
-        c = new JLabel("History URL");
-        d = new JLabel("Available types");
-        e = new JLabel("Parse Path");
-        f = new JLabel("History Parse Path");
-        g = new JLabel("Naturals");
-        h = new JLabel("API Key");
-        i = new JLabel("Exceptions");
+        JLabel a = new JLabel("Name");
+        JLabel b = new JLabel("URL");
+        JLabel c = new JLabel("History URL");
+        JLabel d = new JLabel("Available types");
+        JLabel e = new JLabel("Parse Path");
+        JLabel f = new JLabel("History Parse Path");
+        JLabel g = new JLabel("Naturals");
+        JLabel h = new JLabel("API Key");
+        JLabel i = new JLabel("Exceptions");
 
-        cancel = DendroFactory.getButton("Cancel");
+        JButton cancel = DendroFactory.getButton("Cancel");
         cancel.addActionListener(event -> dispose());
-        save = DendroFactory.getButton("Save");
+        JButton save = DendroFactory.getButton("Save");
         save.addActionListener(event -> saveAction());
 
         if (INDEX >= 0) {

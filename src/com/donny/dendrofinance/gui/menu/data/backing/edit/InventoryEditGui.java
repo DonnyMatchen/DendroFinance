@@ -13,8 +13,6 @@ import javax.swing.*;
 public class InventoryEditGui extends BackingEditGui<LInventory> {
     private JTextField name, ticker, symbol, places, val;
     private JCheckBox merch, comod, publik;
-    private JLabel a, b, c, d, e;
-    private JButton save, cancel;
 
     public InventoryEditGui(BackingTableGui<LInventory> caller, BackingTableCore<LInventory> core, int index, Instance curInst) {
         super(caller, core, index, curInst);
@@ -31,15 +29,15 @@ public class InventoryEditGui extends BackingEditGui<LInventory> {
         comod = new JCheckBox("Commodity");
         publik = new JCheckBox("Public");
 
-        a = new JLabel("Inventory Name");
-        b = new JLabel("Commodity Ticker");
-        c = new JLabel("Inventory Symbol");
-        d = new JLabel("Decimal Places");
-        e = new JLabel("Static Value");
+        JLabel a = new JLabel("Inventory Name");
+        JLabel b = new JLabel("Commodity Ticker");
+        JLabel c = new JLabel("Inventory Symbol");
+        JLabel d = new JLabel("Decimal Places");
+        JLabel e = new JLabel("Static Value");
 
-        cancel = DendroFactory.getButton("Cancel");
+        JButton cancel = DendroFactory.getButton("Cancel");
         cancel.addActionListener(event -> dispose());
-        save = DendroFactory.getButton("Save");
+        JButton save = DendroFactory.getButton("Save");
         save.addActionListener(event -> saveAction());
 
         //populate if in edit mode

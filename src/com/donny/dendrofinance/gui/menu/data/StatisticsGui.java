@@ -13,30 +13,28 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 
 public class StatisticsGui extends RegisterFrame {
-    private final JScrollPane PANE;
-    private final JTable TABLE;
     private final DefaultTableModel TABLE_ACCESS;
 
     public StatisticsGui(MainGui caller, Instance curInst) {
         super(caller, "Statistics", curInst);
         {
-            PANE = DendroFactory.getTable(new String[]{
+            JScrollPane pane = DendroFactory.getTable(new String[]{
                     "Name", "Value"
             }, new Object[][]{}, false);
-            TABLE = (JTable) PANE.getViewport().getView();
-            TABLE_ACCESS = ((DefaultTableModel) TABLE.getModel());
+            JTable table = (JTable) pane.getViewport().getView();
+            TABLE_ACCESS = ((DefaultTableModel) table.getModel());
             //group layout
             {
                 GroupLayout main = new GroupLayout(getContentPane());
                 getContentPane().setLayout(main);
                 main.setHorizontalGroup(
                         main.createSequentialGroup().addContainerGap().addComponent(
-                                PANE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
+                                pane, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
                         ).addContainerGap()
                 );
                 main.setVerticalGroup(
                         main.createSequentialGroup().addContainerGap().addComponent(
-                                PANE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
+                                pane, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
                         ).addContainerGap()
                 );
             }

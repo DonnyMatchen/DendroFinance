@@ -120,7 +120,7 @@ public class Exchange implements ExportableToJson, Serializable {
         return -1;
     }
 
-    public String[] print(Instance curInst) {
+    public String[] print() {
         int fiat = 0, stock = 0, crypto = 0, inv = 0;
         for (String str : SUPPORTED) {
             if (str.contains("F!")) {
@@ -137,12 +137,12 @@ public class Exchange implements ExportableToJson, Serializable {
             }
         }
         return new String[]{
-                NAME, ALT, "" + fiat, "" + stock, "" + crypto, "" + inv, inUse(curInst) ? "X" : ""
+                NAME, ALT, "" + fiat, "" + stock, "" + crypto, "" + inv, inUse() ? "X" : ""
         };
     }
 
-    public boolean inUse(Instance curInst) {
-        for (TransactionEntry entry : curInst.DATA_HANDLER.readTransactions()) {
+    public boolean inUse() {
+        for (TransactionEntry entry : CURRENT_INSTANCE.DATA_HANDLER.readTransactions()) {
             for (AccountWrapper aw : entry.getAccounts()) {
                 if (aw.ACCOUNT.EXCHANGE == this) {
                     return true;
@@ -159,12 +159,12 @@ public class Exchange implements ExportableToJson, Serializable {
         return out;
     }
 
-    public ArrayList<String> aNamesInUse(Instance curInst) {
+    public ArrayList<String> aNamesInUse() {
         ArrayList<String> reduced = new ArrayList<>();
         for (String name : aNames()) {
-            Account a = curInst.ACCOUNTS.getElement(name);
+            Account a = CURRENT_INSTANCE.ACCOUNTS.getElement(name);
             if (a == null) {
-                curInst.LOG_HANDLER.info(getClass(), "You might have a missing currency (" + name + ")");
+                CURRENT_INSTANCE.LOG_HANDLER.info(getClass(), "You might have a missing currency (" + name + ")");
             } else {
                 if (a.inUse()) {
                     reduced.add(name);

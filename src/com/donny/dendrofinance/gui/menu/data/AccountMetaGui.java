@@ -12,10 +12,7 @@ import javax.swing.*;
 import java.io.File;
 
 public class AccountMetaGui extends RegisterFrame {
-    private final JScrollPane GIFT_PANE, BRAVE_PANE;
     private final JTextArea GIFT, BRAVE;
-    private final JLabel A, B;
-    private final JButton SAVE;
 
     private final JsonObject ACCOUNT_OBJECT;
     private final File ACCOUNTS;
@@ -25,14 +22,14 @@ public class AccountMetaGui extends RegisterFrame {
 
         //draw gui
         {
-            GIFT_PANE = DendroFactory.getLongField();
-            GIFT = (JTextArea) GIFT_PANE.getViewport().getView();
-            BRAVE_PANE = DendroFactory.getLongField();
-            BRAVE = (JTextArea) BRAVE_PANE.getViewport().getView();
-            A = new JLabel("Gift Cards");
-            B = new JLabel("Brave Devices");
-            SAVE = DendroFactory.getButton("Save");
-            SAVE.addActionListener(event -> saveAction());
+            JScrollPane giftPane = DendroFactory.getLongField();
+            GIFT = (JTextArea) giftPane.getViewport().getView();
+            JScrollPane bravePane = DendroFactory.getLongField();
+            BRAVE = (JTextArea) bravePane.getViewport().getView();
+            JLabel a = new JLabel("Gift Cards");
+            JLabel b = new JLabel("Brave Devices");
+            JButton save = DendroFactory.getButton("Save");
+            save.addActionListener(event -> saveAction());
 
             //group layout
             {
@@ -43,37 +40,37 @@ public class AccountMetaGui extends RegisterFrame {
                                 main.createParallelGroup(GroupLayout.Alignment.CENTER).addGroup(
                                         main.createSequentialGroup().addGroup(
                                                 main.createParallelGroup(GroupLayout.Alignment.TRAILING).addComponent(
-                                                        A, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                                        a, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                                 ).addComponent(
-                                                        B, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                                        b, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                                 )
                                         ).addGap(DendroFactory.SMALL_GAP).addGroup(
                                                 main.createParallelGroup(GroupLayout.Alignment.LEADING).addComponent(
-                                                        GIFT_PANE, 500, 500, Short.MAX_VALUE
+                                                        giftPane, 500, 500, Short.MAX_VALUE
                                                 ).addComponent(
-                                                        BRAVE_PANE, 500, 500, Short.MAX_VALUE
+                                                        bravePane, 500, 500, Short.MAX_VALUE
                                                 )
                                         )
                                 ).addComponent(
-                                        SAVE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                        save, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                 )
                         ).addContainerGap()
                 );
                 main.setVerticalGroup(
                         main.createSequentialGroup().addContainerGap().addGroup(
                                 main.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(
-                                        A, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                        a, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                 ).addComponent(
-                                        GIFT_PANE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                        giftPane, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                 )
                         ).addGap(DendroFactory.SMALL_GAP).addGroup(
                                 main.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(
-                                        B, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                        b, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                 ).addComponent(
-                                        BRAVE_PANE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                        bravePane, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                 )
                         ).addGap(DendroFactory.MEDIUM_GAP).addComponent(
-                                SAVE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                save, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                         ).addContainerGap()
                 );
             }

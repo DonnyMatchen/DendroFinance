@@ -16,11 +16,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 
 public class PositionGui extends RegisterFrame {
-    private final JButton RECALC;
     private final JTextField DATE;
-    private final JLabel A;
-    private final JScrollPane PANE;
-    private final JTable TABLE;
     private final DefaultTableModel TABLE_ACCESS;
 
     public PositionGui(MainGui caller, Instance curInst) {
@@ -28,16 +24,16 @@ public class PositionGui extends RegisterFrame {
 
         //Draw Gui
         {
-            A = new JLabel("Date");
+            JLabel a = new JLabel("Date");
             DATE = new JTextField();
-            PANE = DendroFactory.getTable(new String[]{
+            JScrollPane pane = DendroFactory.getTable(new String[]{
                     "Asset", "Volume", "Cost", "Unit", "Value", "Unit", "Position"
             }, new Object[][]{}, false);
-            TABLE = (JTable) PANE.getViewport().getView();
-            TABLE_ACCESS = ((DefaultTableModel) TABLE.getModel());
+            JTable table = (JTable) pane.getViewport().getView();
+            TABLE_ACCESS = ((DefaultTableModel) table.getModel());
 
-            RECALC = DendroFactory.getButton("Recalculate");
-            RECALC.addActionListener(event -> reCalcAction());
+            JButton recalculate = DendroFactory.getButton("Recalculate");
+            recalculate.addActionListener(event -> reCalcAction());
 
             //group layout
             {
@@ -47,28 +43,28 @@ public class PositionGui extends RegisterFrame {
                         main.createSequentialGroup().addContainerGap().addGroup(
                                 main.createParallelGroup(GroupLayout.Alignment.CENTER).addGroup(
                                         main.createSequentialGroup().addComponent(
-                                                A, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                                a, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                         ).addGap(DendroFactory.SMALL_GAP).addComponent(
                                                 DATE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
                                         )
                                 ).addComponent(
-                                        PANE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
+                                        pane, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
                                 ).addComponent(
-                                        RECALC, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                        recalculate, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                 )
                         ).addContainerGap()
                 );
                 main.setVerticalGroup(
                         main.createSequentialGroup().addContainerGap().addGroup(
                                 main.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(
-                                        A, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                        a, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                 ).addComponent(
                                         DATE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                 )
                         ).addGap(DendroFactory.SMALL_GAP).addComponent(
-                                PANE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
+                                pane, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
                         ).addGap(DendroFactory.MEDIUM_GAP).addComponent(
-                                RECALC, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                recalculate, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                         ).addContainerGap()
                 );
             }

@@ -17,29 +17,25 @@ import java.math.BigDecimal;
 import java.util.HashMap;
 
 public class AssetStatusGui extends RegisterFrame {
-    private final JLabel A;
     private final JTextField DATE;
-    private final JButton ENTER;
-    private final JScrollPane PANE;
-    private final JTable TABLE;
     private final DefaultTableModel TABLE_ACCESS;
 
     public AssetStatusGui(MainGui caller, Instance curInst) {
         super(caller, "Market Asset Status", curInst);
         //draw gui
         {
-            A = new JLabel("Date");
+            JLabel a = new JLabel("Date");
 
             DATE = new JTextField();
 
-            ENTER = DendroFactory.getButton("Enter");
-            ENTER.addActionListener(event -> enterAction());
+            JButton enter = DendroFactory.getButton("Enter");
+            enter.addActionListener(event -> enterAction());
 
-            PANE = DendroFactory.getTable(new String[]{
+            JScrollPane pane = DendroFactory.getTable(new String[]{
                     "Account", "Amount", "Value"
             }, new Object[][]{}, false);
-            TABLE = (JTable) PANE.getViewport().getView();
-            TABLE_ACCESS = (DefaultTableModel) TABLE.getModel();
+            JTable table = (JTable) pane.getViewport().getView();
+            TABLE_ACCESS = (DefaultTableModel) table.getModel();
 
             //back layout
             {
@@ -49,28 +45,28 @@ public class AssetStatusGui extends RegisterFrame {
                         main.createSequentialGroup().addContainerGap().addGroup(
                                 main.createParallelGroup(GroupLayout.Alignment.CENTER).addGroup(
                                         main.createSequentialGroup().addComponent(
-                                                A, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                                a, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                         ).addGap(DendroFactory.SMALL_GAP).addComponent(
                                                 DATE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
                                         ).addGap(DendroFactory.MEDIUM_GAP).addComponent(
-                                                ENTER, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                                enter, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                         )
                                 ).addComponent(
-                                        PANE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
+                                        pane, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
                                 )
                         ).addContainerGap()
                 );
                 main.setVerticalGroup(
                         main.createSequentialGroup().addContainerGap().addGroup(
                                 main.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(
-                                        A, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                        a, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                 ).addComponent(
                                         DATE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                 ).addComponent(
-                                        ENTER, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                        enter, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                 )
                         ).addGap(DendroFactory.MEDIUM_GAP).addComponent(
-                                PANE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
+                                pane, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
                         ).addContainerGap()
                 );
             }

@@ -14,19 +14,17 @@ import java.math.BigDecimal;
 
 public class LedgerGui extends RegisterFrame {
     private final SearchBox CUR;
-    private final JScrollPane PANE;
-    private final JTable TABLE;
     private final DefaultTableModel TABLE_ACCESS;
 
     public LedgerGui(MainGui caller, Instance curInst) {
         super(caller, "Trading Ledgers", curInst);
         //Draw Gui
         {
-            PANE = DendroFactory.getTable(new String[]{
+            JScrollPane pane = DendroFactory.getTable(new String[]{
                     "Uuid", "Date", "From", "To", "Value", "Price"
             }, new Object[][]{}, false);
-            TABLE = (JTable) PANE.getViewport().getView();
-            TABLE_ACCESS = (DefaultTableModel) TABLE.getModel();
+            JTable table = (JTable) pane.getViewport().getView();
+            TABLE_ACCESS = (DefaultTableModel) table.getModel();
             CUR = new SearchBox("Asset", curInst.getAllUniqueAssetsAsStrings());
             CUR.addListSelectionListener(event -> update());
 
@@ -39,7 +37,7 @@ public class LedgerGui extends RegisterFrame {
                                 main.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(
                                         CUR, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
                                 ).addComponent(
-                                        PANE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
+                                        pane, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
                                 )
                         ).addContainerGap()
                 );
@@ -47,7 +45,7 @@ public class LedgerGui extends RegisterFrame {
                         main.createSequentialGroup().addContainerGap().addComponent(
                                 CUR, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                         ).addGap(DendroFactory.SMALL_GAP).addComponent(
-                                PANE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
+                                pane, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
                         ).addContainerGap()
                 );
             }

@@ -13,8 +13,6 @@ import javax.swing.*;
 public class StockEditGui extends BackingEditGui<LStock> {
     private JTextField name, ticker;
     private JCheckBox publik, dead;
-    private JLabel a, b;
-    private JButton save, cancel;
 
     public StockEditGui(BackingTableGui<LStock> caller, BackingTableCore<LStock> core, int index, Instance curInst) {
         super(caller, core, index, curInst);
@@ -27,12 +25,12 @@ public class StockEditGui extends BackingEditGui<LStock> {
         publik = new JCheckBox("Publicly Traded");
         dead = new JCheckBox("No Longer Traded");
 
-        a = new JLabel("Company Name");
-        b = new JLabel("Stock Ticker");
+        JLabel a = new JLabel("Company Name");
+        JLabel b = new JLabel("Stock Ticker");
 
-        cancel = DendroFactory.getButton("Cancel");
+        JButton cancel = DendroFactory.getButton("Cancel");
         cancel.addActionListener(event -> dispose());
-        save = DendroFactory.getButton("Save");
+        JButton save = DendroFactory.getButton("Save");
         save.addActionListener(event -> saveAction());
 
         //populate if in edit mode

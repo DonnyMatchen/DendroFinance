@@ -17,11 +17,7 @@ import java.awt.event.MouseEvent;
 public class MetaTableGui extends RegisterFrame {
     private final MetaTableCore CORE;
 
-    private final JPanel TAB, INF;
-    private final JLabel A, B, C, D;
     private final JTextField DATE, SEARCH;
-    private final JButton ENTER;
-    private final JScrollPane TABLE_PANE, INFO_PANE;
     private final JTable TABLE;
     private final DefaultTableModel TABLE_ACCESS;
     private final JTextArea INFO;
@@ -33,10 +29,10 @@ public class MetaTableGui extends RegisterFrame {
         //draw GUI
         {
             //table
+            JPanel TAB = new JPanel();
             {
-                TAB = new JPanel();
-                TABLE_PANE = DendroFactory.getTable(CORE.getHeader(), new Object[][]{}, false);
-                TABLE = (JTable) TABLE_PANE.getViewport().getView();
+                JScrollPane pane = DendroFactory.getTable(CORE.getHeader(), new Object[][]{}, false);
+                TABLE = (JTable) pane.getViewport().getView();
                 TABLE.addMouseListener(new MouseAdapter() {
                     @Override
                     public void mouseClicked(MouseEvent event) {
@@ -61,14 +57,14 @@ public class MetaTableGui extends RegisterFrame {
                     }
                 });
                 TABLE_ACCESS = (DefaultTableModel) TABLE.getModel();
-                A = new JLabel(CORE.getName() + " Table");
-                C = new JLabel("Date");
-                D = new JLabel("Search");
+                JLabel a = new JLabel(CORE.getName() + " Table");
+                JLabel c = new JLabel("Date");
+                JLabel d = new JLabel("Search");
                 DATE = new JTextField();
                 DATE.setText(LDate.now(CURRENT_INSTANCE).toString(false));
                 SEARCH = new JTextField();
-                ENTER = DendroFactory.getButton("Search");
-                ENTER.addActionListener(event -> updateTable());
+                JButton enter = DendroFactory.getButton("Search");
+                enter.addActionListener(event -> updateTable());
                 //group layout
                 {
                     GroupLayout main = new GroupLayout(TAB);
@@ -76,56 +72,56 @@ public class MetaTableGui extends RegisterFrame {
                     main.setHorizontalGroup(
                             main.createSequentialGroup().addContainerGap().addGroup(
                                     main.createParallelGroup(GroupLayout.Alignment.LEADING).addComponent(
-                                            A, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                            a, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                     ).addGroup(
                                             main.createSequentialGroup().addComponent(
-                                                    C, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                                    c, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                             ).addGap(DendroFactory.SMALL_GAP).addComponent(
                                                     DATE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
                                             ).addGap(DendroFactory.MEDIUM_GAP).addComponent(
-                                                    ENTER, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                                    enter, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                             )
                                     ).addGroup(
                                             main.createSequentialGroup().addComponent(
-                                                    D, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                                    d, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                             ).addGap(DendroFactory.SMALL_GAP).addComponent(
                                                     SEARCH, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
                                             )
                                     ).addComponent(
-                                            TABLE_PANE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
+                                            pane, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
                                     )
                             ).addContainerGap()
                     );
                     main.setVerticalGroup(
                             main.createSequentialGroup().addComponent(
-                                    A, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                    a, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                             ).addGap(DendroFactory.MEDIUM_GAP).addGroup(
                                     main.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(
-                                            C, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                            c, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                     ).addComponent(
                                             DATE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                     ).addComponent(
-                                            ENTER, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                            enter, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                     )
                             ).addGap(DendroFactory.MEDIUM_GAP).addGroup(
                                     main.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(
-                                            D, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                            d, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                     ).addComponent(
                                             SEARCH, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                     )
                             ).addGap(DendroFactory.SMALL_GAP).addComponent(
-                                    TABLE_PANE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
+                                    pane, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
                             ).addContainerGap()
                     );
                 }
             }
 
             //info
+            JPanel INF = new JPanel();
             {
-                INF = new JPanel();
-                B = new JLabel(CORE.getName() + " Information");
-                INFO_PANE = DendroFactory.getScrollField(false, 10, 40);
-                INFO = (JTextArea) INFO_PANE.getViewport().getView();
+                JLabel a = new JLabel(CORE.getName() + " Information");
+                JScrollPane pane = DendroFactory.getScrollField(false, 10, 40);
+                INFO = (JTextArea) pane.getViewport().getView();
                 //group layout
                 {
                     GroupLayout main = new GroupLayout(INF);
@@ -133,17 +129,17 @@ public class MetaTableGui extends RegisterFrame {
                     main.setHorizontalGroup(
                             main.createSequentialGroup().addContainerGap().addGroup(
                                     main.createParallelGroup(GroupLayout.Alignment.LEADING).addComponent(
-                                            B, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                            a, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                     ).addComponent(
-                                            INFO_PANE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
+                                            pane, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
                                     )
                             ).addContainerGap()
                     );
                     main.setVerticalGroup(
                             main.createSequentialGroup().addComponent(
-                                    B, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                    a, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                             ).addGap(DendroFactory.MEDIUM_GAP).addComponent(
-                                    INFO_PANE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
+                                    pane, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
                             ).addContainerGap()
                     );
                 }

@@ -227,7 +227,7 @@ public class FileHandler {
         } else {
             String json = "passwd" + item.toString();
             ArrayList<Byte> bytes = new ArrayList<>();
-            bytes.add((byte) (CURRENT_INSTANCE.blockSize & 255));
+            bytes.add((byte) (CURRENT_INSTANCE.blockSize));
             for (byte[] segment : Partitioner.partition(json.getBytes(Instance.CHARSET), CURRENT_INSTANCE.blockSize * 16)) {
                 for (byte b : CURRENT_INSTANCE.ENCRYPTION_HANDLER.encrypt(segment)) {
                     bytes.add(b);
@@ -261,7 +261,7 @@ public class FileHandler {
             } else {
                 String json = "passwd" + item.toString();
                 ArrayList<Byte> bytes = new ArrayList<>();
-                bytes.add((byte) (CURRENT_INSTANCE.blockSize & 255));
+                bytes.add((byte) (CURRENT_INSTANCE.blockSize));
                 for (byte[] segment : Partitioner.partition(json.getBytes(Instance.CHARSET), CURRENT_INSTANCE.blockSize * 16)) {
                     for (byte b : encrypt.encrypt(segment)) {
                         bytes.add(b);

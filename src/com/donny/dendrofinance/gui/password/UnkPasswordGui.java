@@ -13,8 +13,6 @@ public class UnkPasswordGui extends ModalFrame {
     private final EncryptionHandler ENC_HAND;
 
     private final JPasswordField PASSWORD;
-    private final JLabel A;
-    private final JButton ENTER, DEFAULT;
 
     private boolean defaultPassword = false;
 
@@ -32,7 +30,7 @@ public class UnkPasswordGui extends ModalFrame {
 
         //draw gui
         {
-            A = new JLabel("Password");
+            JLabel a = new JLabel("Password");
             PASSWORD = new JPasswordField();
             PASSWORD.addKeyListener(new KeyAdapter() {
                 @Override
@@ -42,10 +40,10 @@ public class UnkPasswordGui extends ModalFrame {
                     }
                 }
             });
-            ENTER = DendroFactory.getButton("Enter");
-            ENTER.addActionListener(event -> enterPressed());
-            DEFAULT = DendroFactory.getButton("Use Profile Password");
-            DEFAULT.addActionListener(event -> defaultPressed());
+            JButton enter = DendroFactory.getButton("Enter");
+            enter.addActionListener(event -> enterPressed());
+            JButton defaultButton = DendroFactory.getButton("Use Profile Password");
+            defaultButton.addActionListener(event -> defaultPressed());
 
             //group layout
             {
@@ -53,21 +51,21 @@ public class UnkPasswordGui extends ModalFrame {
                 getContentPane().setLayout(main);
                 main.setHorizontalGroup(
                         main.createSequentialGroup().addContainerGap().addComponent(
-                                A, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                a, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                         ).addGap(DendroFactory.SMALL_GAP).addComponent(
                                 PASSWORD, GroupLayout.PREFERRED_SIZE, 250, Short.MAX_VALUE
                         ).addGap(DendroFactory.SMALL_GAP).addComponent(
-                                ENTER, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                enter, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                         ).addContainerGap()
                 );
                 main.setVerticalGroup(
                         main.createSequentialGroup().addContainerGap().addGroup(
                                 main.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(
-                                        A, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                        a, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                 ).addComponent(
                                         PASSWORD, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                 ).addComponent(
-                                        ENTER, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                        enter, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                 )
                         ).addContainerGap()
                 );

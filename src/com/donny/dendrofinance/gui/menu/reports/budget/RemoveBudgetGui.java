@@ -8,9 +8,6 @@ import com.donny.dendrofinance.instance.Instance;
 import javax.swing.*;
 
 public class RemoveBudgetGui extends ModalFrame {
-    private JLabel A;
-    private JButton NO, YES;
-
     public RemoveBudgetGui(BudgetGui caller, String budget, Instance curInst) {
         super(caller, "Remove Budget", curInst);
         if (budget == null) {
@@ -18,11 +15,11 @@ public class RemoveBudgetGui extends ModalFrame {
         } else {
             //draw gui
             {
-                A = new JLabel("Do you want to delete " + budget + "?");
-                NO = DendroFactory.getButton("No");
-                NO.addActionListener(event -> dispose());
-                YES = DendroFactory.getButton("Yes");
-                YES.addActionListener(event -> yesAction(caller, budget));
+                JLabel a = new JLabel("Do you want to delete " + budget + "?");
+                JButton no = DendroFactory.getButton("No");
+                no.addActionListener(event -> dispose());
+                JButton yes = DendroFactory.getButton("Yes");
+                yes.addActionListener(event -> yesAction(caller, budget));
 
                 //back layout
                 {
@@ -31,26 +28,26 @@ public class RemoveBudgetGui extends ModalFrame {
                     main.setHorizontalGroup(
                             main.createSequentialGroup().addContainerGap().addGroup(
                                     main.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(
-                                            A, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                            a, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                     ).addGroup(
                                             main.createSequentialGroup().addComponent(
-                                                    NO, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                                    no, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                             ).addGap(
                                                     DendroFactory.SMALL_GAP, DendroFactory.SMALL_GAP, Short.MAX_VALUE
                                             ).addComponent(
-                                                    YES, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                                    yes, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                             )
                                     )
                             ).addContainerGap()
                     );
                     main.setVerticalGroup(
                             main.createSequentialGroup().addContainerGap().addComponent(
-                                    A, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                    a, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                             ).addGap(DendroFactory.SMALL_GAP).addGroup(
                                     main.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(
-                                            NO, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                            no, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                     ).addComponent(
-                                            YES, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                            yes, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                     )
                             ).addContainerGap()
                     );

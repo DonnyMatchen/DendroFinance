@@ -14,8 +14,6 @@ import javax.swing.*;
 public class AccountTypeEditGui extends BackingEditGui<AccountType> {
     private JTextField name;
     private JComboBox<String> type;
-    private JLabel a, b;
-    private JButton cancel, save;
 
     public AccountTypeEditGui(BackingTableGui<AccountType> caller, BackingTableCore<AccountType> core, int index, Instance curInst) {
         super(caller, core, index, curInst);
@@ -29,12 +27,12 @@ public class AccountTypeEditGui extends BackingEditGui<AccountType> {
             type.addItem(t.toString());
         }
 
-        a = new JLabel("Name");
-        b = new JLabel("Type");
+        JLabel a = new JLabel("Name");
+        JLabel b = new JLabel("Type");
 
-        cancel = DendroFactory.getButton("Cancel");
+        JButton cancel = DendroFactory.getButton("Cancel");
         cancel.addActionListener(event -> dispose());
-        save = DendroFactory.getButton("Save");
+        JButton save = DendroFactory.getButton("Save");
         save.addActionListener(event -> saveAction());
 
         //populate if in edit mode

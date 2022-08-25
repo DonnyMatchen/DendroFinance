@@ -7,12 +7,10 @@ import java.util.ArrayList;
 
 public class UuidHandler {
     public final ArrayList<Long> UUIDS;
-    private final Instance CURRENT_INSTANCE;
 
     public UuidHandler(Instance curInst) {
-        CURRENT_INSTANCE = curInst;
         UUIDS = new ArrayList<>();
-        CURRENT_INSTANCE.LOG_HANDLER.trace(getClass(), "UuidHandler Initiated");
+        curInst.LOG_HANDLER.trace(getClass(), "UuidHandler Initiated");
     }
 
     public long generateUUID() {

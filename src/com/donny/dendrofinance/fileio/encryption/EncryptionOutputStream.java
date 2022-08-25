@@ -20,7 +20,7 @@ public class EncryptionOutputStream extends FileOutputStream {
         ENCRYPTION_HANDLER = handler;
         BLOCK_SIZE = blockSize * 16;
         BUFFER = new byte[BLOCK_SIZE];
-        super.write((byte) blockSize & 255);
+        super.write((byte) blockSize);
     }
 
     public EncryptionOutputStream(File file, EncryptionHandler handler, int blockSize, Instance curInst) throws IOException {
@@ -29,7 +29,7 @@ public class EncryptionOutputStream extends FileOutputStream {
         ENCRYPTION_HANDLER = handler;
         BLOCK_SIZE = blockSize * 16;
         BUFFER = new byte[BLOCK_SIZE];
-        super.write((byte) blockSize & 255);
+        super.write((byte) blockSize);
     }
 
     public EncryptionOutputStream(String name, int blockSize, Instance curInst) throws IOException {

@@ -54,7 +54,7 @@ public class ExchangeBTC extends BackingTableCore<Exchange> {
         for (Exchange exch : TABLE) {
             if (exch.NAME.toLowerCase().contains(search.toLowerCase())
                     || exch.ALT.toLowerCase().contains(search.toLowerCase())) {
-                out.add(exch.print(CURRENT_INSTANCE));
+                out.add(exch.print());
             }
         }
         return out;
@@ -87,7 +87,7 @@ public class ExchangeBTC extends BackingTableCore<Exchange> {
 
     @Override
     public boolean canRemove(String identifier) {
-        return canEdit(identifier) && !getElement(identifier).inUse(CURRENT_INSTANCE);
+        return canEdit(identifier) && !getElement(identifier).inUse();
     }
 
     @Override

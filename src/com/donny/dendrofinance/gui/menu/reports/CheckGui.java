@@ -12,11 +12,8 @@ import javax.swing.table.DefaultTableModel;
 import java.util.ArrayList;
 
 public class CheckGui extends RegisterFrame {
-    private final JLabel A, B;
     private final JTextField DATE, SEARCH;
     private final JCheckBox OUTSTANDING;
-    private final JButton ENTER;
-    private final JScrollPane PANE;
     private final JTable TABLE;
     private final DefaultTableModel TABLE_ACCESS;
 
@@ -25,20 +22,20 @@ public class CheckGui extends RegisterFrame {
 
         //draw gui
         {
-            A = new JLabel("Date");
-            B = new JLabel("Search");
+            JLabel a = new JLabel("Date");
+            JLabel b = new JLabel("Search");
 
             DATE = new JTextField();
             DATE.setText(LDate.now(CURRENT_INSTANCE).toString(false));
             SEARCH = new JTextField();
 
-            ENTER = DendroFactory.getButton("Search");
-            ENTER.addActionListener(event -> updateTable());
+            JButton enter = DendroFactory.getButton("Search");
+            enter.addActionListener(event -> updateTable());
 
-            PANE = DendroFactory.getTable(new String[]{
+            JScrollPane pane = DendroFactory.getTable(new String[]{
                     "UUID", "Issued", "Cashed", "Check Number", "Value"
             }, new Object[][]{}, false);
-            TABLE = (JTable) PANE.getViewport().getView();
+            TABLE = (JTable) pane.getViewport().getView();
             TABLE_ACCESS = (DefaultTableModel) TABLE.getModel();
 
             OUTSTANDING = new JCheckBox("Only Outstanding Checks");
@@ -51,44 +48,44 @@ public class CheckGui extends RegisterFrame {
                         main.createSequentialGroup().addContainerGap().addGroup(
                                 main.createParallelGroup(GroupLayout.Alignment.LEADING).addGroup(
                                         main.createSequentialGroup().addComponent(
-                                                A, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                                a, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                         ).addGap(DendroFactory.SMALL_GAP).addComponent(
                                                 DATE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
                                         ).addGap(DendroFactory.MEDIUM_GAP).addComponent(
-                                                ENTER, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                                enter, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                         )
                                 ).addGroup(
                                         main.createSequentialGroup().addComponent(
-                                                B, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                                b, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                         ).addGap(DendroFactory.SMALL_GAP).addComponent(
                                                 SEARCH, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
                                         )
                                 ).addComponent(
                                         OUTSTANDING, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                 ).addComponent(
-                                        PANE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
+                                        pane, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
                                 )
                         ).addContainerGap()
                 );
                 main.setVerticalGroup(
                         main.createSequentialGroup().addContainerGap().addGroup(
                                 main.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(
-                                        A, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                        a, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                 ).addComponent(
                                         DATE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                 ).addComponent(
-                                        ENTER, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                        enter, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                 )
                         ).addGap(DendroFactory.SMALL_GAP).addGroup(
                                 main.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(
-                                        B, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                        b, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                 ).addComponent(
                                         SEARCH, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                 )
                         ).addGap(DendroFactory.SMALL_GAP).addComponent(
                                 OUTSTANDING, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                         ).addGap(DendroFactory.SMALL_GAP).addComponent(
-                                PANE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
+                                pane, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
                         ).addContainerGap()
                 );
             }

@@ -20,10 +20,8 @@ import java.util.Comparator;
 public class PasswordGui extends JFrame {
     public final ArrayList<JsonObject> PROFILES;
     private final Instance CURRENT_INSTANCE;
-    private final JLabel A, B;
     private final JPasswordField PASSWORD;
     private final JComboBox<String> PROFILE;
-    private final JButton ENTER, NEW_INSTANCE, EDIT_PROFILE, NEW_PROFILE;
     public boolean done = false;
 
     public PasswordGui(Instance curInst) {
@@ -34,8 +32,8 @@ public class PasswordGui extends JFrame {
         {
             setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
-            A = new JLabel("Password");
-            B = new JLabel("Profile");
+            JLabel a = new JLabel("Password");
+            JLabel b = new JLabel("Profile");
 
             PASSWORD = new JPasswordField();
             PASSWORD.addKeyListener(new KeyAdapter() {
@@ -61,17 +59,17 @@ public class PasswordGui extends JFrame {
                 }
             }
 
-            ENTER = DendroFactory.getButton("Enter");
-            ENTER.addActionListener(event -> enterPressed());
+            JButton enter = DendroFactory.getButton("Enter");
+            enter.addActionListener(event -> enterPressed());
 
-            NEW_INSTANCE = DendroFactory.getButton("New Instance");
-            NEW_INSTANCE.addActionListener(event -> newInstance());
+            JButton newInstance = DendroFactory.getButton("New Instance");
+            newInstance.addActionListener(event -> newInstance());
 
-            EDIT_PROFILE = DendroFactory.getButton("Edit Profile");
-            EDIT_PROFILE.addActionListener(event -> editProfile());
+            JButton editProfile = DendroFactory.getButton("Edit Profile");
+            editProfile.addActionListener(event -> editProfile());
 
-            NEW_PROFILE = DendroFactory.getButton("New Profile");
-            NEW_PROFILE.addActionListener(event -> newProfile());
+            JButton newProfile = DendroFactory.getButton("New Profile");
+            newProfile.addActionListener(event -> newProfile());
 
             {
                 GroupLayout backgroundLayout = new GroupLayout(getContentPane());
@@ -79,9 +77,9 @@ public class PasswordGui extends JFrame {
                 backgroundLayout.setHorizontalGroup(
                         backgroundLayout.createSequentialGroup().addContainerGap().addGroup(
                                 backgroundLayout.createParallelGroup(GroupLayout.Alignment.TRAILING).addComponent(
-                                        B, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                        b, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                 ).addComponent(
-                                        A, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                        a, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                 ).addGap(
                                         DendroFactory.SMALL_GAP, DendroFactory.SMALL_GAP, Short.MAX_VALUE
                                 )
@@ -91,42 +89,42 @@ public class PasswordGui extends JFrame {
                                 ).addComponent(
                                         PASSWORD, GroupLayout.PREFERRED_SIZE, 230, Short.MAX_VALUE
                                 ).addComponent(
-                                        ENTER, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                        enter, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                 )
                         ).addGap(DendroFactory.MEDIUM_GAP).addGroup(
                                 backgroundLayout.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(
-                                        EDIT_PROFILE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                        editProfile, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                 ).addComponent(
-                                        NEW_PROFILE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                        newProfile, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                 ).addComponent(
-                                        NEW_INSTANCE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                        newInstance, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                 )
                         ).addContainerGap()
                 );
                 backgroundLayout.setVerticalGroup(
                         backgroundLayout.createSequentialGroup().addContainerGap().addGroup(
                                 backgroundLayout.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(
-                                        B, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                        b, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                 ).addComponent(
                                         PROFILE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                 ).addComponent(
-                                        EDIT_PROFILE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                        editProfile, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                 )
                         ).addGap(DendroFactory.MEDIUM_GAP).addGroup(
                                 backgroundLayout.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(
-                                        A, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                        a, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                 ).addComponent(
                                         PASSWORD, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                 ).addComponent(
-                                        NEW_PROFILE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                        newProfile, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                 )
                         ).addGap(DendroFactory.MEDIUM_GAP).addGroup(
                                 backgroundLayout.createParallelGroup(GroupLayout.Alignment.CENTER).addGap(
                                         DendroFactory.SMALL_GAP, DendroFactory.SMALL_GAP, Short.MAX_VALUE
                                 ).addComponent(
-                                        ENTER, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                        enter, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                 ).addComponent(
-                                        NEW_INSTANCE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                        newInstance, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                 )
                         ).addContainerGap()
                 );

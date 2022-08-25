@@ -20,10 +20,9 @@ public class BackingTableGui<E extends ExportableToJson> extends RegisterFrame {
     private final BackingTableCore<E> TABLE_CORE;
 
     private final JTextField SEARCH;
-    private final JScrollPane PANE;
     private final JTable TABLE;
     private final DefaultTableModel TABLE_ACCESS;
-    private final JButton UP, DOWN, EDIT, DELETE, CREATE, SORT;
+    private final JButton UP, DOWN, EDIT, DELETE;
 
     public BackingTableGui(MainGui caller, BackingTableCore<E> core, Instance curInst) {
         super(caller, core.getName(true), curInst);
@@ -49,8 +48,8 @@ public class BackingTableGui<E extends ExportableToJson> extends RegisterFrame {
                 }
             });
 
-            PANE = DendroFactory.getTable(TABLE_CORE.getHeader(), new Object[][]{}, false);
-            TABLE = (JTable) PANE.getViewport().getView();
+            JScrollPane pane = DendroFactory.getTable(TABLE_CORE.getHeader(), new Object[][]{}, false);
+            TABLE = (JTable) pane.getViewport().getView();
             TABLE.addMouseListener(new MouseAdapter() {
                 @Override
                 public void mouseClicked(MouseEvent event) {
@@ -88,12 +87,12 @@ public class BackingTableGui<E extends ExportableToJson> extends RegisterFrame {
             DELETE = DendroFactory.getButton("Remove");
             DELETE.addActionListener(event -> new DeleteBackingGui<>(this, TABLE_CORE, TABLE_CORE.getIndex(getIdentifier(TABLE.getSelectedRow())), curInst).setVisible(true));
 
-            CREATE = DendroFactory.getButton("New");
-            CREATE.addActionListener(event -> TABLE_CORE.getEditDialog(this, -1));
+            JButton create = DendroFactory.getButton("New");
+            create.addActionListener(event -> TABLE_CORE.getEditDialog(this, -1));
 
-            SORT = DendroFactory.getButton("Sort");
-            SORT.addActionListener(event -> sort());
-            SORT.setEnabled(TABLE_CORE.SORTABLE);
+            JButton sort = DendroFactory.getButton("Sort");
+            sort.addActionListener(event -> sort());
+            sort.setEnabled(TABLE_CORE.SORTABLE);
 
             //back layout
             {
@@ -104,7 +103,7 @@ public class BackingTableGui<E extends ExportableToJson> extends RegisterFrame {
                                 main.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(
                                         SEARCH, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
                                 ).addComponent(
-                                        PANE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
+                                        pane, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
                                 )
                         ).addGap(DendroFactory.SMALL_GAP).addGroup(
                                 main.createParallelGroup(GroupLayout.Alignment.TRAILING).addComponent(
@@ -116,9 +115,9 @@ public class BackingTableGui<E extends ExportableToJson> extends RegisterFrame {
                                 ).addComponent(
                                         DELETE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                 ).addComponent(
-                                        CREATE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                        create, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                 ).addComponent(
-                                        SORT, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                        sort, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                 )
                         ).addContainerGap()
                 );
@@ -128,7 +127,7 @@ public class BackingTableGui<E extends ExportableToJson> extends RegisterFrame {
                                         main.createSequentialGroup().addComponent(
                                                 SEARCH, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                         ).addGap(DendroFactory.SMALL_GAP).addComponent(
-                                                PANE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
+                                                pane, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
                                         )
                                 ).addGroup(
                                         main.createSequentialGroup().addComponent(
@@ -140,9 +139,9 @@ public class BackingTableGui<E extends ExportableToJson> extends RegisterFrame {
                                         ).addGap(DendroFactory.SMALL_GAP).addComponent(
                                                 DELETE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                         ).addGap(DendroFactory.SMALL_GAP).addComponent(
-                                                CREATE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                                create, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                         ).addGap(DendroFactory.SMALL_GAP).addComponent(
-                                                SORT, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                                sort, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                         )
                                 )
                         ).addContainerGap()

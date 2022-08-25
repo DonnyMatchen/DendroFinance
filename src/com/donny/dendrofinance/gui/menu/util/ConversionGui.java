@@ -12,29 +12,26 @@ import javax.swing.*;
 import java.math.BigDecimal;
 
 public class ConversionGui extends RegisterFrame {
-    private final JLabel A, B;
     private final JTextField DATE, AMOUNT;
     private final SearchBox CUR_A, CUR_B;
-    private final JScrollPane PANE;
     private final JTextArea DISPLAY;
-    private final JButton CONVERT;
 
     public ConversionGui(MainGui caller, Instance curInst) {
         super(caller, "Asset Conversion", curInst);
 
         //draw gui
         {
-            A = new JLabel("Date");
-            B = new JLabel("Amount");
+            JLabel a = new JLabel("Date");
+            JLabel b = new JLabel("Amount");
             DATE = new JTextField();
             AMOUNT = new JTextField();
             CUR_A = new SearchBox("Currency A", CURRENT_INSTANCE.getAllAssetsAsStrings());
             CUR_B = new SearchBox("Currency B", CURRENT_INSTANCE.getAllAssetsAsStrings());
-            PANE = DendroFactory.getScrollField();
-            DISPLAY = (JTextArea) PANE.getViewport().getView();
+            JScrollPane pane = DendroFactory.getScrollField();
+            DISPLAY = (JTextArea) pane.getViewport().getView();
             DISPLAY.setEditable(false);
-            CONVERT = DendroFactory.getButton("Convert");
-            CONVERT.addActionListener(event -> convertAction());
+            JButton convert = DendroFactory.getButton("Convert");
+            convert.addActionListener(event -> convertAction());
 
             //group layout
             {
@@ -45,9 +42,9 @@ public class ConversionGui extends RegisterFrame {
                                 main.createParallelGroup(GroupLayout.Alignment.CENTER).addGroup(
                                         main.createSequentialGroup().addGroup(
                                                 main.createParallelGroup(GroupLayout.Alignment.TRAILING).addComponent(
-                                                        A, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                                        a, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                                 ).addComponent(
-                                                        B, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                                        b, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                                 )
                                         ).addGap(DendroFactory.SMALL_GAP).addGroup(
                                                 main.createParallelGroup(GroupLayout.Alignment.TRAILING).addComponent(
@@ -61,22 +58,22 @@ public class ConversionGui extends RegisterFrame {
                                 ).addComponent(
                                         CUR_B, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
                                 ).addComponent(
-                                        CONVERT, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                        convert, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                 ).addComponent(
-                                        PANE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
+                                        pane, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
                                 )
                         ).addContainerGap()
                 );
                 main.setVerticalGroup(
                         main.createSequentialGroup().addContainerGap().addGroup(
                                 main.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(
-                                        A, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                        a, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                 ).addComponent(
                                         DATE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                 )
                         ).addGap(DendroFactory.SMALL_GAP).addGroup(
                                 main.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(
-                                        B, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                        b, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                 ).addComponent(
                                         AMOUNT, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                 )
@@ -85,9 +82,9 @@ public class ConversionGui extends RegisterFrame {
                         ).addGap(DendroFactory.SMALL_GAP).addComponent(
                                 CUR_B, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                         ).addGap(DendroFactory.SMALL_GAP).addComponent(
-                                CONVERT, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                convert, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                         ).addGap(DendroFactory.SMALL_GAP).addComponent(
-                                PANE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                pane, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                         ).addContainerGap()
                 );
             }

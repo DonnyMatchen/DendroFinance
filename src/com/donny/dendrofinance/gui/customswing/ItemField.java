@@ -9,7 +9,6 @@ import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
 public class ItemField extends JPanel {
-    private final JScrollPane TEXT_PANE, LIST_PANE;
     private final JTextArea TEXT;
     private final JList<String> LIST;
     private final ArrayList<String> MASTER;
@@ -21,11 +20,11 @@ public class ItemField extends JPanel {
         //gui setup
         {
             setBorder(null);
-            TEXT_PANE = DendroFactory.getLongField();
-            TEXT = (JTextArea) TEXT_PANE.getViewport().getView();
-            LIST_PANE = DendroFactory.getScrollPane(false, true);
+            JScrollPane textPane = DendroFactory.getLongField();
+            TEXT = (JTextArea) textPane.getViewport().getView();
+            JScrollPane listPane = DendroFactory.getScrollPane(false, true);
             LIST = new JList<>(new DefaultListModel<>());
-            LIST_PANE.setViewportView(LIST);
+            listPane.setViewportView(LIST);
             LIST.addMouseListener(new MouseInputAdapter() {
                 @Override
                 public void mouseClicked(MouseEvent event) {
@@ -59,16 +58,16 @@ public class ItemField extends JPanel {
                 setLayout(main);
                 main.setHorizontalGroup(
                         main.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(
-                                TEXT_PANE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
+                                textPane, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
                         ).addComponent(
-                                LIST_PANE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
+                                listPane, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
                         )
                 );
                 main.setVerticalGroup(
                         main.createSequentialGroup().addComponent(
-                                TEXT_PANE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                textPane, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                         ).addGap(DendroFactory.SMALL_GAP).addComponent(
-                                LIST_PANE, 0, GroupLayout.PREFERRED_SIZE, 65
+                                listPane, 0, GroupLayout.PREFERRED_SIZE, 65
                         )
                 );
             }

@@ -21,15 +21,8 @@ import java.util.Comparator;
 import java.util.Objects;
 
 public class BudgetGui extends RegisterFrame {
-    private final JTabbedPane BACK;
-    private final JPanel VIEW, EDIT;
-    private final JLabel A, B;
     private final JRadioButton EXPANDED, COLLAPSED;
-    private final ButtonGroup RADIO_GROUP;
     private final JComboBox<String> EDIT_B, BUDGET, YEAR, PERIOD;
-    private final JButton ADD, REMOVE, SAVE, RESET;
-    private final JScrollPane VIEW_PANE, EDIT_PANE;
-    private final JTable VIEW_TABLE, EDIT_TABLE;
     private final DefaultTableModel VIEW_TABLE_ACCESS, EDIT_TABLE_ACCESS;
 
     public BudgetGui(MainGui caller, Instance curInst) {
@@ -37,26 +30,26 @@ public class BudgetGui extends RegisterFrame {
 
         //draw GUI
         {
-            BACK = new JTabbedPane();
+            JTabbedPane BACK = new JTabbedPane();
             //view tab
             {
-                VIEW = new JPanel();
-                VIEW.setBorder(null);
-                VIEW_PANE = DendroFactory.getTable(new String[]{
+                JPanel view = new JPanel();
+                view.setBorder(null);
+                JScrollPane viewPane = DendroFactory.getTable(new String[]{
                         "Line Item", "Value", "Budgeted", "Balance"
                 }, new Object[][]{}, false);
-                VIEW_TABLE = (JTable) VIEW_PANE.getViewport().getView();
-                VIEW_TABLE_ACCESS = (DefaultTableModel) VIEW_TABLE.getModel();
+                JTable viewTable = (JTable) viewPane.getViewport().getView();
+                VIEW_TABLE_ACCESS = (DefaultTableModel) viewTable.getModel();
                 BUDGET = new JComboBox<>();
                 BUDGET.addItemListener(event -> updateView());
                 YEAR = new JComboBox<>();
-                A = new JLabel("Budget");
-                B = new JLabel("Period");
+                JLabel a = new JLabel("Budget");
+                JLabel b = new JLabel("Period");
                 EXPANDED = new JRadioButton("By Account");
                 COLLAPSED = new JRadioButton("By Type");
-                RADIO_GROUP = new ButtonGroup();
-                RADIO_GROUP.add(EXPANDED);
-                RADIO_GROUP.add(COLLAPSED);
+                ButtonGroup radioGroup = new ButtonGroup();
+                radioGroup.add(EXPANDED);
+                radioGroup.add(COLLAPSED);
                 COLLAPSED.setSelected(true);
                 EXPANDED.addActionListener(event -> updateView());
                 COLLAPSED.addActionListener(event -> updateView());
@@ -77,19 +70,19 @@ public class BudgetGui extends RegisterFrame {
 
                 //group layout
                 {
-                    GroupLayout main = new GroupLayout(VIEW);
-                    VIEW.setLayout(main);
+                    GroupLayout main = new GroupLayout(view);
+                    view.setLayout(main);
                     main.setHorizontalGroup(
                             main.createSequentialGroup().addContainerGap().addGroup(
                                     main.createParallelGroup(GroupLayout.Alignment.CENTER).addGroup(
                                             main.createSequentialGroup().addComponent(
-                                                    A, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                                    a, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                             ).addGap(DendroFactory.MEDIUM_GAP).addComponent(
                                                     BUDGET, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
                                             )
                                     ).addGroup(
                                             main.createSequentialGroup().addComponent(
-                                                    B, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                                    b, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                             ).addGap(DendroFactory.MEDIUM_GAP).addComponent(
                                                     YEAR, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                             ).addGap(DendroFactory.SMALL_GAP).addComponent(
@@ -104,20 +97,20 @@ public class BudgetGui extends RegisterFrame {
                                                     EXPANDED, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                             )
                                     ).addComponent(
-                                            VIEW_PANE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
+                                            viewPane, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
                                     )
                             ).addContainerGap()
                     );
                     main.setVerticalGroup(
                             main.createSequentialGroup().addContainerGap().addGroup(
                                     main.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(
-                                            A, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                            a, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                     ).addComponent(
                                             BUDGET, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                     )
                             ).addGap(DendroFactory.SMALL_GAP).addGroup(
                                     main.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(
-                                            B, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                            b, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                     ).addComponent(
                                             YEAR, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                     ).addComponent(
@@ -130,19 +123,20 @@ public class BudgetGui extends RegisterFrame {
                                             EXPANDED, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                     )
                             ).addGap(DendroFactory.SMALL_GAP).addComponent(
-                                    VIEW_PANE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
+                                    viewPane, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
                             ).addContainerGap()
                     );
                 }
+
+                BACK.addTab("View", view);
             }
-            BACK.addTab("View", VIEW);
             //edit tab
             {
-                EDIT = new JPanel();
-                EDIT.setBorder(null);
-                EDIT_PANE = DendroFactory.getTable(new String[]{}, new Object[][]{}, true);
-                EDIT_TABLE = (JTable) EDIT_PANE.getViewport().getView();
-                EDIT_TABLE.setModel(new DefaultTableModel(new Object[][]{}, new String[]{
+                JPanel edit = new JPanel();
+                edit.setBorder(null);
+                JScrollPane editPane = DendroFactory.getTable(new String[]{}, new Object[][]{}, true);
+                JTable editTable = (JTable) editPane.getViewport().getView();
+                editTable.setModel(new DefaultTableModel(new Object[][]{}, new String[]{
                         "Line Item", "Budgeted"
                 }) {
                     @Override
@@ -150,42 +144,42 @@ public class BudgetGui extends RegisterFrame {
                         return column >= 1;
                     }
                 });
-                EDIT_TABLE_ACCESS = (DefaultTableModel) EDIT_TABLE.getModel();
+                EDIT_TABLE_ACCESS = (DefaultTableModel) editTable.getModel();
                 EDIT_B = new JComboBox<>();
                 EDIT_B.addItemListener(event -> updateEdit());
 
-                ADD = DendroFactory.getButton("Add");
-                ADD.addActionListener(event -> new NewBudgetGui(this, CURRENT_INSTANCE).setVisible(true));
-                REMOVE = DendroFactory.getButton("Remove");
-                REMOVE.addActionListener(event -> new RemoveBudgetGui(this, (String) EDIT_B.getSelectedItem(), CURRENT_INSTANCE).setVisible(true));
-                RESET = DendroFactory.getButton("Reset");
-                RESET.addActionListener(event -> updateEdit());
-                SAVE = DendroFactory.getButton("Save");
-                SAVE.addActionListener(event -> saveBudget());
+                JButton add = DendroFactory.getButton("Add");
+                add.addActionListener(event -> new NewBudgetGui(this, CURRENT_INSTANCE).setVisible(true));
+                JButton remove = DendroFactory.getButton("Remove");
+                remove.addActionListener(event -> new RemoveBudgetGui(this, (String) EDIT_B.getSelectedItem(), CURRENT_INSTANCE).setVisible(true));
+                JButton reset = DendroFactory.getButton("Reset");
+                reset.addActionListener(event -> updateEdit());
+                JButton save = DendroFactory.getButton("Save");
+                save.addActionListener(event -> saveBudget());
 
                 //group layout
                 {
-                    GroupLayout main = new GroupLayout(EDIT);
-                    EDIT.setLayout(main);
+                    GroupLayout main = new GroupLayout(edit);
+                    edit.setLayout(main);
                     main.setHorizontalGroup(
                             main.createSequentialGroup().addContainerGap().addGroup(
                                     main.createParallelGroup(GroupLayout.Alignment.CENTER).addGroup(
                                             main.createSequentialGroup().addComponent(
-                                                    REMOVE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                                    remove, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                             ).addGap(DendroFactory.SMALL_GAP).addComponent(
                                                     EDIT_B, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
                                             ).addGap(DendroFactory.SMALL_GAP).addComponent(
-                                                    ADD, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                                    add, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                             )
                                     ).addComponent(
-                                            EDIT_PANE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
+                                            editPane, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
                                     ).addGroup(
                                             main.createSequentialGroup().addComponent(
-                                                    RESET, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                                    reset, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                             ).addGap(
                                                     DendroFactory.SMALL_GAP, DendroFactory.SMALL_GAP, Short.MAX_VALUE
                                             ).addComponent(
-                                                    SAVE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                                    save, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                             )
                                     )
                             ).addContainerGap()
@@ -193,25 +187,26 @@ public class BudgetGui extends RegisterFrame {
                     main.setVerticalGroup(
                             main.createSequentialGroup().addContainerGap().addGroup(
                                     main.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(
-                                            REMOVE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                            remove, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                     ).addComponent(
                                             EDIT_B, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                     ).addComponent(
-                                            ADD, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                            add, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                     )
                             ).addGap(DendroFactory.MEDIUM_GAP).addComponent(
-                                    EDIT_PANE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
+                                    editPane, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
                             ).addGap(DendroFactory.MEDIUM_GAP).addGroup(
                                     main.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(
-                                            RESET, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                            reset, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                     ).addComponent(
-                                            SAVE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                            save, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                     )
                             ).addContainerGap()
                     );
                 }
+
+                BACK.addTab("Edit", edit);
             }
-            BACK.addTab("Edit", EDIT);
 
             add(BACK);
 

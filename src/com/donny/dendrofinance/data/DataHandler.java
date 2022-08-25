@@ -12,7 +12,6 @@ import com.donny.dendrofinance.entry.totals.OrderBookEntry;
 import com.donny.dendrofinance.entry.totals.Position;
 import com.donny.dendrofinance.fileio.ImportHandler;
 import com.donny.dendrofinance.instance.Instance;
-import com.donny.dendrofinance.json.JsonFormattingException;
 import com.donny.dendrofinance.types.LAccountSet;
 import com.donny.dendrofinance.types.LDate;
 import com.donny.dendrofinance.util.Aggregation;

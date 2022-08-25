@@ -10,23 +10,21 @@ import com.donny.dendrofinance.instance.Instance;
 import javax.swing.*;
 
 public class ChangePasswordGui extends RegisterFrame {
-    private final JLabel A, B;
     private final JPasswordField ORIG, PASS;
-    private final JButton ENTER;
 
     public ChangePasswordGui(MainGui caller, Instance curInst) {
         super(caller, "Change Password", curInst);
 
         //draw gui
         {
-            A = new JLabel("Current Password");
-            B = new JLabel("New Password");
+            JLabel a = new JLabel("Current Password");
+            JLabel b = new JLabel("New Password");
 
             ORIG = new JPasswordField();
             PASS = new JPasswordField();
 
-            ENTER = DendroFactory.getButton("Enter");
-            ENTER.addActionListener(event -> enterAction());
+            JButton enter = DendroFactory.getButton("Enter");
+            enter.addActionListener(event -> enterAction());
 
             //group layout
             {
@@ -37,9 +35,9 @@ public class ChangePasswordGui extends RegisterFrame {
                                 main.createParallelGroup(GroupLayout.Alignment.CENTER).addGroup(
                                         main.createSequentialGroup().addGroup(
                                                 main.createParallelGroup(GroupLayout.Alignment.TRAILING).addComponent(
-                                                        A, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                                        a, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                                 ).addComponent(
-                                                        B, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                                        b, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                                 )
                                         ).addGap(DendroFactory.SMALL_GAP).addGroup(
                                                 main.createParallelGroup(GroupLayout.Alignment.LEADING).addComponent(
@@ -49,25 +47,25 @@ public class ChangePasswordGui extends RegisterFrame {
                                                 )
                                         )
                                 ).addComponent(
-                                        ENTER, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                        enter, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                 )
                         ).addContainerGap()
                 );
                 main.setVerticalGroup(
                         main.createSequentialGroup().addContainerGap().addGroup(
                                 main.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(
-                                        A, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                        a, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                 ).addComponent(
                                         ORIG, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                 )
                         ).addGap(DendroFactory.SMALL_GAP).addGroup(
                                 main.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(
-                                        B, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                        b, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                 ).addComponent(
                                         PASS, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                 )
                         ).addGap(DendroFactory.MEDIUM_GAP).addComponent(
-                                ENTER, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                enter, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                         ).addContainerGap()
                 );
             }

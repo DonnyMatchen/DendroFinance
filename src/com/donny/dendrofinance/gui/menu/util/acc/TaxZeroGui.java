@@ -16,8 +16,6 @@ import java.util.HashMap;
 
 public class TaxZeroGui extends RegisterFrame {
     private final JTextField DATE;
-    private final JLabel A;
-    private final JButton SAVE;
 
     public TaxZeroGui(MainGui caller, Instance curInst) {
         super(caller, "Ghost Zeroing Automation", curInst);
@@ -25,9 +23,9 @@ public class TaxZeroGui extends RegisterFrame {
         //draw gui
         {
             DATE = new JTextField();
-            A = new JLabel("Date");
-            SAVE = DendroFactory.getButton("Save");
-            SAVE.addActionListener(event -> saveAction());
+            JLabel a = new JLabel("Date");
+            JButton save = DendroFactory.getButton("Save");
+            save.addActionListener(event -> saveAction());
 
             //group layout
             {
@@ -37,24 +35,24 @@ public class TaxZeroGui extends RegisterFrame {
                         main.createSequentialGroup().addContainerGap().addGroup(
                                 main.createParallelGroup(GroupLayout.Alignment.CENTER).addGroup(
                                         main.createSequentialGroup().addComponent(
-                                                A, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                                a, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                         ).addGap(DendroFactory.SMALL_GAP).addComponent(
                                                 DATE, 250, 250, Short.MAX_VALUE
                                         )
                                 ).addComponent(
-                                        SAVE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                        save, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                 )
                         ).addContainerGap()
                 );
                 main.setVerticalGroup(
                         main.createSequentialGroup().addContainerGap().addGroup(
                                 main.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(
-                                        A, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                        a, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                 ).addComponent(
                                         DATE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                 )
                         ).addGap(DendroFactory.MEDIUM_GAP).addComponent(
-                                SAVE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                save, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                         ).addContainerGap()
                 );
             }

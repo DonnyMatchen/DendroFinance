@@ -1,3 +1,7 @@
+## v0.8.3
+* converted many fields to local in guis
+* other optimizations centered around switching to local variables where appropriate
+
 ## v0.8.2
 * minor optimizations
   * removed unnecessary `& 255` in writing blockSize as a byte

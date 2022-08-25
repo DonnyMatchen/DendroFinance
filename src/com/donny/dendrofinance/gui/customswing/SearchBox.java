@@ -8,9 +8,7 @@ import java.awt.*;
 import java.util.ArrayList;
 
 public class SearchBox extends JPanel {
-    private final JLabel A;
     private final JTextField SEARCH;
-    private final JScrollPane PANE;
     private final JList<String> LIST;
     private ArrayList<String> master;
 
@@ -21,11 +19,11 @@ public class SearchBox extends JPanel {
         //gui setup
         {
             setBorder(null);
-            A = new JLabel(name);
+            JLabel a = new JLabel(name);
             SEARCH = new JTextField();
             LIST = DendroFactory.getList();
-            PANE = DendroFactory.getScrollPane(false, true);
-            PANE.setViewportView(LIST);
+            JScrollPane pane = DendroFactory.getScrollPane(false, true);
+            pane.setViewportView(LIST);
 
             SEARCH.getDocument().addDocumentListener(new DocumentListener() {
                 @Override
@@ -50,20 +48,20 @@ public class SearchBox extends JPanel {
                 setLayout(main);
                 main.setHorizontalGroup(
                         main.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(
-                                A, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                a, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                         ).addComponent(
                                 SEARCH, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
                         ).addComponent(
-                                PANE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
+                                pane, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
                         )
                 );
                 main.setVerticalGroup(
                         main.createSequentialGroup().addComponent(
-                                A, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                a, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                         ).addGap(DendroFactory.SMALL_GAP).addComponent(
                                 SEARCH, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                         ).addGap(DendroFactory.SMALL_GAP).addComponent(
-                                PANE, 21, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                pane, 21, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                         )
                 );
             }

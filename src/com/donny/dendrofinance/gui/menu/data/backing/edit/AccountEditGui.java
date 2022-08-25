@@ -14,8 +14,6 @@ import javax.swing.*;
 public class AccountEditGui extends BackingEditGui<Account> {
     private JTextField name, aid, budget;
     private SearchBox currency, type, exchange;
-    private JLabel a, b, c;
-    private JButton cancel, save;
 
     public AccountEditGui(BackingTableGui<Account> caller, BackingTableCore<Account> core, int index, Instance curInst) {
         super(caller, core, index, curInst);
@@ -31,13 +29,13 @@ public class AccountEditGui extends BackingEditGui<Account> {
         type = new SearchBox("Account Type", CURRENT_INSTANCE.getAccountTypesAsStrings());
         exchange = new SearchBox("Exchange", CURRENT_INSTANCE.getExchangesAsStrings());
 
-        a = new JLabel("Account Name");
-        b = new JLabel("Account ID");
-        c = new JLabel("Budget");
+        JLabel a = new JLabel("Account Name");
+        JLabel b = new JLabel("Account ID");
+        JLabel c = new JLabel("Budget");
 
-        cancel = DendroFactory.getButton("Cancel");
+        JButton cancel = DendroFactory.getButton("Cancel");
         cancel.addActionListener(event -> dispose());
-        save = DendroFactory.getButton("Save");
+        JButton save = DendroFactory.getButton("Save");
         save.addActionListener(event -> saveAction());
 
         //populate if in edit mode

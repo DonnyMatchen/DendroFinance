@@ -27,10 +27,7 @@ import java.util.ArrayList;
 
 public class ArchiveGui extends RegisterFrame {
     private final File DIR;
-
-    private final JLabel A, B;
     private final JComboBox<String> YEAR, ARCHIVES;
-    private final JButton GO, EXPORT;
 
     public ArchiveGui(MainGui caller, Instance curInst) {
         super(caller, "Archive", curInst);
@@ -39,8 +36,8 @@ public class ArchiveGui extends RegisterFrame {
 
         //draw gui
         {
-            A = new JLabel("Year");
-            B = new JLabel("Archive");
+            JLabel a = new JLabel("Year");
+            JLabel b = new JLabel("Archive");
             YEAR = new JComboBox<>();
             Curation<Integer> years = new Curation<>();
             for (TransactionEntry entry : CURRENT_INSTANCE.DATA_HANDLER.readTransactions()) {
@@ -60,10 +57,10 @@ public class ArchiveGui extends RegisterFrame {
                     }
                 }
             }
-            GO = DendroFactory.getButton("Archive");
-            GO.addActionListener(event -> archive());
-            EXPORT = DendroFactory.getButton("Export");
-            EXPORT.addActionListener(event -> export());
+            JButton go = DendroFactory.getButton("Archive");
+            go.addActionListener(event -> archive());
+            JButton export = DendroFactory.getButton("Export");
+            export.addActionListener(event -> export());
 
             //group layout
             {
@@ -73,40 +70,40 @@ public class ArchiveGui extends RegisterFrame {
                         main.createSequentialGroup().addContainerGap().addGroup(
                                 main.createParallelGroup(GroupLayout.Alignment.CENTER).addGroup(
                                         main.createSequentialGroup().addComponent(
-                                                A, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                                a, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                         ).addGap(DendroFactory.SMALL_GAP).addComponent(
                                                 YEAR, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
                                         )
                                 ).addComponent(
-                                        GO, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                        go, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                 ).addGroup(
                                         main.createSequentialGroup().addComponent(
-                                                B, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                                b, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                         ).addGap(DendroFactory.SMALL_GAP).addComponent(
                                                 ARCHIVES, 300, 300, Short.MAX_VALUE
                                         )
                                 ).addComponent(
-                                        EXPORT, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                        export, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                 )
                         ).addContainerGap()
                 );
                 main.setVerticalGroup(
                         main.createSequentialGroup().addContainerGap().addGroup(
                                 main.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(
-                                        A, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                        a, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                 ).addComponent(
                                         YEAR, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                 )
                         ).addGap(DendroFactory.SMALL_GAP).addComponent(
-                                GO, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                go, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                         ).addGap(DendroFactory.SMALL_GAP).addGroup(
                                 main.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(
-                                        B, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                        b, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                 ).addComponent(
                                         ARCHIVES, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                 )
                         ).addGap(DendroFactory.SMALL_GAP).addComponent(
-                                EXPORT, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                export, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                         ).addContainerGap()
                 );
             }

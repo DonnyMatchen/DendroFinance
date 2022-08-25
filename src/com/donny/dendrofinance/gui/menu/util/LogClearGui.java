@@ -10,10 +10,8 @@ import java.io.File;
 import java.util.ArrayList;
 
 public class LogClearGui extends RegisterFrame {
-    private final JScrollPane LIST_PANE, VIEW_PANE;
     private final JList<String> LIST;
     private final JTextArea VIEW;
-    private final JButton REMOVE, REMOVE_ALL, LOAD;
 
     private final File LOGS;
 
@@ -25,17 +23,17 @@ public class LogClearGui extends RegisterFrame {
         //Draw Gui
         {
             LIST = new JList<>(new DefaultListModel<>());
-            LIST_PANE = DendroFactory.getScrollPane(false, true);
-            LIST_PANE.setViewportView(LIST);
-            VIEW_PANE = DendroFactory.getScrollField();
-            VIEW = (JTextArea) VIEW_PANE.getViewport().getView();
+            JScrollPane listPane = DendroFactory.getScrollPane(false, true);
+            listPane.setViewportView(LIST);
+            JScrollPane viewPane = DendroFactory.getScrollField();
+            VIEW = (JTextArea) viewPane.getViewport().getView();
             VIEW.setEditable(false);
-            REMOVE = DendroFactory.getButton("Remove");
-            REMOVE.addActionListener(event -> removeAction());
-            REMOVE_ALL = DendroFactory.getButton("Remove All");
-            REMOVE_ALL.addActionListener(event -> removeAllAction());
-            LOAD = DendroFactory.getButton("Load");
-            LOAD.addActionListener(event -> VIEW.setText(
+            JButton remove = DendroFactory.getButton("Remove");
+            remove.addActionListener(event -> removeAction());
+            JButton removeAll = DendroFactory.getButton("Remove All");
+            removeAll.addActionListener(event -> removeAllAction());
+            JButton load = DendroFactory.getButton("Load");
+            load.addActionListener(event -> VIEW.setText(
                     CURRENT_INSTANCE.FILE_HANDLER.read(LOGS, LIST.getSelectedValue())
             ));
 
@@ -46,17 +44,17 @@ public class LogClearGui extends RegisterFrame {
                 main.setHorizontalGroup(
                         main.createSequentialGroup().addContainerGap().addGroup(
                                 main.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(
-                                        LIST_PANE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
+                                        listPane, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
                                 ).addComponent(
-                                        VIEW_PANE, GroupLayout.PREFERRED_SIZE, 1000, Short.MAX_VALUE
+                                        viewPane, GroupLayout.PREFERRED_SIZE, 1000, Short.MAX_VALUE
                                 )
                         ).addGap(DendroFactory.MEDIUM_GAP).addGroup(
                                 main.createParallelGroup(GroupLayout.Alignment.LEADING).addComponent(
-                                        LOAD, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                        load, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                 ).addComponent(
-                                        REMOVE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                        remove, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                 ).addComponent(
-                                        REMOVE_ALL, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                        removeAll, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                 )
                         ).addContainerGap()
                 );
@@ -64,17 +62,17 @@ public class LogClearGui extends RegisterFrame {
                         main.createSequentialGroup().addContainerGap().addGroup(
                                 main.createParallelGroup(GroupLayout.Alignment.LEADING).addGroup(
                                         main.createSequentialGroup().addComponent(
-                                                LIST_PANE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
+                                                listPane, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
                                         ).addGap(DendroFactory.SMALL_GAP).addComponent(
-                                                VIEW_PANE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
+                                                viewPane, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
                                         )
                                 ).addGroup(
                                         main.createSequentialGroup().addComponent(
-                                                LOAD, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                                load, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                         ).addGap(DendroFactory.SMALL_GAP).addComponent(
-                                                REMOVE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                                remove, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                         ).addGap(DendroFactory.SMALL_GAP).addComponent(
-                                                REMOVE_ALL, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                                removeAll, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                         ).addGap(
                                                 DendroFactory.SMALL_GAP, DendroFactory.SMALL_GAP, Short.MAX_VALUE
                                         )

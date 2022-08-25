@@ -19,10 +19,7 @@ import java.util.Arrays;
 
 public class ExchangeEditGui extends BackingEditGui<Exchange> {
     private JTextField name, alt;
-    private JScrollPane supports, stakes, fees;
     private JTextArea sText, tText, fText;
-    private JLabel a, b, c, d, e;
-    private JButton cancel, save;
 
     public ExchangeEditGui(BackingTableGui<Exchange> caller, BackingTableCore<Exchange> core, int index, Instance curInst) {
         super(caller, core, index, curInst);
@@ -32,22 +29,22 @@ public class ExchangeEditGui extends BackingEditGui<Exchange> {
     protected void initComponents() {
         name = new JTextField();
         alt = new JTextField();
-        supports = DendroFactory.getScrollField();
+        JScrollPane supports = DendroFactory.getScrollField();
         sText = (JTextArea) supports.getViewport().getView();
-        stakes = DendroFactory.getScrollField();
+        JScrollPane stakes = DendroFactory.getScrollField();
         tText = (JTextArea) stakes.getViewport().getView();
-        fees = DendroFactory.getScrollField();
+        JScrollPane fees = DendroFactory.getScrollField();
         fText = (JTextArea) fees.getViewport().getView();
 
-        a = new JLabel("Exchange Name");
-        b = new JLabel("API Name");
-        c = new JLabel("Supported Assets");
-        d = new JLabel("Separate Staking");
-        e = new JLabel("Separate Fees");
+        JLabel a = new JLabel("Exchange Name");
+        JLabel b = new JLabel("API Name");
+        JLabel c = new JLabel("Supported Assets");
+        JLabel d = new JLabel("Separate Staking");
+        JLabel e = new JLabel("Separate Fees");
 
-        cancel = DendroFactory.getButton("Cancel");
+        JButton cancel = DendroFactory.getButton("Cancel");
         cancel.addActionListener(event -> dispose());
-        save = DendroFactory.getButton("Save");
+        JButton save = DendroFactory.getButton("Save");
         save.addActionListener(event -> saveAction());
 
         //populate if in edit mode
@@ -74,7 +71,7 @@ public class ExchangeEditGui extends BackingEditGui<Exchange> {
                 }
                 fText.setText(sb.substring(2));
             }
-            if (exch.inUse(CURRENT_INSTANCE)) {
+            if (exch.inUse()) {
                 name.setEditable(false);
                 name.setBackground(DendroFactory.DISABLED);
             }
@@ -168,7 +165,7 @@ public class ExchangeEditGui extends BackingEditGui<Exchange> {
         sText.setBackground(DendroFactory.CONTENT);
         tText.setBackground(DendroFactory.CONTENT);
         try {
-            ArrayList<String> needed = TABLE.getElement(INDEX).aNamesInUse(CURRENT_INSTANCE);
+            ArrayList<String> needed = TABLE.getElement(INDEX).aNamesInUse();
             for (String s : Validation.validateStringAllowEmpty(sText).replace(" ", "").replace("\n", "").split(",")) {
                 String str = "";
                 if (!sText.getText().equals("")) {

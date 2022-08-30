@@ -12,7 +12,7 @@ For help with milliseconds since epoch, this site is an option: [UnixTimeStamp.c
 * This application expects all input data to be in UTF-8 or ASCII formats
 * Torsocks seems to interfere with this application's ability to read and write files and access APIs.  The latter may be due to many APIs blocking TOR nodes.
 * In Linux systems using the Nautilus filesystem interface or derivatives, there seems to be a problem when .jar files are run.  It seems to set the working directory to the home folder rather than the directory the .jar file is in.
-  * Due to this, the Linux version of the software comes with a run script for convenience
+  * Due to this, the Linux version of the software ships with a run script for convenience
 
 # CONFIGURATION
 the following is an explanation of configuration options available for each profile
@@ -36,7 +36,6 @@ the following is an explanation of configuration options available for each prof
   * Default: 4 (64 bytes)
 
 # KNOWN PROBLEMS
-There is a tendency for some gui windows not to be sized correctly.  I'm not quite sure why this happens, and there doesn't seem to be a fix for it.
 
 # DOWNLOAD
 [Download](https://github.com/DonnyMatchen/DendroFinance/releases)

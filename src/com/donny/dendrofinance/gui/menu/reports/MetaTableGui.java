@@ -163,11 +163,9 @@ public class MetaTableGui extends RegisterFrame {
                             )
                     ).addContainerGap()
             );
-
-            pack();
         }
-
         updateTable();
+        pack();
     }
 
     private void updateTable() {

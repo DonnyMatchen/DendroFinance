@@ -65,9 +65,8 @@ public class DeleteBackingGui<E extends ExportableToJson> extends ModalFrame {
                         ).addContainerGap()
                 );
             }
-
-            pack();
         }
+        pack();
     }
 
     public void deleteAction(BackingTableGui<E> caller, BackingTableCore<E> core, int index) {

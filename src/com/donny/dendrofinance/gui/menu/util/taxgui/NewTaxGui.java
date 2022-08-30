@@ -128,9 +128,8 @@ public class NewTaxGui extends ModalFrame {
                         ).addContainerGap()
                 );
             }
-
-            pack();
         }
+        pack();
     }
 
     private void saveAction(TaxGui caller) {

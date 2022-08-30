@@ -70,8 +70,8 @@ public class UnkPasswordGui extends ModalFrame {
                         ).addContainerGap()
                 );
             }
-            pack();
         }
+        pack();
     }
 
     private EncryptionHandler getEncryptionHandler() {

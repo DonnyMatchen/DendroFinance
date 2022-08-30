@@ -863,9 +863,8 @@ public class SpecialTransactionEntryGui extends ModalFrame {
             }
 
             add(back);
-
-            pack();
         }
+        pack();
     }
 
     private void updateTT() {

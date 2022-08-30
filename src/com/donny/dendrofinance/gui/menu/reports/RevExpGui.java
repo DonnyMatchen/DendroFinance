@@ -118,9 +118,8 @@ public class RevExpGui extends RegisterFrame {
                         ).addContainerGap()
                 );
             }
-
-            pack();
         }
+        pack();
     }
 
     private DefaultTableModel tableAccess() {

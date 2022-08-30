@@ -51,8 +51,8 @@ public class BudgetTypeGui extends RegisterFrame {
                         ).addContainerGap()
                 );
             }
-            pack();
         }
+        pack();
     }
 
     private void saveAction() {

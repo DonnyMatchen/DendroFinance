@@ -192,8 +192,6 @@ public class ProfileGui extends ModalFrame {
                         ).addContainerGap()
                 );
             }
-
-            pack();
         }
         if (config.containsKey("name")) {
             NAME.setText(config.getString("name").getString());
@@ -240,6 +238,7 @@ public class ProfileGui extends ModalFrame {
         if (config.containsKey("block")) {
             BLOCK.setText("" + config.getDecimal("block").decimal);
         }
+        pack();
     }
 
     public void save() {

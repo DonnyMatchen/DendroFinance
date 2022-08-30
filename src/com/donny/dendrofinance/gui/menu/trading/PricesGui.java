@@ -49,9 +49,8 @@ public class PricesGui extends RegisterFrame {
                         ).addContainerGap()
                 );
             }
-
-            pack();
         }
+        pack();
     }
 
     private void update() {

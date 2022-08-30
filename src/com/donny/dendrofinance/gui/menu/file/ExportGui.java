@@ -70,8 +70,8 @@ public class ExportGui extends RegisterFrame {
                         ).addContainerGap()
                 );
             }
-            pack();
         }
+        pack();
     }
 
     private void exportAction() {

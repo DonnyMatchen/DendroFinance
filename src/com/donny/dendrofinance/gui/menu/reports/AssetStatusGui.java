@@ -70,11 +70,10 @@ public class AssetStatusGui extends RegisterFrame {
                         ).addContainerGap()
                 );
             }
-
-            pack();
         }
         DATE.setText(LDate.now(curInst).toDateString());
         enterAction();
+        pack();
     }
 
     public final void enterAction() {

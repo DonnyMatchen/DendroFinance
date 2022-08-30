@@ -305,9 +305,8 @@ public class AppDepGui extends RegisterFrame {
             LDate date = LDate.now(CURRENT_INSTANCE);
             date = new LDate(date.getYear(), date.lastMonth(), LDate.lastDay(date.getYear(), date.lastMonth(), CURRENT_INSTANCE), 23, 59, 59, CURRENT_INSTANCE);
             DATE.setText(date.toString());
-
-            pack();
         }
+        pack();
     }
 
     private void saveAction() {

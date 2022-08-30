@@ -89,9 +89,9 @@ public class CheckGui extends RegisterFrame {
                         ).addContainerGap()
                 );
             }
-            pack();
         }
         updateTable();
+        pack();
     }
 
     public void updateTable() {

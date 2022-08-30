@@ -81,9 +81,8 @@ public class NewBudgetGui extends ModalFrame {
                         ).addContainerGap()
                 );
             }
-
-            pack();
         }
+        pack();
     }
 
     public void okAction() {

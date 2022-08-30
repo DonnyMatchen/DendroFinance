@@ -88,9 +88,8 @@ public class ConversionGui extends RegisterFrame {
                         ).addContainerGap()
                 );
             }
-
-            pack();
         }
+        pack();
     }
 
     private void convertAction() {

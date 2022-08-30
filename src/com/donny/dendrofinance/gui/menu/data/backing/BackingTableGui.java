@@ -149,9 +149,8 @@ public class BackingTableGui<E extends ExportableToJson> extends RegisterFrame {
             }
 
             updateTable();
-
-            pack();
         }
+        pack();
     }
 
     public final void updateTable() {

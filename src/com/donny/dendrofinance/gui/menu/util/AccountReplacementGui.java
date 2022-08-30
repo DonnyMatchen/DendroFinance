@@ -52,9 +52,8 @@ public class AccountReplacementGui extends RegisterFrame {
                         ).addContainerGap()
                 );
             }
-
-            pack();
         }
+        pack();
     }
 
     private void goAction() {

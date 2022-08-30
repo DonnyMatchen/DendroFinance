@@ -68,10 +68,9 @@ public class PositionGui extends RegisterFrame {
                         ).addContainerGap()
                 );
             }
-
-            pack();
         }
         reCalcAction();
+        pack();
     }
 
     public final void reCalcAction() {

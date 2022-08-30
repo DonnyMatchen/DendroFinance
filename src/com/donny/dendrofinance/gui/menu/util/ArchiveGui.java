@@ -107,9 +107,8 @@ public class ArchiveGui extends RegisterFrame {
                         ).addContainerGap()
                 );
             }
-
-            pack();
         }
+        pack();
     }
 
     private void archive() {

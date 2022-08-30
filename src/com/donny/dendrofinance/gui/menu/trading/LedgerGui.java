@@ -49,9 +49,8 @@ public class LedgerGui extends RegisterFrame {
                         ).addContainerGap()
                 );
             }
-
-            pack();
         }
+        pack();
     }
 
     private void update() {

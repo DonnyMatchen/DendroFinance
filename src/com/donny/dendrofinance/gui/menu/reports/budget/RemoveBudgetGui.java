@@ -52,10 +52,9 @@ public class RemoveBudgetGui extends ModalFrame {
                             ).addContainerGap()
                     );
                 }
-
-                pack();
             }
         }
+        pack();
     }
 
     private void yesAction(BudgetGui caller, String budget) {

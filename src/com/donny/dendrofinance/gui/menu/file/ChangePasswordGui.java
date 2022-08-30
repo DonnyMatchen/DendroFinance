@@ -69,8 +69,8 @@ public class ChangePasswordGui extends RegisterFrame {
                         ).addContainerGap()
                 );
             }
-            pack();
         }
+        pack();
     }
 
     private void enterAction() {

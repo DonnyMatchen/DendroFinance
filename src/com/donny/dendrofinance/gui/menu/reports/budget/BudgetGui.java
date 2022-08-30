@@ -209,12 +209,11 @@ public class BudgetGui extends RegisterFrame {
             }
 
             add(BACK);
-
-            pack();
         }
         updateBudget();
         updateView();
         updateEdit();
+        pack();
     }
 
     public final void updateBudget() {

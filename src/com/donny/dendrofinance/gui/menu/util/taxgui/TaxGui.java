@@ -121,10 +121,9 @@ public class TaxGui extends RegisterFrame {
                         ).addContainerGap()
                 );
             }
-
-            pack();
         }
         updateTaxes();
+        pack();
     }
 
     public void updateTaxes() {

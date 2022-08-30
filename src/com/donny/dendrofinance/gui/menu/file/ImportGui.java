@@ -88,9 +88,9 @@ public class ImportGui extends RegisterFrame {
                         ).addContainerGap()
                 );
             }
-            pack();
         }
         updateList();
+        pack();
     }
 
     private void importAction() {

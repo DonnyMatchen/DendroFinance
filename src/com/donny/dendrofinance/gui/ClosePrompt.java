@@ -56,8 +56,8 @@ public class ClosePrompt extends ModalFrame {
                         ).addContainerGap()
                 );
             }
-
-            pack();
         }
+
+        pack();
     }
 }

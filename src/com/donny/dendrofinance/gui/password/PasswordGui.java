@@ -129,10 +129,9 @@ public class PasswordGui extends JFrame {
                         ).addContainerGap()
                 );
             }
-
-            pack();
         }
         CURRENT_INSTANCE.LOG_HANDLER.trace(getClass(), "PasswordGui created");
+        pack();
     }
 
     private void enterPressed() {

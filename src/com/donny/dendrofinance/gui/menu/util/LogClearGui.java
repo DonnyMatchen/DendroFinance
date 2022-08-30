@@ -80,11 +80,9 @@ public class LogClearGui extends RegisterFrame {
                         ).addContainerGap()
                 );
             }
-
-            pack();
         }
-
         updateList();
+        pack();
     }
 
     private void removeAction() {

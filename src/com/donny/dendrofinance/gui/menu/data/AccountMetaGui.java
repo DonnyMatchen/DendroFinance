@@ -79,9 +79,8 @@ public class AccountMetaGui extends RegisterFrame {
             ACCOUNT_OBJECT = (JsonObject) CURRENT_INSTANCE.FILE_HANDLER.readJson(ACCOUNTS);
             GIFT.setText(ACCOUNT_OBJECT.getArray("gift-cards").toString());
             BRAVE.setText(ACCOUNT_OBJECT.getArray("brave-mobile").toString());
-
-            pack();
         }
+        pack();
     }
 
     private void saveAction() {

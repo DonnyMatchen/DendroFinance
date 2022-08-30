@@ -503,8 +503,6 @@ public class NewTransactionEntryGui extends ModalFrame {
             }
 
             add(back);
-
-            pack();
         }
         if (UUID == 0) {
             metaObject = new JsonObject();
@@ -578,6 +576,7 @@ public class NewTransactionEntryGui extends ModalFrame {
         META_TYPE.addItem("NF Asset Change");
         META_TYPE.addItem("Loan Change");
         META_TYPE.addItem("Check");
+        pack();
     }
 
     public void bChanged(JComboBox<String> b, SearchBox a) {

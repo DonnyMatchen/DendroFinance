@@ -23,6 +23,7 @@ public class StatisticsGui extends RegisterFrame {
             }, new Object[][]{}, false);
             JTable table = (JTable) pane.getViewport().getView();
             TABLE_ACCESS = ((DefaultTableModel) table.getModel());
+
             //group layout
             {
                 GroupLayout main = new GroupLayout(getContentPane());
@@ -38,11 +39,9 @@ public class StatisticsGui extends RegisterFrame {
                         ).addContainerGap()
                 );
             }
-
-            pack();
         }
-
         fillTable();
+        pack();
     }
 
     public final void fillTable() {

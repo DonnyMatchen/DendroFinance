@@ -390,11 +390,10 @@ public class MainGui extends JFrame {
                         ).addContainerGap()
                 );
             }
-
-            pack();
         }
 
         updateTable("");
+        pack();
         CURRENT_INSTANCE.LOG_HANDLER.trace(getClass(), "MainGui Created");
     }
 

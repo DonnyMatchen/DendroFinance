@@ -83,11 +83,10 @@ public class BalanceSheetGui extends RegisterFrame {
                         ).addContainerGap()
                 );
             }
-
-            pack();
         }
         DATE.setText(LDate.now(curInst).toDateString());
         updateTable();
+        pack();
     }
 
     public final void updateTable() {

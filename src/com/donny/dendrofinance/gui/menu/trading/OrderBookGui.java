@@ -95,9 +95,8 @@ public class OrderBookGui extends RegisterFrame {
                         ).addContainerGap()
                 );
             }
-
-            pack();
         }
+        pack();
     }
 
     private void update() {

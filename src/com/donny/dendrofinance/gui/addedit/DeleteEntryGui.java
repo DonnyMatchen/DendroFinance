@@ -16,19 +16,17 @@ public class DeleteEntryGui extends ModalFrame {
         UUID = uuid;
         MAIN = caller;
         //draw gui
-        JTextArea area;
+        JScrollPane pane = DendroFactory.getScrollField(false, 5, 40);
+        JTextArea area = (JTextArea) pane.getViewport().getView();
         {
             JLabel text1 = new JLabel("Are you sure you'd like to delete");
             JLabel text2 = new JLabel("the entry bellow?");
-
-            JScrollPane pane = DendroFactory.getScrollField(false, 5, 40);
-            area = (JTextArea) pane.getViewport().getView();
 
             JButton ok = DendroFactory.getButton("Yes");
             ok.addActionListener(event -> yes());
             JButton cancel = DendroFactory.getButton("No");
             cancel.addActionListener(event -> dispose());
-            //back
+            //Group layout
             {
                 GroupLayout main = new GroupLayout(getContentPane());
                 getContentPane().setLayout(main);
@@ -67,10 +65,9 @@ public class DeleteEntryGui extends ModalFrame {
                         ).addContainerGap()
                 );
             }
-
-            pack();
         }
         area.setText(CURRENT_INSTANCE.DATA_HANDLER.getTransactionEntry(UUID).toString());
+        pack();
     }
 
     public void yes() {

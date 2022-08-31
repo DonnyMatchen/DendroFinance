@@ -11,6 +11,7 @@ import com.donny.dendrofinance.instance.Instance;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+import java.awt.*;
 
 public class StatisticsGui extends RegisterFrame {
     private final DefaultTableModel TABLE_ACCESS;
@@ -42,6 +43,8 @@ public class StatisticsGui extends RegisterFrame {
         }
         fillTable();
         pack();
+        Dimension d = Toolkit.getDefaultToolkit().getScreenSize();
+        setLocation(d.width / 2 - getWidth() / 2, d.height / 2 - getHeight() / 2);
     }
 
     public final void fillTable() {

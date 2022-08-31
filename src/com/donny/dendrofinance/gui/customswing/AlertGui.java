@@ -3,6 +3,7 @@ package com.donny.dendrofinance.gui.customswing;
 import com.donny.dendrofinance.instance.Instance;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
@@ -46,7 +47,9 @@ public class AlertGui extends ModalFrame {
                         ).addContainerGap()
                 );
             }
-            pack();
         }
+        pack();
+        Dimension d = Toolkit.getDefaultToolkit().getScreenSize();
+        setLocation(d.width / 2 - getWidth() / 2, d.height / 2 - getHeight() / 2);
     }
 }

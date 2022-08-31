@@ -11,6 +11,7 @@ import com.donny.dendrofinance.gui.customswing.SearchBox;
 import com.donny.dendrofinance.instance.Instance;
 
 import javax.swing.*;
+import java.awt.*;
 import java.math.BigDecimal;
 
 public class AccountReplacementGui extends RegisterFrame {
@@ -54,6 +55,8 @@ public class AccountReplacementGui extends RegisterFrame {
             }
         }
         pack();
+        Dimension d = Toolkit.getDefaultToolkit().getScreenSize();
+        setLocation(d.width / 2 - getWidth() / 2, d.height / 2 - getHeight() / 2);
     }
 
     private void goAction() {

@@ -12,6 +12,7 @@ import com.donny.dendrofinance.types.LDate;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+import java.awt.*;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 
@@ -71,6 +72,8 @@ public class PositionGui extends RegisterFrame {
         }
         reCalcAction();
         pack();
+        Dimension d = Toolkit.getDefaultToolkit().getScreenSize();
+        setLocation(d.width / 2 - getWidth() / 2, d.height / 2 - getHeight() / 2);
     }
 
     public final void reCalcAction() {

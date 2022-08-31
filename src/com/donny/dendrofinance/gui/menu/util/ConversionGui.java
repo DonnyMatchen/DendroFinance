@@ -9,6 +9,7 @@ import com.donny.dendrofinance.instance.Instance;
 import com.donny.dendrofinance.types.LDate;
 
 import javax.swing.*;
+import java.awt.*;
 import java.math.BigDecimal;
 
 public class ConversionGui extends RegisterFrame {
@@ -90,6 +91,8 @@ public class ConversionGui extends RegisterFrame {
             }
         }
         pack();
+        Dimension d = Toolkit.getDefaultToolkit().getScreenSize();
+        setLocation(d.width / 2 - getWidth() / 2, d.height / 2 - getHeight() / 2);
     }
 
     private void convertAction() {

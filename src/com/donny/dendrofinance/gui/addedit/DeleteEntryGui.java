@@ -6,6 +6,7 @@ import com.donny.dendrofinance.gui.customswing.DendroFactory;
 import com.donny.dendrofinance.instance.Instance;
 
 import javax.swing.*;
+import java.awt.*;
 
 public class DeleteEntryGui extends ModalFrame {
     public final MainGui MAIN;
@@ -68,6 +69,8 @@ public class DeleteEntryGui extends ModalFrame {
         }
         area.setText(CURRENT_INSTANCE.DATA_HANDLER.getTransactionEntry(UUID).toString());
         pack();
+        Dimension d = Toolkit.getDefaultToolkit().getScreenSize();
+        setLocation(d.width / 2 - getWidth() / 2, d.height / 2 - getHeight() / 2);
     }
 
     public void yes() {

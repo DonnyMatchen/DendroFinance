@@ -1,6 +1,7 @@
 ## v0.8.3
-* fixed gui problem
-  * moved `pack();` to ensure it is the last thing in every gui's constructor
+* fixed gui problems
+  * moved `pack()` to ensure it is the last thing in every gui's constructor
+  * all guis now appear at center of screen
 * updated readme
 
 ## v0.8.2

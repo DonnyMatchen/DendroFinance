@@ -10,6 +10,7 @@ import com.donny.dendrofinance.gui.form.ValidationFailedException;
 import com.donny.dendrofinance.instance.Instance;
 
 import javax.swing.*;
+import java.awt.*;
 import java.util.ArrayList;
 
 public class SpecialTransactionEntryGui extends ModalFrame {
@@ -865,6 +866,8 @@ public class SpecialTransactionEntryGui extends ModalFrame {
             add(back);
         }
         pack();
+        Dimension d = Toolkit.getDefaultToolkit().getScreenSize();
+        setLocation(d.width / 2 - getWidth() / 2, d.height / 2 - getHeight() / 2);
     }
 
     private void updateTT() {

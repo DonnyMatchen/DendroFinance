@@ -9,6 +9,7 @@ import com.donny.dendrofinance.types.LDate;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
@@ -163,11 +164,11 @@ public class MetaTableGui extends RegisterFrame {
                             )
                     ).addContainerGap()
             );
-
-            pack();
         }
-
         updateTable();
+        pack();
+        Dimension d = Toolkit.getDefaultToolkit().getScreenSize();
+        setLocation(d.width / 2 - getWidth() / 2, d.height / 2 - getHeight() / 2);
     }
 
     private void updateTable() {

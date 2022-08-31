@@ -13,6 +13,7 @@ import com.donny.dendrofinance.util.DoubleAggregation;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Objects;
@@ -118,9 +119,10 @@ public class RevExpGui extends RegisterFrame {
                         ).addContainerGap()
                 );
             }
-
-            pack();
         }
+        pack();
+        Dimension d = Toolkit.getDefaultToolkit().getScreenSize();
+        setLocation(d.width / 2 - getWidth() / 2, d.height / 2 - getHeight() / 2);
     }
 
     private DefaultTableModel tableAccess() {

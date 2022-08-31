@@ -11,6 +11,7 @@ import com.donny.dendrofinance.json.JsonObject;
 import com.donny.dendrofinance.json.JsonString;
 
 import javax.swing.*;
+import java.awt.*;
 import java.math.BigDecimal;
 
 public class ProfileGui extends ModalFrame {
@@ -192,8 +193,6 @@ public class ProfileGui extends ModalFrame {
                         ).addContainerGap()
                 );
             }
-
-            pack();
         }
         if (config.containsKey("name")) {
             NAME.setText(config.getString("name").getString());
@@ -240,6 +239,9 @@ public class ProfileGui extends ModalFrame {
         if (config.containsKey("block")) {
             BLOCK.setText("" + config.getDecimal("block").decimal);
         }
+        pack();
+        Dimension d = Toolkit.getDefaultToolkit().getScreenSize();
+        setLocation(d.width / 2 - getWidth() / 2, d.height / 2 - getHeight() / 2);
     }
 
     public void save() {

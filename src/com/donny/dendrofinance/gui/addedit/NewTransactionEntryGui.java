@@ -18,6 +18,7 @@ import com.donny.dendrofinance.types.LDate;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+import java.awt.*;
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Vector;
@@ -503,8 +504,6 @@ public class NewTransactionEntryGui extends ModalFrame {
             }
 
             add(back);
-
-            pack();
         }
         if (UUID == 0) {
             metaObject = new JsonObject();
@@ -578,6 +577,9 @@ public class NewTransactionEntryGui extends ModalFrame {
         META_TYPE.addItem("NF Asset Change");
         META_TYPE.addItem("Loan Change");
         META_TYPE.addItem("Check");
+        pack();
+        Dimension d = Toolkit.getDefaultToolkit().getScreenSize();
+        setLocation(d.width / 2 - getWidth() / 2, d.height / 2 - getHeight() / 2);
     }
 
     public void bChanged(JComboBox<String> b, SearchBox a) {

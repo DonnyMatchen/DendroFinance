@@ -7,6 +7,7 @@ import com.donny.dendrofinance.instance.Instance;
 
 import javax.swing.*;
 import javax.swing.event.MouseInputAdapter;
+import java.awt.*;
 import java.awt.event.MouseEvent;
 
 public class TaxGui extends RegisterFrame {
@@ -121,10 +122,11 @@ public class TaxGui extends RegisterFrame {
                         ).addContainerGap()
                 );
             }
-
-            pack();
         }
         updateTaxes();
+        pack();
+        Dimension d = Toolkit.getDefaultToolkit().getScreenSize();
+        setLocation(d.width / 2 - getWidth() / 2, d.height / 2 - getHeight() / 2);
     }
 
     public void updateTaxes() {

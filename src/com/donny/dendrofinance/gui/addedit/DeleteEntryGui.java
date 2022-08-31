@@ -6,6 +6,7 @@ import com.donny.dendrofinance.gui.customswing.DendroFactory;
 import com.donny.dendrofinance.instance.Instance;
 
 import javax.swing.*;
+import java.awt.*;
 
 public class DeleteEntryGui extends ModalFrame {
     public final MainGui MAIN;
@@ -16,19 +17,17 @@ public class DeleteEntryGui extends ModalFrame {
         UUID = uuid;
         MAIN = caller;
         //draw gui
-        JTextArea area;
+        JScrollPane pane = DendroFactory.getScrollField(false, 5, 40);
+        JTextArea area = (JTextArea) pane.getViewport().getView();
         {
             JLabel text1 = new JLabel("Are you sure you'd like to delete");
             JLabel text2 = new JLabel("the entry bellow?");
-
-            JScrollPane pane = DendroFactory.getScrollField(false, 5, 40);
-            area = (JTextArea) pane.getViewport().getView();
 
             JButton ok = DendroFactory.getButton("Yes");
             ok.addActionListener(event -> yes());
             JButton cancel = DendroFactory.getButton("No");
             cancel.addActionListener(event -> dispose());
-            //back
+            //Group layout
             {
                 GroupLayout main = new GroupLayout(getContentPane());
                 getContentPane().setLayout(main);
@@ -67,10 +66,11 @@ public class DeleteEntryGui extends ModalFrame {
                         ).addContainerGap()
                 );
             }
-
-            pack();
         }
         area.setText(CURRENT_INSTANCE.DATA_HANDLER.getTransactionEntry(UUID).toString());
+        pack();
+        Dimension d = Toolkit.getDefaultToolkit().getScreenSize();
+        setLocation(d.width / 2 - getWidth() / 2, d.height / 2 - getHeight() / 2);
     }
 
     public void yes() {

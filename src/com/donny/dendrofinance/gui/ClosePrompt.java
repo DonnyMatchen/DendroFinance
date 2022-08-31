@@ -4,6 +4,7 @@ import com.donny.dendrofinance.gui.customswing.DendroFactory;
 import com.donny.dendrofinance.gui.customswing.ModalFrame;
 
 import javax.swing.*;
+import java.awt.*;
 
 public class ClosePrompt extends ModalFrame {
     public ClosePrompt(MainGui caller, boolean exit) {
@@ -56,8 +57,10 @@ public class ClosePrompt extends ModalFrame {
                         ).addContainerGap()
                 );
             }
-
-            pack();
         }
+
+        pack();
+        Dimension d = Toolkit.getDefaultToolkit().getScreenSize();
+        setLocation(d.width / 2 - getWidth() / 2, d.height / 2 - getHeight() / 2);
     }
 }

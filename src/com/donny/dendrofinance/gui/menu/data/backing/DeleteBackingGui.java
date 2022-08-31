@@ -8,6 +8,7 @@ import com.donny.dendrofinance.json.JsonFormattingException;
 import com.donny.dendrofinance.util.ExportableToJson;
 
 import javax.swing.*;
+import java.awt.*;
 
 public class DeleteBackingGui<E extends ExportableToJson> extends ModalFrame {
     public DeleteBackingGui(BackingTableGui<E> caller, BackingTableCore<E> core, int index, Instance curInst) {
@@ -65,9 +66,10 @@ public class DeleteBackingGui<E extends ExportableToJson> extends ModalFrame {
                         ).addContainerGap()
                 );
             }
-
-            pack();
         }
+        pack();
+        Dimension d = Toolkit.getDefaultToolkit().getScreenSize();
+        setLocation(d.width / 2 - getWidth() / 2, d.height / 2 - getHeight() / 2);
     }
 
     public void deleteAction(BackingTableGui<E> caller, BackingTableCore<E> core, int index) {

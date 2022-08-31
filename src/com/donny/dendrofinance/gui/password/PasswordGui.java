@@ -7,6 +7,7 @@ import com.donny.dendrofinance.instance.Instance;
 import com.donny.dendrofinance.json.*;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.io.File;
@@ -129,10 +130,11 @@ public class PasswordGui extends JFrame {
                         ).addContainerGap()
                 );
             }
-
-            pack();
         }
         CURRENT_INSTANCE.LOG_HANDLER.trace(getClass(), "PasswordGui created");
+        pack();
+        Dimension d = Toolkit.getDefaultToolkit().getScreenSize();
+        setLocation(d.width / 2 - getWidth() / 2, d.height / 2 - getHeight() / 2);
     }
 
     private void enterPressed() {

@@ -16,6 +16,7 @@ import com.donny.dendrofinance.util.Curation;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+import java.awt.*;
 import java.math.BigDecimal;
 import java.util.Comparator;
 import java.util.Objects;
@@ -209,12 +210,13 @@ public class BudgetGui extends RegisterFrame {
             }
 
             add(BACK);
-
-            pack();
         }
         updateBudget();
         updateView();
         updateEdit();
+        pack();
+        Dimension d = Toolkit.getDefaultToolkit().getScreenSize();
+        setLocation(d.width / 2 - getWidth() / 2, d.height / 2 - getHeight() / 2);
     }
 
     public final void updateBudget() {

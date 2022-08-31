@@ -1,3 +1,9 @@
+## v0.8.3
+* fixed gui problems
+  * moved `pack()` to ensure it is the last thing in every gui's constructor
+  * all guis now appear at center of screen
+* updated readme
+
 ## v0.8.2
 * minor optimizations
   * removed unnecessary `& 255` in writing blockSize as a byte

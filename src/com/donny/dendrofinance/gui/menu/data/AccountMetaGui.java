@@ -9,6 +9,7 @@ import com.donny.dendrofinance.json.JsonItem;
 import com.donny.dendrofinance.json.JsonObject;
 
 import javax.swing.*;
+import java.awt.*;
 import java.io.File;
 
 public class AccountMetaGui extends RegisterFrame {
@@ -79,9 +80,10 @@ public class AccountMetaGui extends RegisterFrame {
             ACCOUNT_OBJECT = (JsonObject) CURRENT_INSTANCE.FILE_HANDLER.readJson(ACCOUNTS);
             GIFT.setText(ACCOUNT_OBJECT.getArray("gift-cards").toString());
             BRAVE.setText(ACCOUNT_OBJECT.getArray("brave-mobile").toString());
-
-            pack();
         }
+        pack();
+        Dimension d = Toolkit.getDefaultToolkit().getScreenSize();
+        setLocation(d.width / 2 - getWidth() / 2, d.height / 2 - getHeight() / 2);
     }
 
     private void saveAction() {

@@ -12,6 +12,7 @@ import com.donny.dendrofinance.types.LDate;
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import java.awt.*;
 import java.math.BigDecimal;
 
 public class AppDepGui extends RegisterFrame {
@@ -305,9 +306,10 @@ public class AppDepGui extends RegisterFrame {
             LDate date = LDate.now(CURRENT_INSTANCE);
             date = new LDate(date.getYear(), date.lastMonth(), LDate.lastDay(date.getYear(), date.lastMonth(), CURRENT_INSTANCE), 23, 59, 59, CURRENT_INSTANCE);
             DATE.setText(date.toString());
-
-            pack();
         }
+        pack();
+        Dimension d = Toolkit.getDefaultToolkit().getScreenSize();
+        setLocation(d.width / 2 - getWidth() / 2, d.height / 2 - getHeight() / 2);
     }
 
     private void saveAction() {

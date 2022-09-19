@@ -10,6 +10,8 @@ import com.donny.dendrofinance.types.LDate;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 
 public class CheckGui extends RegisterFrame {
@@ -28,7 +30,24 @@ public class CheckGui extends RegisterFrame {
 
             DATE = new JTextField();
             DATE.setText(LDate.now(CURRENT_INSTANCE).toString(false));
+            DATE.addKeyListener(new KeyAdapter() {
+                @Override
+                public void keyTyped(KeyEvent keyEvent) {
+                    if (keyEvent.getKeyChar() == '\n') {
+                        updateTable();
+                    }
+                }
+            });
+
             SEARCH = new JTextField();
+            SEARCH.addKeyListener(new KeyAdapter() {
+                @Override
+                public void keyTyped(KeyEvent keyEvent) {
+                    if (keyEvent.getKeyChar() == '\n') {
+                        updateTable();
+                    }
+                }
+            });
 
             JButton enter = DendroFactory.getButton("Search");
             enter.addActionListener(event -> updateTable());

@@ -63,7 +63,23 @@ public class MetaTableGui extends RegisterFrame {
                 JLabel d = new JLabel("Search");
                 DATE = new JTextField();
                 DATE.setText(LDate.now(CURRENT_INSTANCE).toString(false));
+                DATE.addKeyListener(new KeyAdapter() {
+                    @Override
+                    public void keyTyped(KeyEvent keyEvent) {
+                        if (keyEvent.getKeyChar() == '\n') {
+                            updateTable();
+                        }
+                    }
+                });
                 SEARCH = new JTextField();
+                SEARCH.addKeyListener(new KeyAdapter() {
+                    @Override
+                    public void keyTyped(KeyEvent keyEvent) {
+                        if (keyEvent.getKeyChar() == '\n') {
+                            updateTable();
+                        }
+                    }
+                });
                 JButton enter = DendroFactory.getButton("Search");
                 enter.addActionListener(event -> updateTable());
                 //group layout

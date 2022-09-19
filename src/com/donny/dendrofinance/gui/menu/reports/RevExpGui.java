@@ -14,6 +14,8 @@ import com.donny.dendrofinance.util.DoubleAggregation;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Objects;
@@ -39,9 +41,25 @@ public class RevExpGui extends RegisterFrame {
             JLabel a = new JLabel("From");
             START = new JTextField();
             START.setText(CURRENT_INSTANCE.DATA_HANDLER.getPrior().getDate().tomorrow().toDateString());
+            START.addKeyListener(new KeyAdapter() {
+                @Override
+                public void keyTyped(KeyEvent keyEvent) {
+                    if (keyEvent.getKeyChar() == '\n') {
+                        updateTable();
+                    }
+                }
+            });
             JLabel b = new JLabel("End");
             END = new JTextField();
             END.setText(LDate.now(CURRENT_INSTANCE).toDateString());
+            END.addKeyListener(new KeyAdapter() {
+                @Override
+                public void keyTyped(KeyEvent keyEvent) {
+                    if (keyEvent.getKeyChar() == '\n') {
+                        updateTable();
+                    }
+                }
+            });
             TYPE = new JComboBox<>();
             TYPE.addItem("All");
             for (String s : CURRENT_INSTANCE.DATA_HANDLER.getBudgetTypes()) {

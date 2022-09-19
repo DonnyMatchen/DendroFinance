@@ -1,3 +1,12 @@
+## v0.8.4
+* added enter detection on search fields
+  * `AssetStatusGui`
+  * `BalanceSheetGui`
+  * `CheckGui`
+  * `MetaTableGui`
+  * `RevExpGui`
+* (X) added rate limitation handling to market apis
+
 ## v0.8.3
 * fixed gui problems
   * moved `pack()` to ensure it is the last thing in every gui's constructor

@@ -8,6 +8,8 @@
   "parse-path": array(string)
   "parse-path-hist": array(string)
   "types": string
+  "attempt-limit": integer
+  "duration": integer
 }
 
 * api-key: the access key to the API, if required
@@ -23,6 +25,8 @@
   * I: Commodity (some commodities are counted as forex)
   * C: Cryptocurrencies
   * S: Stocks
+* attempt-limit: the number of failed attempts at getting a price from the API which are allowed before quitting
+* duration: the period of time to wait upon receiving a 429 HTTP response from the API
 
 
 TOKENS:

@@ -8,11 +8,11 @@
   * `CheckGui`
   * `MetaTableGui`
   * `RevExpGui`
-* (->) added rate limitation handling to market apis
+* added rate limitation handling to market apis
   * basic implementation
   * automatic wait upon receiving 429
   * gui implementation
-  * (X) added to data structures explanations
+  * added to data structures explanations
 
 ## v0.8.3
 * fixed gui problems

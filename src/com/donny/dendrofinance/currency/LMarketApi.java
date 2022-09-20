@@ -203,6 +203,7 @@ public class LMarketApi implements ExportableToJson, Serializable {
             } else {
                 if (calls >= CALL_LIMIT) {
                     try {
+                        CURRENT_INSTANCE.LOG_HANDLER.info(getClass(), "Waiting " + DURATION + " milliseconds");
                         TimeUnit.MILLISECONDS.sleep(DURATION);
                         reset = true;
                     } catch (InterruptedException e) {
@@ -256,6 +257,7 @@ public class LMarketApi implements ExportableToJson, Serializable {
             } catch (ApiLimitReachedException e) {
                 if (attempts < 5) {
                     try {
+                        CURRENT_INSTANCE.LOG_HANDLER.info(getClass(), "Waiting " + DURATION + " milliseconds");
                         TimeUnit.MILLISECONDS.sleep(DURATION);
                         attempts++;
                         return convert(amount, a, b);
@@ -309,6 +311,7 @@ public class LMarketApi implements ExportableToJson, Serializable {
             } catch (ApiLimitReachedException e) {
                 if (attempts < 5) {
                     try {
+                        CURRENT_INSTANCE.LOG_HANDLER.info(getClass(), "Waiting " + DURATION + " milliseconds");
                         TimeUnit.MILLISECONDS.sleep(DURATION);
                         attempts++;
                         return convert(amount, a, b, date);

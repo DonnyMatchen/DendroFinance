@@ -708,7 +708,7 @@ public class Instance {
                 }
                 return BigDecimal.ZERO;
             } else {
-                BigDecimal x = aa.getCurrentPrice(a, main).divide(bb.getCurrentPrice(b, main), precision);
+                BigDecimal x = aa.convert(BigDecimal.ONE, a, main).divide(bb.convert(BigDecimal.ONE, b, main), precision);
                 return amount.multiply(x).multiply(b.getFactor().divide(a.getFactor(), precision));
             }
         }
@@ -831,7 +831,7 @@ public class Instance {
                 }
                 return BigDecimal.ZERO;
             } else {
-                BigDecimal x = aa.getHistoricalPrice(a, main, date).divide(bb.getHistoricalPrice(b, main, date), precision);
+                BigDecimal x = aa.convert(BigDecimal.ONE, a, main, date).divide(bb.convert(BigDecimal.ONE, b, main, date), precision);
                 return amount.multiply(x).multiply(b.getFactor().divide(a.getFactor(), precision));
             }
         }

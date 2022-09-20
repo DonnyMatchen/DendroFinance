@@ -330,7 +330,7 @@ public class LMarketApi implements ExportableToJson, Serializable {
         }
     }
 
-    public BigDecimal getCurrentPrice(LCurrency search, LCurrency nat) throws ApiLimitReachedException {
+    private BigDecimal getCurrentPrice(LCurrency search, LCurrency nat) throws ApiLimitReachedException {
         ApiParseBundle bundle = new ApiParseBundle(search, nat, KEY);
         JsonItem item = CURRENT_INSTANCE.FILE_HANDLER.hit(bundle.process(BASE_URL));
         JsonItem sup = null;
@@ -372,7 +372,7 @@ public class LMarketApi implements ExportableToJson, Serializable {
         return BigDecimal.ZERO;
     }
 
-    public BigDecimal getHistoricalPrice(LCurrency search, LCurrency nat, LDate date) throws ApiLimitReachedException {
+    private BigDecimal getHistoricalPrice(LCurrency search, LCurrency nat, LDate date) throws ApiLimitReachedException {
         ApiParseBundle bundle = new ApiParseBundle(search, nat, KEY, date);
         JsonItem item = CURRENT_INSTANCE.FILE_HANDLER.hit(bundle.process(BASE_URL_HISTORY));
         JsonItem sup = null;

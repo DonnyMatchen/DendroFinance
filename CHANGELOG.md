@@ -11,7 +11,7 @@
 * (->) added rate limitation handling to market apis
   * basic implementation
   * automatic wait upon receiving 429
-  * (X) gui implementation
+  * gui implementation
   * (X) added to data structures explanations
 
 ## v0.8.3

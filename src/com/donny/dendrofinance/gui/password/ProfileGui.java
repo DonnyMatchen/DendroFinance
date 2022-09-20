@@ -1,7 +1,7 @@
 package com.donny.dendrofinance.gui.password;
 
-import com.donny.dendrofinance.gui.customswing.ModalFrame;
 import com.donny.dendrofinance.gui.customswing.DendroFactory;
+import com.donny.dendrofinance.gui.customswing.ModalFrame;
 import com.donny.dendrofinance.gui.form.Validation;
 import com.donny.dendrofinance.gui.form.ValidationFailedException;
 import com.donny.dendrofinance.instance.Instance;

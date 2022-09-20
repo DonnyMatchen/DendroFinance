@@ -1,4 +1,7 @@
 ## v0.8.4
+* minor bug fixes
+  * optimized imports
+  * minor fixes involving colons
 * added enter detection on search fields
   * `AssetStatusGui`
   * `BalanceSheetGui`
@@ -7,7 +10,7 @@
   * `RevExpGui`
 * (->) added rate limitation handling to market apis
   * basic implementation
-  * (X) automatic wait upon receiving 429
+  * automatic wait upon receiving 429
   * (X) gui implementation
   * (X) added to data structures explanations
 

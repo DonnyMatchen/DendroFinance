@@ -1,8 +1,8 @@
 package com.donny.dendrofinance.gui.addedit;
 
 import com.donny.dendrofinance.gui.MainGui;
-import com.donny.dendrofinance.gui.customswing.ModalFrame;
 import com.donny.dendrofinance.gui.customswing.DendroFactory;
+import com.donny.dendrofinance.gui.customswing.ModalFrame;
 import com.donny.dendrofinance.instance.Instance;
 
 import javax.swing.*;

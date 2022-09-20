@@ -6,8 +6,8 @@ import com.donny.dendrofinance.currency.LCurrency;
 import com.donny.dendrofinance.currency.LInventory;
 import com.donny.dendrofinance.currency.LStock;
 import com.donny.dendrofinance.gui.MainGui;
-import com.donny.dendrofinance.gui.customswing.RegisterFrame;
 import com.donny.dendrofinance.gui.customswing.DendroFactory;
+import com.donny.dendrofinance.gui.customswing.RegisterFrame;
 import com.donny.dendrofinance.instance.Instance;
 import com.donny.dendrofinance.types.LDate;
 

@@ -1,5 +1,6 @@
 package com.donny.dendrofinance.currency;
 
+import com.donny.dendrofinance.fileio.ApiLimitReachedException;
 import com.donny.dendrofinance.instance.Instance;
 import com.donny.dendrofinance.json.*;
 import com.donny.dendrofinance.types.LDate;
@@ -15,7 +16,7 @@ import java.util.concurrent.TimeUnit;
 public class LMarketApi implements ExportableToJson, Serializable {
     public final String NAME, TYPES, BASE_URL, BASE_URL_HISTORY, KEY;
     public final int CALL_LIMIT, DURATION;
-    private int calls = 0;
+    private int calls = 0, attempts = 0;
     private LDate countFrom;
     private final Instance CURRENT_INSTANCE;
     private final ArrayList<String> PARSE_PATH, PARSE_PATH_HISTORY, NATS, EXCEPTS;
@@ -227,22 +228,45 @@ public class LMarketApi implements ExportableToJson, Serializable {
      * @return the value of <code>amount</code> of <code>a</code> in <code>b</code>, or -1 if they cannot be converted using this api
      */
     public BigDecimal convert(BigDecimal amount, LCurrency a, LCurrency b) {
+        BigDecimal returnValue;
         if (checkCall()) {
-            if (hasNat(b) && canSearch(a)) {
-                return amount.multiply(getCurrentPrice(a, b)).multiply(b.getFactor().divide(a.getFactor(), CURRENT_INSTANCE.precision));
-            } else if (hasNat(a) && canSearch(b)) {
-                return amount.divide(getCurrentPrice(b, a), CURRENT_INSTANCE.precision).multiply(b.getFactor().divide(a.getFactor(), CURRENT_INSTANCE.precision));
-            } else if (canSearch(a) && canSearch(b)) {
-                LCurrency nat;
-                if (hasNat(CURRENT_INSTANCE.main)) {
-                    nat = CURRENT_INSTANCE.main;
+            try {
+                if (hasNat(b) && canSearch(a)) {
+                    returnValue = amount.multiply(getCurrentPrice(a, b)).multiply(b.getFactor().divide(a.getFactor(), CURRENT_INSTANCE.precision));
+                    attempts = 0;
+                    return returnValue;
+                } else if (hasNat(a) && canSearch(b)) {
+                    returnValue = amount.divide(getCurrentPrice(b, a), CURRENT_INSTANCE.precision).multiply(b.getFactor().divide(a.getFactor(), CURRENT_INSTANCE.precision));
+                    attempts = 0;
+                    return returnValue;
+                } else if (canSearch(a) && canSearch(b)) {
+                    LCurrency nat;
+                    if (hasNat(CURRENT_INSTANCE.main)) {
+                        nat = CURRENT_INSTANCE.main;
+                    } else {
+                        nat = CURRENT_INSTANCE.getLCurrency(NATS.get(0));
+                    }
+                    BigDecimal x = getCurrentPrice(a, nat).divide(getCurrentPrice(b, nat), CURRENT_INSTANCE.precision);
+                    returnValue = amount.multiply(x).multiply(b.getFactor().divide(a.getFactor(), CURRENT_INSTANCE.precision));
+                    attempts = 0;
+                    return returnValue;
                 } else {
-                    nat = CURRENT_INSTANCE.getLCurrency(NATS.get(0));
+                    return BigDecimal.valueOf(-1);
                 }
-                BigDecimal x = getCurrentPrice(a, nat).divide(getCurrentPrice(b, nat), CURRENT_INSTANCE.precision);
-                return amount.multiply(x).multiply(b.getFactor().divide(a.getFactor(), CURRENT_INSTANCE.precision));
-            } else {
-                return BigDecimal.valueOf(-1);
+            } catch (ApiLimitReachedException e) {
+                if (attempts < 5) {
+                    try {
+                        TimeUnit.MILLISECONDS.sleep(DURATION);
+                        attempts++;
+                        return convert(amount, a, b);
+                    } catch (InterruptedException ex) {
+                        CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "The sleep timer was interrupted");
+                        return BigDecimal.valueOf(-1);
+                    }
+                } else {
+                    CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Attempts exhausted.  Either your duration is incorrect, or you've been banned.");
+                    return BigDecimal.valueOf(-1);
+                }
             }
         } else {
             CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Something went wrong trying to test whether to call");
@@ -257,22 +281,45 @@ public class LMarketApi implements ExportableToJson, Serializable {
      * @return the value of <code>amount</code> of <code>a</code> in <code>b</code>, or -1 if they cannot be converted using this api
      */
     public BigDecimal convert(BigDecimal amount, LCurrency a, LCurrency b, LDate date) {
+        BigDecimal returnValue;
         if (checkCall()) {
-            if (hasNat(b) && canSearch(a)) {
-                return amount.multiply(getHistoricalPrice(a, b, date)).multiply(b.getFactor().divide(a.getFactor(), CURRENT_INSTANCE.precision));
-            } else if (hasNat(a) && canSearch(b)) {
-                return amount.divide(getHistoricalPrice(b, a, date), CURRENT_INSTANCE.precision).multiply(b.getFactor().divide(a.getFactor(), CURRENT_INSTANCE.precision));
-            } else if (canSearch(a) && canSearch(b)) {
-                LCurrency nat;
-                if (hasNat(CURRENT_INSTANCE.main)) {
-                    nat = CURRENT_INSTANCE.main;
+            try {
+                if (hasNat(b) && canSearch(a)) {
+                    returnValue = amount.multiply(getHistoricalPrice(a, b, date)).multiply(b.getFactor().divide(a.getFactor(), CURRENT_INSTANCE.precision));
+                    attempts = 0;
+                    return returnValue;
+                } else if (hasNat(a) && canSearch(b)) {
+                    returnValue = amount.divide(getHistoricalPrice(b, a, date), CURRENT_INSTANCE.precision).multiply(b.getFactor().divide(a.getFactor(), CURRENT_INSTANCE.precision));
+                    attempts = 0;
+                    return returnValue;
+                } else if (canSearch(a) && canSearch(b)) {
+                    LCurrency nat;
+                    if (hasNat(CURRENT_INSTANCE.main)) {
+                        nat = CURRENT_INSTANCE.main;
+                    } else {
+                        nat = CURRENT_INSTANCE.getLCurrency(NATS.get(0));
+                    }
+                    BigDecimal x = getHistoricalPrice(a, nat, date).divide(getHistoricalPrice(b, nat, date), CURRENT_INSTANCE.precision);
+                    returnValue = amount.multiply(x).multiply(b.getFactor().divide(a.getFactor(), CURRENT_INSTANCE.precision));
+                    attempts = 0;
+                    return returnValue;
                 } else {
-                    nat = CURRENT_INSTANCE.getLCurrency(NATS.get(0));
+                    return BigDecimal.valueOf(-1);
                 }
-                BigDecimal x = getHistoricalPrice(a, nat, date).divide(getHistoricalPrice(b, nat, date), CURRENT_INSTANCE.precision);
-                return amount.multiply(x).multiply(b.getFactor().divide(a.getFactor(), CURRENT_INSTANCE.precision));
-            } else {
-                return BigDecimal.valueOf(-1);
+            } catch (ApiLimitReachedException e) {
+                if (attempts < 5) {
+                    try {
+                        TimeUnit.MILLISECONDS.sleep(DURATION);
+                        attempts++;
+                        return convert(amount, a, b, date);
+                    } catch (InterruptedException ex) {
+                        CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "The sleep timer was interrupted");
+                        return BigDecimal.valueOf(-1);
+                    }
+                } else {
+                    CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Attempts exhausted.  Either your duration is incorrect, or you've been banned.");
+                    return BigDecimal.valueOf(-1);
+                }
             }
         } else {
             CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Something went wrong trying to test whether to call");
@@ -280,7 +327,7 @@ public class LMarketApi implements ExportableToJson, Serializable {
         }
     }
 
-    public BigDecimal getCurrentPrice(LCurrency search, LCurrency nat) {
+    public BigDecimal getCurrentPrice(LCurrency search, LCurrency nat) throws ApiLimitReachedException {
         ApiParseBundle bundle = new ApiParseBundle(search, nat, KEY);
         JsonItem item = CURRENT_INSTANCE.FILE_HANDLER.hit(bundle.process(BASE_URL));
         JsonItem sup = null;
@@ -322,7 +369,7 @@ public class LMarketApi implements ExportableToJson, Serializable {
         return BigDecimal.ZERO;
     }
 
-    public BigDecimal getHistoricalPrice(LCurrency search, LCurrency nat, LDate date) {
+    public BigDecimal getHistoricalPrice(LCurrency search, LCurrency nat, LDate date) throws ApiLimitReachedException {
         ApiParseBundle bundle = new ApiParseBundle(search, nat, KEY, date);
         JsonItem item = CURRENT_INSTANCE.FILE_HANDLER.hit(bundle.process(BASE_URL_HISTORY));
         JsonItem sup = null;

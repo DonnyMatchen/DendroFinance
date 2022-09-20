@@ -2,8 +2,8 @@ package com.donny.dendrofinance.gui.menu.file;
 
 import com.donny.dendrofinance.fileio.ImportHandler;
 import com.donny.dendrofinance.gui.MainGui;
-import com.donny.dendrofinance.gui.customswing.RegisterFrame;
 import com.donny.dendrofinance.gui.customswing.DendroFactory;
+import com.donny.dendrofinance.gui.customswing.RegisterFrame;
 import com.donny.dendrofinance.instance.Instance;
 
 import javax.swing.*;

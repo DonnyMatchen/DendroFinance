@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 public class MarketApiEditGui extends BackingEditGui<LMarketApi> {
-    private JTextField name, callLimit, duration;
+    private JTextField name, attemptLimit, duration;
     private JTextArea url_, urlH_, key_, path_, pathH_, nats_, excepts_;
     private JCheckBox fiat, crypto, stock, inventory;
 
@@ -42,7 +42,7 @@ public class MarketApiEditGui extends BackingEditGui<LMarketApi> {
         JScrollPane excepts = DendroFactory.getLongField();
         excepts_ = (JTextArea) excepts.getViewport().getView();
 
-        callLimit = new JTextField();
+        attemptLimit = new JTextField();
         duration = new JTextField();
 
         fiat = new JCheckBox("Forex");
@@ -59,8 +59,8 @@ public class MarketApiEditGui extends BackingEditGui<LMarketApi> {
         JLabel g = new JLabel("Naturals");
         JLabel h = new JLabel("API Key");
         JLabel i = new JLabel("Exceptions");
-        JLabel j = new JLabel("API Call Limit");
-        JLabel k = new JLabel("API Limit Duration");
+        JLabel j = new JLabel("API Call Attempt Limit");
+        JLabel k = new JLabel("API Wait Duration");
 
         JButton cancel = DendroFactory.getButton("Cancel");
         cancel.addActionListener(event -> dispose());
@@ -81,7 +81,7 @@ public class MarketApiEditGui extends BackingEditGui<LMarketApi> {
             stock.setSelected(root.stocks());
             crypto.setSelected(root.cryptocurrencies());
             inventory.setSelected(root.inventories());
-            callLimit.setText("" + root.CALL_LIMIT);
+            attemptLimit.setText("" + root.ATTEMPT_LIMIT);
             duration.setText("" + root.DURATION);
         }
 
@@ -172,7 +172,7 @@ public class MarketApiEditGui extends BackingEditGui<LMarketApi> {
                                             ).addComponent(
                                                     excepts, 250, 250, Short.MAX_VALUE
                                             ).addComponent(
-                                                    callLimit, 250, 250, Short.MAX_VALUE
+                                                    attemptLimit, 250, 250, Short.MAX_VALUE
                                             ).addComponent(
                                                     duration, 250, 250, Short.MAX_VALUE
                                             )
@@ -247,7 +247,7 @@ public class MarketApiEditGui extends BackingEditGui<LMarketApi> {
                             main.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(
                                     j, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                             ).addComponent(
-                                    callLimit, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                    attemptLimit, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                             )
                     ).addGroup(
                             main.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(
@@ -288,7 +288,7 @@ public class MarketApiEditGui extends BackingEditGui<LMarketApi> {
                     Validation.validateString(url_),
                     Validation.validateString(urlH_),
                     Validation.validateString(key_),
-                    Validation.validateInteger(callLimit).intValue(),
+                    Validation.validateInteger(attemptLimit).intValue(),
                     Validation.validateInteger(duration).intValue(),
                     CURRENT_INSTANCE
             );

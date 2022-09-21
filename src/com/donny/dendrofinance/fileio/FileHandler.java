@@ -405,15 +405,19 @@ public class FileHandler {
      *  STREAMING
      */
 
-    public JsonItem hit(String url) {
+    public JsonItem hit(String url) throws ApiLimitReachedException {
         try {
             return JsonItem.digest(new JsonFactory().createParser(new URL(url).openStream()));
         } catch (JsonFormattingException e) {
-            CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Bad Json at:" + url + "\n" + e);
+            CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Bad Json at: " + url + "\n" + e);
             return null;
         } catch (IOException e) {
-            CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Error connecting:" + url + "\n" + e);
-            return null;
+            if (e.getMessage().contains("429")) {
+                throw new ApiLimitReachedException();
+            } else {
+                CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Error connecting: " + url + "\n" + e);
+                return null;
+            }
         }
     }
 

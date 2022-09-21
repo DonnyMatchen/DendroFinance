@@ -1,8 +1,8 @@
 package com.donny.dendrofinance.gui.menu.data.backing;
 
 import com.donny.dendrofinance.data.backingtable.BackingTableCore;
-import com.donny.dendrofinance.gui.customswing.ModalFrame;
 import com.donny.dendrofinance.gui.customswing.DendroFactory;
+import com.donny.dendrofinance.gui.customswing.ModalFrame;
 import com.donny.dendrofinance.instance.Instance;
 import com.donny.dendrofinance.json.JsonFormattingException;
 import com.donny.dendrofinance.util.ExportableToJson;

@@ -1,8 +1,8 @@
 package com.donny.dendrofinance.gui.menu.reports.budget;
 
 import com.donny.dendrofinance.entry.BudgetEntry;
-import com.donny.dendrofinance.gui.customswing.ModalFrame;
 import com.donny.dendrofinance.gui.customswing.DendroFactory;
+import com.donny.dendrofinance.gui.customswing.ModalFrame;
 import com.donny.dendrofinance.instance.Instance;
 
 import javax.swing.*;
@@ -18,7 +18,7 @@ public class NewBudgetGui extends ModalFrame {
         CALLER = caller;
         //draw gui
         {
-            JLabel a = new JLabel("Budget Name:");
+            JLabel a = new JLabel("Budget Name");
             JLabel b = new JLabel("Template");
             NAME = new JTextField();
             TEMPLATE = new JComboBox<>();

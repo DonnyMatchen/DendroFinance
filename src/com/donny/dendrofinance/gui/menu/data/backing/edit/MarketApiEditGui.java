@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 public class MarketApiEditGui extends BackingEditGui<LMarketApi> {
-    private JTextField name;
+    private JTextField name, attemptLimit, duration;
     private JTextArea url_, urlH_, key_, path_, pathH_, nats_, excepts_;
     private JCheckBox fiat, crypto, stock, inventory;
 
@@ -42,6 +42,9 @@ public class MarketApiEditGui extends BackingEditGui<LMarketApi> {
         JScrollPane excepts = DendroFactory.getLongField();
         excepts_ = (JTextArea) excepts.getViewport().getView();
 
+        attemptLimit = new JTextField();
+        duration = new JTextField();
+
         fiat = new JCheckBox("Forex");
         crypto = new JCheckBox("Cryptocurrencies");
         stock = new JCheckBox("Stocks");
@@ -56,6 +59,8 @@ public class MarketApiEditGui extends BackingEditGui<LMarketApi> {
         JLabel g = new JLabel("Naturals");
         JLabel h = new JLabel("API Key");
         JLabel i = new JLabel("Exceptions");
+        JLabel j = new JLabel("API Call Attempt Limit");
+        JLabel k = new JLabel("API Wait Duration");
 
         JButton cancel = DendroFactory.getButton("Cancel");
         cancel.addActionListener(event -> dispose());
@@ -76,6 +81,8 @@ public class MarketApiEditGui extends BackingEditGui<LMarketApi> {
             stock.setSelected(root.stocks());
             crypto.setSelected(root.cryptocurrencies());
             inventory.setSelected(root.inventories());
+            attemptLimit.setText("" + root.ATTEMPT_LIMIT);
+            duration.setText("" + root.DURATION);
         }
 
         //group layout
@@ -140,6 +147,10 @@ public class MarketApiEditGui extends BackingEditGui<LMarketApi> {
                                                     h, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                             ).addComponent(
                                                     i, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                            ).addComponent(
+                                                    j, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                            ).addComponent(
+                                                    k, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                             )
                                     ).addGap(DendroFactory.SMALL_GAP).addGroup(
                                             main.createParallelGroup(GroupLayout.Alignment.LEADING).addComponent(
@@ -160,6 +171,10 @@ public class MarketApiEditGui extends BackingEditGui<LMarketApi> {
                                                     key, 250, 250, Short.MAX_VALUE
                                             ).addComponent(
                                                     excepts, 250, 250, Short.MAX_VALUE
+                                            ).addComponent(
+                                                    attemptLimit, 250, 250, Short.MAX_VALUE
+                                            ).addComponent(
+                                                    duration, 250, 250, Short.MAX_VALUE
                                             )
                                     )
                             ).addGroup(
@@ -228,6 +243,18 @@ public class MarketApiEditGui extends BackingEditGui<LMarketApi> {
                             ).addComponent(
                                     excepts, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                             )
+                    ).addGroup(
+                            main.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(
+                                    j, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                            ).addComponent(
+                                    attemptLimit, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                            )
+                    ).addGroup(
+                            main.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(
+                                    k, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                            ).addComponent(
+                                    duration, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                            )
                     ).addGap(DendroFactory.MEDIUM_GAP).addGroup(
                             main.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(
                                     cancel, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
@@ -261,6 +288,8 @@ public class MarketApiEditGui extends BackingEditGui<LMarketApi> {
                     Validation.validateString(url_),
                     Validation.validateString(urlH_),
                     Validation.validateString(key_),
+                    Validation.validateInteger(attemptLimit).intValue(),
+                    Validation.validateInteger(duration).intValue(),
                     CURRENT_INSTANCE
             );
             if (!path_.getText().equals("")) {

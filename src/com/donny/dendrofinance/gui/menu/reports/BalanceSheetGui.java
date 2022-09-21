@@ -4,8 +4,8 @@ import com.donny.dendrofinance.account.Account;
 import com.donny.dendrofinance.account.AccountType;
 import com.donny.dendrofinance.account.BroadAccountType;
 import com.donny.dendrofinance.gui.MainGui;
-import com.donny.dendrofinance.gui.customswing.RegisterFrame;
 import com.donny.dendrofinance.gui.customswing.DendroFactory;
+import com.donny.dendrofinance.gui.customswing.RegisterFrame;
 import com.donny.dendrofinance.instance.Instance;
 import com.donny.dendrofinance.types.LDate;
 import com.donny.dendrofinance.util.Aggregation;
@@ -13,6 +13,8 @@ import com.donny.dendrofinance.util.Aggregation;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.math.BigDecimal;
 import java.util.HashMap;
 
@@ -28,7 +30,24 @@ public class BalanceSheetGui extends RegisterFrame {
             JLabel b = new JLabel("Search");
 
             DATE = new JTextField();
+            DATE.addKeyListener(new KeyAdapter() {
+                @Override
+                public void keyTyped(KeyEvent keyEvent) {
+                    if (keyEvent.getKeyChar() == '\n') {
+                        updateTable();
+                    }
+                }
+            });
+
             SEARCH = new JTextField();
+            SEARCH.addKeyListener(new KeyAdapter() {
+                @Override
+                public void keyTyped(KeyEvent keyEvent) {
+                    if (keyEvent.getKeyChar() == '\n') {
+                        updateTable();
+                    }
+                }
+            });
 
             JButton enter = DendroFactory.getButton("Enter");
             enter.addActionListener(event -> updateTable());

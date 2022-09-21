@@ -6,7 +6,9 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 
-import java.io.*;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.Serializable;
 
 public abstract class JsonItem implements Serializable {
     public final JsonType TYPE;

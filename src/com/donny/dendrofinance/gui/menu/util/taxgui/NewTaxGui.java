@@ -1,7 +1,7 @@
 package com.donny.dendrofinance.gui.menu.util.taxgui;
 
-import com.donny.dendrofinance.gui.customswing.ModalFrame;
 import com.donny.dendrofinance.gui.customswing.DendroFactory;
+import com.donny.dendrofinance.gui.customswing.ModalFrame;
 import com.donny.dendrofinance.instance.Instance;
 import com.donny.dendrofinance.tax.TaxItem;
 

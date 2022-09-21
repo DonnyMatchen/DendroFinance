@@ -1,3 +1,19 @@
+## v0.8.4
+* minor bug fixes
+  * optimized imports
+  * minor fixes involving colons
+* added enter detection on search fields
+  * `AssetStatusGui`
+  * `BalanceSheetGui`
+  * `CheckGui`
+  * `MetaTableGui`
+  * `RevExpGui`
+* added rate limitation handling to market apis
+  * basic implementation
+  * automatic wait upon receiving 429
+  * gui implementation
+  * added to data structures explanations
+
 ## v0.8.3
 * fixed gui problems
   * moved `pack()` to ensure it is the last thing in every gui's constructor

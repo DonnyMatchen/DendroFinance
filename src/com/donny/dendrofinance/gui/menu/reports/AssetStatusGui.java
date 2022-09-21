@@ -6,14 +6,16 @@ import com.donny.dendrofinance.currency.LCurrency;
 import com.donny.dendrofinance.currency.LInventory;
 import com.donny.dendrofinance.currency.LStock;
 import com.donny.dendrofinance.gui.MainGui;
-import com.donny.dendrofinance.gui.customswing.RegisterFrame;
 import com.donny.dendrofinance.gui.customswing.DendroFactory;
+import com.donny.dendrofinance.gui.customswing.RegisterFrame;
 import com.donny.dendrofinance.instance.Instance;
 import com.donny.dendrofinance.types.LDate;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.math.BigDecimal;
 import java.util.HashMap;
 
@@ -28,6 +30,14 @@ public class AssetStatusGui extends RegisterFrame {
             JLabel a = new JLabel("Date");
 
             DATE = new JTextField();
+            DATE.addKeyListener(new KeyAdapter() {
+                @Override
+                public void keyTyped(KeyEvent keyEvent) {
+                    if (keyEvent.getKeyChar() == '\n') {
+                        enterAction();
+                    }
+                }
+            });
 
             JButton enter = DendroFactory.getButton("Enter");
             enter.addActionListener(event -> enterAction());

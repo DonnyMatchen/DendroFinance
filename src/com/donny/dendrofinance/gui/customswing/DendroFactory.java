@@ -1,7 +1,10 @@
 package com.donny.dendrofinance.gui.customswing;
 
 import com.donny.dendrofinance.instance.Instance;
-import com.donny.dendrofinance.json.*;
+import com.donny.dendrofinance.json.JsonArray;
+import com.donny.dendrofinance.json.JsonItem;
+import com.donny.dendrofinance.json.JsonObject;
+import com.donny.dendrofinance.json.JsonType;
 
 import javax.swing.*;
 import javax.swing.border.Border;

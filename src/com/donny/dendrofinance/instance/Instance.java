@@ -8,16 +8,23 @@ import com.donny.dendrofinance.currency.LCurrency;
 import com.donny.dendrofinance.currency.LInventory;
 import com.donny.dendrofinance.currency.LMarketApi;
 import com.donny.dendrofinance.currency.LStock;
-import com.donny.dendrofinance.data.*;
+import com.donny.dendrofinance.data.DataHandler;
+import com.donny.dendrofinance.data.LogHandler;
+import com.donny.dendrofinance.data.UuidHandler;
 import com.donny.dendrofinance.data.backingtable.*;
 import com.donny.dendrofinance.entry.TransactionEntry;
-import com.donny.dendrofinance.fileio.*;
+import com.donny.dendrofinance.fileio.ExportHandler;
+import com.donny.dendrofinance.fileio.FileHandler;
+import com.donny.dendrofinance.fileio.ImportHandler;
 import com.donny.dendrofinance.fileio.encryption.EncryptionHandler;
 import com.donny.dendrofinance.gui.MainGui;
-import com.donny.dendrofinance.gui.password.PasswordGui;
 import com.donny.dendrofinance.gui.customswing.DendroFactory;
 import com.donny.dendrofinance.gui.customswing.SearchBox;
-import com.donny.dendrofinance.json.*;
+import com.donny.dendrofinance.gui.password.PasswordGui;
+import com.donny.dendrofinance.json.JsonArray;
+import com.donny.dendrofinance.json.JsonFormattingException;
+import com.donny.dendrofinance.json.JsonObject;
+import com.donny.dendrofinance.json.JsonString;
 import com.donny.dendrofinance.types.LDate;
 
 import javax.swing.*;
@@ -701,7 +708,7 @@ public class Instance {
                 }
                 return BigDecimal.ZERO;
             } else {
-                BigDecimal x = aa.getCurrentPrice(a, main).divide(bb.getCurrentPrice(b, main), precision);
+                BigDecimal x = aa.convert(BigDecimal.ONE, a, main).divide(bb.convert(BigDecimal.ONE, b, main), precision);
                 return amount.multiply(x).multiply(b.getFactor().divide(a.getFactor(), precision));
             }
         }
@@ -824,7 +831,7 @@ public class Instance {
                 }
                 return BigDecimal.ZERO;
             } else {
-                BigDecimal x = aa.getHistoricalPrice(a, main, date).divide(bb.getHistoricalPrice(b, main, date), precision);
+                BigDecimal x = aa.convert(BigDecimal.ONE, a, main, date).divide(bb.convert(BigDecimal.ONE, b, main, date), precision);
                 return amount.multiply(x).multiply(b.getFactor().divide(a.getFactor(), precision));
             }
         }

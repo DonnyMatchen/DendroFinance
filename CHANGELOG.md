@@ -1,3 +1,10 @@
+## v0.9.0
+* major updates to guis
+  * `NewTransactionEntryGui`
+    * removed simple tab, and moved meta fully to it's own tab
+      * renamed fields accordingly
+    * added an easy way to add ACVs
+
 ## v0.8.4
 * minor bug fixes
   * optimized imports

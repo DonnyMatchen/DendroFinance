@@ -93,6 +93,10 @@ public class ItemField extends JPanel {
         TEXT.setText(text);
     }
 
+    public void addText(String text) {
+        TEXT.setText(TEXT.getText() + text);
+    }
+
     private String getToken(String text) {
         StringBuilder sb = new StringBuilder();
         boolean ignore = false;

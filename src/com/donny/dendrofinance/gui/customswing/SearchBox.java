@@ -74,6 +74,10 @@ public class SearchBox extends JPanel {
         updateList(SEARCH.getText());
     }
 
+    public void clear() {
+        SEARCH.setText("");
+    }
+
     public int getSelectedIndex() {
         return LIST.getMaxSelectionIndex();
     }

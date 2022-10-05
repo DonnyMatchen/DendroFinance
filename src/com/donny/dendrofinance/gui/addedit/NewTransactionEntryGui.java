@@ -1,7 +1,5 @@
 package com.donny.dendrofinance.gui.addedit;
 
-import com.donny.dendrofinance.account.AWColumn;
-import com.donny.dendrofinance.account.AccountWrapper;
 import com.donny.dendrofinance.currency.LCurrency;
 import com.donny.dendrofinance.entry.TransactionEntry;
 import com.donny.dendrofinance.gui.MainGui;
@@ -19,6 +17,8 @@ import com.donny.dendrofinance.types.LDate;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Vector;
@@ -26,13 +26,10 @@ import java.util.Vector;
 public class NewTransactionEntryGui extends ModalFrame {
     public final MainGui MAIN;
     public final long UUID;
-    private final JTextField SIMP_DATE, SIMP_ENT, SIMP_ITM, SIMP_DESC,
-            C1, C2, C3, C4, C5, C6,
-            ADV_DATE, ADV_ENT, ADV_ITM, ADV_DESC;
-    private final JComboBox<String> B1, B2, B3, B4, B5, B6, META_TYPE;
-    private final SearchBox A1, A2, A3, A4, A5, A6;
+    private final JTextField DATE, ENT, ITM, DESC;
+    private final JComboBox<String> TYPE;
     private final ItemField ACC;
-    private final JTextArea META, META_TEXT;
+    private final JTextArea META;
     private final JTable TABLE;
     public JsonObject metaObject;
 
@@ -49,237 +46,8 @@ public class NewTransactionEntryGui extends ModalFrame {
             setBackground(DendroFactory.REGULAR);
 
             JTabbedPane back = new JTabbedPane();
-            //simple tab
-            {
-                JPanel tab = new JPanel();
-                tab.setBorder(null);
 
-                JLabel a = new JLabel("Date");
-                JLabel b = new JLabel("Entity");
-                JLabel c = new JLabel("Items");
-                JLabel d = new JLabel("Description");
-
-                JButton insert = DendroFactory.getButton("Save");
-                insert.addActionListener(event -> simpleInsertAction());
-                JButton cancel = DendroFactory.getButton("Cancel");
-                cancel.addActionListener(event -> dispose());
-
-                SIMP_DATE = new JTextField();
-                SIMP_ENT = new JTextField();
-                SIMP_ITM = new JTextField();
-                SIMP_DESC = new JTextField();
-                C1 = new JTextField();
-                C2 = new JTextField();
-                C3 = new JTextField();
-                C4 = new JTextField();
-                C5 = new JTextField();
-                C6 = new JTextField();
-
-                A1 = new SearchBox("Account 1", CURRENT_INSTANCE.getDCAccountsAsStrings());
-                A2 = new SearchBox("Account 2", CURRENT_INSTANCE.getDCAccountsAsStrings());
-                A3 = new SearchBox("Account 3", CURRENT_INSTANCE.getDCAccountsAsStrings());
-                A4 = new SearchBox("Account 4", CURRENT_INSTANCE.getDCAccountsAsStrings());
-                A5 = new SearchBox("Account 5", CURRENT_INSTANCE.getDCAccountsAsStrings());
-                A6 = new SearchBox("Account 6", CURRENT_INSTANCE.getDCAccountsAsStrings());
-
-                B1 = new JComboBox<>();
-                B1.setModel(new DefaultComboBoxModel<>(new String[]{"Debit", "Credit", "Ghost", "Tracking"}));
-                B1.addItemListener(event -> bChanged(B1, A1));
-
-                B2 = new JComboBox<>();
-                B2.setModel(new DefaultComboBoxModel<>(new String[]{"Debit", "Credit", "Ghost", "Tracking"}));
-                B2.addItemListener(event -> bChanged(B2, A2));
-
-                B3 = new JComboBox<>();
-                B3.setModel(new DefaultComboBoxModel<>(new String[]{"Debit", "Credit", "Ghost", "Tracking"}));
-                B3.addItemListener(event -> bChanged(B3, A3));
-
-                B4 = new JComboBox<>();
-                B4.setModel(new DefaultComboBoxModel<>(new String[]{"Debit", "Credit", "Ghost", "Tracking"}));
-                B4.addItemListener(event -> bChanged(B4, A4));
-
-                B5 = new JComboBox<>();
-                B5.setModel(new DefaultComboBoxModel<>(new String[]{"Debit", "Credit", "Ghost", "Tracking"}));
-                B5.addItemListener(event -> bChanged(B5, A5));
-
-                B6 = new JComboBox<>();
-                B6.setModel(new DefaultComboBoxModel<>(new String[]{"Debit", "Credit", "Ghost", "Tracking"}));
-                B6.addItemListener(event -> bChanged(B6, A6));
-
-                //group layout
-                {
-                    GroupLayout main = new GroupLayout(tab);
-                    tab.setLayout(main);
-                    main.setHorizontalGroup(
-                            main.createSequentialGroup().addContainerGap().addGroup(
-                                    main.createParallelGroup(GroupLayout.Alignment.CENTER).addGroup(
-                                            main.createSequentialGroup().addGroup(
-                                                    main.createParallelGroup(GroupLayout.Alignment.TRAILING).addComponent(
-                                                            a, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
-                                                    ).addComponent(
-                                                            b, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
-                                                    ).addComponent(
-                                                            c, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
-                                                    ).addComponent(
-                                                            d, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
-                                                    )
-                                            ).addGap(DendroFactory.SMALL_GAP).addGroup(
-                                                    main.createParallelGroup(GroupLayout.Alignment.LEADING).addComponent(
-                                                            SIMP_DATE, GroupLayout.PREFERRED_SIZE, 250, Short.MAX_VALUE
-                                                    ).addComponent(
-                                                            SIMP_ENT, GroupLayout.PREFERRED_SIZE, 250, Short.MAX_VALUE
-                                                    ).addComponent(
-                                                            SIMP_ITM, GroupLayout.PREFERRED_SIZE, 250, Short.MAX_VALUE
-                                                    ).addComponent(
-                                                            SIMP_DESC, GroupLayout.PREFERRED_SIZE, 250, Short.MAX_VALUE
-                                                    )
-                                            )
-                                    ).addGroup(
-                                            main.createSequentialGroup().addGroup(
-                                                    main.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(
-                                                            A1, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
-                                                    ).addComponent(
-                                                            A2, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
-                                                    ).addComponent(
-                                                            A3, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
-                                                    ).addComponent(
-                                                            A4, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
-                                                    ).addComponent(
-                                                            A5, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
-                                                    ).addComponent(
-                                                            A6, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
-                                                    )
-                                            ).addGap(DendroFactory.SMALL_GAP).addGroup(
-                                                    main.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(
-                                                            B1, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
-                                                    ).addComponent(
-                                                            B2, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
-                                                    ).addComponent(
-                                                            B3, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
-                                                    ).addComponent(
-                                                            B4, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
-                                                    ).addComponent(
-                                                            B5, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
-                                                    ).addComponent(
-                                                            B6, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
-                                                    )
-                                            ).addGap(DendroFactory.SMALL_GAP).addGroup(
-                                                    main.createParallelGroup(GroupLayout.Alignment.LEADING).addComponent(
-                                                            C1, GroupLayout.PREFERRED_SIZE, 250, Short.MAX_VALUE
-                                                    ).addComponent(
-                                                            C2, GroupLayout.PREFERRED_SIZE, 250, Short.MAX_VALUE
-                                                    ).addComponent(
-                                                            C3, GroupLayout.PREFERRED_SIZE, 250, Short.MAX_VALUE
-                                                    ).addComponent(
-                                                            C4, GroupLayout.PREFERRED_SIZE, 250, Short.MAX_VALUE
-                                                    ).addComponent(
-                                                            C5, GroupLayout.PREFERRED_SIZE, 250, Short.MAX_VALUE
-                                                    ).addComponent(
-                                                            C6, GroupLayout.PREFERRED_SIZE, 250, Short.MAX_VALUE
-                                                    )
-                                            )
-                                    ).addGroup(
-                                            main.createSequentialGroup().addComponent(
-                                                    cancel, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
-                                            ).addGap(
-                                                    DendroFactory.SMALL_GAP, DendroFactory.SMALL_GAP, Short.MAX_VALUE
-                                            ).addComponent(
-                                                    insert, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
-                                            )
-                                    )
-                            ).addContainerGap()
-                    );
-                    main.setVerticalGroup(
-                            main.createSequentialGroup().addContainerGap().addGroup(
-                                    main.createSequentialGroup().addGroup(
-                                            main.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(
-                                                    a, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
-                                            ).addComponent(
-                                                    SIMP_DATE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
-                                            )
-                                    ).addGap(DendroFactory.SMALL_GAP).addGroup(
-                                            main.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(
-                                                    b, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
-                                            ).addComponent(
-                                                    SIMP_ENT, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
-                                            )
-                                    ).addGap(DendroFactory.SMALL_GAP).addGroup(
-                                            main.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(
-                                                    c, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
-                                            ).addComponent(
-                                                    SIMP_ITM, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
-                                            )
-                                    ).addGap(DendroFactory.SMALL_GAP).addGroup(
-                                            main.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(
-                                                    d, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
-                                            ).addComponent(
-                                                    SIMP_DESC, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
-                                            )
-                                    )
-                            ).addGap(DendroFactory.SMALL_GAP).addGroup(
-                                    main.createSequentialGroup().addGroup(
-                                            main.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(
-                                                    A1, 100, 100, 100
-                                            ).addComponent(
-                                                    B1, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
-                                            ).addComponent(
-                                                    C1, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
-                                            )
-                                    ).addGap(DendroFactory.SMALL_GAP).addGroup(
-                                            main.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(
-                                                    A2, 100, 100, 100
-                                            ).addComponent(
-                                                    B2, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
-                                            ).addComponent(
-                                                    C2, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
-                                            )
-                                    ).addGap(DendroFactory.SMALL_GAP).addGroup(
-                                            main.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(
-                                                    A3, 100, 100, 100
-                                            ).addComponent(
-                                                    B3, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
-                                            ).addComponent(
-                                                    C3, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
-                                            )
-                                    ).addGap(DendroFactory.SMALL_GAP).addGroup(
-                                            main.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(
-                                                    A4, 100, 100, 100
-                                            ).addComponent(
-                                                    B4, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
-                                            ).addComponent(
-                                                    C4, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
-                                            )
-                                    ).addGap(DendroFactory.SMALL_GAP).addGroup(
-                                            main.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(
-                                                    A5, 100, 100, 100
-                                            ).addComponent(
-                                                    B5, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
-                                            ).addComponent(
-                                                    C5, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
-                                            )
-                                    ).addGap(DendroFactory.SMALL_GAP).addGroup(
-                                            main.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(
-                                                    A6, 100, 100, 100
-                                            ).addComponent(
-                                                    B6, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
-                                            ).addComponent(
-                                                    C6, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
-                                            )
-                                    )
-                            ).addGap(DendroFactory.MEDIUM_GAP).addGroup(
-                                    main.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(
-                                            cancel, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
-                                    ).addComponent(
-                                            insert, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
-                                    )
-                            ).addContainerGap()
-                    );
-                }
-
-                back.addTab("Simple", tab);
-            }
-
-            //advanced tab
+            //transaction tab
             {
                 JPanel tab = new JPanel();
                 tab.setBorder(null);
@@ -289,23 +57,43 @@ public class NewTransactionEntryGui extends ModalFrame {
                 JLabel c = new JLabel("Items");
                 JLabel d = new JLabel("Description");
                 JLabel e = new JLabel("Accounts");
-                JLabel f = new JLabel("Meta-Data");
 
-                ADV_DATE = new JTextField();
-                ADV_ENT = new JTextField();
-                ADV_ITM = new JTextField();
-                ADV_DESC = new JTextField();
+                DATE = new JTextField();
+                ENT = new JTextField();
+                ITM = new JTextField();
+                DESC = new JTextField();
 
                 JButton insert = DendroFactory.getButton("Save");
-                insert.addActionListener(event -> advancedInsertAction());
+                insert.addActionListener(event -> insertAction());
                 JButton cancel = DendroFactory.getButton("Cancel");
                 cancel.addActionListener(event -> dispose());
 
                 ACC = new ItemField(CURRENT_INSTANCE.getAccountsAsStrings());
-                JScrollPane metaPane = DendroFactory.getScrollField();
-                META = (JTextArea) metaPane.getViewport().getView();
 
-                //advanced tab
+                JComboBox<String> type = new JComboBox<>();
+                type.addItem("Debit");
+                type.addItem("Credit");
+                type.addItem("Ghost");
+                type.addItem("Tracking");
+                JTextField amount = new JTextField();
+                SearchBox account = new SearchBox("Account", CURRENT_INSTANCE.getDCAccountsAsStrings());
+                type.addItemListener(event -> {
+                    switch (type.getSelectedIndex()) {
+                        case 0, 1 -> account.setMaster(CURRENT_INSTANCE.getDCAccountsAsStrings());
+                        case 2 -> account.setMaster(CURRENT_INSTANCE.getGhostAccountsAsStrings());
+                        case 3 -> account.setMaster(CURRENT_INSTANCE.getTrackingAccountsAsStrings());
+                        default -> account.setMaster(CURRENT_INSTANCE.getAccountsAsStrings());
+                    }
+                });
+                JButton addAcc = DendroFactory.getButton("Add");
+                addAcc.addActionListener(event -> {
+                    ACC.addText(((String)type.getSelectedItem()).charAt(0) + "!" + account.getSelectedItem() + "(" + CURRENT_INSTANCE.cleanNumber(amount.getText()) + "), ");
+                    amount.setText("");
+                    type.setSelectedIndex(0);
+                    account.clear();
+                });
+
+                //transaction tab
                 {
                     GroupLayout main = new GroupLayout(tab);
                     tab.setLayout(main);
@@ -323,23 +111,29 @@ public class NewTransactionEntryGui extends ModalFrame {
                                                             d, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                                     ).addComponent(
                                                             e, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
-                                                    ).addComponent(
-                                                            f, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                                     )
                                             ).addGap(DendroFactory.SMALL_GAP).addGroup(
                                                     main.createParallelGroup(GroupLayout.Alignment.LEADING).addComponent(
-                                                            ADV_DATE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
+                                                            DATE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
                                                     ).addComponent(
-                                                            ADV_ENT, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
+                                                            ENT, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
                                                     ).addComponent(
-                                                            ADV_ITM, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
+                                                            ITM, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
                                                     ).addComponent(
-                                                            ADV_DESC, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
+                                                            DESC, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
                                                     ).addComponent(
                                                             ACC, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
-                                                    ).addComponent(
-                                                            metaPane, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
                                                     )
+                                            )
+                                    ).addGroup(
+                                            main.createSequentialGroup().addComponent(
+                                                    account, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
+                                            ).addGap(DendroFactory.SMALL_GAP).addComponent(
+                                                    type, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                            ).addGap(DendroFactory.SMALL_GAP).addComponent(
+                                                    amount, 150, 150, 150
+                                            ).addGap(DendroFactory.SMALL_GAP).addComponent(
+                                                    addAcc, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                             )
                                     ).addGroup(
                                             main.createSequentialGroup().addComponent(
@@ -358,25 +152,25 @@ public class NewTransactionEntryGui extends ModalFrame {
                                             main.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(
                                                     a, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                             ).addComponent(
-                                                    ADV_DATE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                                    DATE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                             )
                                     ).addGap(DendroFactory.SMALL_GAP).addGroup(
                                             main.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(
                                                     b, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                             ).addComponent(
-                                                    ADV_ENT, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                                    ENT, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                             )
                                     ).addGap(DendroFactory.SMALL_GAP).addGroup(
                                             main.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(
                                                     c, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                             ).addComponent(
-                                                    ADV_ITM, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                                    ITM, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                             )
                                     ).addGap(DendroFactory.SMALL_GAP).addGroup(
                                             main.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(
                                                     d, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                             ).addComponent(
-                                                    ADV_DESC, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                                    DESC, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                             )
                                     ).addGap(DendroFactory.SMALL_GAP).addGroup(
                                             main.createParallelGroup(GroupLayout.Alignment.LEADING).addComponent(
@@ -384,12 +178,16 @@ public class NewTransactionEntryGui extends ModalFrame {
                                             ).addComponent(
                                                     ACC, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                             )
-                                    ).addGap(DendroFactory.SMALL_GAP).addGroup(
-                                            main.createParallelGroup(GroupLayout.Alignment.LEADING).addComponent(
-                                                    f, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
-                                            ).addComponent(
-                                                    metaPane, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
-                                            )
+                                    )
+                            ).addGap(DendroFactory.SMALL_GAP).addGroup(
+                                    main.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(
+                                            account, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                    ).addComponent(
+                                            type, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                    ).addComponent(
+                                            amount, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                    ).addComponent(
+                                            addAcc, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                     )
                             ).addGap(DendroFactory.MEDIUM_GAP).addGroup(
                                     main.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(
@@ -401,10 +199,10 @@ public class NewTransactionEntryGui extends ModalFrame {
                     );
                 }
 
-                back.addTab("Advanced", tab);
+                back.addTab("Transaction", tab);
             }
 
-            //advanced meta tab
+            //meta tab
             {
                 JPanel tab = new JPanel();
                 tab.setBorder(null);
@@ -422,22 +220,22 @@ public class NewTransactionEntryGui extends ModalFrame {
                 delete.addActionListener(event -> mDeleteAction());
 
                 JScrollPane textPane = DendroFactory.getScrollField();
-                META_TEXT = (JTextArea) textPane.getViewport().getView();
-                textPane.setViewportView(META_TEXT);
-                META_TYPE = new JComboBox<>();
-                META_TYPE.addItemListener(event -> metaTypeChanged());
+                META = (JTextArea) textPane.getViewport().getView();
+                textPane.setViewportView(META);
+                TYPE = new JComboBox<>();
+                TYPE.addItemListener(event -> metaTypeChanged());
                 JScrollPane tablePane = DendroFactory.getTable(new String[]{}, new Object[][]{}, true);
                 TABLE = (JTable) tablePane.getViewport().getView();
                 tablePane.setViewportView(TABLE);
 
-                //advanced meta tab
+                //meta tab
                 {
                     GroupLayout main = new GroupLayout(tab);
                     tab.setLayout(main);
                     main.setHorizontalGroup(
                             main.createSequentialGroup().addContainerGap().addGroup(
                                     main.createParallelGroup(GroupLayout.Alignment.LEADING).addComponent(
-                                            META_TYPE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
+                                            TYPE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
                                     ).addComponent(
                                             a, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                     ).addComponent(
@@ -465,7 +263,7 @@ public class NewTransactionEntryGui extends ModalFrame {
                     );
                     main.setVerticalGroup(
                             main.createSequentialGroup().addContainerGap().addComponent(
-                                    META_TYPE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                    TYPE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                             ).addGap(
                                     DendroFactory.SMALL_GAP, DendroFactory.SMALL_GAP, DendroFactory.SMALL_GAP
                             ).addComponent(
@@ -500,7 +298,7 @@ public class NewTransactionEntryGui extends ModalFrame {
                     );
                 }
 
-                back.addTab("Adv Metadata", tab);
+                back.addTab("Metadata", tab);
             }
 
             add(back);
@@ -509,94 +307,27 @@ public class NewTransactionEntryGui extends ModalFrame {
             metaObject = new JsonObject();
         } else {
             TransactionEntry entry = CURRENT_INSTANCE.DATA_HANDLER.getTransactionEntry(UUID);
-            LAccountSet set = entry.getAccounts();
-            if (set.getSize() <= 6) {
-                SIMP_DATE.setText(entry.getDate().toString());
-                SIMP_ENT.setText(entry.getEntity());
-                SIMP_ITM.setText(entry.getItems());
-                SIMP_DESC.setText(entry.getDescription());
-                for (int i = 0; i < set.getSize(); i++) {
-                    SearchBox alef;
-                    JComboBox<String> bet;
-                    JTextField gimel;
-                    switch (i) {
-                        case 0 -> {
-                            alef = A1;
-                            bet = B1;
-                            gimel = C1;
-                        }
-                        case 1 -> {
-                            alef = A2;
-                            bet = B2;
-                            gimel = C2;
-                        }
-                        case 2 -> {
-                            alef = A3;
-                            bet = B3;
-                            gimel = C3;
-                        }
-                        case 3 -> {
-                            alef = A4;
-                            bet = B4;
-                            gimel = C4;
-                        }
-                        case 4 -> {
-                            alef = A5;
-                            bet = B5;
-                            gimel = C5;
-                        }
-                        default -> {
-                            alef = A6;
-                            bet = B6;
-                            gimel = C6;
-                        }
-                    }
-                    AccountWrapper wrapper = set.get(i);
-                    switch (wrapper.COLUMN) {
-                        case DEBIT -> bet.setSelectedIndex(0);
-                        case CREDIT -> bet.setSelectedIndex(1);
-                        case GHOST -> bet.setSelectedIndex(2);
-                        case TRACKER -> bet.setSelectedIndex(3);
-                    }
-                    alef.setSelectedIndex(wrapper.ACCOUNT.getName());
-                    gimel.setText(wrapper.VALUE.toString());
-                }
-            }
-            ADV_DATE.setText(entry.getDate().toString());
-            ADV_ENT.setText(entry.getEntity());
-            ADV_ITM.setText(entry.getItems());
-            ADV_DESC.setText(entry.getDescription());
+            DATE.setText(entry.getDate().toString());
+            ENT.setText(entry.getEntity());
+            ITM.setText(entry.getItems());
+            DESC.setText(entry.getDescription());
             ACC.setText(entry.getAccounts().toString());
             metaObject = entry.getMeta();
         }
         META.setText(metaObject.print());
-        META_TEXT.setText(metaObject.print());
-        META_TYPE.addItem("New NF Asset");
-        META_TYPE.addItem("New Loan");
-        META_TYPE.addItem("Trading Ledger");
-        META_TYPE.addItem("NF Asset Change");
-        META_TYPE.addItem("Loan Change");
-        META_TYPE.addItem("Check");
+        TYPE.addItem("New NF Asset");
+        TYPE.addItem("New Loan");
+        TYPE.addItem("Trading Ledger");
+        TYPE.addItem("NF Asset Change");
+        TYPE.addItem("Loan Change");
+        TYPE.addItem("Check");
         pack();
         Dimension d = Toolkit.getDefaultToolkit().getScreenSize();
         setLocation(d.width / 2 - getWidth() / 2, d.height / 2 - getHeight() / 2);
     }
 
-    public void bChanged(JComboBox<String> b, SearchBox a) {
-        String column = (String) b.getSelectedItem();
-        int index = a.getSelectedIndex();
-        switch (AWColumn.fromString("" + column.charAt(0))) {
-            case DEBIT, CREDIT -> a.setMaster(CURRENT_INSTANCE.getDCAccountsAsStrings());
-            case GHOST -> a.setMaster(CURRENT_INSTANCE.getGhostAccountsAsStrings());
-            case TRACKER -> a.setMaster(CURRENT_INSTANCE.getTrackingAccountsAsStrings());
-        }
-        if (index < a.getListSize()) {
-            a.setSelectedIndex(index);
-        }
-    }
-
     public void metaTypeChanged() {
-        switch (META_TYPE.getSelectedIndex()) {
+        switch (TYPE.getSelectedIndex()) {
             case (0) -> {
                 TABLE.setModel(new DefaultTableModel(new Vector<>(Arrays.asList("Name", "Description", "Cur", "Value", "Count")), 0) {
                     @Override
@@ -721,87 +452,7 @@ public class NewTransactionEntryGui extends ModalFrame {
         }
     }
 
-    public void simpleInsertAction() {
-        TransactionEntry entry;
-        if (UUID == 0) {
-            entry = new TransactionEntry(CURRENT_INSTANCE);
-        } else {
-            entry = CURRENT_INSTANCE.DATA_HANDLER.getTransactionEntry(UUID);
-        }
-        try {
-            JsonArray aArr = new JsonArray(), vArr = new JsonArray();
-            String column = (String) B1.getSelectedItem();
-            if (column.equals("Tracking")) {
-                column = "B";
-            }
-            AWColumn t1 = AWColumn.fromString("" + column.charAt(0));
-            aArr.add(new JsonString(t1 + "!" + A1.getSelectedItem()));
-            vArr.add(new JsonDecimal(Validation.validateDecimal(C1)));
-            if (A2.getSelectedItem() != null) {
-                column = (String) B2.getSelectedItem();
-                if (column.equals("Tracking")) {
-                    column = "B";
-                }
-                AWColumn t2 = AWColumn.fromString("" + column.charAt(0));
-                aArr.add(new JsonString(t2 + "!" + A2.getSelectedItem()));
-                vArr.add(new JsonDecimal(Validation.validateDecimal(C2)));
-                if (A3.getSelectedItem() != null) {
-                    column = (String) B3.getSelectedItem();
-                    if (column.equals("Tracking")) {
-                        column = "B";
-                    }
-                    AWColumn t3 = AWColumn.fromString("" + column.charAt(0));
-                    aArr.add(new JsonString(t3 + "!" + A3.getSelectedItem()));
-                    vArr.add(new JsonDecimal(Validation.validateDecimal(C3)));
-                    if (A4.getSelectedItem() != null) {
-                        column = (String) B4.getSelectedItem();
-                        if (column.equals("Tracking")) {
-                            column = "B";
-                        }
-                        AWColumn t4 = AWColumn.fromString("" + column.charAt(0));
-                        aArr.add(new JsonString(t4 + "!" + A4.getSelectedItem()));
-                        vArr.add(new JsonDecimal(Validation.validateDecimal(C4)));
-                        if (A5.getSelectedItem() != null) {
-                            column = (String) B5.getSelectedItem();
-                            if (column.equals("Tracking")) {
-                                column = "B";
-                            }
-                            AWColumn t5 = AWColumn.fromString("" + column.charAt(0));
-                            aArr.add(new JsonString(t5 + "!" + A5.getSelectedItem()));
-                            vArr.add(new JsonDecimal(Validation.validateDecimal(C5)));
-                            if (A6.getSelectedItem() != null) {
-                                column = (String) B6.getSelectedItem();
-                                if (column.equals("Tracking")) {
-                                    column = "B";
-                                }
-                                AWColumn t6 = AWColumn.fromString("" + column.charAt(0));
-                                aArr.add(new JsonString(t6 + "!" + A6.getSelectedItem()));
-                                vArr.add(new JsonDecimal(Validation.validateDecimal(C6)));
-                            }
-                        }
-                    }
-                }
-            }
-            entry.insert(
-                    Validation.validateDate(SIMP_DATE, entry.getDate(), CURRENT_INSTANCE),
-                    Validation.validateString(SIMP_ENT),
-                    Validation.validateStringAllowEmpty(SIMP_ITM),
-                    Validation.validateStringAllowEmpty(SIMP_DESC),
-                    new LAccountSet(aArr, CURRENT_INSTANCE)
-            );
-        } catch (ValidationFailedException ex) {
-            CURRENT_INSTANCE.LOG_HANDLER.warn(getClass(), "You did a badness!  " + ex.getMessage());
-        } catch (JsonFormattingException ex) {
-            CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Somehow, the strings in account dropdowns are broken.\nThis should not be happening.  What did you do?");
-        }
-        if (UUID == 0) {
-            CURRENT_INSTANCE.DATA_HANDLER.addTransaction(entry);
-        }
-        MAIN.updateTable();
-        dispose();
-    }
-
-    public void advancedInsertAction() {
+    public void insertAction() {
         try {
             TransactionEntry entry;
             if (UUID == 0) {
@@ -810,10 +461,10 @@ public class NewTransactionEntryGui extends ModalFrame {
                 entry = CURRENT_INSTANCE.DATA_HANDLER.getTransactionEntry(UUID);
             }
             entry.insert(
-                    Validation.validateDate(ADV_DATE, entry.getDate(), CURRENT_INSTANCE),
-                    Validation.validateString(ADV_ENT),
-                    Validation.validateStringAllowEmpty(ADV_ITM),
-                    Validation.validateStringAllowEmpty(ADV_DESC),
+                    Validation.validateDate(DATE, entry.getDate(), CURRENT_INSTANCE),
+                    Validation.validateString(ENT),
+                    Validation.validateStringAllowEmpty(ITM),
+                    Validation.validateStringAllowEmpty(DESC),
                     new LAccountSet(Validation.validateString(ACC), CURRENT_INSTANCE)
             );
             entry.setMeta(Validation.validateJsonObject(META));
@@ -833,7 +484,7 @@ public class NewTransactionEntryGui extends ModalFrame {
 
     public void mUpdateAction() {
         try {
-            metaObject = (JsonObject) JsonItem.digest(META_TEXT.getText());
+            metaObject = (JsonObject) JsonItem.digest(META.getText());
             META.setText(metaObject.print());
         } catch (JsonFormattingException ex) {
             CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Malformed Json on Json tab");
@@ -845,7 +496,7 @@ public class NewTransactionEntryGui extends ModalFrame {
         JsonArray arr = new JsonArray();
         DefaultTableModel tableAccess = (DefaultTableModel) TABLE.getModel();
         if (TABLE.getRowCount() > 0) {
-            switch (META_TYPE.getSelectedIndex()) {
+            switch (TYPE.getSelectedIndex()) {
                 case (0) -> {
                     try {
                         for (int i = 0; i < TABLE.getRowCount(); i++) {
@@ -1001,7 +652,7 @@ public class NewTransactionEntryGui extends ModalFrame {
                     }
                 }
             }
-            META_TEXT.setText(metaObject.print());
+            META.setText(metaObject.print());
             META.setText(metaObject.print());
             metaTypeChanged();
         }

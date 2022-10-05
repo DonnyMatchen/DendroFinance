@@ -17,8 +17,6 @@ import com.donny.dendrofinance.types.LDate;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Vector;
@@ -87,7 +85,7 @@ public class NewTransactionEntryGui extends ModalFrame {
                 });
                 JButton addAcc = DendroFactory.getButton("Add");
                 addAcc.addActionListener(event -> {
-                    ACC.addText(((String)type.getSelectedItem()).charAt(0) + "!" + account.getSelectedItem() + "(" + CURRENT_INSTANCE.cleanNumber(amount.getText()) + "), ");
+                    ACC.addText(((String) type.getSelectedItem()).charAt(0) + "!" + account.getSelectedItem() + "(" + CURRENT_INSTANCE.cleanNumber(amount.getText()) + "), ");
                     amount.setText("");
                     type.setSelectedIndex(0);
                     account.clear();

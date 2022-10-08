@@ -11,7 +11,6 @@ import com.donny.dendrofinance.gui.form.Validation;
 import com.donny.dendrofinance.gui.form.ValidationFailedException;
 import com.donny.dendrofinance.instance.Instance;
 import com.donny.dendrofinance.json.*;
-import com.donny.dendrofinance.types.LAccountSet;
 import com.donny.dendrofinance.types.LDate;
 
 import javax.swing.*;
@@ -459,11 +458,11 @@ public class NewTransactionEntryGui extends ModalFrame {
                 entry = CURRENT_INSTANCE.DATA_HANDLER.getTransactionEntry(UUID);
             }
             entry.insert(
-                    Validation.validateDate(DATE, entry.getDate(), CURRENT_INSTANCE),
+                    Validation.validateDate(DATE, CURRENT_INSTANCE),
                     Validation.validateString(ENT),
                     Validation.validateStringAllowEmpty(ITM),
                     Validation.validateStringAllowEmpty(DESC),
-                    new LAccountSet(Validation.validateString(ACC), CURRENT_INSTANCE)
+                    Validation.validateAccountSet(ACC, CURRENT_INSTANCE)
             );
             entry.setMeta(Validation.validateJsonObject(META));
             if (UUID == 0) {

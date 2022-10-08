@@ -122,4 +122,9 @@ public class ItemField extends JPanel {
     public void setTextBackground(Color color) {
         TEXT.setBackground(color);
     }
+
+    public void select(int start, int end) {
+        TEXT.grabFocus();
+        TEXT.select(start, end);
+    }
 }

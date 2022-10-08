@@ -867,7 +867,7 @@ public class SpecialTransactionEntryGui extends ModalFrame {
     private void psInsert() {
         try {
             if (CURRENT_INSTANCE.DATA_HANDLER.buySell(
-                    Validation.validateDate(DATE, null, CURRENT_INSTANCE),
+                    Validation.validateDate(DATE, CURRENT_INSTANCE),
                     Validation.validateDecimal(F_AMOUNT),
                     Validation.validateDecimal(COST),
                     F_EXCHANGE.getSelectedItem(),
@@ -887,7 +887,7 @@ public class SpecialTransactionEntryGui extends ModalFrame {
     private void pfInsert() {
         try {
             if (CURRENT_INSTANCE.DATA_HANDLER.buySellFee(
-                    Validation.validateDate(DATE, null, CURRENT_INSTANCE),
+                    Validation.validateDate(DATE, CURRENT_INSTANCE),
                     Validation.validateDecimal(F_AMOUNT),
                     Validation.validateDecimal(COST),
                     Validation.validateDecimal(FEE_AMOUNT),
@@ -911,7 +911,7 @@ public class SpecialTransactionEntryGui extends ModalFrame {
     private void ipInsert() {
         try {
             if (CURRENT_INSTANCE.DATA_HANDLER.incPay(
-                    Validation.validateDate(DATE, null, CURRENT_INSTANCE),
+                    Validation.validateDate(DATE, CURRENT_INSTANCE),
                     Validation.validateString(DESCRIPTION),
                     Validation.validateDecimal(F_AMOUNT),
                     Validation.validateDecimal(UNIT),
@@ -932,7 +932,7 @@ public class SpecialTransactionEntryGui extends ModalFrame {
     private void mnInsert() {
         try {
             if (CURRENT_INSTANCE.DATA_HANDLER.minInc(
-                    Validation.validateDate(DATE, null, CURRENT_INSTANCE),
+                    Validation.validateDate(DATE, CURRENT_INSTANCE),
                     Validation.validateString(DESCRIPTION),
                     Validation.validateDecimal(F_AMOUNT),
                     Validation.validateDecimal(UNIT),
@@ -951,7 +951,7 @@ public class SpecialTransactionEntryGui extends ModalFrame {
     private void ctInsert() {
         try {
             if (CURRENT_INSTANCE.DATA_HANDLER.coinTransfer(
-                    Validation.validateDate(DATE, null, CURRENT_INSTANCE),
+                    Validation.validateDate(DATE, CURRENT_INSTANCE),
                     Validation.validateDecimal(F_AMOUNT),
                     Validation.validateDecimal(T_AMOUNT),
                     Validation.validateDecimal(UNIT),
@@ -974,7 +974,7 @@ public class SpecialTransactionEntryGui extends ModalFrame {
     private void ttInsert() {
         try {
             if (CURRENT_INSTANCE.DATA_HANDLER.tokenTransfer(
-                    Validation.validateDate(DATE, null, CURRENT_INSTANCE),
+                    Validation.validateDate(DATE, CURRENT_INSTANCE),
                     Validation.validateDecimal(F_AMOUNT),
                     Validation.validateDecimal(T_AMOUNT),
                     Validation.validateDecimal(FEE_AMOUNT),
@@ -1001,7 +1001,7 @@ public class SpecialTransactionEntryGui extends ModalFrame {
     private void tdInsert() {
         try {
             if (CURRENT_INSTANCE.DATA_HANDLER.trade(
-                    Validation.validateDate(DATE, null, CURRENT_INSTANCE),
+                    Validation.validateDate(DATE, CURRENT_INSTANCE),
                     Validation.validateDecimal(F_AMOUNT),
                     Validation.validateDecimal(T_AMOUNT),
                     Validation.validateDecimal(UNIT),

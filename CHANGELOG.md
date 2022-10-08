@@ -4,6 +4,9 @@
     * removed simple tab, and moved meta fully to it's own tab
       * renamed fields accordingly
     * added an easy way to add ACVs
+  * `SpecialTransactionEntryGui`
+    * transferred from tabs to dynamic radio buttons
+    * ensured that data persists across different insert options
 
 ## v0.8.4
 * minor bug fixes

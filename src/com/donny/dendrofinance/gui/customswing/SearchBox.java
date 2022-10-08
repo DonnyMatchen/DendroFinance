@@ -8,6 +8,7 @@ import java.awt.*;
 import java.util.ArrayList;
 
 public class SearchBox extends JPanel {
+    private final JLabel TITLE;
     private final JTextField SEARCH;
     private final JList<String> LIST;
     private ArrayList<String> master;
@@ -19,7 +20,7 @@ public class SearchBox extends JPanel {
         //gui setup
         {
             setBorder(null);
-            JLabel a = new JLabel(name);
+            TITLE = new JLabel(name);
             SEARCH = new JTextField();
             LIST = DendroFactory.getList();
             JScrollPane pane = DendroFactory.getScrollPane(false, true);
@@ -48,7 +49,7 @@ public class SearchBox extends JPanel {
                 setLayout(main);
                 main.setHorizontalGroup(
                         main.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(
-                                a, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                TITLE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                         ).addComponent(
                                 SEARCH, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
                         ).addComponent(
@@ -57,7 +58,7 @@ public class SearchBox extends JPanel {
                 );
                 main.setVerticalGroup(
                         main.createSequentialGroup().addComponent(
-                                a, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                TITLE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                         ).addGap(DendroFactory.SMALL_GAP).addComponent(
                                 SEARCH, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                         ).addGap(DendroFactory.SMALL_GAP).addComponent(
@@ -76,6 +77,10 @@ public class SearchBox extends JPanel {
 
     public void clear() {
         SEARCH.setText("");
+    }
+
+    public void setTitle(String title) {
+        TITLE.setText(title);
     }
 
     public int getSelectedIndex() {
@@ -116,6 +121,14 @@ public class SearchBox extends JPanel {
 
     public void addListSelectionListener(ListSelectionListener listener) {
         LIST.addListSelectionListener(listener);
+    }
+
+    public ListSelectionListener[] getListSelectionListeners() {
+        return LIST.getListSelectionListeners();
+    }
+
+    public void removeListSelectionListener(ListSelectionListener listener) {
+        LIST.removeListSelectionListener(listener);
     }
 
     public void setListBackground(Color color) {

@@ -9,6 +9,9 @@
   * `SpecialTransactionEntryGui`
     * transferred from tabs to dynamic radio buttons
     * ensured that data persists across different insert options
+* minor updates to guis
+  * `MainGui`
+    * now alerts user if edit or delete are clicked with no selected transaction
 
 ## v0.8.4
 * minor bug fixes

@@ -7,6 +7,7 @@ import com.donny.dendrofinance.entry.TransactionEntry;
 import com.donny.dendrofinance.gui.addedit.DeleteEntryGui;
 import com.donny.dendrofinance.gui.addedit.NewTransactionEntryGui;
 import com.donny.dendrofinance.gui.addedit.SpecialTransactionEntryGui;
+import com.donny.dendrofinance.gui.customswing.AlertGui;
 import com.donny.dendrofinance.gui.customswing.DendroFactory;
 import com.donny.dendrofinance.gui.customswing.RegisterFrame;
 import com.donny.dendrofinance.gui.menu.data.AccountMetaGui;
@@ -126,9 +127,23 @@ public class MainGui extends JFrame {
             JButton specialInsert = DendroFactory.getButton("New Special Transaction");
             specialInsert.addActionListener(event -> new SpecialTransactionEntryGui(this, CURRENT_INSTANCE).setVisible(true));
             JButton edit = DendroFactory.getButton("Edit Transaction");
-            edit.addActionListener(event -> new NewTransactionEntryGui(this, getUUID(TABLE.getSelectedRow()), CURRENT_INSTANCE).setVisible(true));
+            edit.addActionListener(event -> {
+                long u = getUUID(TABLE.getSelectedRow());
+                if (u <= 0) {
+                    new AlertGui(this, "No Transaction Selected!", CURRENT_INSTANCE).setVisible(true);
+                } else {
+                    new NewTransactionEntryGui(this, u, CURRENT_INSTANCE).setVisible(true);
+                }
+            });
             JButton delete = DendroFactory.getButton("Delete Transaction");
-            delete.addActionListener(event -> new DeleteEntryGui(this, getUUID(TABLE.getSelectedRow()), CURRENT_INSTANCE).setVisible(true));
+            delete.addActionListener(event -> {
+                long u = getUUID(TABLE.getSelectedRow());
+                if (u <= 0) {
+                    new AlertGui(this, "No Transaction Selected!", CURRENT_INSTANCE).setVisible(true);
+                } else {
+                    new DeleteEntryGui(this, u, CURRENT_INSTANCE).setVisible(true);
+                }
+            });
 
             //menus
             {
@@ -429,7 +444,7 @@ public class MainGui extends JFrame {
     public long getUUID(int cursor) {
         if (cursor < 0) {
             CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "No row was selected");
-            return 0;
+            return cursor;
         } else if (TABLE_ACCESS.getValueAt(cursor, 0).equals("")) {
             if (cursor != 0) {
                 return getUUID(cursor - 1);

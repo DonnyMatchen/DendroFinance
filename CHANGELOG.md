@@ -12,6 +12,13 @@
 * minor updates to guis
   * `MainGui`
     * now alerts user if edit or delete are clicked with no selected transaction
+* transaction cloning ant templating
+  * `TemplateEntry` created
+  * moved transaction buttons to a menu
+  * added clone and save as template
+  * added `NewTemplateGui`
+  * added template selection to `InsertGui`
+  * (X) added template editing and deleting
 
 ## v0.8.4
 * minor bug fixes

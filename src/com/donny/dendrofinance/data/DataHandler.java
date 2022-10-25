@@ -6,6 +6,7 @@ import com.donny.dendrofinance.currency.LInventory;
 import com.donny.dendrofinance.currency.LStock;
 import com.donny.dendrofinance.entry.BudgetEntry;
 import com.donny.dendrofinance.entry.EntryType;
+import com.donny.dendrofinance.entry.TemplateEntry;
 import com.donny.dendrofinance.entry.TransactionEntry;
 import com.donny.dendrofinance.entry.meta.*;
 import com.donny.dendrofinance.entry.totals.OrderBookEntry;
@@ -27,6 +28,7 @@ public class DataHandler {
     protected final Instance CURRENT_INSTANCE;
     protected final DataSet<TransactionEntry> TRANSACTIONS;
     protected final DataSet<BudgetEntry> BUDGETS;
+    protected final DataSet<TemplateEntry> TEMPLATES;
     protected final ArrayList<String> BUDGET_TYPES;
     public boolean budgetTypesChanged = false;
 
@@ -34,6 +36,7 @@ public class DataHandler {
         CURRENT_INSTANCE = curInst;
         TRANSACTIONS = new DataSet<>("Transactions", EntryType.TRANSACTION, CURRENT_INSTANCE);
         BUDGETS = new DataSet<>("Budgets", EntryType.BUDGET, CURRENT_INSTANCE);
+        TEMPLATES = new DataSet<>("Templates", EntryType.TEMPLATE, CURRENT_INSTANCE);
         BUDGET_TYPES = new ArrayList<>();
         CURRENT_INSTANCE.LOG_HANDLER.trace(getClass(), "DataHandler Initiated");
     }
@@ -42,6 +45,7 @@ public class DataHandler {
         CURRENT_INSTANCE.UUID_HANDLER.UUIDS.clear();
         TRANSACTIONS.reload();
         BUDGETS.reload();
+        TEMPLATES.reload();
     }
 
     public boolean addTransaction(TransactionEntry entry, ImportHandler.ImportMode mode) {
@@ -106,6 +110,37 @@ public class DataHandler {
         return addBudget(entry, ImportHandler.ImportMode.KEEP);
     }
 
+    public boolean addTemplate(TemplateEntry entry, ImportHandler.ImportMode mode) {
+        if (entry.clashing) {
+            switch (mode) {
+                case IGNORE -> {
+                    return false;
+                }
+                case KEEP -> {
+                    return TEMPLATES.add(entry);
+                }
+                case OVERWRITE -> {
+                    TemplateEntry orig = null;
+                    for (TemplateEntry candidate : readTemplates()) {
+                        if (candidate.getUUID() == entry.getUUID()) {
+                            orig = candidate;
+                            break;
+                        }
+                    }
+                    if (orig != null) {
+                        TEMPLATES.remove(orig);
+                    }
+                    return TEMPLATES.add(entry);
+                }
+            }
+        }
+        return TEMPLATES.add(entry);
+    }
+
+    public boolean addTemplate(TemplateEntry entry) {
+        return addTemplate(entry, ImportHandler.ImportMode.KEEP);
+    }
+
     public boolean deleteTransaction(long uuid) {
         TransactionEntry cand = null;
         for (TransactionEntry entry : readTransactions()) {
@@ -136,12 +171,31 @@ public class DataHandler {
         }
     }
 
+    public boolean deleteTemplate(long uuid) {
+        TemplateEntry cand = null;
+        for (TemplateEntry entry : readTemplates()) {
+            if (entry.getUUID() == uuid) {
+                cand = entry;
+                break;
+            }
+        }
+        if (cand == null) {
+            return false;
+        } else {
+            return TEMPLATES.remove(cand);
+        }
+    }
+
     public ArrayList<TransactionEntry> readTransactions() {
         return TRANSACTIONS.read();
     }
 
     public ArrayList<BudgetEntry> readBudgets() {
         return BUDGETS.read();
+    }
+
+    public ArrayList<TemplateEntry> readTemplates() {
+        return TEMPLATES.read();
     }
 
     public TransactionEntry getPrior() {
@@ -1247,6 +1301,7 @@ public class DataHandler {
     public void save() {
         TRANSACTIONS.save();
         BUDGETS.save();
+        TEMPLATES.save();
     }
 
     public void checkLedgers() {

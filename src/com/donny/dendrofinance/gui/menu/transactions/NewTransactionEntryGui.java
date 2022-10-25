@@ -1,6 +1,7 @@
-package com.donny.dendrofinance.gui.addedit;
+package com.donny.dendrofinance.gui.menu.transactions;
 
 import com.donny.dendrofinance.currency.LCurrency;
+import com.donny.dendrofinance.entry.TemplateEntry;
 import com.donny.dendrofinance.entry.TransactionEntry;
 import com.donny.dendrofinance.gui.MainGui;
 import com.donny.dendrofinance.gui.customswing.DendroFactory;
@@ -23,6 +24,7 @@ import java.util.Vector;
 public class NewTransactionEntryGui extends ModalFrame {
     public final MainGui MAIN;
     public final long UUID;
+    public final boolean CLONE;
     private final JTextField DATE, ENT, ITM, DESC;
     private final JComboBox<String> TYPE;
     private final ItemField ACC;
@@ -31,13 +33,14 @@ public class NewTransactionEntryGui extends ModalFrame {
     public JsonObject metaObject;
 
     public NewTransactionEntryGui(MainGui caller, Instance curInst) {
-        this(caller, 0, curInst);
+        this(caller, 0, false, curInst);
     }
 
-    public NewTransactionEntryGui(MainGui caller, long uuid, Instance curInst) {
+    public NewTransactionEntryGui(MainGui caller, long uuid, boolean clone, Instance curInst) {
         super(caller, (uuid == 0 ? "New" : "Edit") + " Transaction Entry", curInst);
         MAIN = caller;
         UUID = uuid;
+        CLONE = clone;
         //draw gui
         {
             setBackground(DendroFactory.REGULAR);
@@ -90,6 +93,21 @@ public class NewTransactionEntryGui extends ModalFrame {
                     account.clear();
                 });
 
+                JComboBox<TemplateEntry> templates = new JComboBox<>();
+                CURRENT_INSTANCE.DATA_HANDLER.readTemplates().forEach(templates::addItem);
+                JButton load = DendroFactory.getButton("Load Template");
+                load.addActionListener(event -> {
+                    if (templates.getSelectedIndex() >= 0) {
+                        TransactionEntry entry = CURRENT_INSTANCE.DATA_HANDLER.getTransactionEntry(((TemplateEntry) templates.getSelectedItem()).getRef());
+                        DATE.setText(entry.getDate().toString());
+                        ENT.setText(entry.getEntity());
+                        ITM.setText(entry.getItems());
+                        DESC.setText(entry.getDescription());
+                        ACC.setText(entry.getAccounts().toString());
+                        metaObject = entry.getMeta();
+                    }
+                });
+
                 //transaction tab
                 {
                     GroupLayout main = new GroupLayout(tab);
@@ -124,13 +142,19 @@ public class NewTransactionEntryGui extends ModalFrame {
                                             )
                                     ).addGroup(
                                             main.createSequentialGroup().addComponent(
-                                                    account, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
+                                                    account, 150, 150, Short.MAX_VALUE
                                             ).addGap(DendroFactory.SMALL_GAP).addComponent(
                                                     type, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                             ).addGap(DendroFactory.SMALL_GAP).addComponent(
                                                     amount, 150, 150, 150
                                             ).addGap(DendroFactory.SMALL_GAP).addComponent(
                                                     addAcc, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                            )
+                                    ).addGroup(
+                                            main.createSequentialGroup().addComponent(
+                                                    templates, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
+                                            ).addGap(DendroFactory.SMALL_GAP).addComponent(
+                                                    load, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                             )
                                     ).addGroup(
                                             main.createSequentialGroup().addComponent(
@@ -178,7 +202,7 @@ public class NewTransactionEntryGui extends ModalFrame {
                                     )
                             ).addGap(DendroFactory.SMALL_GAP).addGroup(
                                     main.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(
-                                            account, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                            account, 150, 150, 150
                                     ).addComponent(
                                             type, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                     ).addComponent(
@@ -186,7 +210,15 @@ public class NewTransactionEntryGui extends ModalFrame {
                                     ).addComponent(
                                             addAcc, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                     )
-                            ).addGap(DendroFactory.MEDIUM_GAP).addGroup(
+                            ).addGap(DendroFactory.LARGE_GAP).addGroup(
+                                    main.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(
+                                            templates, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                    ).addComponent(
+                                            load, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                    )
+                            ).addGap(
+                                    DendroFactory.LARGE_GAP, DendroFactory.LARGE_GAP, Short.MAX_VALUE
+                            ).addGroup(
                                     main.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(
                                             cancel, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                     ).addComponent(
@@ -452,7 +484,7 @@ public class NewTransactionEntryGui extends ModalFrame {
     public void insertAction() {
         try {
             TransactionEntry entry;
-            if (UUID == 0) {
+            if (UUID == 0 || CLONE) {
                 entry = new TransactionEntry(CURRENT_INSTANCE);
             } else {
                 entry = CURRENT_INSTANCE.DATA_HANDLER.getTransactionEntry(UUID);

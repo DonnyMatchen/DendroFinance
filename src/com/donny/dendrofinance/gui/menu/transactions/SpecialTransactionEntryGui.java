@@ -1,4 +1,4 @@
-package com.donny.dendrofinance.gui.addedit;
+package com.donny.dendrofinance.gui.menu.transactions;
 
 import com.donny.dendrofinance.account.BroadAccountType;
 import com.donny.dendrofinance.gui.MainGui;

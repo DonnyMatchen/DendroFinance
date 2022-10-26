@@ -1,6 +1,7 @@
 package com.donny.dendrofinance.fileio;
 
 import com.donny.dendrofinance.entry.BudgetEntry;
+import com.donny.dendrofinance.entry.TemplateEntry;
 import com.donny.dendrofinance.entry.TransactionEntry;
 import com.donny.dendrofinance.instance.Instance;
 import com.donny.dendrofinance.json.JsonArray;
@@ -48,6 +49,17 @@ public class ExportHandler {
                     }
                 }
                 CURRENT_INSTANCE.FILE_HANDLER.writeJson(budgets, array);
+
+                File templates = new File(directory.getPath() + File.separator + name + "-Templates.json");
+                array = new JsonArray();
+                for (TemplateEntry entry : CURRENT_INSTANCE.DATA_HANDLER.readTemplates()) {
+                    try {
+                        array.add(entry.export());
+                    } catch (JsonFormattingException ex) {
+                        CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Damaged Template Entry: " + entry.getUUID());
+                    }
+                }
+                CURRENT_INSTANCE.FILE_HANDLER.writeJson(templates, array);
             }
             case "XTBL" -> {
                 File transactions = new File(directory.getPath() + File.separator + name + "-Transactions.xtbl");
@@ -71,6 +83,17 @@ public class ExportHandler {
                     }
                 }
                 CURRENT_INSTANCE.FILE_HANDLER.writeEncryptJson(budgets, array);
+
+                File templates = new File(directory.getPath() + File.separator + name + "-Templates.xtbl");
+                array = new JsonArray();
+                for (TemplateEntry entry : CURRENT_INSTANCE.DATA_HANDLER.readTemplates()) {
+                    try {
+                        array.add(entry.export());
+                    } catch (JsonFormattingException ex) {
+                        CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Damaged Template Entry: " + entry.getUUID());
+                    }
+                }
+                CURRENT_INSTANCE.FILE_HANDLER.writeEncryptJson(templates, array);
             }
         }
     }

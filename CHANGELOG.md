@@ -19,7 +19,7 @@
   * added `NewTemplateGui`
   * added template selection to `InsertGui`
   * added template editing and deleting
-  * (X) import and export templates
+  * import and export templates
 
 ## v0.8.4
 * minor bug fixes

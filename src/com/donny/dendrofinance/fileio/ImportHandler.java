@@ -1,6 +1,7 @@
 package com.donny.dendrofinance.fileio;
 
 import com.donny.dendrofinance.entry.BudgetEntry;
+import com.donny.dendrofinance.entry.TemplateEntry;
 import com.donny.dendrofinance.entry.TransactionEntry;
 import com.donny.dendrofinance.instance.Instance;
 import com.donny.dendrofinance.json.JsonArray;
@@ -106,6 +107,12 @@ public class ImportHandler {
                 CURRENT_INSTANCE.DATA_HANDLER.addBudget(new BudgetEntry(obj, mode, CURRENT_INSTANCE), mode);
             }
             imported = true;
+        } else if (file.getName().toLowerCase().contains("template")) {
+            JsonArray array = (JsonArray) CURRENT_INSTANCE.FILE_HANDLER.readJson(file);
+            for (JsonObject obj : array.getObjectArray()) {
+                CURRENT_INSTANCE.DATA_HANDLER.addTemplate(new TemplateEntry(obj, mode, CURRENT_INSTANCE), mode);
+            }
+            imported = true;
         }
         if (imported) {
             CURRENT_INSTANCE.FILE_HANDLER.delete(file);
@@ -133,6 +140,17 @@ public class ImportHandler {
                 JsonArray array = (JsonArray) item;
                 for (JsonObject obj : array.getObjectArray()) {
                     CURRENT_INSTANCE.DATA_HANDLER.addBudget(new BudgetEntry(obj, mode, CURRENT_INSTANCE));
+                }
+                imported = true;
+            }
+        } else if (file.getName().toLowerCase().contains("template")) {
+            JsonItem item = CURRENT_INSTANCE.FILE_HANDLER.readDecryptJsonUnknownPassword(file, caller);
+            if (item == null) {
+                CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Incorrect password for file: " + file.getPath());
+            } else {
+                JsonArray array = (JsonArray) item;
+                for (JsonObject obj : array.getObjectArray()) {
+                    CURRENT_INSTANCE.DATA_HANDLER.addTemplate(new TemplateEntry(obj, mode, CURRENT_INSTANCE));
                 }
                 imported = true;
             }

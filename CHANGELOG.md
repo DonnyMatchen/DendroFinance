@@ -1,3 +1,26 @@
+## v0.9.0
+* major updates to guis
+  * `NewTransactionEntryGui`
+    * removed simple tab, and moved meta fully to it's own tab
+      * renamed fields accordingly
+    * added an easy way to add ACVs
+    * added validation for ACVs
+      * with selection
+  * `SpecialTransactionEntryGui`
+    * transferred from tabs to dynamic radio buttons
+    * ensured that data persists across different insert options
+* minor updates to guis
+  * `MainGui`
+    * now alerts user if edit or delete are clicked with no selected transaction
+* transaction cloning ant templating
+  * `TemplateEntry` created
+  * moved transaction buttons to a menu
+  * added clone and save as template
+  * added `NewTemplateGui`
+  * added template selection to `InsertGui`
+  * added template editing and deleting
+  * import and export templates
+
 ## v0.8.4
 * minor bug fixes
   * optimized imports

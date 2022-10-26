@@ -44,6 +44,7 @@ public abstract class Entry implements ExportableToJson, Serializable {
         return switch (type) {
             case TRANSACTION -> new TransactionEntry(obj, ImportHandler.ImportMode.KEEP, curInst);
             case BUDGET -> new BudgetEntry(obj, ImportHandler.ImportMode.KEEP, curInst);
+            case TEMPLATE -> new TemplateEntry(obj, ImportHandler.ImportMode.KEEP, curInst);
         };
     }
 

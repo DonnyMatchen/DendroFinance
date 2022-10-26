@@ -1,6 +1,5 @@
-package com.donny.dendrofinance.gui.addedit;
+package com.donny.dendrofinance.gui.menu.data;
 
-import com.donny.dendrofinance.gui.MainGui;
 import com.donny.dendrofinance.gui.customswing.DendroFactory;
 import com.donny.dendrofinance.gui.customswing.ModalFrame;
 import com.donny.dendrofinance.instance.Instance;
@@ -8,35 +7,29 @@ import com.donny.dendrofinance.instance.Instance;
 import javax.swing.*;
 import java.awt.*;
 
-public class DeleteEntryGui extends ModalFrame {
-    public final MainGui MAIN;
-    public final long UUID;
-
-    public DeleteEntryGui(MainGui caller, long uuid, Instance curInst) {
-        super(caller, "Delete Transaction Entry", curInst);
-        UUID = uuid;
-        MAIN = caller;
+public class DeleteTemplateGui extends ModalFrame {
+    public DeleteTemplateGui(JFrame caller, long uuid, Instance curInst) {
+        super(caller, "Delete Template", curInst);
         //draw gui
-        JScrollPane pane = DendroFactory.getScrollField(false, 5, 40);
-        JTextArea area = (JTextArea) pane.getViewport().getView();
         {
-            JLabel text1 = new JLabel("Are you sure you'd like to delete");
-            JLabel text2 = new JLabel("the entry bellow?");
-
-            JButton ok = DendroFactory.getButton("Yes");
-            ok.addActionListener(event -> yes());
-            JButton cancel = DendroFactory.getButton("No");
+            JLabel a = new JLabel("Are you sure you want to delete this?");
+            JScrollPane pane = DendroFactory.getScrollField();
+            JTextArea text = (JTextArea) pane.getViewport().getView();
+            text.setEditable(false);
+            text.setText(curInst.DATA_HANDLER.getTemplateEntry(uuid).toFlatString());
+            JButton cancel = DendroFactory.getButton("Cancel");
             cancel.addActionListener(event -> dispose());
-            //Group layout
+            JButton delete = DendroFactory.getButton("Ok");
+            delete.addActionListener(event -> deleteAction(uuid, caller));
+
+            //group layout
             {
                 GroupLayout main = new GroupLayout(getContentPane());
                 getContentPane().setLayout(main);
                 main.setHorizontalGroup(
                         main.createSequentialGroup().addContainerGap().addGroup(
-                                main.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(
-                                        text1, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
-                                ).addComponent(
-                                        text2, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                main.createParallelGroup(GroupLayout.Alignment.LEADING).addComponent(
+                                        a, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                 ).addComponent(
                                         pane, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
                                 ).addGroup(
@@ -45,37 +38,36 @@ public class DeleteEntryGui extends ModalFrame {
                                         ).addGap(
                                                 DendroFactory.SMALL_GAP, DendroFactory.SMALL_GAP, Short.MAX_VALUE
                                         ).addComponent(
-                                                ok, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                                delete, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                         )
                                 )
                         ).addContainerGap()
                 );
                 main.setVerticalGroup(
                         main.createSequentialGroup().addContainerGap().addComponent(
-                                text1, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                a, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                         ).addGap(DendroFactory.SMALL_GAP).addComponent(
-                                text2, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
-                        ).addGap(DendroFactory.SMALL_GAP).addComponent(
-                                pane, GroupLayout.PREFERRED_SIZE, 350, Short.MAX_VALUE
+                                pane, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
                         ).addGap(DendroFactory.MEDIUM_GAP).addGroup(
                                 main.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(
                                         cancel, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                 ).addComponent(
-                                        ok, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                        delete, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                 )
                         ).addContainerGap()
                 );
             }
         }
-        area.setText(CURRENT_INSTANCE.DATA_HANDLER.getTransactionEntry(UUID).toString());
         pack();
         Dimension d = Toolkit.getDefaultToolkit().getScreenSize();
         setLocation(d.width / 2 - getWidth() / 2, d.height / 2 - getHeight() / 2);
     }
 
-    public void yes() {
-        CURRENT_INSTANCE.DATA_HANDLER.deleteTransaction(UUID);
-        MAIN.updateTable();
+    public void deleteAction(long uuid, JFrame caller) {
+        CURRENT_INSTANCE.DATA_HANDLER.deleteTemplate(uuid);
+        if (caller instanceof TemplateGui) {
+            ((TemplateGui) caller).updateTable();
+        }
         dispose();
     }
 }

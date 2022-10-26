@@ -8,12 +8,12 @@ import com.donny.dendrofinance.json.JsonObject;
 import com.donny.dendrofinance.json.JsonString;
 
 public class TemplateEntry extends Entry {
-    private final String NAME;
+    private String name;
     private final long REF;
 
     public TemplateEntry(String name, long ref, Instance curInst) {
         super(curInst);
-        NAME = name;
+        this.name = name;
         REF = ref;
     }
 
@@ -23,12 +23,16 @@ public class TemplateEntry extends Entry {
 
     public TemplateEntry(JsonObject obj, ImportHandler.ImportMode mode, Instance curInst) {
         super(obj, mode, curInst);
-        NAME = obj.getString("name").getString();
+        name = obj.getString("name").getString();
         REF = obj.getDecimal("ref").decimal.longValue();
     }
 
     public String getName() {
-        return NAME;
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public long getRef() {
@@ -42,18 +46,18 @@ public class TemplateEntry extends Entry {
     @Override
     public JsonObject export() throws JsonFormattingException {
         JsonObject obj = super.export();
-        obj.put("name", new JsonString(NAME));
+        obj.put("name", new JsonString(name));
         obj.put("ref", new JsonDecimal(REF));
         return obj;
     }
 
     @Override
     public String toFlatString() {
-        return Long.toUnsignedString(getUUID()) + "\t" + NAME + "\n" + getTemplate().toFlatString();
+        return Long.toUnsignedString(getUUID()) + "\t" + name + "\n" + getTemplate().toFlatString();
     }
 
     @Override
     public String toString() {
-        return NAME;
+        return name;
     }
 }

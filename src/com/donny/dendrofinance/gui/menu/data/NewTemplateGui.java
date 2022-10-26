@@ -1,4 +1,4 @@
-package com.donny.dendrofinance.gui.menu.transactions;
+package com.donny.dendrofinance.gui.menu.data;
 
 import com.donny.dendrofinance.entry.TemplateEntry;
 import com.donny.dendrofinance.gui.customswing.DendroFactory;
@@ -12,7 +12,7 @@ public class NewTemplateGui extends ModalFrame {
     public final long UUID;
     private final JTextField NAME;
 
-    public NewTemplateGui(JFrame caller, long uuid, Instance curInst) {
+    public NewTemplateGui(JFrame caller, boolean ref, long uuid, Instance curInst) {
         super(caller, "New Template", curInst);
         UUID = uuid;
 
@@ -21,13 +21,13 @@ public class NewTemplateGui extends ModalFrame {
             JLabel a = new JLabel("UUID");
             JLabel b = new JLabel("name");
 
-            JTextField id = new JTextField(Long.toUnsignedString(uuid));
+            JTextField id = new JTextField();
             id.setBackground(DendroFactory.DISABLED);
             id.setEditable(false);
             NAME = new JTextField();
 
             JButton save = DendroFactory.getButton("Save");
-            save.addActionListener(event -> saveAction());
+            save.addActionListener(event -> saveAction(ref, caller));
             JButton cancel = DendroFactory.getButton("Cancel");
             cancel.addActionListener(event -> dispose());
             //Group layout
@@ -81,14 +81,29 @@ public class NewTemplateGui extends ModalFrame {
                         ).addContainerGap()
                 );
             }
+            if (ref) {
+                TemplateEntry entry = CURRENT_INSTANCE.DATA_HANDLER.getTemplateEntry(UUID);
+                id.setText(Long.toUnsignedString(entry.getRef()));
+                NAME.setText(entry.getName());
+            } else {
+                id.setText(Long.toUnsignedString(uuid));
+            }
         }
         pack();
         Dimension d = Toolkit.getDefaultToolkit().getScreenSize();
         setLocation(d.width / 2 - getWidth() / 2, d.height / 2 - getHeight() / 2);
     }
 
-    private void saveAction() {
-        CURRENT_INSTANCE.DATA_HANDLER.addTemplate(new TemplateEntry(NAME.getText(), UUID, CURRENT_INSTANCE));
+    private void saveAction(boolean ref, JFrame caller) {
+        if (ref) {
+            TemplateEntry entry = CURRENT_INSTANCE.DATA_HANDLER.getTemplateEntry(UUID);
+            entry.setName(NAME.getText());
+            if (caller instanceof TemplateGui) {
+                ((TemplateGui) caller).updateTable();
+            }
+        } else {
+            CURRENT_INSTANCE.DATA_HANDLER.addTemplate(new TemplateEntry(NAME.getText(), UUID, CURRENT_INSTANCE));
+        }
         dispose();
     }
 }

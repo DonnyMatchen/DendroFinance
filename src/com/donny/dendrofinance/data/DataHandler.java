@@ -583,6 +583,15 @@ public class DataHandler {
         return null;
     }
 
+    public TemplateEntry getTemplateEntry(long uuid) {
+        for (TemplateEntry entry : readTemplates()) {
+            if (entry.getUUID() == uuid) {
+                return entry;
+            }
+        }
+        return null;
+    }
+
     /**
      * @return Object[]{
      * ArrayList<Position> positions

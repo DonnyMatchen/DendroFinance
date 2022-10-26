@@ -7,9 +7,7 @@ import com.donny.dendrofinance.entry.TransactionEntry;
 import com.donny.dendrofinance.gui.customswing.AlertGui;
 import com.donny.dendrofinance.gui.customswing.DendroFactory;
 import com.donny.dendrofinance.gui.customswing.RegisterFrame;
-import com.donny.dendrofinance.gui.menu.data.AccountMetaGui;
-import com.donny.dendrofinance.gui.menu.data.BudgetTypeGui;
-import com.donny.dendrofinance.gui.menu.data.StatisticsGui;
+import com.donny.dendrofinance.gui.menu.data.*;
 import com.donny.dendrofinance.gui.menu.data.backing.BackingTableGui;
 import com.donny.dendrofinance.gui.menu.file.ChangePasswordGui;
 import com.donny.dendrofinance.gui.menu.file.ExportGui;
@@ -21,7 +19,6 @@ import com.donny.dendrofinance.gui.menu.trading.OrderBookGui;
 import com.donny.dendrofinance.gui.menu.trading.PositionGui;
 import com.donny.dendrofinance.gui.menu.trading.PricesGui;
 import com.donny.dendrofinance.gui.menu.transactions.DeleteEntryGui;
-import com.donny.dendrofinance.gui.menu.transactions.NewTemplateGui;
 import com.donny.dendrofinance.gui.menu.transactions.NewTransactionEntryGui;
 import com.donny.dendrofinance.gui.menu.transactions.SpecialTransactionEntryGui;
 import com.donny.dendrofinance.gui.menu.util.AccountReplacementGui;
@@ -180,6 +177,8 @@ public class MainGui extends JFrame {
                 accountMeta.addActionListener(event -> new AccountMetaGui(this, CURRENT_INSTANCE).setVisible(true));
                 JMenuItem budgetTyp = new JMenuItem("Budget Types");
                 budgetTyp.addActionListener(event -> new BudgetTypeGui(this, CURRENT_INSTANCE).setVisible(true));
+                JMenuItem template = new JMenuItem("Templates");
+                template.addActionListener(event -> new TemplateGui(this, CURRENT_INSTANCE).setVisible(true));
                 JMenuItem stats = new JMenuItem("Statistics");
                 stats.addActionListener(event -> new StatisticsGui(this, CURRENT_INSTANCE).setVisible(true));
 
@@ -193,6 +192,7 @@ public class MainGui extends JFrame {
                 data.add(new JSeparator());
                 data.add(accountMeta);
                 data.add(budgetTyp);
+                data.add(template);
                 data.add(stats);
 
                 //transactions
@@ -222,15 +222,15 @@ public class MainGui extends JFrame {
                     if (validSelection())
                         new DeleteEntryGui(this, getUUID(TABLE.getSelectedRow()), CURRENT_INSTANCE).setVisible(true);
                 });
-                JMenuItem template = new JMenuItem("Save as Template");
-                template.addActionListener(event -> {
+                JMenuItem newTemplate = new JMenuItem("Save as Template");
+                newTemplate.addActionListener(event -> {
                     if (validSelection())
-                        new NewTemplateGui(this, getUUID(TABLE.getSelectedRow()), CURRENT_INSTANCE).setVisible(true);
+                        new NewTemplateGui(this, false, getUUID(TABLE.getSelectedRow()), CURRENT_INSTANCE).setVisible(true);
                 });
                 thisTrans.add(edit);
                 thisTrans.add(clone);
                 thisTrans.add(delete);
-                thisTrans.add(template);
+                thisTrans.add(newTemplate);
 
                 trans.add(newTrans);
                 trans.add(thisTrans);

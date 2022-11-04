@@ -1,6 +1,8 @@
 ## v0.9.1
 * minor bug fixes
   * transaction cloning now functions
+  * cleaning moved to its own class
+    * cleaning now applied to number validation
 
 ## v0.9.0
 * major updates to guis

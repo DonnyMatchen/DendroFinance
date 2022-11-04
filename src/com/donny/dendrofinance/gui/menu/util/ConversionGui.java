@@ -5,6 +5,7 @@ import com.donny.dendrofinance.gui.MainGui;
 import com.donny.dendrofinance.gui.customswing.DendroFactory;
 import com.donny.dendrofinance.gui.customswing.RegisterFrame;
 import com.donny.dendrofinance.gui.customswing.SearchBox;
+import com.donny.dendrofinance.gui.form.Cleaning;
 import com.donny.dendrofinance.instance.Instance;
 import com.donny.dendrofinance.types.LDate;
 
@@ -99,7 +100,7 @@ public class ConversionGui extends RegisterFrame {
         if (!DATE.getText().equals("") && !new LDate(DATE.getText(), CURRENT_INSTANCE).toDateString().equals(LDate.now(CURRENT_INSTANCE).toDateString())) {
             LCurrency a = CURRENT_INSTANCE.getLCurrency(CUR_A.getSelectedItem());
             LCurrency b = CURRENT_INSTANCE.getLCurrency(CUR_B.getSelectedItem());
-            BigDecimal x = CURRENT_INSTANCE.cleanNumber(AMOUNT.getText());
+            BigDecimal x = Cleaning.cleanNumber(AMOUNT.getText());
             if (x.compareTo(BigDecimal.ZERO) == 0) {
                 x = BigDecimal.ONE;
             }
@@ -108,7 +109,7 @@ public class ConversionGui extends RegisterFrame {
         } else {
             LCurrency a = CURRENT_INSTANCE.getLCurrency(CUR_A.getSelectedItem());
             LCurrency b = CURRENT_INSTANCE.getLCurrency(CUR_B.getSelectedItem());
-            BigDecimal x = CURRENT_INSTANCE.cleanNumber(AMOUNT.getText());
+            BigDecimal x = Cleaning.cleanNumber(AMOUNT.getText());
             if (x.compareTo(BigDecimal.ZERO) == 0) {
                 x = BigDecimal.ONE;
             }

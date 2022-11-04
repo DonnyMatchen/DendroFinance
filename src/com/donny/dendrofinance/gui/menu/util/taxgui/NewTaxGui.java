@@ -2,6 +2,7 @@ package com.donny.dendrofinance.gui.menu.util.taxgui;
 
 import com.donny.dendrofinance.gui.customswing.DendroFactory;
 import com.donny.dendrofinance.gui.customswing.ModalFrame;
+import com.donny.dendrofinance.gui.form.Cleaning;
 import com.donny.dendrofinance.instance.Instance;
 import com.donny.dendrofinance.tax.TaxItem;
 
@@ -153,8 +154,8 @@ public class NewTaxGui extends ModalFrame {
         for (int i = 0; i < TABLE.getRowCount(); i++) {
             try {
                 list.add(new BigDecimal[]{
-                        CURRENT_INSTANCE.cleanNumber((String) TABLE_ACCESS.getValueAt(i, 0)),
-                        CURRENT_INSTANCE.cleanNumber((String) TABLE_ACCESS.getValueAt(i, 1))
+                        Cleaning.cleanNumber((String) TABLE_ACCESS.getValueAt(i, 0)),
+                        Cleaning.cleanNumber((String) TABLE_ACCESS.getValueAt(i, 1))
                 });
             } catch (NumberFormatException ex) {
                 CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Bad bracket: ["

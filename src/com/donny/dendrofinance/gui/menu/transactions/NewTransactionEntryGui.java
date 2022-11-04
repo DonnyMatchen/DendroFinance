@@ -497,7 +497,7 @@ public class NewTransactionEntryGui extends ModalFrame {
                     Validation.validateAccountSet(ACC, CURRENT_INSTANCE)
             );
             entry.setMeta(Validation.validateJsonObject(META));
-            if (UUID == 0) {
+            if (UUID == 0 || CLONE) {
                 CURRENT_INSTANCE.DATA_HANDLER.addTransaction(entry);
             }
             MAIN.updateTable();

@@ -1,3 +1,7 @@
+## v0.9.1
+* minor bug fixes
+  * transaction cloning now functions
+
 ## v0.9.0
 * major updates to guis
   * `NewTransactionEntryGui`

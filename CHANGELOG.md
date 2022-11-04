@@ -3,6 +3,7 @@
   * transaction cloning now functions
   * cleaning moved to its own class
     * cleaning now applied to number validation
+    * appreciation and depreciation gui now no longer requires pre-cleaned numbers
 
 ## v0.9.0
 * major updates to guis

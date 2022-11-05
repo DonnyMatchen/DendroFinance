@@ -9,6 +9,7 @@ import com.donny.dendrofinance.entry.TransactionEntry;
 import com.donny.dendrofinance.gui.MainGui;
 import com.donny.dendrofinance.gui.customswing.DendroFactory;
 import com.donny.dendrofinance.gui.customswing.RegisterFrame;
+import com.donny.dendrofinance.gui.form.Cleaning;
 import com.donny.dendrofinance.instance.Instance;
 import com.donny.dendrofinance.json.JsonDecimal;
 import com.donny.dendrofinance.util.Aggregation;
@@ -462,7 +463,7 @@ public class BudgetGui extends RegisterFrame {
                 String a = (String) EDIT_TABLE_ACCESS.getValueAt(i, 0);
                 String b = (String) EDIT_TABLE_ACCESS.getValueAt(i, 1);
                 if (entry != null) {
-                    entry.getBudget().put(a, new JsonDecimal(CURRENT_INSTANCE.cleanNumber(b)));
+                    entry.getBudget().put(a, new JsonDecimal(Cleaning.cleanNumber(b)));
                 }
             }
             updateBudget();

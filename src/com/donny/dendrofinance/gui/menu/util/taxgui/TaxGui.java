@@ -3,6 +3,7 @@ package com.donny.dendrofinance.gui.menu.util.taxgui;
 import com.donny.dendrofinance.gui.MainGui;
 import com.donny.dendrofinance.gui.customswing.DendroFactory;
 import com.donny.dendrofinance.gui.customswing.RegisterFrame;
+import com.donny.dendrofinance.gui.form.Cleaning;
 import com.donny.dendrofinance.instance.Instance;
 
 import javax.swing.*;
@@ -136,9 +137,9 @@ public class TaxGui extends RegisterFrame {
 
     private void calculateAction() {
         if (EXEMPT.getText().equals("")) {
-            RESULT.setText(CURRENT_INSTANCE.$(CURRENT_INSTANCE.TAX_ITEMS.getElement((String) ITEMS.getSelectedItem()).process(CURRENT_INSTANCE.cleanNumber(VALUE.getText()))));
+            RESULT.setText(CURRENT_INSTANCE.$(CURRENT_INSTANCE.TAX_ITEMS.getElement((String) ITEMS.getSelectedItem()).process(Cleaning.cleanNumber(VALUE.getText()))));
         } else {
-            RESULT.setText(CURRENT_INSTANCE.$(CURRENT_INSTANCE.TAX_ITEMS.getElement((String) ITEMS.getSelectedItem()).process(CURRENT_INSTANCE.cleanNumber(VALUE.getText()), CURRENT_INSTANCE.cleanNumber(EXEMPT.getText()))));
+            RESULT.setText(CURRENT_INSTANCE.$(CURRENT_INSTANCE.TAX_ITEMS.getElement((String) ITEMS.getSelectedItem()).process(Cleaning.cleanNumber(VALUE.getText()), Cleaning.cleanNumber(EXEMPT.getText()))));
         }
     }
 

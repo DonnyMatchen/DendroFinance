@@ -5,6 +5,7 @@ import com.donny.dendrofinance.entry.TransactionEntry;
 import com.donny.dendrofinance.gui.MainGui;
 import com.donny.dendrofinance.gui.customswing.DendroFactory;
 import com.donny.dendrofinance.gui.customswing.RegisterFrame;
+import com.donny.dendrofinance.gui.form.Cleaning;
 import com.donny.dendrofinance.instance.Instance;
 import com.donny.dendrofinance.types.LAccountSet;
 import com.donny.dendrofinance.types.LDate;
@@ -36,51 +37,53 @@ public class AppDepGui extends RegisterFrame {
                 public void insertUpdate(DocumentEvent documentEvent) {
                     try {
                         LDate date = new LDate(DATE.getText(), CURRENT_INSTANCE);
-                        STOCK_CURRENT.setText(CURRENT_INSTANCE.DATA_HANDLER.accountAsOf(Account.stockName, date).toString());
-                        CRYPTO_CURRENT.setText(CURRENT_INSTANCE.DATA_HANDLER.accountAsOf(Account.cryptoName, date).toString());
-                        INV_CURRENT.setText(CURRENT_INSTANCE.DATA_HANDLER.accountAsOf(Account.inventoryName, date).toString());
-                        FIAT_CURRENT.setText(CURRENT_INSTANCE.DATA_HANDLER.accountAsOf(Account.fiatName, date).toString());
+                        STOCK_CURRENT.setText(CURRENT_INSTANCE.main.encode(CURRENT_INSTANCE.DATA_HANDLER.accountAsOf(Account.stockName, date)));
+                        CRYPTO_CURRENT.setText(CURRENT_INSTANCE.main.encode(CURRENT_INSTANCE.DATA_HANDLER.accountAsOf(Account.cryptoName, date)));
+                        INV_CURRENT.setText(CURRENT_INSTANCE.main.encode(CURRENT_INSTANCE.DATA_HANDLER.accountAsOf(Account.inventoryName, date)));
+                        FIAT_CURRENT.setText(CURRENT_INSTANCE.main.encode(CURRENT_INSTANCE.DATA_HANDLER.accountAsOf(Account.fiatName, date)));
                     } catch (ArrayIndexOutOfBoundsException | NumberFormatException ex) {
                     }
                 }
 
                 @Override
                 public void removeUpdate(DocumentEvent documentEvent) {
-
+                    try {
+                        LDate date = new LDate(DATE.getText(), CURRENT_INSTANCE);
+                        STOCK_CURRENT.setText(CURRENT_INSTANCE.main.encode(CURRENT_INSTANCE.DATA_HANDLER.accountAsOf(Account.stockName, date)));
+                        CRYPTO_CURRENT.setText(CURRENT_INSTANCE.main.encode(CURRENT_INSTANCE.DATA_HANDLER.accountAsOf(Account.cryptoName, date)));
+                        INV_CURRENT.setText(CURRENT_INSTANCE.main.encode(CURRENT_INSTANCE.DATA_HANDLER.accountAsOf(Account.inventoryName, date)));
+                        FIAT_CURRENT.setText(CURRENT_INSTANCE.main.encode(CURRENT_INSTANCE.DATA_HANDLER.accountAsOf(Account.fiatName, date)));
+                    } catch (ArrayIndexOutOfBoundsException | NumberFormatException ex) {
+                    }
                 }
 
                 @Override
                 public void changedUpdate(DocumentEvent documentEvent) {
-
+                    try {
+                        LDate date = new LDate(DATE.getText(), CURRENT_INSTANCE);
+                        STOCK_CURRENT.setText(CURRENT_INSTANCE.main.encode(CURRENT_INSTANCE.DATA_HANDLER.accountAsOf(Account.stockName, date)));
+                        CRYPTO_CURRENT.setText(CURRENT_INSTANCE.main.encode(CURRENT_INSTANCE.DATA_HANDLER.accountAsOf(Account.cryptoName, date)));
+                        INV_CURRENT.setText(CURRENT_INSTANCE.main.encode(CURRENT_INSTANCE.DATA_HANDLER.accountAsOf(Account.inventoryName, date)));
+                        FIAT_CURRENT.setText(CURRENT_INSTANCE.main.encode(CURRENT_INSTANCE.DATA_HANDLER.accountAsOf(Account.fiatName, date)));
+                    } catch (ArrayIndexOutOfBoundsException | NumberFormatException ex) {
+                    }
                 }
             });
             STOCK = new JTextField();
             STOCK.getDocument().addDocumentListener(new DocumentListener() {
                 @Override
                 public void insertUpdate(DocumentEvent documentEvent) {
-                    try {
-                        BigDecimal x = new BigDecimal(STOCK.getText());
-                        STOCK_APP.setText(x.subtract(new BigDecimal(STOCK_CURRENT.getText())).toString());
-                    } catch (NumberFormatException ex) {
-                    }
+                    STOCK_APP.setText(CURRENT_INSTANCE.main.encode(Cleaning.cleanNumber(STOCK.getText()).subtract(Cleaning.cleanNumber(STOCK_CURRENT.getText()))));
                 }
 
                 @Override
                 public void removeUpdate(DocumentEvent documentEvent) {
-                    try {
-                        BigDecimal x = new BigDecimal(STOCK.getText());
-                        STOCK_APP.setText(x.subtract(new BigDecimal(STOCK_CURRENT.getText())).toString());
-                    } catch (NumberFormatException ex) {
-                    }
+                    STOCK_APP.setText(CURRENT_INSTANCE.main.encode(Cleaning.cleanNumber(STOCK.getText()).subtract(Cleaning.cleanNumber(STOCK_CURRENT.getText()))));
                 }
 
                 @Override
                 public void changedUpdate(DocumentEvent documentEvent) {
-                    try {
-                        BigDecimal x = new BigDecimal(STOCK.getText());
-                        STOCK_APP.setText(x.subtract(new BigDecimal(STOCK_CURRENT.getText())).toString());
-                    } catch (NumberFormatException ex) {
-                    }
+                    STOCK_APP.setText(CURRENT_INSTANCE.main.encode(Cleaning.cleanNumber(STOCK.getText()).subtract(Cleaning.cleanNumber(STOCK_CURRENT.getText()))));
                 }
             });
             STOCK_CURRENT = new JTextField();
@@ -91,29 +94,17 @@ public class AppDepGui extends RegisterFrame {
             CRYPTO.getDocument().addDocumentListener(new DocumentListener() {
                 @Override
                 public void insertUpdate(DocumentEvent documentEvent) {
-                    try {
-                        BigDecimal x = new BigDecimal(CRYPTO.getText());
-                        CRYPTO_APP.setText(x.subtract(new BigDecimal(CRYPTO_CURRENT.getText())).toString());
-                    } catch (NumberFormatException ex) {
-                    }
+                    CRYPTO_APP.setText(CURRENT_INSTANCE.main.encode(Cleaning.cleanNumber(CRYPTO.getText()).subtract(Cleaning.cleanNumber(CRYPTO_CURRENT.getText()))));
                 }
 
                 @Override
                 public void removeUpdate(DocumentEvent documentEvent) {
-                    try {
-                        BigDecimal x = new BigDecimal(CRYPTO.getText());
-                        CRYPTO_APP.setText(x.subtract(new BigDecimal(CRYPTO_CURRENT.getText())).toString());
-                    } catch (NumberFormatException ex) {
-                    }
+                    CRYPTO_APP.setText(CURRENT_INSTANCE.main.encode(Cleaning.cleanNumber(CRYPTO.getText()).subtract(Cleaning.cleanNumber(CRYPTO_CURRENT.getText()))));
                 }
 
                 @Override
                 public void changedUpdate(DocumentEvent documentEvent) {
-                    try {
-                        BigDecimal x = new BigDecimal(CRYPTO.getText());
-                        CRYPTO_APP.setText(x.subtract(new BigDecimal(CRYPTO_CURRENT.getText())).toString());
-                    } catch (NumberFormatException ex) {
-                    }
+                    CRYPTO_APP.setText(CURRENT_INSTANCE.main.encode(Cleaning.cleanNumber(CRYPTO.getText()).subtract(Cleaning.cleanNumber(CRYPTO_CURRENT.getText()))));
                 }
             });
             CRYPTO_CURRENT = new JTextField();
@@ -124,29 +115,17 @@ public class AppDepGui extends RegisterFrame {
             INV.getDocument().addDocumentListener(new DocumentListener() {
                 @Override
                 public void insertUpdate(DocumentEvent documentEvent) {
-                    try {
-                        BigDecimal x = new BigDecimal(INV.getText());
-                        INV_APP.setText(x.subtract(new BigDecimal(INV_CURRENT.getText())).toString());
-                    } catch (NumberFormatException ex) {
-                    }
+                    INV_APP.setText(CURRENT_INSTANCE.main.encode(Cleaning.cleanNumber(INV.getText()).subtract(Cleaning.cleanNumber(INV_CURRENT.getText()))));
                 }
 
                 @Override
                 public void removeUpdate(DocumentEvent documentEvent) {
-                    try {
-                        BigDecimal x = new BigDecimal(INV.getText());
-                        INV_APP.setText(x.subtract(new BigDecimal(INV_CURRENT.getText())).toString());
-                    } catch (NumberFormatException ex) {
-                    }
+                    INV_APP.setText(CURRENT_INSTANCE.main.encode(Cleaning.cleanNumber(INV.getText()).subtract(Cleaning.cleanNumber(INV_CURRENT.getText()))));
                 }
 
                 @Override
                 public void changedUpdate(DocumentEvent documentEvent) {
-                    try {
-                        BigDecimal x = new BigDecimal(INV.getText());
-                        INV_APP.setText(x.subtract(new BigDecimal(INV_CURRENT.getText())).toString());
-                    } catch (NumberFormatException ex) {
-                    }
+                    INV_APP.setText(CURRENT_INSTANCE.main.encode(Cleaning.cleanNumber(INV.getText()).subtract(Cleaning.cleanNumber(INV_CURRENT.getText()))));
                 }
             });
             INV_CURRENT = new JTextField();
@@ -157,29 +136,17 @@ public class AppDepGui extends RegisterFrame {
             FIAT.getDocument().addDocumentListener(new DocumentListener() {
                 @Override
                 public void insertUpdate(DocumentEvent documentEvent) {
-                    try {
-                        BigDecimal x = new BigDecimal(FIAT.getText());
-                        FIAT_APP.setText(x.subtract(new BigDecimal(FIAT_CURRENT.getText())).toString());
-                    } catch (NumberFormatException ex) {
-                    }
+                    FIAT_APP.setText(CURRENT_INSTANCE.main.encode(Cleaning.cleanNumber(FIAT.getText()).subtract(Cleaning.cleanNumber(FIAT_CURRENT.getText()))));
                 }
 
                 @Override
                 public void removeUpdate(DocumentEvent documentEvent) {
-                    try {
-                        BigDecimal x = new BigDecimal(FIAT.getText());
-                        FIAT_APP.setText(x.subtract(new BigDecimal(FIAT_CURRENT.getText())).toString());
-                    } catch (NumberFormatException ex) {
-                    }
+                    FIAT_APP.setText(CURRENT_INSTANCE.main.encode(Cleaning.cleanNumber(FIAT.getText()).subtract(Cleaning.cleanNumber(FIAT_CURRENT.getText()))));
                 }
 
                 @Override
                 public void changedUpdate(DocumentEvent documentEvent) {
-                    try {
-                        BigDecimal x = new BigDecimal(FIAT.getText());
-                        FIAT_APP.setText(x.subtract(new BigDecimal(FIAT_CURRENT.getText())).toString());
-                    } catch (NumberFormatException ex) {
-                    }
+                    FIAT_APP.setText(CURRENT_INSTANCE.main.encode(Cleaning.cleanNumber(FIAT.getText()).subtract(Cleaning.cleanNumber(FIAT_CURRENT.getText()))));
                 }
             });
             FIAT_CURRENT = new JTextField();
@@ -188,7 +155,6 @@ public class AppDepGui extends RegisterFrame {
             FIAT_APP.setEditable(false);
             JButton save = DendroFactory.getButton("Save");
             save.addActionListener(event -> saveAction());
-
             //group layout
             {
                 GroupLayout main = new GroupLayout(getContentPane());
@@ -306,6 +272,10 @@ public class AppDepGui extends RegisterFrame {
             LDate date = LDate.now(CURRENT_INSTANCE);
             date = new LDate(date.getYear(), date.lastMonth(), LDate.lastDay(date.getYear(), date.lastMonth(), CURRENT_INSTANCE), 23, 59, 59, CURRENT_INSTANCE);
             DATE.setText(date.toString());
+            STOCK.setText(STOCK_CURRENT.getText());
+            CRYPTO.setText(CRYPTO_CURRENT.getText());
+            INV.setText(INV_CURRENT.getText());
+            FIAT.setText(FIAT_CURRENT.getText());
         }
         pack();
         Dimension d = Toolkit.getDefaultToolkit().getScreenSize();

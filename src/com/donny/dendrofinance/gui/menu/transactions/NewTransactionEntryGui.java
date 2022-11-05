@@ -8,6 +8,7 @@ import com.donny.dendrofinance.gui.customswing.DendroFactory;
 import com.donny.dendrofinance.gui.customswing.ItemField;
 import com.donny.dendrofinance.gui.customswing.ModalFrame;
 import com.donny.dendrofinance.gui.customswing.SearchBox;
+import com.donny.dendrofinance.gui.form.Cleaning;
 import com.donny.dendrofinance.gui.form.Validation;
 import com.donny.dendrofinance.gui.form.ValidationFailedException;
 import com.donny.dendrofinance.instance.Instance;
@@ -87,7 +88,7 @@ public class NewTransactionEntryGui extends ModalFrame {
                 });
                 JButton addAcc = DendroFactory.getButton("Add");
                 addAcc.addActionListener(event -> {
-                    ACC.addText(((String) type.getSelectedItem()).charAt(0) + "!" + account.getSelectedItem() + "(" + CURRENT_INSTANCE.cleanNumber(amount.getText()) + "), ");
+                    ACC.addText(((String) type.getSelectedItem()).charAt(0) + "!" + account.getSelectedItem() + "(" + Cleaning.cleanNumber(amount.getText()) + "), ");
                     amount.setText("");
                     type.setSelectedIndex(0);
                     account.clear();
@@ -497,7 +498,7 @@ public class NewTransactionEntryGui extends ModalFrame {
                     Validation.validateAccountSet(ACC, CURRENT_INSTANCE)
             );
             entry.setMeta(Validation.validateJsonObject(META));
-            if (UUID == 0) {
+            if (UUID == 0 || CLONE) {
                 CURRENT_INSTANCE.DATA_HANDLER.addTransaction(entry);
             }
             MAIN.updateTable();
@@ -540,7 +541,7 @@ public class NewTransactionEntryGui extends ModalFrame {
                                 obj.put("desc", new JsonString(tableAccess.getValueAt(i, 1).toString()));
                                 obj.put("currency", new JsonString(tableAccess.getValueAt(i, 2).toString()));
                                 obj.put("val", new JsonDecimal(
-                                        CURRENT_INSTANCE.cleanNumber(tableAccess.getValueAt(i, 3).toString())
+                                        Cleaning.cleanNumber(tableAccess.getValueAt(i, 3).toString())
                                 ));
                                 obj.put("count", new JsonDecimal(tableAccess.getValueAt(i, 4).toString()));
                                 arr.add(obj);
@@ -565,10 +566,10 @@ public class NewTransactionEntryGui extends ModalFrame {
                                 obj.put("desc", new JsonString(tableAccess.getValueAt(i, 1).toString()));
                                 obj.put("cur", new JsonString(tableAccess.getValueAt(i, 2).toString()));
                                 obj.put("princ", new JsonDecimal(
-                                        CURRENT_INSTANCE.cleanNumber(tableAccess.getValueAt(i, 3).toString())
+                                        Cleaning.cleanNumber(tableAccess.getValueAt(i, 3).toString())
                                 ));
                                 obj.put("rate", new JsonDecimal(
-                                        CURRENT_INSTANCE.cleanNumber(tableAccess.getValueAt(i, 4).toString())
+                                        Cleaning.cleanNumber(tableAccess.getValueAt(i, 4).toString())
                                 ));
                                 arr.add(obj);
                             }
@@ -591,13 +592,13 @@ public class NewTransactionEntryGui extends ModalFrame {
                                 obj.put("from-cur", new JsonString(tableAccess.getValueAt(i, 0).toString()));
                                 obj.put("to-cur", new JsonString(tableAccess.getValueAt(i, 1).toString()));
                                 obj.put("from-amnt", new JsonDecimal(
-                                        CURRENT_INSTANCE.cleanNumber(tableAccess.getValueAt(i, 2).toString())
+                                        Cleaning.cleanNumber(tableAccess.getValueAt(i, 2).toString())
                                 ));
                                 obj.put("to-amnt", new JsonDecimal(
-                                        CURRENT_INSTANCE.cleanNumber(tableAccess.getValueAt(i, 3).toString())
+                                        Cleaning.cleanNumber(tableAccess.getValueAt(i, 3).toString())
                                 ));
                                 obj.put("main-amnt", new JsonDecimal(
-                                        CURRENT_INSTANCE.cleanNumber(tableAccess.getValueAt(i, 4).toString())
+                                        Cleaning.cleanNumber(tableAccess.getValueAt(i, 4).toString())
                                 ));
                                 arr.add(obj);
                             }
@@ -620,7 +621,7 @@ public class NewTransactionEntryGui extends ModalFrame {
                                 obj.put("name", new JsonString(tableAccess.getValueAt(i, 0).toString()));
                                 obj.put("currency", new JsonString(tableAccess.getValueAt(i, 1).toString()));
                                 obj.put("change", new JsonDecimal(
-                                        CURRENT_INSTANCE.cleanNumber(tableAccess.getValueAt(i, 2).toString())
+                                        Cleaning.cleanNumber(tableAccess.getValueAt(i, 2).toString())
                                 ));
                                 obj.put("count", new JsonDecimal(tableAccess.getValueAt(i, 3).toString()));
                                 arr.add(obj);
@@ -671,7 +672,7 @@ public class NewTransactionEntryGui extends ModalFrame {
                                     obj.put("cashed", new JsonDecimal(new LDate(tableAccess.getValueAt(i, 0).toString(), CURRENT_INSTANCE).getTime()));
                                 }
                                 obj.put("number", new JsonString(tableAccess.getValueAt(i, 1).toString()));
-                                obj.put("value", new JsonDecimal(CURRENT_INSTANCE.cleanNumber(tableAccess.getValueAt(i, 2).toString())));
+                                obj.put("value", new JsonDecimal(Cleaning.cleanNumber(tableAccess.getValueAt(i, 2).toString())));
                                 arr.add(obj);
                             }
                         }

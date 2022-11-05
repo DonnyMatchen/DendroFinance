@@ -891,27 +891,6 @@ public class Instance {
         box.addItem("December");
     }
 
-    public BigDecimal cleanNumber(String raw) {
-        boolean flag = raw.contains("%");
-        raw = raw.replace("(", "-");
-        String allowed = "0123456789.-";
-        StringBuilder out = new StringBuilder();
-        for (char c : raw.toCharArray()) {
-            if (allowed.contains("" + c)) {
-                out.append(c);
-            }
-        }
-        if (out.length() == 0) {
-            return BigDecimal.ZERO;
-        } else {
-            if (flag) {
-                return new BigDecimal(out.toString()).divide(BigDecimal.TEN.pow(2), precision);
-            } else {
-                return new BigDecimal(out.toString());
-            }
-        }
-    }
-
     public ArrayList<String> getAllTaxItemsAsStrings() {
         ArrayList<String> out = new ArrayList<>();
         TAX_ITEMS.forEach(item -> out.add(item.NAME));

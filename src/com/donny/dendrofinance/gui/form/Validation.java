@@ -12,6 +12,7 @@ import com.donny.dendrofinance.types.LDate;
 import javax.swing.*;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.math.MathContext;
 
 public class Validation {
     public static void require(JTextField field) throws ValidationFailedException {
@@ -57,24 +58,20 @@ public class Validation {
 
     public static BigDecimal validateDecimal(JTextField field) throws ValidationFailedException {
         require(field);
-        try {
-            field.setBackground(DendroFactory.CONTENT);
-            return new BigDecimal(field.getText());
-        } catch (NumberFormatException e) {
-            field.setBackground(DendroFactory.WRONG);
-            throw new ValidationFailedException("Field is not a valid number");
-        }
+        field.setBackground(DendroFactory.CONTENT);
+        return Cleaning.cleanNumber(field.getText());
+    }
+
+    public static BigDecimal validateDecimalAllowPercent(JTextField field, MathContext precision) throws ValidationFailedException {
+        require(field);
+        field.setBackground(DendroFactory.CONTENT);
+        return Cleaning.cleanNumberAllowPercent(field.getText(), precision);
     }
 
     public static BigInteger validateInteger(JTextField field) throws ValidationFailedException {
         require(field);
-        try {
-            field.setBackground(DendroFactory.CONTENT);
-            return new BigInteger(field.getText());
-        } catch (NumberFormatException e) {
-            field.setBackground(DendroFactory.WRONG);
-            throw new ValidationFailedException("Field is not a valid integer");
-        }
+        field.setBackground(DendroFactory.CONTENT);
+        return Cleaning.cleanInteger(field.getText());
     }
 
     public static String validateString(JTextField field) throws ValidationFailedException {

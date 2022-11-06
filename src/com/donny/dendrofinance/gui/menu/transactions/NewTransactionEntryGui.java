@@ -38,7 +38,7 @@ public class NewTransactionEntryGui extends ModalFrame {
     }
 
     public NewTransactionEntryGui(MainGui caller, long uuid, boolean clone, Instance curInst) {
-        super(caller, (uuid == 0 ? "New" : "Edit") + " Transaction Entry", curInst);
+        super(caller, (uuid == 0 ? "New" : clone ? "Clone" : "Edit") + " Transaction Entry", curInst);
         MAIN = caller;
         UUID = uuid;
         CLONE = clone;

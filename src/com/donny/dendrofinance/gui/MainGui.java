@@ -242,7 +242,9 @@ public class MainGui extends JFrame {
                 checks.addActionListener(event -> new CheckGui(this, CURRENT_INSTANCE).setVisible(true));
 
                 JMenuItem bal = new JMenuItem("Balance Sheet");
-                bal.addActionListener(event -> new BalanceSheetGui(this, CURRENT_INSTANCE).setVisible(true));
+                bal.addActionListener(event -> new BalanceSheetGui(this, false, CURRENT_INSTANCE).setVisible(true));
+                JMenuItem dif = new JMenuItem("Change in Accounts");
+                dif.addActionListener(event -> new BalanceSheetGui(this, true, CURRENT_INSTANCE).setVisible(true));
                 JMenuItem acc = new JMenuItem("Asset Status");
                 acc.addActionListener(event -> new AssetStatusGui(this, CURRENT_INSTANCE).setVisible(true));
 
@@ -259,6 +261,7 @@ public class MainGui extends JFrame {
                 rep.add(checks);
                 rep.add(new JSeparator());
                 rep.add(bal);
+                rep.add(dif);
                 rep.add(acc);
                 rep.add(new JSeparator());
                 rep.add(budg);

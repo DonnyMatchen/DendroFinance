@@ -6,6 +6,8 @@ import com.donny.dendrofinance.gui.MainGui;
 import com.donny.dendrofinance.gui.customswing.DendroFactory;
 import com.donny.dendrofinance.gui.customswing.RegisterFrame;
 import com.donny.dendrofinance.gui.form.Cleaning;
+import com.donny.dendrofinance.gui.form.Validation;
+import com.donny.dendrofinance.gui.form.ValidationFailedException;
 import com.donny.dendrofinance.instance.Instance;
 import com.donny.dendrofinance.types.LAccountSet;
 import com.donny.dendrofinance.types.LDate;
@@ -33,40 +35,31 @@ public class AppDepGui extends RegisterFrame {
             JLabel e = new JLabel("Non-main Fiat");
             DATE = new JTextField();
             DATE.getDocument().addDocumentListener(new DocumentListener() {
-                @Override
-                public void insertUpdate(DocumentEvent documentEvent) {
+                private void sharedAction() {
                     try {
-                        LDate date = new LDate(DATE.getText(), CURRENT_INSTANCE);
+                        LDate date = Validation.validateDate(DATE, CURRENT_INSTANCE);
                         STOCK_CURRENT.setText(CURRENT_INSTANCE.main.encode(CURRENT_INSTANCE.DATA_HANDLER.accountAsOf(Account.stockName, date)));
                         CRYPTO_CURRENT.setText(CURRENT_INSTANCE.main.encode(CURRENT_INSTANCE.DATA_HANDLER.accountAsOf(Account.cryptoName, date)));
                         INV_CURRENT.setText(CURRENT_INSTANCE.main.encode(CURRENT_INSTANCE.DATA_HANDLER.accountAsOf(Account.inventoryName, date)));
                         FIAT_CURRENT.setText(CURRENT_INSTANCE.main.encode(CURRENT_INSTANCE.DATA_HANDLER.accountAsOf(Account.fiatName, date)));
-                    } catch (ArrayIndexOutOfBoundsException | NumberFormatException ex) {
+                    } catch (ValidationFailedException ex) {
+                        CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Not a valid date: " + DATE.getText());
                     }
+                }
+
+                @Override
+                public void insertUpdate(DocumentEvent documentEvent) {
+                    sharedAction();
                 }
 
                 @Override
                 public void removeUpdate(DocumentEvent documentEvent) {
-                    try {
-                        LDate date = new LDate(DATE.getText(), CURRENT_INSTANCE);
-                        STOCK_CURRENT.setText(CURRENT_INSTANCE.main.encode(CURRENT_INSTANCE.DATA_HANDLER.accountAsOf(Account.stockName, date)));
-                        CRYPTO_CURRENT.setText(CURRENT_INSTANCE.main.encode(CURRENT_INSTANCE.DATA_HANDLER.accountAsOf(Account.cryptoName, date)));
-                        INV_CURRENT.setText(CURRENT_INSTANCE.main.encode(CURRENT_INSTANCE.DATA_HANDLER.accountAsOf(Account.inventoryName, date)));
-                        FIAT_CURRENT.setText(CURRENT_INSTANCE.main.encode(CURRENT_INSTANCE.DATA_HANDLER.accountAsOf(Account.fiatName, date)));
-                    } catch (ArrayIndexOutOfBoundsException | NumberFormatException ex) {
-                    }
+                    sharedAction();
                 }
 
                 @Override
                 public void changedUpdate(DocumentEvent documentEvent) {
-                    try {
-                        LDate date = new LDate(DATE.getText(), CURRENT_INSTANCE);
-                        STOCK_CURRENT.setText(CURRENT_INSTANCE.main.encode(CURRENT_INSTANCE.DATA_HANDLER.accountAsOf(Account.stockName, date)));
-                        CRYPTO_CURRENT.setText(CURRENT_INSTANCE.main.encode(CURRENT_INSTANCE.DATA_HANDLER.accountAsOf(Account.cryptoName, date)));
-                        INV_CURRENT.setText(CURRENT_INSTANCE.main.encode(CURRENT_INSTANCE.DATA_HANDLER.accountAsOf(Account.inventoryName, date)));
-                        FIAT_CURRENT.setText(CURRENT_INSTANCE.main.encode(CURRENT_INSTANCE.DATA_HANDLER.accountAsOf(Account.fiatName, date)));
-                    } catch (ArrayIndexOutOfBoundsException | NumberFormatException ex) {
-                    }
+                    sharedAction();
                 }
             });
             STOCK = new JTextField();
@@ -289,31 +282,35 @@ public class AppDepGui extends RegisterFrame {
         BigDecimal inventory = new BigDecimal(INV_APP.getText());
         BigDecimal fiat = new BigDecimal(FIAT_APP.getText());
         x = x.add(stock).add(crypto).add(inventory).add(fiat);
-        LDate date = new LDate(DATE.getText(), CURRENT_INSTANCE);
-        TransactionEntry entry = new TransactionEntry(CURRENT_INSTANCE);
-        String accs = (stock.compareTo(BigDecimal.ZERO) == 0 ? "" : stock.compareTo(BigDecimal.ZERO) > 0 ? "D!" + Account.stockName + "(" + stock + "), " : "C!" + Account.stockName + "(" + stock.abs() + "), ")
-                + (crypto.compareTo(BigDecimal.ZERO) == 0 ? "" : crypto.compareTo(BigDecimal.ZERO) > 0 ? "D!" + Account.cryptoName + "(" + crypto + "), " : "C!" + Account.cryptoName + "(" + crypto.abs() + "), ")
-                + (inventory.compareTo(BigDecimal.ZERO) == 0 ? "" : inventory.compareTo(BigDecimal.ZERO) > 0 ? "D!" + Account.inventoryName + "(" + inventory + "), " : "C!" + Account.inventoryName + "(" + inventory.abs() + "), ")
-                + (fiat.compareTo(BigDecimal.ZERO) == 0 ? "" : fiat.compareTo(BigDecimal.ZERO) > 0 ? "D!" + Account.fiatName + "(" + fiat + "), " : "C!" + Account.fiatName + "(" + fiat.abs() + "), ");
-        if (x.compareTo(BigDecimal.ZERO) >= 0) {
-            entry.insert(
-                    date,
-                    "ACC",
-                    "",
-                    Account.appreciationName + " (" + date.getYear() + "-" + (date.getMonth() < 10 ? "0" : "") + date.getMonth() + ")",
-                    new LAccountSet("C!" + Account.appreciationName + "(" + x + "), " + accs, CURRENT_INSTANCE)
-            );
-        } else {
-            entry.insert(
-                    date,
-                    "ACC",
-                    "",
-                    Account.depreciationName + " (" + date.getYear() + "-" + (date.getMonth() < 10 ? "0" : "") + date.getMonth() + ")",
-                    new LAccountSet("D!" + Account.depreciationName + "(" + x.abs() + "), " + accs, CURRENT_INSTANCE)
-            );
+        try {
+            LDate date = Validation.validateDate(DATE, CURRENT_INSTANCE);
+            TransactionEntry entry = new TransactionEntry(CURRENT_INSTANCE);
+            String accs = (stock.compareTo(BigDecimal.ZERO) == 0 ? "" : stock.compareTo(BigDecimal.ZERO) > 0 ? "D!" + Account.stockName + "(" + stock + "), " : "C!" + Account.stockName + "(" + stock.abs() + "), ")
+                    + (crypto.compareTo(BigDecimal.ZERO) == 0 ? "" : crypto.compareTo(BigDecimal.ZERO) > 0 ? "D!" + Account.cryptoName + "(" + crypto + "), " : "C!" + Account.cryptoName + "(" + crypto.abs() + "), ")
+                    + (inventory.compareTo(BigDecimal.ZERO) == 0 ? "" : inventory.compareTo(BigDecimal.ZERO) > 0 ? "D!" + Account.inventoryName + "(" + inventory + "), " : "C!" + Account.inventoryName + "(" + inventory.abs() + "), ")
+                    + (fiat.compareTo(BigDecimal.ZERO) == 0 ? "" : fiat.compareTo(BigDecimal.ZERO) > 0 ? "D!" + Account.fiatName + "(" + fiat + "), " : "C!" + Account.fiatName + "(" + fiat.abs() + "), ");
+            if (x.compareTo(BigDecimal.ZERO) >= 0) {
+                entry.insert(
+                        date,
+                        "ACC",
+                        "",
+                        Account.appreciationName + " (" + date.getYear() + "-" + (date.getMonth() < 10 ? "0" : "") + date.getMonth() + ")",
+                        new LAccountSet("C!" + Account.appreciationName + "(" + x + "), " + accs, CURRENT_INSTANCE)
+                );
+            } else {
+                entry.insert(
+                        date,
+                        "ACC",
+                        "",
+                        Account.depreciationName + " (" + date.getYear() + "-" + (date.getMonth() < 10 ? "0" : "") + date.getMonth() + ")",
+                        new LAccountSet("D!" + Account.depreciationName + "(" + x.abs() + "), " + accs, CURRENT_INSTANCE)
+                );
+            }
+            CURRENT_INSTANCE.DATA_HANDLER.addTransaction(entry);
+            CALLER.updateTable();
+            dispose();
+        } catch (ValidationFailedException e) {
+            CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Not a valid date: " + DATE.getText());
         }
-        CURRENT_INSTANCE.DATA_HANDLER.addTransaction(entry);
-        CALLER.updateTable();
-        dispose();
     }
 }

@@ -34,6 +34,7 @@ import java.math.MathContext;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.text.DecimalFormat;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
@@ -749,22 +750,30 @@ public class Instance {
                 LCurrency cur = getLCurrency(history.getString("currency").getString());
                 JsonArray arr = history.getArray("history");
                 BigDecimal price = BigDecimal.ZERO;
-                if (new LDate(arr.getObject(0).getString("date").getString(), this).compareTo(date) > 0) {
-                    price = arr.getObject(0).getDecimal("price").decimal;
-                } else {
-                    for (int i = 0; i < arr.size(); i++) {
-                        JsonObject obj = arr.getObject(i);
-                        LDate dateI = new LDate(obj.getString("date").getString(), this);
-                        if (i < arr.size() - 1) {
-                            LDate dateII = new LDate(arr.getObject(i + 1).getString("date").getString(), this);
-                            if (date.compareTo(dateI) >= 0 && date.compareTo(dateII) <= 0) {
+                try {
+                    if (new LDate(arr.getObject(0).getString("date").getString(), this).compareTo(date) > 0) {
+                        price = arr.getObject(0).getDecimal("price").decimal;
+                    } else {
+                        for (int i = 0; i < arr.size(); i++) {
+                            JsonObject obj = arr.getObject(i);
+                            LDate dateI = new LDate(obj.getString("date").getString(), this);
+                            if (i < arr.size() - 1) {
+                                LDate dateII = new LDate(arr.getObject(i + 1).getString("date").getString(), this);
+                                if (date.compareTo(dateI) >= 0 && date.compareTo(dateII) <= 0) {
+                                    price = obj.getDecimal("price").decimal;
+                                    break;
+                                }
+                            }
+                            if (i == arr.size() - 1) {
                                 price = obj.getDecimal("price").decimal;
-                                break;
                             }
                         }
-                        if (i == arr.size() - 1) {
-                            price = obj.getDecimal("price").decimal;
-                        }
+                    }
+                } catch (ParseException e) {
+                    if (aStock != null) {
+                        LOG_HANDLER.error(getClass(), "Damaged date in private stock history json: " + a);
+                    } else {
+                        LOG_HANDLER.error(getClass(), "Damaged date in private inventory history json: " + a);
                     }
                 }
                 if (cur.equals(b)) {
@@ -774,7 +783,7 @@ public class Instance {
                 }
             } else {
                 JsonObject history;
-                if (aStock != null) {
+                if (bStock != null) {
                     history = FILE_HANDLER.getPrivateStock(b.getTicker());
                 } else {
                     history = FILE_HANDLER.getPrivateInventory(b.getTicker());
@@ -782,22 +791,30 @@ public class Instance {
                 LCurrency cur = getLCurrency(history.getString("currency").getString());
                 JsonArray arr = history.getArray("history");
                 BigDecimal price = BigDecimal.ZERO;
-                if (new LDate(arr.getObject(0).getString("date").getString(), this).compareTo(date) > 0) {
-                    price = arr.getObject(0).getDecimal("price").decimal;
-                } else {
-                    for (int i = 0; i < arr.size(); i++) {
-                        JsonObject obj = arr.getObject(i);
-                        LDate dateI = new LDate(obj.getString("date").getString(), this);
-                        if (i < arr.size() - 1) {
-                            LDate dateII = new LDate(arr.getObject(i + 1).getString("date").getString(), this);
-                            if (date.compareTo(dateI) >= 0 && date.compareTo(dateII) <= 0) {
+                try {
+                    if (new LDate(arr.getObject(0).getString("date").getString(), this).compareTo(date) > 0) {
+                        price = arr.getObject(0).getDecimal("price").decimal;
+                    } else {
+                        for (int i = 0; i < arr.size(); i++) {
+                            JsonObject obj = arr.getObject(i);
+                            LDate dateI = new LDate(obj.getString("date").getString(), this);
+                            if (i < arr.size() - 1) {
+                                LDate dateII = new LDate(arr.getObject(i + 1).getString("date").getString(), this);
+                                if (date.compareTo(dateI) >= 0 && date.compareTo(dateII) <= 0) {
+                                    price = obj.getDecimal("price").decimal;
+                                    break;
+                                }
+                            }
+                            if (i == arr.size() - 1) {
                                 price = obj.getDecimal("price").decimal;
-                                break;
                             }
                         }
-                        if (i == arr.size() - 1) {
-                            price = obj.getDecimal("price").decimal;
-                        }
+                    }
+                } catch (ParseException e) {
+                    if (bStock != null) {
+                        LOG_HANDLER.error(getClass(), "Damaged date in private stock history json: " + b);
+                    } else {
+                        LOG_HANDLER.error(getClass(), "Damaged date in private inventory history json: " + b);
                     }
                 }
                 if (cur.equals(a)) {

@@ -13,6 +13,7 @@ import javax.swing.*;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.MathContext;
+import java.text.ParseException;
 
 public class Validation {
     public static void require(JTextField field) throws ValidationFailedException {
@@ -50,7 +51,7 @@ public class Validation {
         try {
             field.setBackground(DendroFactory.CONTENT);
             return new LDate(field.getText(), curInst);
-        } catch (NumberFormatException | ArrayIndexOutOfBoundsException e) {
+        } catch (ParseException e) {
             field.setBackground(DendroFactory.WRONG);
             throw new ValidationFailedException("Field is not a valid date");
         }

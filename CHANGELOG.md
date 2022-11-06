@@ -1,10 +1,14 @@
 ## v0.10.0
+* (->) date format improvements and documentation
+  * date format input widened and improved
+  * (X) new date formats documented
 * (X) multi-asset calls to apis
 * balance sheet improvements
   * balance sheet importance thresholds
   * difference of accounts
 * minor bug fixes
   * cloning transactions now has correct title
+  * asset status and position gui now wait to execute potentially lengthy operations
 
 ## v0.9.1
 * minor bug fixes

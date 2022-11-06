@@ -5,11 +5,68 @@ import com.donny.dendrofinance.json.JsonDecimal;
 import com.donny.dendrofinance.util.ExportableToJson;
 
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 
 public class LDate implements ExportableToJson, Comparable<LDate> {
+    private static final ArrayList<DateFormat> MONTH_FIRST = new ArrayList<>(), MONTH_SECOND = new ArrayList<>();
+
+    static {
+        ArrayList<String> amerDate = new ArrayList<>(Arrays.asList(
+                "MM/dd", "MM/dd/yy", "MM/dd/yyyy"
+        )), otherDate = new ArrayList<>(Arrays.asList(
+                "dd/MM", "dd/MM/yy", "dd/MM/yyyy"
+        )), bothDate = new ArrayList<>(Arrays.asList(
+                "MMM dd", "MMM dd yy", "MMM dd yyyy", "MMM dd, yy", "MMM dd, yyyy",
+                "MMMM dd", "MMMM dd yy", "MMMM dd yyyy", "MMMM dd, yy", "MMMM dd, yyyy",
+                "dd MMM", "dd MMM yy", "dd MMM yyyy", "dd MMM, yy", "dd MMM, yyyy",
+                "dd MMMM", "dd MMMM yy", "dd MMMM yyyy", "dd MMMM, yy", "dd MMMM, yyyy"
+        )), time = new ArrayList<>(Arrays.asList(
+                "HH:mm", "HH:mm zzz", "HH:mm:ss", "HH:mm:ss.SSS", "HH:mm:ss zzz", "HH:mm:ss.SSS zzz",
+                "hh:mm a", "hh:mm a zzz", "hh:mm:ss a", "hh:mm:ss.SSS a", "hh:mm:ss a zzz", "hh:mm:ss.SSS a zzz"
+        ));
+        time.forEach(s -> {
+            MONTH_FIRST.add(new SimpleDateFormat(s));
+            MONTH_SECOND.add(new SimpleDateFormat(s));
+        });
+        amerDate.forEach(s -> {
+            MONTH_FIRST.add(new SimpleDateFormat(s));
+            time.forEach(t -> {
+                MONTH_FIRST.add(new SimpleDateFormat(s + " " + t));
+                MONTH_FIRST.add(new SimpleDateFormat(s + ", " + t));
+                MONTH_FIRST.add(new SimpleDateFormat(s + "; " + t));
+                MONTH_FIRST.add(new SimpleDateFormat(s + " | " + t));
+            });
+        });
+        otherDate.forEach(s -> {
+            MONTH_SECOND.add(new SimpleDateFormat(s));
+            time.forEach(t -> {
+                MONTH_SECOND.add(new SimpleDateFormat(s + " " + t));
+                MONTH_SECOND.add(new SimpleDateFormat(s + ", " + t));
+                MONTH_SECOND.add(new SimpleDateFormat(s + "; " + t));
+                MONTH_SECOND.add(new SimpleDateFormat(s + " | " + t));
+            });
+        });
+        bothDate.forEach(s -> {
+            MONTH_FIRST.add(new SimpleDateFormat(s));
+            MONTH_SECOND.add(new SimpleDateFormat(s));
+            time.forEach(t -> {
+                MONTH_FIRST.add(new SimpleDateFormat(s + " " + t));
+                MONTH_FIRST.add(new SimpleDateFormat(s + ", " + t));
+                MONTH_FIRST.add(new SimpleDateFormat(s + "; " + t));
+                MONTH_FIRST.add(new SimpleDateFormat(s + " | " + t));
+                MONTH_SECOND.add(new SimpleDateFormat(s + " " + t));
+                MONTH_SECOND.add(new SimpleDateFormat(s + ", " + t));
+                MONTH_SECOND.add(new SimpleDateFormat(s + "; " + t));
+                MONTH_SECOND.add(new SimpleDateFormat(s + " | " + t));
+            });
+        });
+    }
+
     private final Date DATE;
     private final Instance CURRENT_INSTANCE;
 
@@ -48,86 +105,33 @@ public class LDate implements ExportableToJson, Comparable<LDate> {
         this(year, month, day, hour, minute, second, 0, curInst);
     }
 
-    public LDate(String raw, Instance curInst) {
+    public LDate(String raw, Instance curInst) throws ParseException {
+        CURRENT_INSTANCE = curInst;
         if (raw.equalsIgnoreCase("now")) {
             DATE = new Date();
-            CURRENT_INSTANCE = curInst;
         } else {
-            raw = raw.replace("|", "");
-            while (raw.contains("  ")) {
-                raw = raw.replace("  ", " ");
-            }
-            if (raw.contains(" ")) {
-                String[] split = raw.split(" ");
-                String[] dayParts = split[0].split("/");
-                String[] timeParts = split[1].split(":");
-                int year, month, day, hour, minute, second, milli;
-                if (dayParts.length == 3) {
-                    if (dayParts[2].length() == 4) {
-                        year = Integer.parseInt(dayParts[2]);
-                    } else if (dayParts[2].length() == 2) {
-                        year = 2000 + Integer.parseInt(dayParts[2]);
-                    } else {
-                        year = now(curInst).getYear();
-                    }
-                } else {
-                    year = now(curInst).getYear();
-                }
-                if (curInst.american) {
-                    month = Integer.parseInt(dayParts[0]);
-                    day = Integer.parseInt(dayParts[1]);
-                } else {
-                    month = Integer.parseInt(dayParts[1]);
-                    day = Integer.parseInt(dayParts[0]);
-                }
-                hour = Integer.parseInt(timeParts[0]);
-                minute = Integer.parseInt(timeParts[1]);
-                milli = 0;
-                second = 0;
-                if (timeParts.length >= 3) {
-                    if (timeParts[2].contains(".")) {
-                        StringBuilder temp = new StringBuilder(timeParts[2].split("\\.")[1]);
-                        while (temp.length() < 3) {
-                            temp.append("0");
-                        }
-                        milli = Integer.parseInt(temp.toString());
-                        second = Integer.parseInt(timeParts[2].split("\\.")[0]);
-                    } else {
-                        second = Integer.parseInt(timeParts[2]);
-                    }
-                }
-                Calendar date = Calendar.getInstance();
-                date.set(year, month - 1, day, hour, minute, second);
-                long temp = date.getTime().getTime();
-                DATE = new Date(temp - (temp % 1000) + milli);
-                CURRENT_INSTANCE = curInst;
+            Date candidate = null;
+            ArrayList<DateFormat> formats;
+            if (CURRENT_INSTANCE.american) {
+                formats = MONTH_FIRST;
             } else {
-                String[] dayParts = raw.split("/");
-                int year, month, day;
-                if (dayParts.length == 3) {
-                    if (dayParts[2].length() == 4) {
-                        year = Integer.parseInt(dayParts[2]);
-                    } else if (dayParts[2].length() == 2) {
-                        year = 2000 + Integer.parseInt(dayParts[2]);
-                    } else {
-                        year = now(curInst).getYear();
-                    }
-                } else {
-                    year = now(curInst).getYear();
-                }
-                if (curInst.american) {
-                    month = Integer.parseInt(dayParts[0]);
-                    day = Integer.parseInt(dayParts[1]);
-                } else {
-                    month = Integer.parseInt(dayParts[1]);
-                    day = Integer.parseInt(dayParts[0]);
-                }
-                Calendar date = Calendar.getInstance();
-                date.set(year, month - 1, day, 0, 0, 0);
-                long temp = date.getTime().getTime();
-                DATE = new Date(temp - (temp % 1000));
-                CURRENT_INSTANCE = curInst;
+                formats = MONTH_SECOND;
             }
+            for (DateFormat form : formats) {
+                try {
+                    candidate = form.parse(raw);
+                } catch (ParseException e) {
+                    continue;
+                }
+                if (candidate != null) {
+                    break;
+                }
+            }
+            if (candidate == null) {
+                CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Date string could not be parsed!");
+                throw new ParseException(raw, 0);
+            }
+            DATE = candidate;
         }
     }
 
@@ -287,15 +291,15 @@ public class LDate implements ExportableToJson, Comparable<LDate> {
         } else {
             if (milli) {
                 if (CURRENT_INSTANCE.american) {
-                    return new SimpleDateFormat("MM/dd/yyyy | HH:mm:ss.SSS zzz").format(DATE);
+                    return new SimpleDateFormat("MM/dd/yyyy, HH:mm:ss.SSS zzz").format(DATE);
                 } else {
-                    return new SimpleDateFormat("dd/MM/yyyy | HH:mm:ss.SSS zzz").format(DATE);
+                    return new SimpleDateFormat("dd/MM/yyyy, HH:mm:ss.SSS zzz").format(DATE);
                 }
             } else {
                 if (CURRENT_INSTANCE.american) {
-                    return new SimpleDateFormat("MM/dd/yyyy | HH:mm:ss zzz").format(DATE);
+                    return new SimpleDateFormat("MM/dd/yyyy, HH:mm:ss zzz").format(DATE);
                 } else {
-                    return new SimpleDateFormat("dd/MM/yyyy | HH:mm:ss zzz").format(DATE);
+                    return new SimpleDateFormat("dd/MM/yyyy, HH:mm:ss zzz").format(DATE);
                 }
             }
         }

@@ -4,6 +4,8 @@ import com.donny.dendrofinance.data.metatable.MetaTableCore;
 import com.donny.dendrofinance.gui.MainGui;
 import com.donny.dendrofinance.gui.customswing.DendroFactory;
 import com.donny.dendrofinance.gui.customswing.RegisterFrame;
+import com.donny.dendrofinance.gui.form.Validation;
+import com.donny.dendrofinance.gui.form.ValidationFailedException;
 import com.donny.dendrofinance.instance.Instance;
 import com.donny.dendrofinance.types.LDate;
 
@@ -188,21 +190,31 @@ public class MetaTableGui extends RegisterFrame {
     }
 
     private void updateTable() {
-        while (TABLE_ACCESS.getRowCount() > 0) {
-            TABLE_ACCESS.removeRow(0);
-        }
-        for (String[] row : CORE.getContents(new LDate(DATE.getText(), CURRENT_INSTANCE), SEARCH.getText())) {
-            TABLE_ACCESS.addRow(row);
+        try {
+            LDate date = Validation.validateDate(DATE, CURRENT_INSTANCE);
+            while (TABLE_ACCESS.getRowCount() > 0) {
+                TABLE_ACCESS.removeRow(0);
+            }
+            for (String[] row : CORE.getContents(date, SEARCH.getText())) {
+                TABLE_ACCESS.addRow(row);
+            }
+        } catch (ValidationFailedException e) {
+            CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Not a valid date: " + DATE.getText());
         }
     }
 
     private void tableCursorChanged(int row) {
-        String identifier = (String) TABLE.getValueAt(row, 0);
-        String name = (String) TABLE.getValueAt(row, 1);
-        if (identifier.equals("")) {
-            tableCursorChanged(row - 1);
-        } else {
-            INFO.setText(CORE.print(identifier, name, new LDate(DATE.getText(), CURRENT_INSTANCE)));
+        try {
+            LDate date = Validation.validateDate(DATE, CURRENT_INSTANCE);
+            String identifier = (String) TABLE.getValueAt(row, 0);
+            String name = (String) TABLE.getValueAt(row, 1);
+            if (identifier.equals("")) {
+                tableCursorChanged(row - 1);
+            } else {
+                INFO.setText(CORE.print(identifier, name, date));
+            }
+        } catch (ValidationFailedException e) {
+            CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Not a valid date: " + DATE.getText());
         }
     }
 }

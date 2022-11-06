@@ -6,6 +6,8 @@ import com.donny.dendrofinance.entry.TransactionEntry;
 import com.donny.dendrofinance.gui.MainGui;
 import com.donny.dendrofinance.gui.customswing.DendroFactory;
 import com.donny.dendrofinance.gui.customswing.RegisterFrame;
+import com.donny.dendrofinance.gui.form.Validation;
+import com.donny.dendrofinance.gui.form.ValidationFailedException;
 import com.donny.dendrofinance.instance.Instance;
 import com.donny.dendrofinance.types.LAccountSet;
 import com.donny.dendrofinance.types.LDate;
@@ -69,37 +71,42 @@ public class NetIncomeGui extends RegisterFrame {
     }
 
     private void saveAction() {
-        BigDecimal net = BigDecimal.ZERO;
-        HashMap<Account, BigDecimal> accounts = CURRENT_INSTANCE.DATA_HANDLER.accountsAsOf(new LDate(DATE.getText(), CURRENT_INSTANCE));
-        for (Account a : accounts.keySet()) {
-            if (a.getBroadAccountType() == BroadAccountType.REVENUE) {
-                net = net.add(accounts.get(a));
-            } else if (a.getBroadAccountType() == BroadAccountType.EXPENSE) {
-                net = net.subtract(accounts.get(a));
+        try {
+            LDate date = Validation.validateDate(DATE, CURRENT_INSTANCE);
+            BigDecimal net = BigDecimal.ZERO;
+            HashMap<Account, BigDecimal> accounts = CURRENT_INSTANCE.DATA_HANDLER.accountsAsOf(date);
+            for (Account a : accounts.keySet()) {
+                if (a.getBroadAccountType() == BroadAccountType.REVENUE) {
+                    net = net.add(accounts.get(a));
+                } else if (a.getBroadAccountType() == BroadAccountType.EXPENSE) {
+                    net = net.subtract(accounts.get(a));
+                }
             }
-        }
-        StringBuilder sb = new StringBuilder();
-        if (net.compareTo(BigDecimal.ZERO) >= 0) {
-            sb.append("C!Net_Income(").append(net).append(")");
-        } else {
-            sb.append("D!Net_Income(").append(net.abs()).append(")");
-        }
-        for (Account a : accounts.keySet()) {
-            if ((a.getBroadAccountType() == BroadAccountType.REVENUE || a.getBroadAccountType() == BroadAccountType.EXPENSE) && accounts.get(a).compareTo(BigDecimal.ZERO) != 0) {
-                sb.append(", ").append(a.getDefaultColumn(false)).append("!").append(a.getName())
-                        .append("(").append(accounts.get(a)).append(")");
+            StringBuilder sb = new StringBuilder();
+            if (net.compareTo(BigDecimal.ZERO) >= 0) {
+                sb.append("C!Net_Income(").append(net).append(")");
+            } else {
+                sb.append("D!Net_Income(").append(net.abs()).append(")");
             }
+            for (Account a : accounts.keySet()) {
+                if ((a.getBroadAccountType() == BroadAccountType.REVENUE || a.getBroadAccountType() == BroadAccountType.EXPENSE) && accounts.get(a).compareTo(BigDecimal.ZERO) != 0) {
+                    sb.append(", ").append(a.getDefaultColumn(false)).append("!").append(a.getName())
+                            .append("(").append(accounts.get(a)).append(")");
+                }
+            }
+            TransactionEntry entry = new TransactionEntry(CURRENT_INSTANCE);
+            entry.insert(
+                    date,
+                    "ACC",
+                    "",
+                    "Net Income",
+                    new LAccountSet(sb.toString(), CURRENT_INSTANCE)
+            );
+            CURRENT_INSTANCE.DATA_HANDLER.addTransaction(entry);
+            CALLER.updateTable();
+            dispose();
+        } catch (ValidationFailedException e) {
+            CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Not a valid date: " + DATE.getText());
         }
-        TransactionEntry entry = new TransactionEntry(CURRENT_INSTANCE);
-        entry.insert(
-                new LDate(DATE.getText(), CURRENT_INSTANCE),
-                "ACC",
-                "",
-                "Net Income",
-                new LAccountSet(sb.toString(), CURRENT_INSTANCE)
-        );
-        CURRENT_INSTANCE.DATA_HANDLER.addTransaction(entry);
-        CALLER.updateTable();
-        dispose();
     }
 }

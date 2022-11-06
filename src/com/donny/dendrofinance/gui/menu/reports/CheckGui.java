@@ -4,6 +4,8 @@ import com.donny.dendrofinance.entry.meta.CheckMetadata;
 import com.donny.dendrofinance.gui.MainGui;
 import com.donny.dendrofinance.gui.customswing.DendroFactory;
 import com.donny.dendrofinance.gui.customswing.RegisterFrame;
+import com.donny.dendrofinance.gui.form.Validation;
+import com.donny.dendrofinance.gui.form.ValidationFailedException;
 import com.donny.dendrofinance.instance.Instance;
 import com.donny.dendrofinance.types.LDate;
 
@@ -122,8 +124,9 @@ public class CheckGui extends RegisterFrame {
         }
         ArrayList<CheckMetadata> meta;
         try {
-            meta = CURRENT_INSTANCE.DATA_HANDLER.getChecks(new LDate(DATE.getText(), CURRENT_INSTANCE));
-        } catch (NumberFormatException | ArrayIndexOutOfBoundsException ex) {
+            meta = CURRENT_INSTANCE.DATA_HANDLER.getChecks(Validation.validateDate(DATE, CURRENT_INSTANCE));
+        } catch (ValidationFailedException e) {
+            CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Not a valid date: " + DATE.getText());
             meta = CURRENT_INSTANCE.DATA_HANDLER.getChecks();
         }
         for (CheckMetadata check : meta) {

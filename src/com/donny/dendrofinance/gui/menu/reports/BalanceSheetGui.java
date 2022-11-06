@@ -247,7 +247,7 @@ public class BalanceSheetGui extends RegisterFrame {
                 if (accBegin.containsKey(a) || accEnd.containsKey(a)) {
                     BigDecimal compare = BigDecimal.ONE;
                     BigDecimal thresh = Cleaning.cleanNumber(THRESH.getText());
-                    if(thresh.compareTo(BigDecimal.ZERO) != 0) {
+                    if (thresh.compareTo(BigDecimal.ZERO) != 0) {
                         compare = thresh.abs();
                     } else {
                         if (a.getCurrency().getPlaces() > 0) {
@@ -353,7 +353,7 @@ public class BalanceSheetGui extends RegisterFrame {
                 if (acc.containsKey(a)) {
                     BigDecimal compare = BigDecimal.ONE;
                     BigDecimal thresh = Cleaning.cleanNumber(THRESH.getText());
-                    if(thresh.compareTo(BigDecimal.ZERO) != 0) {
+                    if (thresh.compareTo(BigDecimal.ZERO) != 0) {
                         compare = thresh.abs();
                     } else {
                         if (a.getCurrency().getPlaces() > 0) {

@@ -6,6 +6,8 @@ import com.donny.dendrofinance.entry.TransactionEntry;
 import com.donny.dendrofinance.gui.MainGui;
 import com.donny.dendrofinance.gui.customswing.DendroFactory;
 import com.donny.dendrofinance.gui.customswing.RegisterFrame;
+import com.donny.dendrofinance.gui.form.Validation;
+import com.donny.dendrofinance.gui.form.ValidationFailedException;
 import com.donny.dendrofinance.instance.Instance;
 import com.donny.dendrofinance.types.LAccountSet;
 import com.donny.dendrofinance.types.LDate;
@@ -69,24 +71,28 @@ public class TaxZeroGui extends RegisterFrame {
     }
 
     private void saveAction() {
-        BigDecimal net = BigDecimal.ZERO;
-        HashMap<Account, BigDecimal> accounts = CURRENT_INSTANCE.DATA_HANDLER.accountsAsOf(new LDate(DATE.getText(), CURRENT_INSTANCE));
-        StringBuilder sb = new StringBuilder();
-        for (Account a : accounts.keySet()) {
-            if (a.getBroadAccountType() == BroadAccountType.GHOST && accounts.get(a).compareTo(BigDecimal.ZERO) != 0) {
-                sb.append(", G!").append(a.getName()).append("(").append(accounts.get(a).multiply(BigDecimal.valueOf(-1))).append(")");
+        try {
+            LDate date = Validation.validateDate(DATE, CURRENT_INSTANCE);
+            HashMap<Account, BigDecimal> accounts = CURRENT_INSTANCE.DATA_HANDLER.accountsAsOf(date);
+            StringBuilder sb = new StringBuilder();
+            for (Account a : accounts.keySet()) {
+                if (a.getBroadAccountType() == BroadAccountType.GHOST && accounts.get(a).compareTo(BigDecimal.ZERO) != 0) {
+                    sb.append(", G!").append(a.getName()).append("(").append(accounts.get(a).multiply(BigDecimal.valueOf(-1))).append(")");
+                }
             }
+            TransactionEntry entry = new TransactionEntry(CURRENT_INSTANCE);
+            entry.insert(
+                    date,
+                    "ACC",
+                    "",
+                    "Tax Zeroing",
+                    new LAccountSet(sb.substring(2), CURRENT_INSTANCE)
+            );
+            CURRENT_INSTANCE.DATA_HANDLER.addTransaction(entry);
+            CALLER.updateTable();
+            dispose();
+        } catch (ValidationFailedException e) {
+            CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Not a valid date: " + DATE.getText());
         }
-        TransactionEntry entry = new TransactionEntry(CURRENT_INSTANCE);
-        entry.insert(
-                new LDate(DATE.getText(), CURRENT_INSTANCE),
-                "ACC",
-                "",
-                "Tax Zeroing",
-                new LAccountSet(sb.substring(2), CURRENT_INSTANCE)
-        );
-        CURRENT_INSTANCE.DATA_HANDLER.addTransaction(entry);
-        CALLER.updateTable();
-        dispose();
     }
 }

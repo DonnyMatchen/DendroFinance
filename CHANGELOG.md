@@ -1,9 +1,8 @@
 ## v0.10.0
 * (X) multi-asset calls to apis
-* (X) balance sheet improvements
-  * (X) balance sheet importance thresholds
+* balance sheet improvements
+  * balance sheet importance thresholds
   * difference of accounts
-* (X) full set of accounting documents
 * minor bug fixes
   * cloning transactions now has correct title
 

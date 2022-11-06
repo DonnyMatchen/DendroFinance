@@ -6,6 +6,7 @@ import com.donny.dendrofinance.account.BroadAccountType;
 import com.donny.dendrofinance.gui.MainGui;
 import com.donny.dendrofinance.gui.customswing.DendroFactory;
 import com.donny.dendrofinance.gui.customswing.RegisterFrame;
+import com.donny.dendrofinance.gui.form.Cleaning;
 import com.donny.dendrofinance.instance.Instance;
 import com.donny.dendrofinance.types.LDate;
 import com.donny.dendrofinance.util.Aggregation;
@@ -19,17 +20,18 @@ import java.math.BigDecimal;
 import java.util.HashMap;
 
 public class BalanceSheetGui extends RegisterFrame {
-    private final JTextField DATE, FROM, SEARCH;
+    private final JTextField DATE, FROM, SEARCH, THRESH;
     private final DefaultTableModel TABLE_ACCESS;
 
     public BalanceSheetGui(MainGui caller, boolean diff, Instance curInst) {
         super(caller, diff ? "Change in Accounts" : "Balance Sheet", curInst);
         //draw gui
         {
-            JLabel a = new JLabel("Date");
-            JLabel b = new JLabel("Search");
-            JLabel c = new JLabel("From");
-            JLabel d = new JLabel("To");
+            JLabel a = new JLabel("Threshold");
+            JLabel b = new JLabel("Date");
+            JLabel c = new JLabel("Search");
+            JLabel d = new JLabel("From");
+            JLabel e = new JLabel("To");
 
             DATE = new JTextField();
             DATE.addKeyListener(new KeyAdapter() {
@@ -43,6 +45,16 @@ public class BalanceSheetGui extends RegisterFrame {
 
             FROM = new JTextField();
             FROM.addKeyListener(new KeyAdapter() {
+                @Override
+                public void keyTyped(KeyEvent keyEvent) {
+                    if (keyEvent.getKeyChar() == '\n') {
+                        updateTable(diff);
+                    }
+                }
+            });
+
+            THRESH = new JTextField();
+            THRESH.addKeyListener(new KeyAdapter() {
                 @Override
                 public void keyTyped(KeyEvent keyEvent) {
                     if (keyEvent.getKeyChar() == '\n') {
@@ -79,9 +91,9 @@ public class BalanceSheetGui extends RegisterFrame {
                             main.createSequentialGroup().addContainerGap().addGroup(
                                     main.createParallelGroup(GroupLayout.Alignment.CENTER).addGroup(
                                             main.createSequentialGroup().addComponent(
-                                                    c, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                                    a, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                             ).addGap(DendroFactory.SMALL_GAP).addComponent(
-                                                    FROM, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
+                                                    THRESH, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
                                             ).addGap(DendroFactory.MEDIUM_GAP).addComponent(
                                                     enter, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                             )
@@ -89,11 +101,17 @@ public class BalanceSheetGui extends RegisterFrame {
                                             main.createSequentialGroup().addComponent(
                                                     d, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                             ).addGap(DendroFactory.SMALL_GAP).addComponent(
+                                                    FROM, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
+                                            )
+                                    ).addGroup(
+                                            main.createSequentialGroup().addComponent(
+                                                    e, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                            ).addGap(DendroFactory.SMALL_GAP).addComponent(
                                                     DATE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
                                             )
                                     ).addGroup(
                                             main.createSequentialGroup().addComponent(
-                                                    b, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                                    c, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                             ).addGap(DendroFactory.SMALL_GAP).addComponent(
                                                     SEARCH, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
                                             )
@@ -105,9 +123,9 @@ public class BalanceSheetGui extends RegisterFrame {
                     main.setVerticalGroup(
                             main.createSequentialGroup().addContainerGap().addGroup(
                                     main.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(
-                                            c, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                            a, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                     ).addComponent(
-                                            FROM, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                            THRESH, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                     ).addComponent(
                                             enter, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                     )
@@ -115,11 +133,17 @@ public class BalanceSheetGui extends RegisterFrame {
                                     main.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(
                                             d, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                     ).addComponent(
+                                            FROM, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                    )
+                            ).addGap(DendroFactory.MEDIUM_GAP).addGroup(
+                                    main.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(
+                                            e, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                    ).addComponent(
                                             DATE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                     )
                             ).addGap(DendroFactory.MEDIUM_GAP).addGroup(
                                     main.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(
-                                            b, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                            c, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                     ).addComponent(
                                             SEARCH, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                     )
@@ -134,13 +158,19 @@ public class BalanceSheetGui extends RegisterFrame {
                                             main.createSequentialGroup().addComponent(
                                                     a, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                             ).addGap(DendroFactory.SMALL_GAP).addComponent(
-                                                    DATE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
+                                                    THRESH, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
                                             ).addGap(DendroFactory.MEDIUM_GAP).addComponent(
                                                     enter, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                             )
                                     ).addGroup(
                                             main.createSequentialGroup().addComponent(
                                                     b, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                            ).addGap(DendroFactory.SMALL_GAP).addComponent(
+                                                    DATE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
+                                            )
+                                    ).addGroup(
+                                            main.createSequentialGroup().addComponent(
+                                                    c, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                             ).addGap(DendroFactory.SMALL_GAP).addComponent(
                                                     SEARCH, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
                                             )
@@ -154,13 +184,19 @@ public class BalanceSheetGui extends RegisterFrame {
                                     main.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(
                                             a, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                     ).addComponent(
-                                            DATE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                            THRESH, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                     ).addComponent(
                                             enter, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                     )
                             ).addGap(DendroFactory.MEDIUM_GAP).addGroup(
                                     main.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(
                                             b, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                    ).addComponent(
+                                            DATE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                    )
+                            ).addGap(DendroFactory.MEDIUM_GAP).addGroup(
+                                    main.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(
+                                            c, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                     ).addComponent(
                                             SEARCH, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                     )
@@ -210,8 +246,13 @@ public class BalanceSheetGui extends RegisterFrame {
             for (Account a : CURRENT_INSTANCE.ACCOUNTS) {
                 if (accBegin.containsKey(a) || accEnd.containsKey(a)) {
                     BigDecimal compare = BigDecimal.ONE;
-                    if (a.getCurrency().getPlaces() > 0) {
-                        compare = new BigDecimal("0." + "0".repeat(a.getCurrency().getPlaces() - 1) + "1");
+                    BigDecimal thresh = Cleaning.cleanNumber(THRESH.getText());
+                    if(thresh.compareTo(BigDecimal.ZERO) != 0) {
+                        compare = thresh.abs();
+                    } else {
+                        if (a.getCurrency().getPlaces() > 0) {
+                            compare = new BigDecimal("0." + "0".repeat(a.getCurrency().getPlaces() - 1) + "1");
+                        }
                     }
                     BigDecimal begin, end;
                     if (accBegin.containsKey(a) && (accBegin.get(a).compareTo(compare) >= 0
@@ -311,8 +352,13 @@ public class BalanceSheetGui extends RegisterFrame {
             for (Account a : CURRENT_INSTANCE.ACCOUNTS) {
                 if (acc.containsKey(a)) {
                     BigDecimal compare = BigDecimal.ONE;
-                    if (a.getCurrency().getPlaces() > 0) {
-                        compare = new BigDecimal("0." + "0".repeat(a.getCurrency().getPlaces() - 1) + "1");
+                    BigDecimal thresh = Cleaning.cleanNumber(THRESH.getText());
+                    if(thresh.compareTo(BigDecimal.ZERO) != 0) {
+                        compare = thresh.abs();
+                    } else {
+                        if (a.getCurrency().getPlaces() > 0) {
+                            compare = new BigDecimal("0." + "0".repeat(a.getCurrency().getPlaces() - 1) + "1");
+                        }
                     }
                     if (acc.get(a).compareTo(compare) >= 0 || acc.get(a).compareTo(compare.multiply(BigDecimal.valueOf(-1))) <= 0) {
                         typ.add(a.getBroadAccountType(), acc.get(a));

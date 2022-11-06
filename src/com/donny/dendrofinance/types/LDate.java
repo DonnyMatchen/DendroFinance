@@ -17,7 +17,7 @@ public class LDate implements ExportableToJson, Comparable<LDate> {
 
     static {
         ArrayList<String> amerDate = new ArrayList<>(Arrays.asList(
-                "MM/dd/yyyy","MMM/dd/yyyy","MMMM/dd/yyyy"
+                "MM/dd/yyyy", "MMM/dd/yyyy", "MMMM/dd/yyyy"
         )), otherDate = new ArrayList<>(Arrays.asList(
                 "dd/MM/yyyy", "dd/MMM/yyyy", "dd/MMMM/yyyy"
         )), bothDate = new ArrayList<>(Arrays.asList(
@@ -48,20 +48,32 @@ public class LDate implements ExportableToJson, Comparable<LDate> {
                 MONTH_SECOND.add(new SimpleDateFormat(d + ", " + t));
                 MONTH_SECOND.add(new SimpleDateFormat(d + "; " + t));
                 MONTH_SECOND.add(new SimpleDateFormat(d + " | " + t));
+                MONTH_SECOND.add(new SimpleDateFormat(t + " " + d));
+                MONTH_SECOND.add(new SimpleDateFormat(t + ", " + d));
+                MONTH_SECOND.add(new SimpleDateFormat(t + "; " + d));
+                MONTH_SECOND.add(new SimpleDateFormat(t + " | " + d));
             });
         });
-        bothDate.forEach(s -> {
-            MONTH_FIRST.add(new SimpleDateFormat(s));
-            MONTH_SECOND.add(new SimpleDateFormat(s));
+        bothDate.forEach(d -> {
+            MONTH_FIRST.add(new SimpleDateFormat(d));
+            MONTH_SECOND.add(new SimpleDateFormat(d));
             time.forEach(t -> {
-                MONTH_FIRST.add(new SimpleDateFormat(s + " " + t));
-                MONTH_FIRST.add(new SimpleDateFormat(s + ", " + t));
-                MONTH_FIRST.add(new SimpleDateFormat(s + "; " + t));
-                MONTH_FIRST.add(new SimpleDateFormat(s + " | " + t));
-                MONTH_SECOND.add(new SimpleDateFormat(s + " " + t));
-                MONTH_SECOND.add(new SimpleDateFormat(s + ", " + t));
-                MONTH_SECOND.add(new SimpleDateFormat(s + "; " + t));
-                MONTH_SECOND.add(new SimpleDateFormat(s + " | " + t));
+                MONTH_FIRST.add(new SimpleDateFormat(d + " " + t));
+                MONTH_FIRST.add(new SimpleDateFormat(d + ", " + t));
+                MONTH_FIRST.add(new SimpleDateFormat(d + "; " + t));
+                MONTH_FIRST.add(new SimpleDateFormat(d + " | " + t));
+                MONTH_FIRST.add(new SimpleDateFormat(t + " " + d));
+                MONTH_FIRST.add(new SimpleDateFormat(t + ", " + d));
+                MONTH_FIRST.add(new SimpleDateFormat(t + "; " + d));
+                MONTH_FIRST.add(new SimpleDateFormat(t + " | " + d));
+                MONTH_SECOND.add(new SimpleDateFormat(d + " " + t));
+                MONTH_SECOND.add(new SimpleDateFormat(d + ", " + t));
+                MONTH_SECOND.add(new SimpleDateFormat(d + "; " + t));
+                MONTH_SECOND.add(new SimpleDateFormat(d + " | " + t));
+                MONTH_SECOND.add(new SimpleDateFormat(t + " " + d));
+                MONTH_SECOND.add(new SimpleDateFormat(t + ", " + d));
+                MONTH_SECOND.add(new SimpleDateFormat(t + "; " + d));
+                MONTH_SECOND.add(new SimpleDateFormat(t + " | " + d));
             });
         });
         MONTH_FIRST.sort((SimpleDateFormat t1, SimpleDateFormat t2) -> -1 * Integer.compare(t1.toPattern().length(), t2.toPattern().length()));

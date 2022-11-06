@@ -69,8 +69,8 @@ Example:
 ##### Column Letters
 1. **D**: Debit
 2. **C**: Credit
-3. **T**: Tracking
-4. **G**: Ghost
+3. **G**: Ghost
+4. **T**: Tracking
 
 # ESSENTIAL ELEMENTS
 Account and Exchange names must be unique, and cannot contain spaces.

@@ -1,7 +1,7 @@
 ## v0.10.0
-* (->) date format improvements and documentation
+* date format improvements and documentation
   * date format input widened and improved
-  * (X) new date formats documented
+  * new date formats documented
 * (X) multi-asset calls to apis
 * balance sheet improvements
   * balance sheet importance thresholds

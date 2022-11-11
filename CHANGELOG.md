@@ -2,13 +2,20 @@
 * date format improvements and documentation
   * date format input widened and improved
   * new date formats documented
-* (X) multi-asset calls to apis
+* multi-asset calls to apis
+  * major change to api structure
+    * (X) data structure updated in `Examples`
+  * (X) no multiple search option handling
+  * (X) more complex multisearch options handled
+  * (X) `AssetStatusGui` now takes any currency
+  * (X) documentation now covers API handling
 * balance sheet improvements
   * balance sheet importance thresholds
   * difference of accounts
 * minor bug fixes
   * cloning transactions now has correct title
   * asset status and position gui now wait to execute potentially lengthy operations
+  * market APIs are now saved along with other backing elements
 
 ## v0.9.1
 * minor bug fixes

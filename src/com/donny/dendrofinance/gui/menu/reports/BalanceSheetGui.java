@@ -255,14 +255,12 @@ public class BalanceSheetGui extends RegisterFrame {
                         }
                     }
                     BigDecimal begin, end;
-                    if (accBegin.containsKey(a) && (accBegin.get(a).compareTo(compare) >= 0
-                            || accBegin.get(a).compareTo(compare.multiply(BigDecimal.valueOf(-1))) <= 0)) {
+                    if (accBegin.containsKey(a) && a.getCurrency().significant(accBegin.get(a))) {
                         begin = accBegin.get(a);
                     } else {
                         begin = BigDecimal.ZERO;
                     }
-                    if (accEnd.containsKey(a) && (accEnd.get(a).compareTo(compare) >= 0
-                            || accEnd.get(a).compareTo(compare.multiply(BigDecimal.valueOf(-1))) <= 0)) {
+                    if (accEnd.containsKey(a) && a.getCurrency().significant(accEnd.get(a))) {
                         end = accEnd.get(a);
                     } else {
                         end = BigDecimal.ZERO;

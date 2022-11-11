@@ -36,6 +36,7 @@ import java.nio.charset.StandardCharsets;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.concurrent.TimeUnit;
 
 public class Instance {
@@ -558,6 +559,7 @@ public class Instance {
                 accounts = new File(data.getPath() + File.separator + "Accounts" + File.separator + "accounts.json"),
                 accTyp = new File(data.getPath() + File.separator + "Accounts" + File.separator + "account-types.json"),
                 taxItm = new File(data.getPath() + File.separator + "Accounts" + File.separator + "tax-items.json"),
+                marApi = new File(data.getPath() + File.separator + "Currencies" + File.separator + "market-apis.json"),
                 spec = new File(data.getPath() + File.separator + "Accounts" + File.separator + "special.json"),
                 budg = new File(data.getPath() + File.separator + "Accounts" + File.separator + "budget.json");
         if (CURRENCIES.changed) {
@@ -568,6 +570,9 @@ public class Instance {
         }
         if (INVENTORIES.changed) {
             FILE_HANDLER.write(inventories, INVENTORIES.export().print());
+        }
+        if (MARKET_APIS.changed) {
+            FILE_HANDLER.write(marApi, MARKET_APIS.export().print());
         }
         if (ACCOUNTS.changed) {
             FILE_HANDLER.write(accounts, ACCOUNTS.export().print());
@@ -852,6 +857,200 @@ public class Instance {
                 return amount.multiply(x).multiply(b.getFactor().divide(a.getFactor(), precision));
             }
         }
+    }
+
+    public HashMap<LCurrency, BigDecimal> getAllConversions(ArrayList<LCurrency> currencies, LCurrency convert) {
+        HashMap<LCurrency, BigDecimal> out = new HashMap<>();
+        HashMap<LMarketApi, ArrayList<LCurrency>> lists = new HashMap<>();
+        ChainList secondary = new ChainList();
+        for (LCurrency c : currencies) {
+            if (c == convert) {
+                out.put(c, BigDecimal.ONE);
+            } else {
+                boolean flag = true;
+                if (c instanceof LStock s) {
+                    if (!s.isPublic()) {
+                        flag = false;
+                        out.put(c, s.getTotal(BigDecimal.ONE));
+                    }
+                } else if (c instanceof LInventory i) {
+                    if (!i.isPublic()) {
+                        flag = false;
+                        out.put(c, i.getTotal(BigDecimal.ONE));
+                    }
+                }
+                if (flag) {
+                    boolean placed = false;
+                    for (LMarketApi api : MARKET_APIS) {
+                        if (api.canSearch(c)) {
+                            if (api.hasNat(convert) || api.canSearch(convert)) {
+                                if (!lists.containsKey(api)) {
+                                    lists.put(api, new ArrayList<>());
+                                }
+                                lists.get(api).add(c);
+                                placed = true;
+                                break;
+                            }
+                        }
+                    }
+                    if (!placed) {
+                        for (LMarketApi api : MARKET_APIS) {
+                            if (api.canSearch(c)) {
+                                ConversionChain chain = secondary.contains(api);
+                                if (chain == null) {
+                                    for (LCurrency n : CURRENCIES) {
+                                        if (n != c && api.hasNat(n)) {
+                                            chain = new ConversionChain();
+                                            chain.from = api;
+                                            chain.middle = n;
+                                            for (LMarketApi app : MARKET_APIS) {
+                                                if (app != api) {
+                                                    if (app.canConvert(n, convert)) {
+                                                        chain.to = app;
+                                                        chain.LIST.add(c);
+                                                        secondary.CHAINS.add(chain);
+                                                        placed = true;
+                                                        break;
+                                                    }
+                                                }
+                                            }
+                                            if (placed) {
+                                                break;
+                                            }
+                                        }
+                                    }
+                                } else {
+                                    chain.LIST.add(c);
+                                }
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        for (LMarketApi api : MARKET_APIS) {
+            if (lists.get(api) != null) {
+                if (lists.get(api).size() > 1) {
+                    HashMap<LCurrency, BigDecimal> prices = api.convert(lists.get(api), convert);
+                    for (LCurrency c : prices.keySet()) {
+                        out.put(c, prices.get(c));
+                    }
+                } else {
+                    out.put(lists.get(api).get(0), api.convert(BigDecimal.ONE, lists.get(api).get(0), convert));
+                }
+
+            }
+        }
+        for (ConversionChain chain : secondary.CHAINS) {
+            BigDecimal x = chain.to.convert(BigDecimal.ONE, chain.middle, convert);
+            if (chain.LIST.size() > 1) {
+                HashMap<LCurrency, BigDecimal> prices = chain.from.convert(chain.LIST, chain.middle);
+                for (LCurrency c : prices.keySet()) {
+                    out.put(c, prices.get(c).multiply(x));
+                }
+            } else {
+                out.put(chain.LIST.get(0), chain.LIST.get(0).getTotal(BigDecimal.ONE).multiply(x));
+            }
+        }
+        return out;
+    }
+
+    public HashMap<LCurrency, BigDecimal> getAllConversions(ArrayList<LCurrency> currencies, LCurrency convert, LDate date) {
+        HashMap<LCurrency, BigDecimal> out = new HashMap<>();
+        HashMap<LMarketApi, ArrayList<LCurrency>> lists = new HashMap<>();
+        ChainList secondary = new ChainList();
+        for (LCurrency c : currencies) {
+            if (c == convert) {
+                out.put(c, BigDecimal.ONE);
+            } else {
+                boolean flag = true;
+                if (c instanceof LStock s) {
+                    if (!s.isPublic()) {
+                        flag = false;
+                        out.put(c, s.getTotal(BigDecimal.ONE, date));
+                    }
+                } else if (c instanceof LInventory i) {
+                    if (!i.isPublic()) {
+                        flag = false;
+                        out.put(c, i.getTotal(BigDecimal.ONE, date));
+                    }
+                }
+                if (flag) {
+                    boolean placed = false;
+                    for (LMarketApi api : MARKET_APIS) {
+                        if (api.canSearch(c)) {
+                            if (api.hasNat(convert) || api.canSearch(convert)) {
+                                if (!lists.containsKey(api)) {
+                                    lists.put(api, new ArrayList<>());
+                                }
+                                lists.get(api).add(c);
+                                placed = true;
+                                break;
+                            }
+                        }
+                    }
+                    if (!placed) {
+                        for (LMarketApi api : MARKET_APIS) {
+                            if (api.canSearch(c)) {
+                                ConversionChain chain = secondary.contains(api);
+                                if (chain == null) {
+                                    for (LCurrency n : CURRENCIES) {
+                                        if (n != c && api.hasNat(n)) {
+                                            chain = new ConversionChain();
+                                            chain.from = api;
+                                            chain.middle = n;
+                                            for (LMarketApi app : MARKET_APIS) {
+                                                if (app != api) {
+                                                    if (app.canConvert(n, convert)) {
+                                                        chain.to = app;
+                                                        chain.LIST.add(c);
+                                                        secondary.CHAINS.add(chain);
+                                                        placed = true;
+                                                        break;
+                                                    }
+                                                }
+                                            }
+                                            if (placed) {
+                                                break;
+                                            }
+                                        }
+                                    }
+                                } else {
+                                    chain.LIST.add(c);
+                                }
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        for (LMarketApi api : MARKET_APIS) {
+            if (lists.get(api) != null) {
+                if (lists.get(api).size() > 1) {
+                    HashMap<LCurrency, BigDecimal> prices = api.convert(lists.get(api), convert, date);
+                    for (LCurrency c : prices.keySet()) {
+                        out.put(c, prices.get(c));
+                    }
+                } else {
+                    out.put(lists.get(api).get(0), api.convert(BigDecimal.ONE, lists.get(api).get(0), convert, date));
+                }
+
+            }
+        }
+        for (ConversionChain chain : secondary.CHAINS) {
+            BigDecimal x = chain.to.convert(BigDecimal.ONE, chain.middle, convert, date);
+            if (chain.LIST.size() > 1) {
+                HashMap<LCurrency, BigDecimal> prices = chain.from.convert(chain.LIST, chain.middle, date);
+                for (LCurrency c : prices.keySet()) {
+                    out.put(c, prices.get(c).multiply(x));
+                }
+            } else {
+                out.put(chain.LIST.get(0), chain.LIST.get(0).getTotal(BigDecimal.ONE, date).multiply(x));
+            }
+        }
+        return out;
     }
 
     public LCurrency getLCurrency(String name) {

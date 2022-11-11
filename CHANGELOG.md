@@ -7,7 +7,7 @@
     * (X) data structure updated in `Examples`
   * (X) no multiple search option handling
   * (X) more complex multisearch options handled
-  * (X) `AssetStatusGui` now takes any currency
+  * `AssetStatusGui` now takes any currency
   * (X) documentation now covers API handling
 * balance sheet improvements
   * balance sheet importance thresholds

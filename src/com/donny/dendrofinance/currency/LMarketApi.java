@@ -380,16 +380,36 @@ public class LMarketApi implements ExportableToJson, Serializable {
     public HashMap<LCurrency, BigDecimal> convert(ArrayList<LCurrency> searches, LCurrency b) {
         HashMap<LCurrency, BigDecimal> out = new HashMap<>();
         ArrayList<LCurrency> actual = new ArrayList<>();
+        ArrayList<LCurrency> nats = new ArrayList<>();
         for (LCurrency c : searches) {
             if (canConvert(c, b)) {
-                actual.add(c);
+                if (hasNat(c)) {
+                    nats.add(c);
+                } else {
+                    actual.add(c);
+                }
             }
         }
         for (LCurrency[] list : partition(actual, MULTI_LIMIT)) {
-            HashMap<LCurrency, BigDecimal> part = convert_(list, b);
-            for (LCurrency c : part.keySet()) {
-                out.put(c, part.get(c).multiply(b.getFactor().divide(c.getFactor(), CURRENT_INSTANCE.precision)));
+            int count = 0;
+            for (LCurrency c : list) {
+                if (c != null) {
+                    count++;
+                } else {
+                    break;
+                }
             }
+            if (count > 1) {
+                HashMap<LCurrency, BigDecimal> part = convert_(list, b);
+                for (LCurrency c : part.keySet()) {
+                    out.put(c, part.get(c).multiply(b.getFactor().divide(c.getFactor(), CURRENT_INSTANCE.precision)));
+                }
+            } else {
+                out.put(list[0], convert(BigDecimal.ONE, list[0], b));
+            }
+        }
+        for (LCurrency n : nats) {
+            out.put(n, convert(BigDecimal.ONE, n, b));
         }
         return out;
     }
@@ -442,16 +462,36 @@ public class LMarketApi implements ExportableToJson, Serializable {
     public HashMap<LCurrency, BigDecimal> convert(ArrayList<LCurrency> searches, LCurrency b, LDate date) {
         HashMap<LCurrency, BigDecimal> out = new HashMap<>();
         ArrayList<LCurrency> actual = new ArrayList<>();
+        ArrayList<LCurrency> nats = new ArrayList<>();
         for (LCurrency c : searches) {
             if (canConvert(c, b)) {
-                actual.add(c);
+                if (hasNat(c)) {
+                    nats.add(c);
+                } else {
+                    actual.add(c);
+                }
             }
         }
         for (LCurrency[] list : partition(actual, MULTI_LIMIT)) {
-            HashMap<LCurrency, BigDecimal> part = convert_(list, b, date);
-            for (LCurrency c : part.keySet()) {
-                out.put(c, part.get(c).multiply(b.getFactor().divide(c.getFactor(), CURRENT_INSTANCE.precision)));
+            int count = 0;
+            for (LCurrency c : list) {
+                if (c != null) {
+                    count++;
+                } else {
+                    break;
+                }
             }
+            if (count > 1) {
+                HashMap<LCurrency, BigDecimal> part = convert_(list, b, date);
+                for (LCurrency c : part.keySet()) {
+                    out.put(c, part.get(c).multiply(b.getFactor().divide(c.getFactor(), CURRENT_INSTANCE.precision)));
+                }
+            } else {
+                out.put(list[0], convert(BigDecimal.ONE, list[0], b, date));
+            }
+        }
+        for (LCurrency n : nats) {
+            out.put(n, convert(BigDecimal.ONE, n, b, date));
         }
         return out;
     }
@@ -555,14 +595,16 @@ public class LMarketApi implements ExportableToJson, Serializable {
                         case OBJECT -> sup = ((JsonObject) sup).get(token);
                         case DECIMAL -> out.put(c, ((JsonDecimal) sup).decimal);
                         case STRING -> out.put(c, new BigDecimal(((JsonString) sup).getString()));
-                        case NULL, BOOL -> CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "It looks like the api wasn't structured how you thought it was.\n" + bundle.process(MULTI_URL) + "\n" + item.print());
+                        case NULL, BOOL ->
+                                CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "It looks like the api wasn't structured how you thought it was.\n" + bundle.process(MULTI_URL) + "\n" + item.print());
                     }
                 }
                 if (sup != null) {
                     switch (sup.getType()) {
                         case DECIMAL -> out.put(c, ((JsonDecimal) sup).decimal);
                         case STRING -> out.put(c, new BigDecimal(((JsonString) sup).getString()));
-                        case ARRAY, BOOL, OBJECT, NULL -> CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "It looks like the api wasn't structured how you thought it was.\n" + bundle.process(MULTI_URL) + "\n" + item.print());
+                        case ARRAY, BOOL, OBJECT, NULL ->
+                                CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "It looks like the api wasn't structured how you thought it was.\n" + bundle.process(MULTI_URL) + "\n" + item.print());
                     }
                 }
             } else {
@@ -575,15 +617,6 @@ public class LMarketApi implements ExportableToJson, Serializable {
     private HashMap<LCurrency, BigDecimal> getHistoricalPrices(LCurrency[] searches, LCurrency nat, LDate date) throws ApiLimitReachedException {
         HashMap<LCurrency, BigDecimal> out = new HashMap<>();
         MultiApiParseBundle bundle = new MultiApiParseBundle(searches, nat, KEY, SEPARATOR, date);
-        try {
-            bundle.process(MULTI_URL_HISTORY);
-        } catch (NullPointerException e) {
-            try {
-                System.out.println(export());
-            } catch (JsonFormattingException ex) {
-                System.out.println("well we tried: " + NAME);
-            }
-        }
         JsonItem item = CURRENT_INSTANCE.FILE_HANDLER.hit(bundle.process(MULTI_URL_HISTORY, null));
         for (LCurrency c : searches) {
             JsonItem sup = null;
@@ -597,14 +630,16 @@ public class LMarketApi implements ExportableToJson, Serializable {
                     case OBJECT -> sup = ((JsonObject) sup).get(token);
                     case DECIMAL -> out.put(c, ((JsonDecimal) sup).decimal);
                     case STRING -> out.put(c, new BigDecimal(((JsonString) sup).getString()));
-                    case NULL, BOOL -> CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "It looks like the api wasn't structured how you thought it was.\n" + bundle.process(MULTI_URL) + "\n" + item.print());
+                    case NULL, BOOL ->
+                            CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "It looks like the api wasn't structured how you thought it was.\n" + bundle.process(MULTI_URL) + "\n" + item.print());
                 }
             }
             if (sup != null) {
                 switch (sup.getType()) {
                     case DECIMAL -> out.put(c, ((JsonDecimal) sup).decimal);
                     case STRING -> out.put(c, new BigDecimal(((JsonString) sup).getString()));
-                    case ARRAY, BOOL, OBJECT, NULL -> CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "It looks like the api wasn't structured how you thought it was.\n" + bundle.process(MULTI_URL) + "\n" + item.print());
+                    case ARRAY, BOOL, OBJECT, NULL ->
+                            CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "It looks like the api wasn't structured how you thought it was.\n" + bundle.process(MULTI_URL) + "\n" + item.print());
                 }
             }
         }

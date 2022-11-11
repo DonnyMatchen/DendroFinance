@@ -232,7 +232,7 @@ public class DataHandler {
         return x;
     }
 
-    public HashMap<LCurrency, BigDecimal> pricesAsOf(LDate date) {
+    public HashMap<LCurrency, BigDecimal> pricesAsOf(LCurrency cur, LDate date) {
         CURRENT_INSTANCE.LOG_HANDLER.trace(getClass(), "Price-get started");
         HashMap<Account, BigDecimal> acc = accountsAsOf(date.getYear(), date.getMonth(), date.getDay());
         Aggregation<LCurrency> assets = new Aggregation<>();
@@ -248,9 +248,9 @@ public class DataHandler {
         LDate now = LDate.now(CURRENT_INSTANCE);
         HashMap<LCurrency, BigDecimal> out;
         if (date.getYear() == now.getYear() && date.getMonth() == now.getMonth() && date.getDay() == now.getDay()) {
-            out = CURRENT_INSTANCE.getAllConversions(significant, CURRENT_INSTANCE.main);
+            out = CURRENT_INSTANCE.getAllConversions(significant, cur);
         } else {
-            out = CURRENT_INSTANCE.getAllConversions(significant, CURRENT_INSTANCE.main, date);
+            out = CURRENT_INSTANCE.getAllConversions(significant, cur, date);
         }
         CURRENT_INSTANCE.LOG_HANDLER.trace(getClass(), "Price get finished");
         return out;

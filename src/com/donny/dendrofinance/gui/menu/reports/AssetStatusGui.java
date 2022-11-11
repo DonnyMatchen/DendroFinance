@@ -8,6 +8,7 @@ import com.donny.dendrofinance.currency.LStock;
 import com.donny.dendrofinance.gui.MainGui;
 import com.donny.dendrofinance.gui.customswing.DendroFactory;
 import com.donny.dendrofinance.gui.customswing.RegisterFrame;
+import com.donny.dendrofinance.gui.customswing.SearchBox;
 import com.donny.dendrofinance.gui.form.Validation;
 import com.donny.dendrofinance.gui.form.ValidationFailedException;
 import com.donny.dendrofinance.instance.Instance;
@@ -23,6 +24,7 @@ import java.util.HashMap;
 
 public class AssetStatusGui extends RegisterFrame {
     private final JTextField DATE;
+    private final SearchBox CURRENCY;
     private final DefaultTableModel TABLE_ACCESS;
 
     public AssetStatusGui(MainGui caller, Instance curInst) {
@@ -36,13 +38,15 @@ public class AssetStatusGui extends RegisterFrame {
                 @Override
                 public void keyTyped(KeyEvent keyEvent) {
                     if (keyEvent.getKeyChar() == '\n') {
-                        enterAction();
+                        enterAction(getCurrency());
                     }
                 }
             });
 
+            CURRENCY = new SearchBox("Currency", curInst.getAllAssetsAsStrings());
+
             JButton enter = DendroFactory.getButton("Enter");
-            enter.addActionListener(event -> enterAction());
+            enter.addActionListener(event -> enterAction(getCurrency()));
 
             JScrollPane pane = DendroFactory.getTable(new String[]{
                     "Account", "Amount", "Value"
@@ -65,6 +69,8 @@ public class AssetStatusGui extends RegisterFrame {
                                                 enter, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                         )
                                 ).addComponent(
+                                        CURRENCY, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
+                                ).addComponent(
                                         pane, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
                                 )
                         ).addContainerGap()
@@ -78,6 +84,8 @@ public class AssetStatusGui extends RegisterFrame {
                                 ).addComponent(
                                         enter, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                 )
+                        ).addGap(DendroFactory.SMALL_GAP).addComponent(
+                                CURRENCY, 150, 150, Short.MAX_VALUE
                         ).addGap(DendroFactory.MEDIUM_GAP).addComponent(
                                 pane, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
                         ).addContainerGap()
@@ -90,7 +98,7 @@ public class AssetStatusGui extends RegisterFrame {
         setLocation(d.width / 2 - getWidth() / 2, d.height / 2 - getHeight() / 2);
     }
 
-    public final void enterAction() {
+    public final void enterAction(LCurrency currency) {
         try {
             LDate date = Validation.validateDate(DATE, CURRENT_INSTANCE);
             while (TABLE_ACCESS.getRowCount() > 0) {
@@ -98,7 +106,7 @@ public class AssetStatusGui extends RegisterFrame {
             }
             int y = date.getYear(), m = date.getMonth(), d = date.getDay();
             HashMap<Account, BigDecimal> acc = CURRENT_INSTANCE.DATA_HANDLER.accountsAsOf(y, m, d);
-            HashMap<LCurrency, BigDecimal> prices = CURRENT_INSTANCE.DATA_HANDLER.pricesAsOf(date);
+            HashMap<LCurrency, BigDecimal> prices = CURRENT_INSTANCE.DATA_HANDLER.pricesAsOf(currency, date);
             BigDecimal stock = BigDecimal.ZERO, crypt = BigDecimal.ZERO, inv = BigDecimal.ZERO, fiat = BigDecimal.ZERO,
                     main = BigDecimal.ZERO, total = BigDecimal.ZERO, nf = BigDecimal.ZERO, rec = BigDecimal.ZERO, debts = BigDecimal.ZERO;
             for (Account a : CURRENT_INSTANCE.ACCOUNTS) {
@@ -111,7 +119,7 @@ public class AssetStatusGui extends RegisterFrame {
                                 CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Missing price: " + a.getCurrency());
                             }
                             TABLE_ACCESS.addRow(new String[]{
-                                    a.getName(), a.getCurrency().encode(acc.get(a)), CURRENT_INSTANCE.$(acc.get(a).multiply(prices.get(a.getCurrency())))
+                                    a.getName(), a.getCurrency().encode(acc.get(a)), currency.encode(acc.get(a).multiply(prices.get(a.getCurrency())))
                             });
                             if (a.getCurrency() instanceof LStock) {
                                 stock = stock.add(acc.get(a).multiply(prices.get(a.getCurrency())));
@@ -121,11 +129,11 @@ public class AssetStatusGui extends RegisterFrame {
                                 if (a.getCurrency().isFiat()) {
                                     if (a.getCurrency().equals(CURRENT_INSTANCE.main)) {
                                         if (a.getAccountType().NAME.equalsIgnoreCase(Account.fixedAssetsTypeName)) {
-                                            nf = nf.add(acc.get(a));
+                                            nf = nf.add(acc.get(a).multiply(prices.get(a.getCurrency())));
                                         } else if (a.getAccountType().NAME.equalsIgnoreCase(Account.receiveTypeName)) {
-                                            rec = rec.add(acc.get(a));
+                                            rec = rec.add(acc.get(a).multiply(prices.get(a.getCurrency())));
                                         } else {
-                                            main = main.add(acc.get(a));
+                                            main = main.add(acc.get(a).multiply(prices.get(a.getCurrency())));
                                         }
                                     } else {
                                         fiat = fiat.add(acc.get(a).multiply(prices.get(a.getCurrency())));
@@ -145,50 +153,59 @@ public class AssetStatusGui extends RegisterFrame {
             TABLE_ACCESS.addRow(new String[]{"", "", ""});
             if (main.compareTo(BigDecimal.ZERO) > 0) {
                 TABLE_ACCESS.addRow(new String[]{
-                        "Main Currency", "", CURRENT_INSTANCE.$(main)
+                        "Main Currency", "", currency.encode(main)
                 });
             }
             if (fiat.compareTo(BigDecimal.ZERO) > 0) {
                 TABLE_ACCESS.addRow(new String[]{
-                        "Other Currency", "", CURRENT_INSTANCE.$(fiat)
+                        "Other Currency", "", currency.encode(fiat)
                 });
             }
             if (stock.compareTo(BigDecimal.ZERO) > 0) {
                 TABLE_ACCESS.addRow(new String[]{
-                        "Stock Portfolio", "", CURRENT_INSTANCE.$(stock)
+                        "Stock Portfolio", "", currency.encode(stock)
                 });
             }
             if (crypt.compareTo(BigDecimal.ZERO) > 0) {
                 TABLE_ACCESS.addRow(new String[]{
-                        "Cryptocurrency", "", CURRENT_INSTANCE.$(crypt)
+                        "Cryptocurrency", "", currency.encode(crypt)
                 });
             }
             if (inv.compareTo(BigDecimal.ZERO) > 0) {
                 TABLE_ACCESS.addRow(new String[]{
-                        "Inventory", "", CURRENT_INSTANCE.$(inv)
+                        "Inventory", "", currency.encode(inv)
                 });
             }
             if (nf.compareTo(BigDecimal.ZERO) > 0) {
                 TABLE_ACCESS.addRow(new String[]{
-                        "Non Fungibles", "", CURRENT_INSTANCE.$(nf)
+                        "Non Fungibles", "", currency.encode(nf)
                 });
             }
             if (rec.compareTo(BigDecimal.ZERO) > 0) {
                 TABLE_ACCESS.addRow(new String[]{
-                        "Receivables", "", CURRENT_INSTANCE.$(rec)
+                        "Receivables", "", currency.encode(rec)
                 });
             }
             if (debts.compareTo(BigDecimal.ZERO) < 0) {
                 TABLE_ACCESS.addRow(new String[]{
-                        "Debts", "", CURRENT_INSTANCE.$(debts)
+                        "Debts", "", currency.encode(debts)
                 });
             }
             TABLE_ACCESS.addRow(new String[]{
-                    "Total", "", CURRENT_INSTANCE.$(total)
+                    "Total", "", currency.encode(total)
             });
         } catch (ValidationFailedException e) {
             CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Validation error: " + e.getMessage());
         }
 
+    }
+
+    private LCurrency getCurrency() {
+        String selected = CURRENCY.getSelectedItem();
+        if (selected == null) {
+            return CURRENT_INSTANCE.main;
+        } else {
+            return CURRENT_INSTANCE.getLCurrency(CURRENCY.getSelectedItem());
+        }
     }
 }

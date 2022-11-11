@@ -887,9 +887,6 @@ public class Instance {
                     boolean placed = false;
                     for (LMarketApi api : MARKET_APIS) {
                         if (api.canConvert(c, convertTo)) {
-                            if (c.toString().equals("F!USD")) {
-                                System.out.println("A: " + api.NAME);
-                            }
                             if (!lists.containsKey(api)) {
                                 lists.put(api, new ArrayList<>());
                             }

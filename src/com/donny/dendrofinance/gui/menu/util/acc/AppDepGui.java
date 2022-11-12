@@ -34,14 +34,100 @@ public class AppDepGui extends RegisterFrame {
             JLabel d = new JLabel("Inventories");
             JLabel e = new JLabel("Non-main Fiat");
             DATE = new JTextField();
+            STOCK_CURRENT = new JTextField();
+            STOCK_CURRENT.setEditable(false);
+            STOCK_APP = new JTextField();
+            STOCK_APP.setEditable(false);
+            STOCK = new JTextField();
+            STOCK.getDocument().addDocumentListener(new DocumentListener() {
+                @Override
+                public void insertUpdate(DocumentEvent documentEvent) {
+                    STOCK_APP.setText(CURRENT_INSTANCE.main.encode(Cleaning.cleanNumber(STOCK.getText()).subtract(Cleaning.cleanNumber(STOCK_CURRENT.getText()))));
+                }
+
+                @Override
+                public void removeUpdate(DocumentEvent documentEvent) {
+                    STOCK_APP.setText(CURRENT_INSTANCE.main.encode(Cleaning.cleanNumber(STOCK.getText()).subtract(Cleaning.cleanNumber(STOCK_CURRENT.getText()))));
+                }
+
+                @Override
+                public void changedUpdate(DocumentEvent documentEvent) {
+                    STOCK_APP.setText(CURRENT_INSTANCE.main.encode(Cleaning.cleanNumber(STOCK.getText()).subtract(Cleaning.cleanNumber(STOCK_CURRENT.getText()))));
+                }
+            });
+            CRYPTO_CURRENT = new JTextField();
+            CRYPTO_CURRENT.setEditable(false);
+            CRYPTO_APP = new JTextField();
+            CRYPTO_APP.setEditable(false);
+            CRYPTO = new JTextField();
+            CRYPTO.getDocument().addDocumentListener(new DocumentListener() {
+                @Override
+                public void insertUpdate(DocumentEvent documentEvent) {
+                    CRYPTO_APP.setText(CURRENT_INSTANCE.main.encode(Cleaning.cleanNumber(CRYPTO.getText()).subtract(Cleaning.cleanNumber(CRYPTO_CURRENT.getText()))));
+                }
+
+                @Override
+                public void removeUpdate(DocumentEvent documentEvent) {
+                    CRYPTO_APP.setText(CURRENT_INSTANCE.main.encode(Cleaning.cleanNumber(CRYPTO.getText()).subtract(Cleaning.cleanNumber(CRYPTO_CURRENT.getText()))));
+                }
+
+                @Override
+                public void changedUpdate(DocumentEvent documentEvent) {
+                    CRYPTO_APP.setText(CURRENT_INSTANCE.main.encode(Cleaning.cleanNumber(CRYPTO.getText()).subtract(Cleaning.cleanNumber(CRYPTO_CURRENT.getText()))));
+                }
+            });
+            INV_CURRENT = new JTextField();
+            INV_CURRENT.setEditable(false);
+            INV_APP = new JTextField();
+            INV_APP.setEditable(false);
+            INV = new JTextField();
+            INV.getDocument().addDocumentListener(new DocumentListener() {
+                @Override
+                public void insertUpdate(DocumentEvent documentEvent) {
+                    INV_APP.setText(CURRENT_INSTANCE.main.encode(Cleaning.cleanNumber(INV.getText()).subtract(Cleaning.cleanNumber(INV_CURRENT.getText()))));
+                }
+
+                @Override
+                public void removeUpdate(DocumentEvent documentEvent) {
+                    INV_APP.setText(CURRENT_INSTANCE.main.encode(Cleaning.cleanNumber(INV.getText()).subtract(Cleaning.cleanNumber(INV_CURRENT.getText()))));
+                }
+
+                @Override
+                public void changedUpdate(DocumentEvent documentEvent) {
+                    INV_APP.setText(CURRENT_INSTANCE.main.encode(Cleaning.cleanNumber(INV.getText()).subtract(Cleaning.cleanNumber(INV_CURRENT.getText()))));
+                }
+            });
+            FIAT_CURRENT = new JTextField();
+            FIAT_CURRENT.setEditable(false);
+            FIAT_APP = new JTextField();
+            FIAT_APP.setEditable(false);
+            FIAT = new JTextField();
+            FIAT.getDocument().addDocumentListener(new DocumentListener() {
+                @Override
+                public void insertUpdate(DocumentEvent documentEvent) {
+                    FIAT_APP.setText(CURRENT_INSTANCE.main.encode(Cleaning.cleanNumber(FIAT.getText()).subtract(Cleaning.cleanNumber(FIAT_CURRENT.getText()))));
+                }
+
+                @Override
+                public void removeUpdate(DocumentEvent documentEvent) {
+                    FIAT_APP.setText(CURRENT_INSTANCE.main.encode(Cleaning.cleanNumber(FIAT.getText()).subtract(Cleaning.cleanNumber(FIAT_CURRENT.getText()))));
+                }
+
+                @Override
+                public void changedUpdate(DocumentEvent documentEvent) {
+                    FIAT_APP.setText(CURRENT_INSTANCE.main.encode(Cleaning.cleanNumber(FIAT.getText()).subtract(Cleaning.cleanNumber(FIAT_CURRENT.getText()))));
+                }
+            });
             DATE.getDocument().addDocumentListener(new DocumentListener() {
                 private void sharedAction() {
                     try {
-                        LDate date = Validation.validateDate(DATE, CURRENT_INSTANCE);
-                        STOCK_CURRENT.setText(CURRENT_INSTANCE.main.encode(CURRENT_INSTANCE.DATA_HANDLER.accountAsOf(Account.stockName, date)));
-                        CRYPTO_CURRENT.setText(CURRENT_INSTANCE.main.encode(CURRENT_INSTANCE.DATA_HANDLER.accountAsOf(Account.cryptoName, date)));
-                        INV_CURRENT.setText(CURRENT_INSTANCE.main.encode(CURRENT_INSTANCE.DATA_HANDLER.accountAsOf(Account.inventoryName, date)));
-                        FIAT_CURRENT.setText(CURRENT_INSTANCE.main.encode(CURRENT_INSTANCE.DATA_HANDLER.accountAsOf(Account.fiatName, date)));
+                        if (!DATE.getText().equals("")) {
+                            LDate date = Validation.validateDate(DATE, CURRENT_INSTANCE);
+                            STOCK_CURRENT.setText(CURRENT_INSTANCE.main.encode(CURRENT_INSTANCE.DATA_HANDLER.accountAsOf(Account.stockName, date)));
+                            CRYPTO_CURRENT.setText(CURRENT_INSTANCE.main.encode(CURRENT_INSTANCE.DATA_HANDLER.accountAsOf(Account.cryptoName, date)));
+                            INV_CURRENT.setText(CURRENT_INSTANCE.main.encode(CURRENT_INSTANCE.DATA_HANDLER.accountAsOf(Account.inventoryName, date)));
+                            FIAT_CURRENT.setText(CURRENT_INSTANCE.main.encode(CURRENT_INSTANCE.DATA_HANDLER.accountAsOf(Account.fiatName, date)));
+                        }
                     } catch (ValidationFailedException ex) {
                         CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Not a valid date: " + DATE.getText());
                     }
@@ -62,90 +148,6 @@ public class AppDepGui extends RegisterFrame {
                     sharedAction();
                 }
             });
-            STOCK = new JTextField();
-            STOCK.getDocument().addDocumentListener(new DocumentListener() {
-                @Override
-                public void insertUpdate(DocumentEvent documentEvent) {
-                    STOCK_APP.setText(CURRENT_INSTANCE.main.encode(Cleaning.cleanNumber(STOCK.getText()).subtract(Cleaning.cleanNumber(STOCK_CURRENT.getText()))));
-                }
-
-                @Override
-                public void removeUpdate(DocumentEvent documentEvent) {
-                    STOCK_APP.setText(CURRENT_INSTANCE.main.encode(Cleaning.cleanNumber(STOCK.getText()).subtract(Cleaning.cleanNumber(STOCK_CURRENT.getText()))));
-                }
-
-                @Override
-                public void changedUpdate(DocumentEvent documentEvent) {
-                    STOCK_APP.setText(CURRENT_INSTANCE.main.encode(Cleaning.cleanNumber(STOCK.getText()).subtract(Cleaning.cleanNumber(STOCK_CURRENT.getText()))));
-                }
-            });
-            STOCK_CURRENT = new JTextField();
-            STOCK_CURRENT.setEditable(false);
-            STOCK_APP = new JTextField();
-            STOCK_APP.setEditable(false);
-            CRYPTO = new JTextField();
-            CRYPTO.getDocument().addDocumentListener(new DocumentListener() {
-                @Override
-                public void insertUpdate(DocumentEvent documentEvent) {
-                    CRYPTO_APP.setText(CURRENT_INSTANCE.main.encode(Cleaning.cleanNumber(CRYPTO.getText()).subtract(Cleaning.cleanNumber(CRYPTO_CURRENT.getText()))));
-                }
-
-                @Override
-                public void removeUpdate(DocumentEvent documentEvent) {
-                    CRYPTO_APP.setText(CURRENT_INSTANCE.main.encode(Cleaning.cleanNumber(CRYPTO.getText()).subtract(Cleaning.cleanNumber(CRYPTO_CURRENT.getText()))));
-                }
-
-                @Override
-                public void changedUpdate(DocumentEvent documentEvent) {
-                    CRYPTO_APP.setText(CURRENT_INSTANCE.main.encode(Cleaning.cleanNumber(CRYPTO.getText()).subtract(Cleaning.cleanNumber(CRYPTO_CURRENT.getText()))));
-                }
-            });
-            CRYPTO_CURRENT = new JTextField();
-            CRYPTO_CURRENT.setEditable(false);
-            CRYPTO_APP = new JTextField();
-            CRYPTO_APP.setEditable(false);
-            INV = new JTextField();
-            INV.getDocument().addDocumentListener(new DocumentListener() {
-                @Override
-                public void insertUpdate(DocumentEvent documentEvent) {
-                    INV_APP.setText(CURRENT_INSTANCE.main.encode(Cleaning.cleanNumber(INV.getText()).subtract(Cleaning.cleanNumber(INV_CURRENT.getText()))));
-                }
-
-                @Override
-                public void removeUpdate(DocumentEvent documentEvent) {
-                    INV_APP.setText(CURRENT_INSTANCE.main.encode(Cleaning.cleanNumber(INV.getText()).subtract(Cleaning.cleanNumber(INV_CURRENT.getText()))));
-                }
-
-                @Override
-                public void changedUpdate(DocumentEvent documentEvent) {
-                    INV_APP.setText(CURRENT_INSTANCE.main.encode(Cleaning.cleanNumber(INV.getText()).subtract(Cleaning.cleanNumber(INV_CURRENT.getText()))));
-                }
-            });
-            INV_CURRENT = new JTextField();
-            INV_CURRENT.setEditable(false);
-            INV_APP = new JTextField();
-            INV_APP.setEditable(false);
-            FIAT = new JTextField();
-            FIAT.getDocument().addDocumentListener(new DocumentListener() {
-                @Override
-                public void insertUpdate(DocumentEvent documentEvent) {
-                    FIAT_APP.setText(CURRENT_INSTANCE.main.encode(Cleaning.cleanNumber(FIAT.getText()).subtract(Cleaning.cleanNumber(FIAT_CURRENT.getText()))));
-                }
-
-                @Override
-                public void removeUpdate(DocumentEvent documentEvent) {
-                    FIAT_APP.setText(CURRENT_INSTANCE.main.encode(Cleaning.cleanNumber(FIAT.getText()).subtract(Cleaning.cleanNumber(FIAT_CURRENT.getText()))));
-                }
-
-                @Override
-                public void changedUpdate(DocumentEvent documentEvent) {
-                    FIAT_APP.setText(CURRENT_INSTANCE.main.encode(Cleaning.cleanNumber(FIAT.getText()).subtract(Cleaning.cleanNumber(FIAT_CURRENT.getText()))));
-                }
-            });
-            FIAT_CURRENT = new JTextField();
-            FIAT_CURRENT.setEditable(false);
-            FIAT_APP = new JTextField();
-            FIAT_APP.setEditable(false);
             JButton save = DendroFactory.getButton("Save");
             save.addActionListener(event -> saveAction());
             //group layout
@@ -277,10 +279,10 @@ public class AppDepGui extends RegisterFrame {
 
     private void saveAction() {
         BigDecimal x = BigDecimal.ZERO;
-        BigDecimal stock = new BigDecimal(STOCK_APP.getText());
-        BigDecimal crypto = new BigDecimal(CRYPTO_APP.getText());
-        BigDecimal inventory = new BigDecimal(INV_APP.getText());
-        BigDecimal fiat = new BigDecimal(FIAT_APP.getText());
+        BigDecimal stock = Cleaning.cleanNumber(STOCK_APP.getText());
+        BigDecimal crypto = Cleaning.cleanNumber(CRYPTO_APP.getText());
+        BigDecimal inventory = Cleaning.cleanNumber(INV_APP.getText());
+        BigDecimal fiat = Cleaning.cleanNumber(FIAT_APP.getText());
         x = x.add(stock).add(crypto).add(inventory).add(fiat);
         try {
             LDate date = Validation.validateDate(DATE, CURRENT_INSTANCE);

@@ -16,6 +16,8 @@
   * cloning transactions now has correct title
   * asset status and position gui now wait to execute potentially lengthy operations
   * market APIs are now saved along with other backing elements
+  * date no longer requires not empty
+  * `AppDepGui` now works again
 
 ## v0.9.1
 * minor bug fixes

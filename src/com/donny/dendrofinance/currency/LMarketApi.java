@@ -472,7 +472,7 @@ public class LMarketApi implements ExportableToJson, Serializable {
                 }
             }
         }
-        for (LCurrency[] list : partition(actual, MULTI_LIMIT)) {
+        for (LCurrency[] list : partition(actual, MULTI_HIST_LIMIT)) {
             int count = 0;
             for (LCurrency c : list) {
                 if (c != null) {

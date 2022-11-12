@@ -47,13 +47,16 @@ public class Validation {
     }
 
     public static LDate validateDate(JTextField field, Instance curInst) throws ValidationFailedException {
-        require(field);
-        try {
-            field.setBackground(DendroFactory.CONTENT);
-            return new LDate(field.getText(), curInst);
-        } catch (ParseException e) {
-            field.setBackground(DendroFactory.WRONG);
-            throw new ValidationFailedException("Field is not a valid date");
+        if (field.getText().replace("\"", "").equals("")) {
+            return LDate.now(curInst);
+        } else {
+            try {
+                field.setBackground(DendroFactory.CONTENT);
+                return new LDate(field.getText(), curInst);
+            } catch (ParseException e) {
+                field.setBackground(DendroFactory.WRONG);
+                throw new ValidationFailedException("Field is not a valid date");
+            }
         }
     }
 

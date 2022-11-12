@@ -6,7 +6,7 @@
   * major change to api structure
     * (X) data structure updated in `Examples`
   * (X) no multiple search option handling
-  * (X) more complex multisearch options handled
+  * (X) variant currencies handled correctly
   * `AssetStatusGui` now takes any currency
   * (X) documentation now covers API handling
 * balance sheet improvements

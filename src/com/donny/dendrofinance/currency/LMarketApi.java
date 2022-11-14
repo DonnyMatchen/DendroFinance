@@ -399,9 +399,6 @@ public class LMarketApi implements ExportableToJson, Serializable {
                 } else {
                     boolean flag = true;
                     for (LCurrency a : actual) {
-                        if(c.getTicker().equalsIgnoreCase("kava")) {
-                            System.out.println(a.getTicker() + ", " + c.getTicker() + ": " + a.matches(c));
-                        }
                         if(a.matches(c)) {
                             flag = false;
                         }
@@ -513,9 +510,6 @@ public class LMarketApi implements ExportableToJson, Serializable {
                 } else {
                     boolean flag = true;
                     for (LCurrency a : actual) {
-                        if(c.getTicker().equalsIgnoreCase("kava")) {
-                            System.out.println(a.getTicker() + ", " + c.getTicker() + ": " + a.matches(c));
-                        }
                         if(a.matches(c)) {
                             flag = false;
                         }

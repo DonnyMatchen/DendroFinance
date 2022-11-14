@@ -120,9 +120,9 @@ public class LMarketApi implements ExportableToJson, Serializable {
 
     public boolean hasNat(LCurrency currency) {
         for (String nat : NATS) {
-            LCurrency cur = CURRENT_INSTANCE.getLCurrency(nat);
-            if (cur != null) {
-                if (cur.getTicker().equals(currency.getTicker()) && cur.getClass() == currency.getClass() && cur.isFiat() == currency.isFiat()) {
+            LCurrency n = CURRENT_INSTANCE.getLCurrency(nat);
+            if (n != null) {
+                if (n.matches(currency)) {
                     return true;
                 }
             }
@@ -270,7 +270,7 @@ public class LMarketApi implements ExportableToJson, Serializable {
         return (canSearch(a) && hasNat(b)) ||
                 (canSearch(b) && hasNat(a)) ||
                 (canSearch(a) && canSearch(b)) ||
-                (a.getTicker().equals(b.getTicker()) && a.isFiat() == b.isFiat() && a.getClass() == b.getClass());
+                a.matches(b);
     }
 
     /**
@@ -380,13 +380,37 @@ public class LMarketApi implements ExportableToJson, Serializable {
     public HashMap<LCurrency, BigDecimal> convert(ArrayList<LCurrency> searches, LCurrency b) {
         HashMap<LCurrency, BigDecimal> out = new HashMap<>();
         ArrayList<LCurrency> actual = new ArrayList<>();
+        ArrayList<LCurrency> derivatives = new ArrayList<>();
         ArrayList<LCurrency> nats = new ArrayList<>();
         for (LCurrency c : searches) {
             if (canConvert(c, b)) {
-                if (hasNat(c)) {
-                    nats.add(c);
+                if (canSearch(c)) {
+                    boolean flag = true;
+                    for (LCurrency a : actual) {
+                        if(a.matches(c)) {
+                            flag = false;
+                        }
+                    }
+                    if(flag) {
+                        actual.add(c);
+                    } else {
+                        derivatives.add(c);
+                    }
                 } else {
-                    actual.add(c);
+                    boolean flag = true;
+                    for (LCurrency a : actual) {
+                        if(c.getTicker().equalsIgnoreCase("kava")) {
+                            System.out.println(a.getTicker() + ", " + c.getTicker() + ": " + a.matches(c));
+                        }
+                        if(a.matches(c)) {
+                            flag = false;
+                        }
+                    }
+                    if(flag) {
+                        nats.add(c);
+                    } else {
+                        derivatives.add(c);
+                    }
                 }
             }
         }
@@ -410,6 +434,14 @@ public class LMarketApi implements ExportableToJson, Serializable {
         }
         for (LCurrency n : nats) {
             out.put(n, convert(BigDecimal.ONE, n, b));
+        }
+        for (LCurrency d : derivatives) {
+            for (LCurrency c : out.keySet()) {
+                if(c.matches(d)) {
+                    out.put(d, out.get(c).multiply(c.getFactor()).divide(d.getFactor(), CURRENT_INSTANCE.precision));
+                    break;
+                }
+            }
         }
         return out;
     }
@@ -462,13 +494,37 @@ public class LMarketApi implements ExportableToJson, Serializable {
     public HashMap<LCurrency, BigDecimal> convert(ArrayList<LCurrency> searches, LCurrency b, LDate date) {
         HashMap<LCurrency, BigDecimal> out = new HashMap<>();
         ArrayList<LCurrency> actual = new ArrayList<>();
+        ArrayList<LCurrency> derivatives = new ArrayList<>();
         ArrayList<LCurrency> nats = new ArrayList<>();
         for (LCurrency c : searches) {
             if (canConvert(c, b)) {
-                if (hasNat(c)) {
-                    nats.add(c);
+                if (canSearch(c)) {
+                    boolean flag = true;
+                    for (LCurrency a : actual) {
+                        if(a.matches(c)) {
+                            flag = false;
+                        }
+                    }
+                    if(flag) {
+                        actual.add(c);
+                    } else {
+                        derivatives.add(c);
+                    }
                 } else {
-                    actual.add(c);
+                    boolean flag = true;
+                    for (LCurrency a : actual) {
+                        if(c.getTicker().equalsIgnoreCase("kava")) {
+                            System.out.println(a.getTicker() + ", " + c.getTicker() + ": " + a.matches(c));
+                        }
+                        if(a.matches(c)) {
+                            flag = false;
+                        }
+                    }
+                    if(flag) {
+                        nats.add(c);
+                    } else {
+                        derivatives.add(c);
+                    }
                 }
             }
         }
@@ -492,6 +548,14 @@ public class LMarketApi implements ExportableToJson, Serializable {
         }
         for (LCurrency n : nats) {
             out.put(n, convert(BigDecimal.ONE, n, b, date));
+        }
+        for (LCurrency d : derivatives) {
+            for (LCurrency c : out.keySet()) {
+                if(c.matches(d)) {
+                    out.put(d, out.get(c).multiply(c.getFactor()).divide(d.getFactor(), CURRENT_INSTANCE.precision));
+                    break;
+                }
+            }
         }
         return out;
     }

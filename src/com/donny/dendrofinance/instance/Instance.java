@@ -649,7 +649,7 @@ public class Instance {
         if ((bStock != null && !bStock.isPublic()) || (bInv != null && !bInv.isPublic())) {
             bPrivate = true;
         }
-        if (a.getTicker().equalsIgnoreCase(b.getTicker()) && a.getClass() == b.getClass() && a.isFiat() == b.isFiat()) {
+        if (a.matches(b)) {
             return amount.multiply(b.getFactor().divide(a.getFactor(), precision));
         } else if (aPrivate || bPrivate) {
             if (aPrivate) {
@@ -742,7 +742,7 @@ public class Instance {
         if ((bStock != null && !bStock.isPublic()) || (bInv != null && !bInv.isPublic())) {
             bPrivate = true;
         }
-        if (a.getTicker().equalsIgnoreCase(b.getTicker()) && a.getClass() == b.getClass() && a.isFiat() == b.isFiat()) {
+        if (a.matches(b)) {
             return amount.multiply(b.getFactor().divide(a.getFactor(), precision));
         } else if (aPrivate || bPrivate) {
             if (aPrivate) {
@@ -866,10 +866,8 @@ public class Instance {
         for (LCurrency c : currencies) {
             if (c == convertTo) {
                 out.put(c, BigDecimal.ONE);
-            } else if (c.getTicker().equals(convertTo.getTicker()) && c.getClass() == convertTo.getClass()) {
-                if ((c.isFiat() && convertTo.isFiat()) || (!c.isFiat() && !convertTo.isFiat())) {
-                    out.put(c, convert(BigDecimal.ONE, c, convertTo));
-                }
+            } else if (c.matches(convertTo)) {
+                out.put(c, convert(BigDecimal.ONE, c, convertTo));
             } else {
                 boolean flag = true;
                 if (c instanceof LStock s) {
@@ -965,10 +963,8 @@ public class Instance {
         for (LCurrency c : currencies) {
             if (c == convertTo) {
                 out.put(c, BigDecimal.ONE);
-            } else if (c.getTicker().equals(convertTo.getTicker()) && c.getClass() == convertTo.getClass()) {
-                if ((c.isFiat() && convertTo.isFiat()) || (!c.isFiat() && !convertTo.isFiat())) {
-                    out.put(c, convert(BigDecimal.ONE, c, convertTo));
-                }
+            } else if (c.matches(convertTo)) {
+                out.put(c, convert(BigDecimal.ONE, c, convertTo));
             } else {
                 boolean flag = true;
                 if (c instanceof LStock s) {

@@ -406,6 +406,7 @@ public class FileHandler {
      */
 
     public JsonItem hit(String url) throws ApiLimitReachedException {
+        System.out.println(url);
         try {
             return JsonItem.digest(new JsonFactory().createParser(new URL(url).openStream()));
         } catch (JsonFormattingException e) {

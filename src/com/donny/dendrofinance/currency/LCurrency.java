@@ -212,6 +212,10 @@ public class LCurrency implements ExportableToJson, Serializable {
         }
     }
 
+    public boolean matches(LCurrency b) {
+        return getTicker().equals(b.getTicker()) && getClass() == b.getClass() && (isFiat() == b.isFiat());
+    }
+
     @Override
     public JsonObject export() throws JsonFormattingException {
         JsonObject obj = new JsonObject();

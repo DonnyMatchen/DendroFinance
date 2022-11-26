@@ -4,12 +4,12 @@
   * new date formats documented
 * multi-asset calls to apis
   * major change to api structure
-    * (X) data structure updated in `Examples`
+    * data structure updated in `Examples`
   * handling of no multiple search option
   * excepts changed to included and excluded
   * variant currencies handled correctly
   * `AssetStatusGui` now takes any currency
-  * (X) documentation now covers API handling
+  * documentation now covers API
 * balance sheet improvements
   * balance sheet importance thresholds
   * difference of accounts

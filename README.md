@@ -13,6 +13,10 @@ For help with milliseconds since epoch, this site is an option: [UnixTimeStamp.c
 * Torsocks seems to interfere with this application's ability to read and write files and access APIs.  The latter may be due to many APIs blocking TOR nodes.
 * In Linux systems using the Nautilus filesystem interface or derivatives, there seems to be a problem when .jar files are run.  It seems to set the working directory to the home folder rather than the directory the .jar file is in.
   * Due to this, the Linux version of the software ships with a run script for convenience
+* This application's asset conversion api handling is only designed for APIs conforming to the following attributes:
+  * HTTP accessed
+  * uses HTTP GET method
+  * returns a JSON
 
 # CONFIGURATION
 the following is an explanation of configuration options available for each profile

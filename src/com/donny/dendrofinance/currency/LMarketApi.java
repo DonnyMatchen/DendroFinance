@@ -54,13 +54,15 @@ public class LMarketApi implements ExportableToJson, Serializable {
 
     public final String NAME, TYPES, SEPARATOR, BASE_URL, BASE_URL_HISTORY, MULTI_URL, MULTI_URL_HISTORY, KEY;
     public final int ATTEMPT_LIMIT, DURATION, MULTI_LIMIT, MULTI_HIST_LIMIT;
+    public final boolean MULTIPLE;
     private int attempts = 0;
     private final Instance CURRENT_INSTANCE;
-    private final ArrayList<String> BASE_PARSE, BASE_HIST_PARSE, MULTI_PARSE, MULTI_HIST_PARSE, NATS, EXCEPTS;
+    private final ArrayList<String> BASE_PARSE, BASE_HIST_PARSE, MULTI_PARSE, MULTI_HIST_PARSE;
+    private final ArrayList<LCurrency> NATS, EXCLUDED, INCLUDED;
 
     public LMarketApi(String name, String types, String baseUrl, String baseUrlHist, String multiUrl,
                       String multiUrlHist, String sep, String apiKey, int mLimit, int mhLimit, int attemptLimit,
-                      int duration, Instance curInst) {
+                      int duration, boolean multiple, Instance curInst) {
         CURRENT_INSTANCE = curInst;
         NAME = name;
         TYPES = types;
@@ -77,9 +79,31 @@ public class LMarketApi implements ExportableToJson, Serializable {
         MULTI_LIMIT = mLimit;
         MULTI_HIST_LIMIT = mhLimit;
         NATS = new ArrayList<>();
-        EXCEPTS = new ArrayList<>();
+        EXCLUDED = new ArrayList<>();
+        INCLUDED = new ArrayList<>();
         ATTEMPT_LIMIT = attemptLimit;
         DURATION = duration;
+        MULTIPLE = multiple;
+    }
+
+    public LMarketApi(String name, String types, String baseUrl, String baseUrlHist, String apiKey, int attemptLimit,
+                      int duration, Instance curInst) {
+        this(
+                name,
+                types,
+                baseUrl,
+                baseUrlHist,
+                "",
+                "",
+                "",
+                apiKey,
+                1,
+                1,
+                attemptLimit,
+                duration,
+                false,
+                curInst
+        );
     }
 
     public LMarketApi(JsonObject object, Instance curInst) {
@@ -96,6 +120,7 @@ public class LMarketApi implements ExportableToJson, Serializable {
                 object.getDecimal("multi-bounds-hist").decimal.intValue(),
                 object.getDecimal("attempt-limit").decimal.intValue(),
                 object.getDecimal("duration").decimal.intValue(),
+                object.getString("flags").getString().contains("M"),
                 curInst
         );
         for (JsonString string : object.getArray("base-parse").getStringArray()) {
@@ -104,46 +129,63 @@ public class LMarketApi implements ExportableToJson, Serializable {
         for (JsonString string : object.getArray("base-hist-parse").getStringArray()) {
             BASE_HIST_PARSE.add(string.getString());
         }
-        for (JsonString string : object.getArray("multi-parse").getStringArray()) {
-            MULTI_PARSE.add(string.getString());
-        }
-        for (JsonString string : object.getArray("multi-hist-parse").getStringArray()) {
-            MULTI_HIST_PARSE.add(string.getString());
+        if (MULTIPLE) {
+            for (JsonString string : object.getArray("multi-parse").getStringArray()) {
+                MULTI_PARSE.add(string.getString());
+            }
+            for (JsonString string : object.getArray("multi-hist-parse").getStringArray()) {
+                MULTI_HIST_PARSE.add(string.getString());
+            }
         }
         for (JsonString str : object.getArray("nats").getStringArray()) {
-            NATS.add(str.getString());
+            LCurrency cur = CURRENT_INSTANCE.getLCurrency(str.getString());
+            if (cur != null) {
+                NATS.add(cur);
+            }
         }
-        for (JsonString str : object.getArray("excepts").getStringArray()) {
-            EXCEPTS.add(str.getString());
+        for (JsonString str : object.getArray("excluded").getStringArray()) {
+            LCurrency cur = CURRENT_INSTANCE.getLCurrency(str.getString());
+            if (cur != null) {
+                EXCLUDED.add(cur);
+            }
+        }
+        for (JsonString str : object.getArray("included").getStringArray()) {
+            LCurrency cur = CURRENT_INSTANCE.getLCurrency(str.getString());
+            if (cur != null) {
+                INCLUDED.add(cur);
+            }
         }
     }
 
     public boolean hasNat(LCurrency currency) {
-        for (String nat : NATS) {
-            LCurrency n = CURRENT_INSTANCE.getLCurrency(nat);
-            if (n != null) {
-                if (n.matches(currency)) {
-                    return true;
-                }
+        for (LCurrency nat : NATS) {
+            if (nat.matches(currency)) {
+                return true;
             }
         }
         return false;
     }
 
     public boolean canSearch(LCurrency c) {
-        if (EXCEPTS.contains(c.toString())) {
-            return false;
+        for (LCurrency e : EXCLUDED) {
+            if (e.matches(c)) {
+                return false;
+            }
+        }
+        for (LCurrency i : INCLUDED) {
+            if (i.matches(c)) {
+                return true;
+            }
+        }
+        if (c instanceof LStock) {
+            return TYPES.contains("S");
+        } else if (c instanceof LInventory) {
+            return TYPES.contains("I");
         } else {
-            if (c instanceof LStock) {
-                return TYPES.contains("S");
-            } else if (c instanceof LInventory) {
-                return TYPES.contains("I");
+            if (c.isFiat()) {
+                return TYPES.contains("F");
             } else {
-                if (c.isFiat()) {
-                    return TYPES.contains("F");
-                } else {
-                    return TYPES.contains("C");
-                }
+                return TYPES.contains("C");
             }
         }
     }
@@ -184,14 +226,19 @@ public class LMarketApi implements ExportableToJson, Serializable {
         BASE_HIST_PARSE.addAll(newPath);
     }
 
-    public void resetNats(ArrayList<String> newPath) {
+    public void resetNats(ArrayList<LCurrency> newPath) {
         NATS.clear();
         NATS.addAll(newPath);
     }
 
-    public void resetExcepts(ArrayList<String> newPath) {
-        EXCEPTS.clear();
-        EXCEPTS.addAll(newPath);
+    public void resetExcluded(ArrayList<LCurrency> newPath) {
+        EXCLUDED.clear();
+        EXCLUDED.addAll(newPath);
+    }
+
+    public void resetIncluded(ArrayList<LCurrency> newPath) {
+        INCLUDED.clear();
+        INCLUDED.addAll(newPath);
     }
 
     public String readBaseParsePath() {
@@ -247,20 +294,32 @@ public class LMarketApi implements ExportableToJson, Serializable {
             return "";
         } else {
             StringBuilder sb = new StringBuilder();
-            for (String s : NATS) {
-                sb.append(", ").append(s);
+            for (LCurrency n : NATS) {
+                sb.append(", ").append(n.toString());
             }
             return sb.substring(2);
         }
     }
 
-    public String readExcepts() {
-        if (EXCEPTS.isEmpty()) {
+    public String readExcluded() {
+        if (EXCLUDED.isEmpty()) {
             return "";
         } else {
             StringBuilder sb = new StringBuilder();
-            for (String s : EXCEPTS) {
-                sb.append(", ").append(s);
+            for (LCurrency e : EXCLUDED) {
+                sb.append(", ").append(e.toString());
+            }
+            return sb.substring(2);
+        }
+    }
+
+    public String readIncluded() {
+        if (INCLUDED.isEmpty()) {
+            return "";
+        } else {
+            StringBuilder sb = new StringBuilder();
+            for (LCurrency i : INCLUDED) {
+                sb.append(", ").append(i.toString());
             }
             return sb.substring(2);
         }
@@ -295,7 +354,7 @@ public class LMarketApi implements ExportableToJson, Serializable {
                 if (hasNat(CURRENT_INSTANCE.main)) {
                     nat = CURRENT_INSTANCE.main;
                 } else {
-                    nat = CURRENT_INSTANCE.getLCurrency(NATS.get(0));
+                    nat = NATS.get(0);
                 }
                 BigDecimal x = getCurrentPrice(a, nat).divide(getCurrentPrice(b, nat), CURRENT_INSTANCE.precision);
                 returnValue = amount.multiply(x).multiply(b.getFactor().divide(a.getFactor(), CURRENT_INSTANCE.precision));
@@ -322,6 +381,10 @@ public class LMarketApi implements ExportableToJson, Serializable {
         }
     }
 
+    public BigDecimal convert(LCurrency a, LCurrency b) {
+        return convert(BigDecimal.ONE, a, b);
+    }
+
     /**
      * @param amount the amount of currency <code>a</code> to be converted
      * @param a      the asset to be converted from
@@ -345,7 +408,7 @@ public class LMarketApi implements ExportableToJson, Serializable {
                 if (hasNat(CURRENT_INSTANCE.main)) {
                     nat = CURRENT_INSTANCE.main;
                 } else {
-                    nat = CURRENT_INSTANCE.getLCurrency(NATS.get(0));
+                    nat = NATS.get(0);
                 }
                 BigDecimal x = getHistoricalPrice(a, nat, date).divide(getHistoricalPrice(b, nat, date), CURRENT_INSTANCE.precision);
                 returnValue = amount.multiply(x).multiply(b.getFactor().divide(a.getFactor(), CURRENT_INSTANCE.precision));
@@ -372,6 +435,10 @@ public class LMarketApi implements ExportableToJson, Serializable {
         }
     }
 
+    public BigDecimal convert(LCurrency a, LCurrency b, LDate date) {
+        return convert(BigDecimal.ONE, a, b, date);
+    }
+
     /**
      * @param searches the assets to convert from
      * @param b        the asset to convert to
@@ -379,64 +446,72 @@ public class LMarketApi implements ExportableToJson, Serializable {
      */
     public HashMap<LCurrency, BigDecimal> convert(ArrayList<LCurrency> searches, LCurrency b) {
         HashMap<LCurrency, BigDecimal> out = new HashMap<>();
-        ArrayList<LCurrency> actual = new ArrayList<>();
-        ArrayList<LCurrency> derivatives = new ArrayList<>();
-        ArrayList<LCurrency> nats = new ArrayList<>();
-        for (LCurrency c : searches) {
-            if (canConvert(c, b)) {
-                if (canSearch(c)) {
-                    boolean flag = true;
-                    for (LCurrency a : actual) {
-                        if(a.matches(c)) {
-                            flag = false;
+        if (MULTIPLE) {
+            ArrayList<LCurrency> actual = new ArrayList<>();
+            ArrayList<LCurrency> derivatives = new ArrayList<>();
+            ArrayList<LCurrency> nats = new ArrayList<>();
+            for (LCurrency c : searches) {
+                if (canConvert(c, b)) {
+                    if (canSearch(c)) {
+                        boolean flag = true;
+                        for (LCurrency a : actual) {
+                            if (a.matches(c)) {
+                                flag = false;
+                            }
+                        }
+                        if (flag) {
+                            actual.add(c);
+                        } else {
+                            derivatives.add(c);
+                        }
+                    } else {
+                        boolean flag = true;
+                        for (LCurrency a : actual) {
+                            if (a.matches(c)) {
+                                flag = false;
+                            }
+                        }
+                        if (flag) {
+                            nats.add(c);
+                        } else {
+                            derivatives.add(c);
                         }
                     }
-                    if(flag) {
-                        actual.add(c);
+                }
+            }
+            for (LCurrency[] list : partition(actual, MULTI_LIMIT)) {
+                int count = 0;
+                for (LCurrency c : list) {
+                    if (c != null) {
+                        count++;
                     } else {
-                        derivatives.add(c);
+                        break;
+                    }
+                }
+                if (count > 1) {
+                    HashMap<LCurrency, BigDecimal> part = convert_(list, b);
+                    for (LCurrency c : part.keySet()) {
+                        out.put(c, part.get(c).multiply(b.getFactor().divide(c.getFactor(), CURRENT_INSTANCE.precision)));
                     }
                 } else {
-                    boolean flag = true;
-                    for (LCurrency a : actual) {
-                        if(a.matches(c)) {
-                            flag = false;
-                        }
+                    out.put(list[0], convert(BigDecimal.ONE, list[0], b));
+                }
+            }
+            for (LCurrency n : nats) {
+                out.put(n, convert(BigDecimal.ONE, n, b));
+            }
+            for (LCurrency d : derivatives) {
+                for (LCurrency c : out.keySet()) {
+                    if (c.matches(d)) {
+                        out.put(d, out.get(c).multiply(c.getFactor()).divide(d.getFactor(), CURRENT_INSTANCE.precision));
+                        break;
                     }
-                    if(flag) {
-                        nats.add(c);
-                    } else {
-                        derivatives.add(c);
-                    }
                 }
             }
-        }
-        for (LCurrency[] list : partition(actual, MULTI_LIMIT)) {
-            int count = 0;
-            for (LCurrency c : list) {
-                if (c != null) {
-                    count++;
-                } else {
-                    break;
-                }
-            }
-            if (count > 1) {
-                HashMap<LCurrency, BigDecimal> part = convert_(list, b);
-                for (LCurrency c : part.keySet()) {
-                    out.put(c, part.get(c).multiply(b.getFactor().divide(c.getFactor(), CURRENT_INSTANCE.precision)));
-                }
-            } else {
-                out.put(list[0], convert(BigDecimal.ONE, list[0], b));
-            }
-        }
-        for (LCurrency n : nats) {
-            out.put(n, convert(BigDecimal.ONE, n, b));
-        }
-        for (LCurrency d : derivatives) {
-            for (LCurrency c : out.keySet()) {
-                if(c.matches(d)) {
-                    out.put(d, out.get(c).multiply(c.getFactor()).divide(d.getFactor(), CURRENT_INSTANCE.precision));
-                    break;
+        } else {
+            for (LCurrency c : searches) {
+                if (canConvert(c, b)) {
+                    out.put(c, convert(c, b));
                 }
             }
         }
@@ -456,7 +531,7 @@ public class LMarketApi implements ExportableToJson, Serializable {
                 }
                 return out;
             } else {
-                LCurrency nat = CURRENT_INSTANCE.getLCurrency(NATS.get(0));
+                LCurrency nat = NATS.get(0);
                 HashMap<LCurrency, BigDecimal> temp = getCurrentPrices(searches, nat);
                 BigDecimal x = convert(BigDecimal.ONE, nat, b);
                 HashMap<LCurrency, BigDecimal> out = new HashMap<>();
@@ -490,64 +565,72 @@ public class LMarketApi implements ExportableToJson, Serializable {
      */
     public HashMap<LCurrency, BigDecimal> convert(ArrayList<LCurrency> searches, LCurrency b, LDate date) {
         HashMap<LCurrency, BigDecimal> out = new HashMap<>();
-        ArrayList<LCurrency> actual = new ArrayList<>();
-        ArrayList<LCurrency> derivatives = new ArrayList<>();
-        ArrayList<LCurrency> nats = new ArrayList<>();
-        for (LCurrency c : searches) {
-            if (canConvert(c, b)) {
-                if (canSearch(c)) {
-                    boolean flag = true;
-                    for (LCurrency a : actual) {
-                        if(a.matches(c)) {
-                            flag = false;
+        if (MULTIPLE) {
+            ArrayList<LCurrency> actual = new ArrayList<>();
+            ArrayList<LCurrency> derivatives = new ArrayList<>();
+            ArrayList<LCurrency> nats = new ArrayList<>();
+            for (LCurrency c : searches) {
+                if (canConvert(c, b)) {
+                    if (canSearch(c)) {
+                        boolean flag = true;
+                        for (LCurrency a : actual) {
+                            if (a.matches(c)) {
+                                flag = false;
+                            }
+                        }
+                        if (flag) {
+                            actual.add(c);
+                        } else {
+                            derivatives.add(c);
+                        }
+                    } else {
+                        boolean flag = true;
+                        for (LCurrency a : actual) {
+                            if (a.matches(c)) {
+                                flag = false;
+                            }
+                        }
+                        if (flag) {
+                            nats.add(c);
+                        } else {
+                            derivatives.add(c);
                         }
                     }
-                    if(flag) {
-                        actual.add(c);
+                }
+            }
+            for (LCurrency[] list : partition(actual, MULTI_HIST_LIMIT)) {
+                int count = 0;
+                for (LCurrency c : list) {
+                    if (c != null) {
+                        count++;
                     } else {
-                        derivatives.add(c);
+                        break;
+                    }
+                }
+                if (count > 1) {
+                    HashMap<LCurrency, BigDecimal> part = convert_(list, b, date);
+                    for (LCurrency c : part.keySet()) {
+                        out.put(c, part.get(c).multiply(b.getFactor().divide(c.getFactor(), CURRENT_INSTANCE.precision)));
                     }
                 } else {
-                    boolean flag = true;
-                    for (LCurrency a : actual) {
-                        if(a.matches(c)) {
-                            flag = false;
-                        }
+                    out.put(list[0], convert(BigDecimal.ONE, list[0], b, date));
+                }
+            }
+            for (LCurrency n : nats) {
+                out.put(n, convert(BigDecimal.ONE, n, b, date));
+            }
+            for (LCurrency d : derivatives) {
+                for (LCurrency c : out.keySet()) {
+                    if (c.matches(d)) {
+                        out.put(d, out.get(c).multiply(c.getFactor()).divide(d.getFactor(), CURRENT_INSTANCE.precision));
+                        break;
                     }
-                    if(flag) {
-                        nats.add(c);
-                    } else {
-                        derivatives.add(c);
-                    }
                 }
             }
-        }
-        for (LCurrency[] list : partition(actual, MULTI_HIST_LIMIT)) {
-            int count = 0;
-            for (LCurrency c : list) {
-                if (c != null) {
-                    count++;
-                } else {
-                    break;
-                }
-            }
-            if (count > 1) {
-                HashMap<LCurrency, BigDecimal> part = convert_(list, b, date);
-                for (LCurrency c : part.keySet()) {
-                    out.put(c, part.get(c).multiply(b.getFactor().divide(c.getFactor(), CURRENT_INSTANCE.precision)));
-                }
-            } else {
-                out.put(list[0], convert(BigDecimal.ONE, list[0], b, date));
-            }
-        }
-        for (LCurrency n : nats) {
-            out.put(n, convert(BigDecimal.ONE, n, b, date));
-        }
-        for (LCurrency d : derivatives) {
-            for (LCurrency c : out.keySet()) {
-                if(c.matches(d)) {
-                    out.put(d, out.get(c).multiply(c.getFactor()).divide(d.getFactor(), CURRENT_INSTANCE.precision));
-                    break;
+        } else {
+            for (LCurrency c : searches) {
+                if (canConvert(c, b)) {
+                    out.put(c, convert(c, b, date));
                 }
             }
         }
@@ -556,9 +639,9 @@ public class LMarketApi implements ExportableToJson, Serializable {
 
     private HashMap<LCurrency, BigDecimal> convert_(LCurrency[] searches, LCurrency b, LDate date) {
         try {
-            if (NATS.contains(b.toString())) {
+            if (hasNat(b)) {
                 return getHistoricalPrices(searches, b, date);
-            } else if (NATS.contains(CURRENT_INSTANCE.main.toString())) {
+            } else if (hasNat(CURRENT_INSTANCE.main)) {
                 HashMap<LCurrency, BigDecimal> temp = getHistoricalPrices(searches, CURRENT_INSTANCE.main, date);
                 BigDecimal x = convert(BigDecimal.ONE, CURRENT_INSTANCE.main, b);
                 HashMap<LCurrency, BigDecimal> out = new HashMap<>();
@@ -567,7 +650,7 @@ public class LMarketApi implements ExportableToJson, Serializable {
                 }
                 return out;
             } else {
-                LCurrency nat = CURRENT_INSTANCE.getLCurrency(NATS.get(0));
+                LCurrency nat = NATS.get(0);
                 HashMap<LCurrency, BigDecimal> temp = getHistoricalPrices(searches, nat, date);
                 BigDecimal x = convert(BigDecimal.ONE, nat, b);
                 HashMap<LCurrency, BigDecimal> out = new HashMap<>();
@@ -760,15 +843,20 @@ public class LMarketApi implements ExportableToJson, Serializable {
         object.put("multi-bounds-hist", new JsonDecimal(MULTI_HIST_LIMIT));
         object.put("types", new JsonString(TYPES));
         JsonArray array = new JsonArray();
-        for (String nat : NATS) {
-            array.add(new JsonString(nat));
+        for (LCurrency nat : NATS) {
+            array.add(new JsonString(nat.toString()));
         }
         object.put("nats", array);
         array = new JsonArray();
-        for (String except : EXCEPTS) {
-            array.add(new JsonString(except));
+        for (LCurrency exclude : EXCLUDED) {
+            array.add(new JsonString(exclude.toString()));
         }
-        object.put("excepts", array);
+        object.put("excluded", array);
+        array = new JsonArray();
+        for (LCurrency include : INCLUDED) {
+            array.add(new JsonString(include.toString()));
+        }
+        object.put("included", array);
         array = new JsonArray();
         for (String s : BASE_PARSE) {
             array.add(new JsonString(s));
@@ -780,17 +868,26 @@ public class LMarketApi implements ExportableToJson, Serializable {
         }
         object.put("base-hist-parse", array);
         array = new JsonArray();
-        for (String s : MULTI_PARSE) {
-            array.add(new JsonString(s));
+        if (MULTIPLE) {
+            for (String s : MULTI_PARSE) {
+                array.add(new JsonString(s));
+            }
         }
         object.put("multi-parse", array);
         array = new JsonArray();
-        for (String s : MULTI_HIST_PARSE) {
-            array.add(new JsonString(s));
+        if (MULTIPLE) {
+            for (String s : MULTI_HIST_PARSE) {
+                array.add(new JsonString(s));
+            }
         }
         object.put("multi-hist-parse", array);
         object.put("attempt-limit", new JsonDecimal(ATTEMPT_LIMIT));
         object.put("duration", new JsonDecimal(DURATION));
+        String flags = "";
+        if (MULTIPLE) {
+            flags += "M";
+        }
+        object.put("flags", new JsonString(flags));
         return object;
     }
 

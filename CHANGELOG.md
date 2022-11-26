@@ -5,7 +5,8 @@
 * multi-asset calls to apis
   * major change to api structure
     * (X) data structure updated in `Examples`
-  * (X) handling of no multiple search option
+  * handling of no multiple search option
+  * excepts changed to included and excluded
   * variant currencies handled correctly
   * `AssetStatusGui` now takes any currency
   * (X) documentation now covers API handling

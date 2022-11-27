@@ -7,6 +7,8 @@ import com.donny.dendrofinance.entry.totals.Position;
 import com.donny.dendrofinance.gui.MainGui;
 import com.donny.dendrofinance.gui.customswing.DendroFactory;
 import com.donny.dendrofinance.gui.customswing.RegisterFrame;
+import com.donny.dendrofinance.gui.form.Validation;
+import com.donny.dendrofinance.gui.form.ValidationFailedException;
 import com.donny.dendrofinance.instance.Instance;
 import com.donny.dendrofinance.types.LDate;
 
@@ -70,7 +72,6 @@ public class PositionGui extends RegisterFrame {
                 );
             }
         }
-        reCalcAction();
         pack();
         Dimension d = Toolkit.getDefaultToolkit().getScreenSize();
         setLocation(d.width / 2 - getWidth() / 2, d.height / 2 - getHeight() / 2);
@@ -85,12 +86,17 @@ public class PositionGui extends RegisterFrame {
         if (DATE.getText().equals("")) {
             useDate = false;
         } else {
-            LDate date = new LDate(DATE.getText(), CURRENT_INSTANCE);
-            if (date.toDateString().equals(LDate.now(CURRENT_INSTANCE).toDateString())) {
+            try {
+                LDate date = Validation.validateDate(DATE, CURRENT_INSTANCE);
+                if (date.toDateString().equals(LDate.now(CURRENT_INSTANCE).toDateString())) {
+                    useDate = false;
+                } else {
+                    useDate = true;
+                    point = date;
+                }
+            } catch (ValidationFailedException e) {
+                CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Not a valid date: " + DATE.getText());
                 useDate = false;
-            } else {
-                useDate = true;
-                point = date;
             }
         }
         BigDecimal tCost = BigDecimal.ZERO, tVal = BigDecimal.ZERO;

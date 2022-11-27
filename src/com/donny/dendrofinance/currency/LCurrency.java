@@ -162,6 +162,14 @@ public class LCurrency implements ExportableToJson, Serializable {
         }
     }
 
+    public boolean significant(BigDecimal amount) {
+        BigDecimal compare = BigDecimal.ONE;
+        if (PLACES > 0) {
+            compare = new BigDecimal("0." + "0".repeat(PLACES - 1) + "1");
+        }
+        return amount.compareTo(compare) >= 0 || amount.compareTo(compare.multiply(BigDecimal.valueOf(-1))) <= 0;
+    }
+
     public boolean inUse() {
         for (TransactionEntry entry : CURRENT_INSTANCE.DATA_HANDLER.readTransactions()) {
             for (AccountWrapper aw : entry.getAccounts()) {
@@ -202,6 +210,10 @@ public class LCurrency implements ExportableToJson, Serializable {
             }
             return nw;
         }
+    }
+
+    public boolean matches(LCurrency b) {
+        return getTicker().equals(b.getTicker()) && getClass() == b.getClass() && (isFiat() == b.isFiat());
     }
 
     @Override

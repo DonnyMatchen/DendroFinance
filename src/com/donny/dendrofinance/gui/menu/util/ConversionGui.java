@@ -6,6 +6,8 @@ import com.donny.dendrofinance.gui.customswing.DendroFactory;
 import com.donny.dendrofinance.gui.customswing.RegisterFrame;
 import com.donny.dendrofinance.gui.customswing.SearchBox;
 import com.donny.dendrofinance.gui.form.Cleaning;
+import com.donny.dendrofinance.gui.form.Validation;
+import com.donny.dendrofinance.gui.form.ValidationFailedException;
 import com.donny.dendrofinance.instance.Instance;
 import com.donny.dendrofinance.types.LDate;
 
@@ -97,24 +99,29 @@ public class ConversionGui extends RegisterFrame {
     }
 
     private void convertAction() {
-        if (!DATE.getText().equals("") && !new LDate(DATE.getText(), CURRENT_INSTANCE).toDateString().equals(LDate.now(CURRENT_INSTANCE).toDateString())) {
-            LCurrency a = CURRENT_INSTANCE.getLCurrency(CUR_A.getSelectedItem());
-            LCurrency b = CURRENT_INSTANCE.getLCurrency(CUR_B.getSelectedItem());
-            BigDecimal x = Cleaning.cleanNumber(AMOUNT.getText());
-            if (x.compareTo(BigDecimal.ZERO) == 0) {
-                x = BigDecimal.ONE;
+        try {
+            LDate date = Validation.validateDate(DATE, CURRENT_INSTANCE);
+            if (!DATE.getText().equals("") && !date.toDateString().equals(LDate.now(CURRENT_INSTANCE).toDateString())) {
+                LCurrency a = CURRENT_INSTANCE.getLCurrency(CUR_A.getSelectedItem());
+                LCurrency b = CURRENT_INSTANCE.getLCurrency(CUR_B.getSelectedItem());
+                BigDecimal x = Cleaning.cleanNumber(AMOUNT.getText());
+                if (x.compareTo(BigDecimal.ZERO) == 0) {
+                    x = BigDecimal.ONE;
+                }
+                BigDecimal y = CURRENT_INSTANCE.convert(x, a, b, date);
+                DISPLAY.setText(a.encode(x) + "\n=\n" + b.encode(y));
+            } else {
+                LCurrency a = CURRENT_INSTANCE.getLCurrency(CUR_A.getSelectedItem());
+                LCurrency b = CURRENT_INSTANCE.getLCurrency(CUR_B.getSelectedItem());
+                BigDecimal x = Cleaning.cleanNumber(AMOUNT.getText());
+                if (x.compareTo(BigDecimal.ZERO) == 0) {
+                    x = BigDecimal.ONE;
+                }
+                BigDecimal y = CURRENT_INSTANCE.convert(x, a, b);
+                DISPLAY.setText(a.encode(x) + "\n=\n" + b.encode(y));
             }
-            BigDecimal y = CURRENT_INSTANCE.convert(x, a, b, new LDate(DATE.getText(), CURRENT_INSTANCE));
-            DISPLAY.setText(a.encode(x) + "\n=\n" + b.encode(y));
-        } else {
-            LCurrency a = CURRENT_INSTANCE.getLCurrency(CUR_A.getSelectedItem());
-            LCurrency b = CURRENT_INSTANCE.getLCurrency(CUR_B.getSelectedItem());
-            BigDecimal x = Cleaning.cleanNumber(AMOUNT.getText());
-            if (x.compareTo(BigDecimal.ZERO) == 0) {
-                x = BigDecimal.ONE;
-            }
-            BigDecimal y = CURRENT_INSTANCE.convert(x, a, b);
-            DISPLAY.setText(a.encode(x) + "\n=\n" + b.encode(y));
+        } catch (ValidationFailedException e) {
+            CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Not a valid date: " + DATE.getText());
         }
     }
 }

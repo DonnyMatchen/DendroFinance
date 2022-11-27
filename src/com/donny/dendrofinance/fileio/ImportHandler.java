@@ -13,6 +13,7 @@ import com.donny.dendrofinance.types.LDate;
 
 import javax.swing.*;
 import java.io.File;
+import java.text.ParseException;
 
 public class ImportHandler {
     private final Instance CURRENT_INSTANCE;
@@ -74,19 +75,21 @@ public class ImportHandler {
         for (String line : raw.replace("\r", "").split("\n")) {
             String[] fields = line.split("\t");
             TransactionEntry entry = new TransactionEntry(CURRENT_INSTANCE);
-            entry.insert(
-                    new LDate(fields[0], CURRENT_INSTANCE),
-                    fields[1],
-                    fields[2],
-                    fields[3],
-                    new LAccountSet(fields[4], CURRENT_INSTANCE)
-            );
             try {
+                entry.insert(
+                        new LDate(fields[0], CURRENT_INSTANCE),
+                        fields[1],
+                        fields[2],
+                        fields[3],
+                        new LAccountSet(fields[4], CURRENT_INSTANCE)
+                );
                 if (!fields[5].equals("{}")) {
                     entry.setMeta((JsonObject) JsonItem.digest(fields[6]));
                 }
             } catch (JsonFormattingException e) {
                 CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Bad Metadata: " + fields[6]);
+            } catch (ParseException e) {
+                CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Bad Date: " + fields[0]);
             }
             CURRENT_INSTANCE.DATA_HANDLER.addTransaction(entry);
         }

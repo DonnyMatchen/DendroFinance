@@ -2,7 +2,7 @@ package com.donny.dendrofinance.util;
 
 import java.util.ArrayList;
 
-public class Partitioner<E> {
+public class Partitioner {
     public static ArrayList<byte[]> partition(byte[] array, int partitionSize) {
         if (partitionSize < 1) {
             throw new IllegalArgumentException("Partition Size must be a positive number!");
@@ -131,39 +131,6 @@ public class Partitioner<E> {
         }
         if (flag) {
             out.add(current);
-        }
-        return out;
-    }
-
-    public ArrayList<E[]> partition(E[] array, int partitionSize, E def) {
-        if (partitionSize < 1) {
-            throw new IllegalArgumentException("Partition Size must be a positive number!");
-        }
-        ArrayList<E[]> out = new ArrayList<>();
-        int cursor = 0;
-        Object[] current = null;
-        for (E e : array) {
-            if (cursor == 0) {
-                if (current != null) {
-                    out.add((E[]) current);
-                }
-                current = new Object[partitionSize];
-            }
-            current[cursor] = e;
-            cursor++;
-            if (cursor == partitionSize) {
-                cursor = 0;
-            }
-        }
-        boolean flag = false;
-        for (Object o : current) {
-            if (o != def) {
-                flag = true;
-                break;
-            }
-        }
-        if (flag) {
-            out.add((E[]) current);
         }
         return out;
     }

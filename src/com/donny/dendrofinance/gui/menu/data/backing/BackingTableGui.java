@@ -94,6 +94,18 @@ public class BackingTableGui<E extends ExportableToJson> extends RegisterFrame {
             JButton sort = DendroFactory.getButton("Sort");
             sort.addActionListener(event -> sort());
             sort.setEnabled(TABLE_CORE.SORTABLE);
+            if (!sort.isEnabled()) {
+                sort.setBackground(DendroFactory.DISABLED);
+            }
+
+            UP.setEnabled(false);
+            UP.setBackground(DendroFactory.DISABLED);
+            DOWN.setEnabled(false);
+            DOWN.setBackground(DendroFactory.DISABLED);
+            EDIT.setEnabled(false);
+            EDIT.setBackground(DendroFactory.DISABLED);
+            DELETE.setEnabled(false);
+            DELETE.setBackground(DendroFactory.DISABLED);
 
             //back layout
             {

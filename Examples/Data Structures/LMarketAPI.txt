@@ -1,41 +1,57 @@
 {
+  "name": string
   "api-key": string
+  "sep": string
   "base-url": string
   "base-url-hist": string
-  "excepts": array(string)
-  "name": string {unique}
-  "nats": array(string)
-  "parse-path": array(string)
-  "parse-path-hist": array(string)
+  "multi-url": string
+  "multi-url-hist": string
+  "multi-bounds": integer
+  "multi-bounds-hist": integer
   "types": string
+  "nats": array(string)
+  "included": array(string)
+  "excluded": array(string)
+  "base-parse": array(string)
+  "base-hist-parse": array(string)
+  "multi-parse": array(string)
+  "multi-hist-parse": array(string)
   "attempt-limit": integer
   "duration": integer
+  "flags": string
 }
 
-* api-key: the access key to the API, if required
-* base-url: the URL for the APi with tokens (for more about tokens, see bellow)
-* base-url-hist: the URL for the API for historical data with tokens
-* excepts: an array of assets that this API does not cover despite being of its types
 * name: the name of the API
-* nats: an array of assets (usually fiat currencies) that act as the "to" in conversion.  Many stock APIs will have only F!USD for this, but some APIs have a whole range of "to" currencies
-* parse-path: an array of strings giving the path through the returned JSON
-* parse-path-hist: an array of strings giving the path through the returned JSON for historical data
-* types: The types of assets the API returns data for
+* api-key: the access key to the API, if required
+* sep: the separator for multi-search
+* base-url: the URL for the API (includes tokens, explained bellow)
+* base-url-hist: the URL for the API for historical data (includes tokens, explained bellow)
+* multi-url: the URL for the API for multi-asset calls (includes tokens, explained bellow)
+* multi-url-hist: the URL for the API for multi-asset and historical data calls (includes tokens, explained bellow)
+* multi-bounds: the maximum number of calls per multi-search
+* multi-bounds-hist: the maximum number of calls per historical multi-search
+* types: If one of these flags is present, then the API will assume by default an asset of this type can be searched
   * F: forex
   * I: Commodity (some commodities are counted as forex)
   * C: Cryptocurrencies
   * S: Stocks
+* nats: an array of assets (usually fiat currencies) that act as the "to" in conversion.  Many stock APIs will have only F!USD for this, but some APIs have a whole range of "to" currencies
+* includes: an array of assets that this API specifically includes, aside from whole type inclusion
+* excludes: an array of assets that this API specifically excludes, despite inclusion of its type
+* parse-path: an array of strings giving the path through the returned JSON (includes tokens, explained bellow)
+* parse-path-hist: an array of strings giving the path through the returned JSON for historical data (includes tokens, explained bellow)
+* multi-path: an array of strings giving the path through the returned JSON for multi-search (includes tokens, explained bellow)
+* multi-path-hist: an array of strings giving the path through the returned JSON for historical multi-search (includes tokens, explained bellow)
 * attempt-limit: the number of failed attempts at getting a price from the API which are allowed before quitting
 * duration: the period of time to wait upon receiving a 429 HTTP response from the API
+* flags:
+  * M: Multi-search calls permitted.  If this is not present, multi-search functionality will be disabled for this API
 
 
 TOKENS:
-@nat-tic@ - The ticker of the "to" currency in upper case
-@nat-tic-l@ - The ticker of the "to" currency in lower case
-@nat-name@ - The name of the "to" currency in lower case and with spaces replaced with hyphens, or the alt-name if present
-@search-tic@ - The ticker of the "from" currency in upper case
-@search-tic-l@ - The ticker of the "from" currency in lower case
-@search-name@ - The name of the "from" currency in lower case and with spaces replaced with hyphens, or the alt-name if present
+@nat-tic@ - The ticker of the "to" asset in upper case
+@nat-tic-l@ - The ticker of the "to" asset in lower case
+@nat-name@ - The name of the "to" asset in lower case and with spaces replaced with hyphens, or the alt-name if present
 @year@ - the year as a four-digit number
 @year-2@ - the year as a two-digit number
 @month@ - the month as a two-digit integer
@@ -48,3 +64,19 @@ TOKENS:
 @epoch-day@ - the date as a number of days since 00:00:00 01/01/1970 UTC +0
 @epoch-day-m@ - the date as a number of days since 00:00:00 01/01/1970 UTC +0, subtracted by 1
 @key@ - the API key
+
+Regular Search:
+@search-tic@ - The ticker of the "from" asset in upper case
+@search-tic-l@ - The ticker of the "from" asset in lower case
+@search-name@ - The name of the "from" asset in lower case and with spaces replaced with hyphens, or the alt-name if present
+
+Multi-Search:
+URLs:
+@searches-tic@ - The tickers of the "from" assets in upper case as a list, separated by "sep"
+@searches-tic-l@ - The tickers of the "from" assets in lower case as a list, separated by "sep"
+@searches-name@ - The names of the "from" assets in lower case and with spaces replaced with hyphens, or the alt-name if present, as a list, separated by "sep"
+
+Parse Paths:
+@search-tic@ - The ticker of the current "from" asset in upper case
+@search-tic-l@ - The ticker of the current "from" asset in lower case
+@search-name@ - The name of the current "from" asset in lower case and with spaces replaced with hyphens, or the alt-name if present

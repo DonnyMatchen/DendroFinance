@@ -19,6 +19,7 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.math.BigDecimal;
+import java.text.ParseException;
 import java.util.Arrays;
 import java.util.Vector;
 
@@ -38,7 +39,7 @@ public class NewTransactionEntryGui extends ModalFrame {
     }
 
     public NewTransactionEntryGui(MainGui caller, long uuid, boolean clone, Instance curInst) {
-        super(caller, (uuid == 0 ? "New" : "Edit") + " Transaction Entry", curInst);
+        super(caller, (uuid == 0 ? "New" : clone ? "Clone" : "Edit") + " Transaction Entry", curInst);
         MAIN = caller;
         UUID = uuid;
         CLONE = clone;
@@ -679,6 +680,8 @@ public class NewTransactionEntryGui extends ModalFrame {
                         metaObject.put("check", arr);
                     } catch (JsonFormattingException ex) {
                         CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Malformed Entry in Meta Table");
+                    } catch (ParseException e) {
+                        CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Malformed Date in Meta Table");
                     }
                 }
             }

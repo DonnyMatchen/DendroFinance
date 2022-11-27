@@ -6,6 +6,8 @@ import com.donny.dendrofinance.gui.MainGui;
 import com.donny.dendrofinance.gui.customswing.DendroFactory;
 import com.donny.dendrofinance.gui.customswing.RegisterFrame;
 import com.donny.dendrofinance.gui.form.Cleaning;
+import com.donny.dendrofinance.gui.form.Validation;
+import com.donny.dendrofinance.gui.form.ValidationFailedException;
 import com.donny.dendrofinance.instance.Instance;
 import com.donny.dendrofinance.types.LAccountSet;
 import com.donny.dendrofinance.types.LDate;
@@ -32,43 +34,10 @@ public class AppDepGui extends RegisterFrame {
             JLabel d = new JLabel("Inventories");
             JLabel e = new JLabel("Non-main Fiat");
             DATE = new JTextField();
-            DATE.getDocument().addDocumentListener(new DocumentListener() {
-                @Override
-                public void insertUpdate(DocumentEvent documentEvent) {
-                    try {
-                        LDate date = new LDate(DATE.getText(), CURRENT_INSTANCE);
-                        STOCK_CURRENT.setText(CURRENT_INSTANCE.main.encode(CURRENT_INSTANCE.DATA_HANDLER.accountAsOf(Account.stockName, date)));
-                        CRYPTO_CURRENT.setText(CURRENT_INSTANCE.main.encode(CURRENT_INSTANCE.DATA_HANDLER.accountAsOf(Account.cryptoName, date)));
-                        INV_CURRENT.setText(CURRENT_INSTANCE.main.encode(CURRENT_INSTANCE.DATA_HANDLER.accountAsOf(Account.inventoryName, date)));
-                        FIAT_CURRENT.setText(CURRENT_INSTANCE.main.encode(CURRENT_INSTANCE.DATA_HANDLER.accountAsOf(Account.fiatName, date)));
-                    } catch (ArrayIndexOutOfBoundsException | NumberFormatException ex) {
-                    }
-                }
-
-                @Override
-                public void removeUpdate(DocumentEvent documentEvent) {
-                    try {
-                        LDate date = new LDate(DATE.getText(), CURRENT_INSTANCE);
-                        STOCK_CURRENT.setText(CURRENT_INSTANCE.main.encode(CURRENT_INSTANCE.DATA_HANDLER.accountAsOf(Account.stockName, date)));
-                        CRYPTO_CURRENT.setText(CURRENT_INSTANCE.main.encode(CURRENT_INSTANCE.DATA_HANDLER.accountAsOf(Account.cryptoName, date)));
-                        INV_CURRENT.setText(CURRENT_INSTANCE.main.encode(CURRENT_INSTANCE.DATA_HANDLER.accountAsOf(Account.inventoryName, date)));
-                        FIAT_CURRENT.setText(CURRENT_INSTANCE.main.encode(CURRENT_INSTANCE.DATA_HANDLER.accountAsOf(Account.fiatName, date)));
-                    } catch (ArrayIndexOutOfBoundsException | NumberFormatException ex) {
-                    }
-                }
-
-                @Override
-                public void changedUpdate(DocumentEvent documentEvent) {
-                    try {
-                        LDate date = new LDate(DATE.getText(), CURRENT_INSTANCE);
-                        STOCK_CURRENT.setText(CURRENT_INSTANCE.main.encode(CURRENT_INSTANCE.DATA_HANDLER.accountAsOf(Account.stockName, date)));
-                        CRYPTO_CURRENT.setText(CURRENT_INSTANCE.main.encode(CURRENT_INSTANCE.DATA_HANDLER.accountAsOf(Account.cryptoName, date)));
-                        INV_CURRENT.setText(CURRENT_INSTANCE.main.encode(CURRENT_INSTANCE.DATA_HANDLER.accountAsOf(Account.inventoryName, date)));
-                        FIAT_CURRENT.setText(CURRENT_INSTANCE.main.encode(CURRENT_INSTANCE.DATA_HANDLER.accountAsOf(Account.fiatName, date)));
-                    } catch (ArrayIndexOutOfBoundsException | NumberFormatException ex) {
-                    }
-                }
-            });
+            STOCK_CURRENT = new JTextField();
+            STOCK_CURRENT.setEditable(false);
+            STOCK_APP = new JTextField();
+            STOCK_APP.setEditable(false);
             STOCK = new JTextField();
             STOCK.getDocument().addDocumentListener(new DocumentListener() {
                 @Override
@@ -86,10 +55,10 @@ public class AppDepGui extends RegisterFrame {
                     STOCK_APP.setText(CURRENT_INSTANCE.main.encode(Cleaning.cleanNumber(STOCK.getText()).subtract(Cleaning.cleanNumber(STOCK_CURRENT.getText()))));
                 }
             });
-            STOCK_CURRENT = new JTextField();
-            STOCK_CURRENT.setEditable(false);
-            STOCK_APP = new JTextField();
-            STOCK_APP.setEditable(false);
+            CRYPTO_CURRENT = new JTextField();
+            CRYPTO_CURRENT.setEditable(false);
+            CRYPTO_APP = new JTextField();
+            CRYPTO_APP.setEditable(false);
             CRYPTO = new JTextField();
             CRYPTO.getDocument().addDocumentListener(new DocumentListener() {
                 @Override
@@ -107,10 +76,10 @@ public class AppDepGui extends RegisterFrame {
                     CRYPTO_APP.setText(CURRENT_INSTANCE.main.encode(Cleaning.cleanNumber(CRYPTO.getText()).subtract(Cleaning.cleanNumber(CRYPTO_CURRENT.getText()))));
                 }
             });
-            CRYPTO_CURRENT = new JTextField();
-            CRYPTO_CURRENT.setEditable(false);
-            CRYPTO_APP = new JTextField();
-            CRYPTO_APP.setEditable(false);
+            INV_CURRENT = new JTextField();
+            INV_CURRENT.setEditable(false);
+            INV_APP = new JTextField();
+            INV_APP.setEditable(false);
             INV = new JTextField();
             INV.getDocument().addDocumentListener(new DocumentListener() {
                 @Override
@@ -128,10 +97,10 @@ public class AppDepGui extends RegisterFrame {
                     INV_APP.setText(CURRENT_INSTANCE.main.encode(Cleaning.cleanNumber(INV.getText()).subtract(Cleaning.cleanNumber(INV_CURRENT.getText()))));
                 }
             });
-            INV_CURRENT = new JTextField();
-            INV_CURRENT.setEditable(false);
-            INV_APP = new JTextField();
-            INV_APP.setEditable(false);
+            FIAT_CURRENT = new JTextField();
+            FIAT_CURRENT.setEditable(false);
+            FIAT_APP = new JTextField();
+            FIAT_APP.setEditable(false);
             FIAT = new JTextField();
             FIAT.getDocument().addDocumentListener(new DocumentListener() {
                 @Override
@@ -149,10 +118,36 @@ public class AppDepGui extends RegisterFrame {
                     FIAT_APP.setText(CURRENT_INSTANCE.main.encode(Cleaning.cleanNumber(FIAT.getText()).subtract(Cleaning.cleanNumber(FIAT_CURRENT.getText()))));
                 }
             });
-            FIAT_CURRENT = new JTextField();
-            FIAT_CURRENT.setEditable(false);
-            FIAT_APP = new JTextField();
-            FIAT_APP.setEditable(false);
+            DATE.getDocument().addDocumentListener(new DocumentListener() {
+                private void sharedAction() {
+                    try {
+                        if (!DATE.getText().equals("")) {
+                            LDate date = Validation.validateDate(DATE, CURRENT_INSTANCE);
+                            STOCK_CURRENT.setText(CURRENT_INSTANCE.main.encode(CURRENT_INSTANCE.DATA_HANDLER.accountAsOf(Account.stockName, date)));
+                            CRYPTO_CURRENT.setText(CURRENT_INSTANCE.main.encode(CURRENT_INSTANCE.DATA_HANDLER.accountAsOf(Account.cryptoName, date)));
+                            INV_CURRENT.setText(CURRENT_INSTANCE.main.encode(CURRENT_INSTANCE.DATA_HANDLER.accountAsOf(Account.inventoryName, date)));
+                            FIAT_CURRENT.setText(CURRENT_INSTANCE.main.encode(CURRENT_INSTANCE.DATA_HANDLER.accountAsOf(Account.fiatName, date)));
+                        }
+                    } catch (ValidationFailedException ex) {
+                        CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Not a valid date: " + DATE.getText());
+                    }
+                }
+
+                @Override
+                public void insertUpdate(DocumentEvent documentEvent) {
+                    sharedAction();
+                }
+
+                @Override
+                public void removeUpdate(DocumentEvent documentEvent) {
+                    sharedAction();
+                }
+
+                @Override
+                public void changedUpdate(DocumentEvent documentEvent) {
+                    sharedAction();
+                }
+            });
             JButton save = DendroFactory.getButton("Save");
             save.addActionListener(event -> saveAction());
             //group layout
@@ -284,36 +279,40 @@ public class AppDepGui extends RegisterFrame {
 
     private void saveAction() {
         BigDecimal x = BigDecimal.ZERO;
-        BigDecimal stock = new BigDecimal(STOCK_APP.getText());
-        BigDecimal crypto = new BigDecimal(CRYPTO_APP.getText());
-        BigDecimal inventory = new BigDecimal(INV_APP.getText());
-        BigDecimal fiat = new BigDecimal(FIAT_APP.getText());
+        BigDecimal stock = Cleaning.cleanNumber(STOCK_APP.getText());
+        BigDecimal crypto = Cleaning.cleanNumber(CRYPTO_APP.getText());
+        BigDecimal inventory = Cleaning.cleanNumber(INV_APP.getText());
+        BigDecimal fiat = Cleaning.cleanNumber(FIAT_APP.getText());
         x = x.add(stock).add(crypto).add(inventory).add(fiat);
-        LDate date = new LDate(DATE.getText(), CURRENT_INSTANCE);
-        TransactionEntry entry = new TransactionEntry(CURRENT_INSTANCE);
-        String accs = (stock.compareTo(BigDecimal.ZERO) == 0 ? "" : stock.compareTo(BigDecimal.ZERO) > 0 ? "D!" + Account.stockName + "(" + stock + "), " : "C!" + Account.stockName + "(" + stock.abs() + "), ")
-                + (crypto.compareTo(BigDecimal.ZERO) == 0 ? "" : crypto.compareTo(BigDecimal.ZERO) > 0 ? "D!" + Account.cryptoName + "(" + crypto + "), " : "C!" + Account.cryptoName + "(" + crypto.abs() + "), ")
-                + (inventory.compareTo(BigDecimal.ZERO) == 0 ? "" : inventory.compareTo(BigDecimal.ZERO) > 0 ? "D!" + Account.inventoryName + "(" + inventory + "), " : "C!" + Account.inventoryName + "(" + inventory.abs() + "), ")
-                + (fiat.compareTo(BigDecimal.ZERO) == 0 ? "" : fiat.compareTo(BigDecimal.ZERO) > 0 ? "D!" + Account.fiatName + "(" + fiat + "), " : "C!" + Account.fiatName + "(" + fiat.abs() + "), ");
-        if (x.compareTo(BigDecimal.ZERO) >= 0) {
-            entry.insert(
-                    date,
-                    "ACC",
-                    "",
-                    Account.appreciationName + " (" + date.getYear() + "-" + (date.getMonth() < 10 ? "0" : "") + date.getMonth() + ")",
-                    new LAccountSet("C!" + Account.appreciationName + "(" + x + "), " + accs, CURRENT_INSTANCE)
-            );
-        } else {
-            entry.insert(
-                    date,
-                    "ACC",
-                    "",
-                    Account.depreciationName + " (" + date.getYear() + "-" + (date.getMonth() < 10 ? "0" : "") + date.getMonth() + ")",
-                    new LAccountSet("D!" + Account.depreciationName + "(" + x.abs() + "), " + accs, CURRENT_INSTANCE)
-            );
+        try {
+            LDate date = Validation.validateDate(DATE, CURRENT_INSTANCE);
+            TransactionEntry entry = new TransactionEntry(CURRENT_INSTANCE);
+            String accs = (stock.compareTo(BigDecimal.ZERO) == 0 ? "" : stock.compareTo(BigDecimal.ZERO) > 0 ? "D!" + Account.stockName + "(" + stock + "), " : "C!" + Account.stockName + "(" + stock.abs() + "), ")
+                    + (crypto.compareTo(BigDecimal.ZERO) == 0 ? "" : crypto.compareTo(BigDecimal.ZERO) > 0 ? "D!" + Account.cryptoName + "(" + crypto + "), " : "C!" + Account.cryptoName + "(" + crypto.abs() + "), ")
+                    + (inventory.compareTo(BigDecimal.ZERO) == 0 ? "" : inventory.compareTo(BigDecimal.ZERO) > 0 ? "D!" + Account.inventoryName + "(" + inventory + "), " : "C!" + Account.inventoryName + "(" + inventory.abs() + "), ")
+                    + (fiat.compareTo(BigDecimal.ZERO) == 0 ? "" : fiat.compareTo(BigDecimal.ZERO) > 0 ? "D!" + Account.fiatName + "(" + fiat + "), " : "C!" + Account.fiatName + "(" + fiat.abs() + "), ");
+            if (x.compareTo(BigDecimal.ZERO) >= 0) {
+                entry.insert(
+                        date,
+                        "ACC",
+                        "",
+                        Account.appreciationName + " (" + date.getYear() + "-" + (date.getMonth() < 10 ? "0" : "") + date.getMonth() + ")",
+                        new LAccountSet("C!" + Account.appreciationName + "(" + x + "), " + accs, CURRENT_INSTANCE)
+                );
+            } else {
+                entry.insert(
+                        date,
+                        "ACC",
+                        "",
+                        Account.depreciationName + " (" + date.getYear() + "-" + (date.getMonth() < 10 ? "0" : "") + date.getMonth() + ")",
+                        new LAccountSet("D!" + Account.depreciationName + "(" + x.abs() + "), " + accs, CURRENT_INSTANCE)
+                );
+            }
+            CURRENT_INSTANCE.DATA_HANDLER.addTransaction(entry);
+            CALLER.updateTable();
+            dispose();
+        } catch (ValidationFailedException e) {
+            CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Not a valid date: " + DATE.getText());
         }
-        CURRENT_INSTANCE.DATA_HANDLER.addTransaction(entry);
-        CALLER.updateTable();
-        dispose();
     }
 }

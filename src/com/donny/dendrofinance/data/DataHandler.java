@@ -1,6 +1,9 @@
 package com.donny.dendrofinance.data;
 
-import com.donny.dendrofinance.account.*;
+import com.donny.dendrofinance.account.AWColumn;
+import com.donny.dendrofinance.account.Account;
+import com.donny.dendrofinance.account.AccountWrapper;
+import com.donny.dendrofinance.account.Exchange;
 import com.donny.dendrofinance.currency.LCurrency;
 import com.donny.dendrofinance.currency.LInventory;
 import com.donny.dendrofinance.currency.LStock;
@@ -229,25 +232,25 @@ public class DataHandler {
         return x;
     }
 
-    public HashMap<LCurrency, BigDecimal> pricesAsOf(int y, int m, int d) {
+    public HashMap<LCurrency, BigDecimal> pricesAsOf(LCurrency cur, LDate date) {
         CURRENT_INSTANCE.LOG_HANDLER.trace(getClass(), "Price-get started");
-        HashMap<Account, BigDecimal> acc = accountsAsOf(y, m, d);
-        HashMap<LCurrency, BigDecimal> out = new HashMap<>();
+        HashMap<Account, BigDecimal> acc = accountsAsOf(date.getYear(), date.getMonth(), date.getDay());
+        Aggregation<LCurrency> assets = new Aggregation<>();
+        ArrayList<LCurrency> significant = new ArrayList<>();
         for (Account a : acc.keySet()) {
-            BigDecimal compare = BigDecimal.ONE;
-            if (a.getCurrency().getPlaces() > 0) {
-                compare = new BigDecimal("0." + "0".repeat(a.getCurrency().getPlaces() - 1) + "1");
+            assets.add(a.getCurrency(), acc.get(a));
+        }
+        for (LCurrency c : assets.keySet()) {
+            if (c.significant(assets.get(c))) {
+                significant.add(c);
             }
-            if (acc.get(a).abs().compareTo(compare) >= 0) {
-                if (!out.containsKey(a.getCurrency())) {
-                    LDate now = LDate.now(CURRENT_INSTANCE);
-                    if (now.getYear() == y && now.getMonth() == m && now.getDay() == d) {
-                        out.put(a.getCurrency(), a.getCurrency().getTotal(BigDecimal.ONE));
-                    } else {
-                        out.put(a.getCurrency(), a.getCurrency().getTotal(BigDecimal.ONE, new LDate(y, m, d, CURRENT_INSTANCE)));
-                    }
-                }
-            }
+        }
+        LDate now = LDate.now(CURRENT_INSTANCE);
+        HashMap<LCurrency, BigDecimal> out;
+        if (date.getYear() == now.getYear() && date.getMonth() == now.getMonth() && date.getDay() == now.getDay()) {
+            out = CURRENT_INSTANCE.getAllConversions(significant, cur);
+        } else {
+            out = CURRENT_INSTANCE.getAllConversions(significant, cur, date);
         }
         CURRENT_INSTANCE.LOG_HANDLER.trace(getClass(), "Price get finished");
         return out;
@@ -275,21 +278,6 @@ public class DataHandler {
             }
         }
         return accounts;
-    }
-
-    public BigDecimal cryptoAsOf(int y, int m, int d, LCurrency natural) {
-        BigDecimal crypto = BigDecimal.ZERO;
-        HashMap<Account, BigDecimal> vals = accountsAsOf(y, m, d);
-        Aggregation<LCurrency> fin = new Aggregation<>();
-        for (Account a : vals.keySet()) {
-            if (a.getBroadAccountType() == BroadAccountType.TRACKING && !(a.getCurrency() instanceof LStock) && !(a.getCurrency() instanceof LInventory)) {
-                fin.add(a.getCurrency(), vals.get(a));
-            }
-        }
-        for (LCurrency c : fin.keySet()) {
-            crypto = crypto.add(CURRENT_INSTANCE.convert(fin.get(c), c, natural));
-        }
-        return crypto;
     }
 
     public ArrayList<AssetMetadata> assetTotals() {

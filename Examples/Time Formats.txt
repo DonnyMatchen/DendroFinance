@@ -1,0 +1,52 @@
+These are expected formats.  Note that year MUST be 4 digit.
+
+Accepted formats:
+{DATE}
+{DATE} {TIME}
+{DATE}, {TIME}
+{DATE}; {TIME}
+{DATE} | {TIME}
+{TIME} {DATE}
+{TIME}, {DATE}
+{TIME}; {DATE}
+{TIME} | {DATE}
+
+American Date Formats:
+11/06/2022
+Nov/06/2022
+November/06/2022
+
+Non-American Formats:
+06/11/2022
+06/Nov/2022
+06/November/2022
+
+Other Date Formats
+Nov 06 2022
+Nov 06, 2022
+November 06 2022
+November 06, 2022
+06 Nov 2022
+06 Nov, 2022
+06 November 2022
+06 November, 2022
+
+Time Formats:
+13:20
+13:20 EST
+13:20:18
+13:20:18.014
+13:20:18 EST
+13:20:18.014 EST
+01:20PM
+01:20PM EST
+01:20:18PM
+01:20:18.014PM
+01:20:18PM EST
+01:20:18.014PM EST
+01:20 PM
+01:20 PM EST
+01:20:18 PM
+01:20:18.014 PM
+01:20:18 PM EST
+01:20:18.014 PM EST

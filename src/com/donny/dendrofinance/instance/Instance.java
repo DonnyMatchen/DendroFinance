@@ -34,7 +34,9 @@ import java.math.MathContext;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.text.DecimalFormat;
+import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.concurrent.TimeUnit;
 
 public class Instance {
@@ -557,6 +559,7 @@ public class Instance {
                 accounts = new File(data.getPath() + File.separator + "Accounts" + File.separator + "accounts.json"),
                 accTyp = new File(data.getPath() + File.separator + "Accounts" + File.separator + "account-types.json"),
                 taxItm = new File(data.getPath() + File.separator + "Accounts" + File.separator + "tax-items.json"),
+                marApi = new File(data.getPath() + File.separator + "Currencies" + File.separator + "market-apis.json"),
                 spec = new File(data.getPath() + File.separator + "Accounts" + File.separator + "special.json"),
                 budg = new File(data.getPath() + File.separator + "Accounts" + File.separator + "budget.json");
         if (CURRENCIES.changed) {
@@ -567,6 +570,9 @@ public class Instance {
         }
         if (INVENTORIES.changed) {
             FILE_HANDLER.write(inventories, INVENTORIES.export().print());
+        }
+        if (MARKET_APIS.changed) {
+            FILE_HANDLER.write(marApi, MARKET_APIS.export().print());
         }
         if (ACCOUNTS.changed) {
             FILE_HANDLER.write(accounts, ACCOUNTS.export().print());
@@ -643,7 +649,7 @@ public class Instance {
         if ((bStock != null && !bStock.isPublic()) || (bInv != null && !bInv.isPublic())) {
             bPrivate = true;
         }
-        if (a.getTicker().equalsIgnoreCase(b.getTicker()) && a.getClass() == b.getClass() && a.isFiat() == b.isFiat()) {
+        if (a.matches(b)) {
             return amount.multiply(b.getFactor().divide(a.getFactor(), precision));
         } else if (aPrivate || bPrivate) {
             if (aPrivate) {
@@ -736,7 +742,7 @@ public class Instance {
         if ((bStock != null && !bStock.isPublic()) || (bInv != null && !bInv.isPublic())) {
             bPrivate = true;
         }
-        if (a.getTicker().equalsIgnoreCase(b.getTicker()) && a.getClass() == b.getClass() && a.isFiat() == b.isFiat()) {
+        if (a.matches(b)) {
             return amount.multiply(b.getFactor().divide(a.getFactor(), precision));
         } else if (aPrivate || bPrivate) {
             if (aPrivate) {
@@ -749,22 +755,30 @@ public class Instance {
                 LCurrency cur = getLCurrency(history.getString("currency").getString());
                 JsonArray arr = history.getArray("history");
                 BigDecimal price = BigDecimal.ZERO;
-                if (new LDate(arr.getObject(0).getString("date").getString(), this).compareTo(date) > 0) {
-                    price = arr.getObject(0).getDecimal("price").decimal;
-                } else {
-                    for (int i = 0; i < arr.size(); i++) {
-                        JsonObject obj = arr.getObject(i);
-                        LDate dateI = new LDate(obj.getString("date").getString(), this);
-                        if (i < arr.size() - 1) {
-                            LDate dateII = new LDate(arr.getObject(i + 1).getString("date").getString(), this);
-                            if (date.compareTo(dateI) >= 0 && date.compareTo(dateII) <= 0) {
+                try {
+                    if (new LDate(arr.getObject(0).getString("date").getString(), this).compareTo(date) > 0) {
+                        price = arr.getObject(0).getDecimal("price").decimal;
+                    } else {
+                        for (int i = 0; i < arr.size(); i++) {
+                            JsonObject obj = arr.getObject(i);
+                            LDate dateI = new LDate(obj.getString("date").getString(), this);
+                            if (i < arr.size() - 1) {
+                                LDate dateII = new LDate(arr.getObject(i + 1).getString("date").getString(), this);
+                                if (date.compareTo(dateI) >= 0 && date.compareTo(dateII) <= 0) {
+                                    price = obj.getDecimal("price").decimal;
+                                    break;
+                                }
+                            }
+                            if (i == arr.size() - 1) {
                                 price = obj.getDecimal("price").decimal;
-                                break;
                             }
                         }
-                        if (i == arr.size() - 1) {
-                            price = obj.getDecimal("price").decimal;
-                        }
+                    }
+                } catch (ParseException e) {
+                    if (aStock != null) {
+                        LOG_HANDLER.error(getClass(), "Damaged date in private stock history json: " + a);
+                    } else {
+                        LOG_HANDLER.error(getClass(), "Damaged date in private inventory history json: " + a);
                     }
                 }
                 if (cur.equals(b)) {
@@ -774,7 +788,7 @@ public class Instance {
                 }
             } else {
                 JsonObject history;
-                if (aStock != null) {
+                if (bStock != null) {
                     history = FILE_HANDLER.getPrivateStock(b.getTicker());
                 } else {
                     history = FILE_HANDLER.getPrivateInventory(b.getTicker());
@@ -782,22 +796,30 @@ public class Instance {
                 LCurrency cur = getLCurrency(history.getString("currency").getString());
                 JsonArray arr = history.getArray("history");
                 BigDecimal price = BigDecimal.ZERO;
-                if (new LDate(arr.getObject(0).getString("date").getString(), this).compareTo(date) > 0) {
-                    price = arr.getObject(0).getDecimal("price").decimal;
-                } else {
-                    for (int i = 0; i < arr.size(); i++) {
-                        JsonObject obj = arr.getObject(i);
-                        LDate dateI = new LDate(obj.getString("date").getString(), this);
-                        if (i < arr.size() - 1) {
-                            LDate dateII = new LDate(arr.getObject(i + 1).getString("date").getString(), this);
-                            if (date.compareTo(dateI) >= 0 && date.compareTo(dateII) <= 0) {
+                try {
+                    if (new LDate(arr.getObject(0).getString("date").getString(), this).compareTo(date) > 0) {
+                        price = arr.getObject(0).getDecimal("price").decimal;
+                    } else {
+                        for (int i = 0; i < arr.size(); i++) {
+                            JsonObject obj = arr.getObject(i);
+                            LDate dateI = new LDate(obj.getString("date").getString(), this);
+                            if (i < arr.size() - 1) {
+                                LDate dateII = new LDate(arr.getObject(i + 1).getString("date").getString(), this);
+                                if (date.compareTo(dateI) >= 0 && date.compareTo(dateII) <= 0) {
+                                    price = obj.getDecimal("price").decimal;
+                                    break;
+                                }
+                            }
+                            if (i == arr.size() - 1) {
                                 price = obj.getDecimal("price").decimal;
-                                break;
                             }
                         }
-                        if (i == arr.size() - 1) {
-                            price = obj.getDecimal("price").decimal;
-                        }
+                    }
+                } catch (ParseException e) {
+                    if (bStock != null) {
+                        LOG_HANDLER.error(getClass(), "Damaged date in private stock history json: " + b);
+                    } else {
+                        LOG_HANDLER.error(getClass(), "Damaged date in private inventory history json: " + b);
                     }
                 }
                 if (cur.equals(a)) {
@@ -835,6 +857,200 @@ public class Instance {
                 return amount.multiply(x).multiply(b.getFactor().divide(a.getFactor(), precision));
             }
         }
+    }
+
+    public HashMap<LCurrency, BigDecimal> getAllConversions(ArrayList<LCurrency> currencies, LCurrency convertTo) {
+        HashMap<LCurrency, BigDecimal> out = new HashMap<>();
+        HashMap<LMarketApi, ArrayList<LCurrency>> lists = new HashMap<>();
+        ChainList secondary = new ChainList();
+        for (LCurrency c : currencies) {
+            if (c == convertTo) {
+                out.put(c, BigDecimal.ONE);
+            } else if (c.matches(convertTo)) {
+                out.put(c, convert(BigDecimal.ONE, c, convertTo));
+            } else {
+                boolean flag = true;
+                if (c instanceof LStock s) {
+                    if (!s.isPublic()) {
+                        flag = false;
+                        out.put(c, convert(BigDecimal.ONE, s, convertTo));
+                    }
+                } else if (c instanceof LInventory i) {
+                    if (!i.isPublic()) {
+                        flag = false;
+                        out.put(c, convert(BigDecimal.ONE, i, convertTo));
+                    }
+                }
+                if (flag) {
+                    boolean placed = false;
+                    for (LMarketApi api : MARKET_APIS) {
+                        if (api.canConvert(c, convertTo)) {
+                            if (!lists.containsKey(api)) {
+                                lists.put(api, new ArrayList<>());
+                            }
+                            lists.get(api).add(c);
+                            placed = true;
+                            break;
+                        }
+                    }
+                    if (!placed) {
+                        for (LMarketApi api : MARKET_APIS) {
+                            if (api.hasNat(c) || api.canSearch(c)) {
+                                ConversionChain chain = secondary.contains(api);
+                                if (chain == null) {
+                                    for (LCurrency n : CURRENCIES) {
+                                        if (n != c && api.hasNat(n)) {
+                                            chain = new ConversionChain();
+                                            chain.from = api;
+                                            chain.middle = n;
+                                            for (LMarketApi app : MARKET_APIS) {
+                                                if (app != api) {
+                                                    if (app.canConvert(n, convertTo)) {
+                                                        chain.to = app;
+                                                        chain.LIST.add(c);
+                                                        secondary.CHAINS.add(chain);
+                                                        placed = true;
+                                                        break;
+                                                    }
+                                                }
+                                            }
+                                            if (placed) {
+                                                break;
+                                            }
+                                        }
+                                    }
+                                } else {
+                                    chain.LIST.add(c);
+                                }
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        for (LMarketApi api : MARKET_APIS) {
+            if (lists.get(api) != null) {
+                if (lists.get(api).size() > 1) {
+                    HashMap<LCurrency, BigDecimal> prices = api.convert(lists.get(api), convertTo);
+                    for (LCurrency c : prices.keySet()) {
+                        out.put(c, prices.get(c));
+                    }
+                } else {
+                    out.put(lists.get(api).get(0), api.convert(BigDecimal.ONE, lists.get(api).get(0), convertTo));
+                }
+
+            }
+        }
+        for (ConversionChain chain : secondary.CHAINS) {
+            BigDecimal x = chain.to.convert(BigDecimal.ONE, chain.middle, convertTo);
+            if (chain.LIST.size() > 1) {
+                HashMap<LCurrency, BigDecimal> prices = chain.from.convert(chain.LIST, chain.middle);
+                for (LCurrency c : prices.keySet()) {
+                    out.put(c, prices.get(c).multiply(x));
+                }
+            } else {
+                out.put(chain.LIST.get(0), chain.LIST.get(0).getTotal(BigDecimal.ONE).multiply(x));
+            }
+        }
+        return out;
+    }
+
+    public HashMap<LCurrency, BigDecimal> getAllConversions(ArrayList<LCurrency> currencies, LCurrency convertTo, LDate date) {
+        HashMap<LCurrency, BigDecimal> out = new HashMap<>();
+        HashMap<LMarketApi, ArrayList<LCurrency>> lists = new HashMap<>();
+        ChainList secondary = new ChainList();
+        for (LCurrency c : currencies) {
+            if (c == convertTo) {
+                out.put(c, BigDecimal.ONE);
+            } else if (c.matches(convertTo)) {
+                out.put(c, convert(BigDecimal.ONE, c, convertTo));
+            } else {
+                boolean flag = true;
+                if (c instanceof LStock s) {
+                    if (!s.isPublic()) {
+                        flag = false;
+                        out.put(c, convert(BigDecimal.ONE, s, convertTo, date));
+                    }
+                } else if (c instanceof LInventory i) {
+                    if (!i.isPublic()) {
+                        flag = false;
+                        out.put(c, convert(BigDecimal.ONE, i, convertTo, date));
+                    }
+                }
+                if (flag) {
+                    boolean placed = false;
+                    for (LMarketApi api : MARKET_APIS) {
+                        if (api.canConvert(c, convertTo)) {
+                            if (!lists.containsKey(api)) {
+                                lists.put(api, new ArrayList<>());
+                            }
+                            lists.get(api).add(c);
+                            placed = true;
+                            break;
+                        }
+                    }
+                    if (!placed) {
+                        for (LMarketApi api : MARKET_APIS) {
+                            if (api.hasNat(c) || api.canSearch(c)) {
+                                ConversionChain chain = secondary.contains(api);
+                                if (chain == null) {
+                                    for (LCurrency n : CURRENCIES) {
+                                        if (n != c && api.hasNat(n)) {
+                                            chain = new ConversionChain();
+                                            chain.from = api;
+                                            chain.middle = n;
+                                            for (LMarketApi app : MARKET_APIS) {
+                                                if (app != api) {
+                                                    if (app.canConvert(n, convertTo)) {
+                                                        chain.to = app;
+                                                        chain.LIST.add(c);
+                                                        secondary.CHAINS.add(chain);
+                                                        placed = true;
+                                                        break;
+                                                    }
+                                                }
+                                            }
+                                            if (placed) {
+                                                break;
+                                            }
+                                        }
+                                    }
+                                } else {
+                                    chain.LIST.add(c);
+                                }
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        for (LMarketApi api : MARKET_APIS) {
+            if (lists.get(api) != null) {
+                if (lists.get(api).size() > 1) {
+                    HashMap<LCurrency, BigDecimal> prices = api.convert(lists.get(api), convertTo, date);
+                    for (LCurrency c : prices.keySet()) {
+                        out.put(c, prices.get(c));
+                    }
+                } else {
+                    out.put(lists.get(api).get(0), api.convert(BigDecimal.ONE, lists.get(api).get(0), convertTo, date));
+                }
+
+            }
+        }
+        for (ConversionChain chain : secondary.CHAINS) {
+            BigDecimal x = chain.to.convert(BigDecimal.ONE, chain.middle, convertTo, date);
+            if (chain.LIST.size() > 1) {
+                HashMap<LCurrency, BigDecimal> prices = chain.from.convert(chain.LIST, chain.middle, date);
+                for (LCurrency c : prices.keySet()) {
+                    out.put(c, prices.get(c).multiply(x));
+                }
+            } else {
+                out.put(chain.LIST.get(0), chain.LIST.get(0).getTotal(BigDecimal.ONE, date).multiply(x));
+            }
+        }
+        return out;
     }
 
     public LCurrency getLCurrency(String name) {

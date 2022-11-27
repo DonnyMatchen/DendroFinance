@@ -1,3 +1,25 @@
+## v0.10.0
+* date format improvements and documentation
+  * date format input widened and improved
+  * new date formats documented
+* multi-asset calls to apis
+  * major change to api structure
+    * data structure updated in `Examples`
+  * handling of no multiple search option
+  * excepts changed to included and excluded
+  * variant currencies handled correctly
+  * `AssetStatusGui` now takes any currency
+  * documentation now covers API
+* balance sheet improvements
+  * balance sheet importance thresholds
+  * difference of accounts
+* minor bug fixes
+  * cloning transactions now has correct title
+  * asset status and position gui now wait to execute potentially lengthy operations
+  * market APIs are now saved along with other backing elements
+  * date no longer requires not empty
+  * `AppDepGui` now works again
+
 ## v0.9.1
 * minor bug fixes
   * transaction cloning now functions

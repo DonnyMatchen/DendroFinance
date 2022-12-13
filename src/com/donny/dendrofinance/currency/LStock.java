@@ -1,15 +1,18 @@
 package com.donny.dendrofinance.currency;
 
 import com.donny.dendrofinance.instance.Instance;
+import com.donny.dendrofinance.json.JsonDecimal;
 import com.donny.dendrofinance.json.JsonFormattingException;
 import com.donny.dendrofinance.json.JsonObject;
 import com.donny.dendrofinance.json.JsonString;
 
+import java.math.BigDecimal;
+
 public class LStock extends LCurrency {
     private final boolean PUBLIC;
 
-    public LStock(String name, String ticker, boolean publik, boolean dead, Instance curInst) {
-        super(name, ticker, false, "§", true, 6, "", false, dead, curInst);
+    public LStock(String name, String ticker, boolean publik, BigDecimal factor, boolean dead, Instance curInst) {
+        super(name, ticker, false, "§", true, 6, factor, "", false, dead, curInst);
         PUBLIC = publik;
     }
 
@@ -18,6 +21,7 @@ public class LStock extends LCurrency {
                 obj.getString("name").getString(),
                 obj.getString("tic").getString(),
                 !obj.getString("flags").getString().contains("P"),
+                obj.containsKey("factor") ? obj.getDecimal("factor").decimal : BigDecimal.ONE,
                 obj.getString("flags").getString().contains("D"),
                 curInst
         );
@@ -40,6 +44,9 @@ public class LStock extends LCurrency {
             flags += "P";
         }
         obj.put("flags", new JsonString(flags));
+        if (getFactor().compareTo(BigDecimal.ONE) != 0) {
+            obj.put("factor", new JsonDecimal(getFactor()));
+        }
         return obj;
     }
 

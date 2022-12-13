@@ -101,6 +101,30 @@ public class JsonArray extends JsonItem {
         return (JsonObject) get(index);
     }
 
+    public JsonItem last() {
+        return ARRAY.get(ARRAY.size() - 1);
+    }
+
+    public JsonString lastString() {
+        return (JsonString) last();
+    }
+
+    public JsonDecimal lastDecimal() {
+        return (JsonDecimal) last();
+    }
+
+    public JsonBool lastBool() {
+        return (JsonBool) last();
+    }
+
+    public JsonArray lastArray() {
+        return (JsonArray) last();
+    }
+
+    public JsonObject lastObject() {
+        return (JsonObject) last();
+    }
+
     public boolean add(JsonItem item) {
         return ARRAY.add(item);
     }

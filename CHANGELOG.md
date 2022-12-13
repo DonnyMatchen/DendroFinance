@@ -1,3 +1,14 @@
+## v0.10.1
+* factor now allowed for inventory and stock
+* added "last" functions to JsonArray
+* minor bug fixes
+  * fixed small error in `MarketApiEditGui`
+  * fixed minor issue with conversion
+  * adjusted conversions for the possibility of private stock/inventory prices listed ahead of time
+  * more helpful error messages in retrieving private stock/inventory
+  * removed redundant code
+  * minor optimizations
+
 ## v0.10.0
 * date format improvements and documentation
   * date format input widened and improved

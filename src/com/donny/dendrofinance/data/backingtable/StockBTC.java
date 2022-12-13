@@ -46,7 +46,7 @@ public class StockBTC extends BackingTableCore<LStock> {
 
     @Override
     public int contentIdentifierIndex() {
-        return 1;
+        return 0;
     }
 
     @Override
@@ -85,7 +85,7 @@ public class StockBTC extends BackingTableCore<LStock> {
             }
             String name = stk.getName();
             if (stk.isDead()) {
-                name = "[" + name + "]";
+                name += " [Dead]";
             }
             if (!(name.toLowerCase().contains(check.toLowerCase())
                     || stk.getName().toLowerCase().contains(check.toLowerCase())
@@ -108,11 +108,15 @@ public class StockBTC extends BackingTableCore<LStock> {
 
     @Override
     public int getIndex(String identifier) {
-        for (LStock stk : TABLE) {
+        if (identifier.contains("[")) {
+            identifier = identifier.split("\\[")[0].trim();
+        }
+        for (int i = 0; i < TABLE.size(); i++) {
+            LStock stk = TABLE.get(i);
             if (stk.toString().equalsIgnoreCase(identifier)
                     || stk.getName().equalsIgnoreCase(identifier)
                     || stk.getTicker().equalsIgnoreCase(identifier)) {
-                return TABLE.indexOf(stk);
+                return i;
             }
         }
         return -1;

@@ -376,7 +376,7 @@ public class FileHandler {
             CURRENT_INSTANCE.LOG_HANDLER.debug(getClass(), "Private stock history read: " + name);
             return history;
         } else {
-            CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "No History File found: " + name);
+            CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "No Stock History File found: " + name);
             return null;
         }
     }
@@ -396,7 +396,7 @@ public class FileHandler {
             CURRENT_INSTANCE.LOG_HANDLER.debug(getClass(), "Private inventory history read: " + id);
             return history;
         } else {
-            CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "No History File found: " + id);
+            CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "No Inventory History File found: " + id);
             return null;
         }
     }

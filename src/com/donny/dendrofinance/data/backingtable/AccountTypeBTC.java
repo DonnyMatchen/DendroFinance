@@ -69,9 +69,10 @@ public class AccountTypeBTC extends BackingTableCore<AccountType> {
 
     @Override
     public int getIndex(String identifier) {
-        for (AccountType accTyp : TABLE) {
+        for (int i = 0; i < TABLE.size(); i++) {
+            AccountType accTyp = TABLE.get(i);
             if (accTyp.NAME.equalsIgnoreCase(identifier)) {
-                return TABLE.indexOf(accTyp);
+                return i;
             }
         }
         return -1;

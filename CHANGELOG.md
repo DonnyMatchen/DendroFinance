@@ -4,6 +4,7 @@
 * minor bug fixes
   * fixed small error in `MarketApiEditGui`
   * fixed minor issue with conversion
+    * A hardcoded `5` was eradicated
   * adjusted conversions for the possibility of private stock/inventory prices listed ahead of time
   * more helpful error messages in retrieving private stock/inventory
   * removed redundant code

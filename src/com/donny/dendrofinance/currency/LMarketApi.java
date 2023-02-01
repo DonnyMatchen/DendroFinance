@@ -14,13 +14,6 @@ import java.util.HashMap;
 import java.util.concurrent.TimeUnit;
 
 public class LMarketApi implements ExportableToJson, Serializable {
-    protected static LCurrency[] ListToArray(ArrayList<LCurrency> list) {
-        LCurrency[] out = new LCurrency[list.size()];
-        for (int i = 0; i < list.size(); i++) {
-            out[i] = list.get(i);
-        }
-        return out;
-    }
 
     protected static ArrayList<LCurrency[]> partition(ArrayList<LCurrency> list, int limit) {
         ArrayList<LCurrency[]> out = new ArrayList<>();
@@ -366,7 +359,7 @@ public class LMarketApi implements ExportableToJson, Serializable {
         } catch (ApiLimitReachedException e) {
             if (attempts < ATTEMPT_LIMIT) {
                 try {
-                    CURRENT_INSTANCE.LOG_HANDLER.info(getClass(), "Waiting " + DURATION + " milliseconds");
+                    CURRENT_INSTANCE.LOG_HANDLER.info(getClass(), NAME + ": Waiting " + DURATION + " milliseconds (attempt: " + attempts + ")");
                     TimeUnit.MILLISECONDS.sleep(DURATION);
                     attempts++;
                     return convert(amount, a, b);
@@ -418,9 +411,9 @@ public class LMarketApi implements ExportableToJson, Serializable {
                 return BigDecimal.valueOf(-1);
             }
         } catch (ApiLimitReachedException e) {
-            if (attempts < 5) {
+            if (attempts < ATTEMPT_LIMIT) {
                 try {
-                    CURRENT_INSTANCE.LOG_HANDLER.info(getClass(), "Waiting " + DURATION + " milliseconds");
+                    CURRENT_INSTANCE.LOG_HANDLER.info(getClass(), NAME + ": Waiting " + DURATION + " milliseconds (attempt: " + attempts + ")");
                     TimeUnit.MILLISECONDS.sleep(DURATION);
                     attempts++;
                     return convert(amount, a, b, date);

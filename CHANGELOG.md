@@ -3,6 +3,7 @@
   * items, description, and accounts are now long fields
     * long fields now block line breaks
 * Exchanges now have a `toString` method allowing them to display correctly.
+* Account Types now have a `ToString` method allowing them to display correctly
 
 ## v0.10.1
 * factor now allowed for inventory and stock

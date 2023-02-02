@@ -39,4 +39,9 @@ public class AccountType implements ExportableToJson {
         obj.put("type", new JsonString(TYPE.toString()));
         return obj;
     }
+
+    @Override
+    public String toString() {
+        return NAME;
+    }
 }

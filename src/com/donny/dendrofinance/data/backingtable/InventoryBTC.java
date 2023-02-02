@@ -55,32 +55,29 @@ public class InventoryBTC extends BackingTableCore<LInventory> {
         ArrayList<String[]> out = new ArrayList<>();
         for (LInventory inv : TABLE) {
             String check = search;
-            boolean flagU = false, rFlagU = false, flagA = false, rFlagA = false, allow = true;
+            boolean flagU = inv.inUse(), allow = true;
+            boolean flagA = flagU || inv.inAccount();
             if (check.contains("$U")) {
-                flagU = true;
                 check = check.replace("$U", "").trim();
-                if (!inv.inUse()) {
+                if (!flagU) {
                     allow = false;
                 }
             }
             if (check.contains("$u")) {
-                rFlagU = true;
                 check = check.replace("$u", "").trim();
-                if (inv.inUse()) {
+                if (flagU) {
                     allow = false;
                 }
             }
             if (check.contains("$A")) {
-                flagA = true;
                 check = check.replace("$A", "").trim();
-                if (!inv.inAccount()) {
+                if (!flagA) {
                     allow = false;
                 }
             }
             if (check.contains("$a")) {
-                flagA = true;
                 check = check.replace("$a", "").trim();
-                if (inv.inAccount()) {
+                if (flagA) {
                     allow = false;
                 }
             }
@@ -94,8 +91,8 @@ public class InventoryBTC extends BackingTableCore<LInventory> {
             if (allow) {
                 out.add(new String[]{
                         inv.getName(), inv.getTicker(), inv.encode(BigDecimal.ZERO),
-                        (!rFlagA && (flagA || inv.inAccount())) ? "X" : "",
-                        (!rFlagU && (flagU || inv.inUse())) ? "X" : ""
+                        flagA ? "X" : "",
+                        flagU ? "X" : ""
                 });
             }
         }

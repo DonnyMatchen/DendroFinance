@@ -126,7 +126,7 @@ public class Validation {
         }
     }
 
-    public static LAccountSet validateAccountSet(JTextField field, Instance curInst) throws ValidationFailedException {
+    public static LAccountSet validateAccountSet(JTextArea field, Instance curInst) throws ValidationFailedException {
         String raw = field.getText();
         raw = raw.replace("{", "").replace("}", "").replace(" ", "");
         for (String seg : raw.split(",")) {

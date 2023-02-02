@@ -27,7 +27,8 @@ public class NewTransactionEntryGui extends ModalFrame {
     public final MainGui MAIN;
     public final long UUID;
     public final boolean CLONE;
-    private final JTextField DATE, ENT, ITM, DESC, ACC;
+    private final JTextField DATE, ENT;
+    private final JTextArea ITM, DESC, ACC;;
     private final JComboBox<String> TYPE;
     private final JTextArea META;
     private final JTable TABLE;
@@ -62,15 +63,17 @@ public class NewTransactionEntryGui extends ModalFrame {
 
                 DATE = new JTextField();
                 ENT = new JTextField();
-                ITM = new JTextField();
-                DESC = new JTextField();
+                JScrollPane itmScroll = DendroFactory.getLongField();
+                ITM = (JTextArea) itmScroll.getViewport().getView();
+                JScrollPane descScroll = DendroFactory.getLongField();
+                DESC = (JTextArea) descScroll.getViewport().getView();
+                JScrollPane accScroll = DendroFactory.getLongField();
+                ACC = (JTextArea) accScroll.getViewport().getView();
 
                 JButton insert = DendroFactory.getButton("Save");
                 insert.addActionListener(event -> insertAction());
                 JButton cancel = DendroFactory.getButton("Cancel");
                 cancel.addActionListener(event -> dispose());
-
-                ACC = new JTextField();
 
                 JComboBox<String> type = new JComboBox<>();
                 type.addItem("Debit");
@@ -105,7 +108,9 @@ public class NewTransactionEntryGui extends ModalFrame {
                                     "(" + Cleaning.cleanNumber(amount.getText()) + "), "
                     );
                     amount.setText("");
-                    type.setSelectedIndex(0);
+                    if(type.getSelectedIndex() > 1) {
+                        type.setSelectedIndex(0);
+                    }
                     account.clear();
                 });
 
@@ -149,11 +154,11 @@ public class NewTransactionEntryGui extends ModalFrame {
                                                     ).addComponent(
                                                             ENT, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
                                                     ).addComponent(
-                                                            ITM, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
+                                                            itmScroll, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
                                                     ).addComponent(
-                                                            DESC, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
+                                                            descScroll, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
                                                     ).addComponent(
-                                                            ACC, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
+                                                            accScroll, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
                                                     )
                                             )
                                     ).addGroup(
@@ -198,22 +203,22 @@ public class NewTransactionEntryGui extends ModalFrame {
                                                     ENT, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                             )
                                     ).addGap(DendroFactory.SMALL_GAP).addGroup(
-                                            main.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(
+                                            main.createParallelGroup(GroupLayout.Alignment.LEADING).addComponent(
                                                     c, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                             ).addComponent(
-                                                    ITM, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                                    itmScroll, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                             )
                                     ).addGap(DendroFactory.SMALL_GAP).addGroup(
-                                            main.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(
+                                            main.createParallelGroup(GroupLayout.Alignment.LEADING).addComponent(
                                                     d, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                             ).addComponent(
-                                                    DESC, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                                    descScroll, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                             )
                                     ).addGap(DendroFactory.SMALL_GAP).addGroup(
                                             main.createParallelGroup(GroupLayout.Alignment.LEADING).addComponent(
                                                     e, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                             ).addComponent(
-                                                    ACC, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                                    accScroll, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                             )
                                     )
                             ).addGap(DendroFactory.SMALL_GAP).addGroup(

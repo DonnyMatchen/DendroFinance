@@ -4,6 +4,8 @@
     * long fields now block line breaks
 * Exchanges now have a `toString` method allowing them to display correctly.
 * Account Types now have a `ToString` method allowing them to display correctly
+* minor optimizations with in use and in account calls
+* small improvement to `Exchange.print()`
 
 ## v0.10.1
 * factor now allowed for inventory and stock

@@ -123,17 +123,15 @@ public class Exchange implements ExportableToJson, Serializable {
     public String[] print() {
         int fiat = 0, stock = 0, crypto = 0, inv = 0;
         for (String str : SUPPORTED) {
-            if (str.contains("F!")) {
+            LCurrency c = CURRENT_INSTANCE.getLCurrency(str);
+            if (c.isFiat()) {
                 fiat++;
-            }
-            if (str.contains("S!")) {
+            } else if (c instanceof LStock) {
                 stock++;
-            }
-            if (str.contains("C!")) {
-                crypto++;
-            }
-            if (str.contains("I!")) {
+            } else if (c instanceof LInventory) {
                 inv++;
+            } else {
+                crypto++;
             }
         }
         return new String[]{

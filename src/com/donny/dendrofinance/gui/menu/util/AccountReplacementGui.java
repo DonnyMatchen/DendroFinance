@@ -15,7 +15,7 @@ import java.awt.*;
 import java.math.BigDecimal;
 
 public class AccountReplacementGui extends RegisterFrame {
-    public final SearchBox OLD, NEW;
+    public final SearchBox<Account> OLD, NEW;
     public final JButton GO;
 
     public AccountReplacementGui(MainGui caller, Instance curInst) {
@@ -23,8 +23,8 @@ public class AccountReplacementGui extends RegisterFrame {
 
         //draw gui
         {
-            OLD = new SearchBox("Existing Account", CURRENT_INSTANCE.getAccountsInUseAsStrings());
-            NEW = new SearchBox("Replacement Account", CURRENT_INSTANCE.getAccountsAsStrings());
+            OLD = new SearchBox<>("Existing Account", CURRENT_INSTANCE.getAccountsInUse());
+            NEW = new SearchBox<>("Replacement Account", CURRENT_INSTANCE.ACCOUNTS);
             GO = new JButton("Do Change");
             GO.addActionListener(event -> goAction());
 
@@ -60,8 +60,8 @@ public class AccountReplacementGui extends RegisterFrame {
     }
 
     private void goAction() {
-        Account a = CURRENT_INSTANCE.ACCOUNTS.getElement(OLD.getSelectedItem());
-        Account b = CURRENT_INSTANCE.ACCOUNTS.getElement(NEW.getSelectedItem());
+        Account a = OLD.getSelectedItem();
+        Account b = NEW.getSelectedItem();
         for (TransactionEntry entry : CURRENT_INSTANCE.DATA_HANDLER.readTransactions()) {
             int index = -1;
             AWColumn column = null;
@@ -78,7 +78,7 @@ public class AccountReplacementGui extends RegisterFrame {
             }
         }
         if (!a.inUse()) {
-            OLD.setMaster(CURRENT_INSTANCE.getAccountsInUseAsStrings());
+            OLD.setMaster(CURRENT_INSTANCE.getAccountsInUse());
         } else {
             CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "I don't know how you fucked this up.  Account not replaced.");
         }

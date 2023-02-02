@@ -1261,219 +1261,185 @@ public class Instance {
         box.addItem("December");
     }
 
-    public ArrayList<String> getAllTaxItemsAsStrings() {
-        ArrayList<String> out = new ArrayList<>();
-        TAX_ITEMS.forEach(item -> out.add(item.NAME));
+    public ArrayList<LCurrency> getAllAssets() {
+        ArrayList<LCurrency> out = new ArrayList<>();
+        CURRENCIES.forEach(out::add);
+        STOCKS.forEach((out::add));
+        INVENTORIES.forEach(out::add);
         return out;
     }
 
-    public ArrayList<String> getAllAssetsAsStrings() {
-        ArrayList<String> out = new ArrayList<>();
-        CURRENCIES.forEach(c -> out.add(c.toString()));
-        STOCKS.forEach((s -> out.add(s.toString())));
-        INVENTORIES.forEach(i -> out.add(i.toString()));
-        return out;
-    }
-
-    public ArrayList<String> getAllAssetsAsStrings(Exchange e) {
+    public ArrayList<LCurrency> getAllAssetsByExchange(Exchange e) {
         if (e == null) {
-            return getAllUniqueAssetsAsStrings();
+            return getAllUniqueAssets();
         } else {
-            ArrayList<String> out = new ArrayList<>();
+            ArrayList<LCurrency> out = new ArrayList<>();
             CURRENCIES.getBaseline().forEach(c -> {
                 if (e.supports(c) && c != main) {
-                    out.add(c.toString());
+                    out.add(c);
                 }
             });
             STOCKS.forEach((s -> {
                 if (e.supports(s)) {
-                    out.add(s.toString());
+                    out.add(s);
                 }
             }));
             INVENTORIES.forEach((i -> {
                 if (e.supports(i)) {
-                    out.add(i.toString());
+                    out.add(i);
                 }
             }));
             return out;
         }
     }
 
-    public ArrayList<String> getAllAssetsAsStrings(SearchBox e) {
-        return getAllAssetsAsStrings(EXCHANGES.getElement(e.getSelectedItem()));
+    public ArrayList<LCurrency> getAllAssetsByExchange(SearchBox<Exchange> e) {
+        return getAllAssetsByExchange(e.getSelectedItem());
     }
 
-    public ArrayList<String> getAllAssetsAsStrings(Exchange e1, Exchange e2) {
+    public ArrayList<LCurrency> getAllAssetsByDoubleExchange(Exchange e1, Exchange e2) {
         if (e1 == null || e2 == null) {
             if (e2 == null) {
-                return getAllAssetsAsStrings(e1);
+                return getAllAssetsByExchange(e1);
             } else {
-                return getAllAssetsAsStrings(e2);
+                return getAllAssetsByExchange(e2);
             }
         } else {
-            ArrayList<String> out = new ArrayList<>();
+            ArrayList<LCurrency> out = new ArrayList<>();
             CURRENCIES.getBaseline().forEach(c -> {
                 if (e1.supports(c) && e2.supports(c) && c != main) {
-                    out.add(c.toString());
+                    out.add(c);
                 }
             });
             STOCKS.forEach((s -> {
                 if (e1.supports(s) && e2.supports(s)) {
-                    out.add(s.toString());
+                    out.add(s);
                 }
             }));
             INVENTORIES.forEach((i -> {
                 if (e1.supports(i) && e2.supports(i)) {
-                    out.add(i.toString());
+                    out.add(i);
                 }
             }));
             return out;
         }
     }
 
-    public ArrayList<String> getAllAssetsAsStrings(SearchBox e1, SearchBox e2) {
-        return getAllAssetsAsStrings(
-                EXCHANGES.getElement(e1.getSelectedItem()),
-                EXCHANGES.getElement(e2.getSelectedItem())
+    public ArrayList<LCurrency> getAllAssetsByDoubleExchange(SearchBox<Exchange> e1, SearchBox<Exchange> e2) {
+        return getAllAssetsByDoubleExchange(
+                e1.getSelectedItem(),
+                e2.getSelectedItem()
         );
     }
 
-    public ArrayList<String> getAllTokensAsStrings(Exchange e1, Exchange e2) {
-        ArrayList<String> out = new ArrayList<>();
+    public ArrayList<LCurrency> getAllTokensByDoubleExchange(Exchange e1, Exchange e2) {
+        ArrayList<LCurrency> out = new ArrayList<>();
         if (e1 == null || e2 == null) {
             CURRENCIES.getBaseline().forEach(c -> {
                 if (c.isToken()) {
-                    out.add(c.toString());
+                    out.add(c);
                 }
             });
         } else {
             CURRENCIES.getBaseline().forEach(c -> {
                 if (e1.supports(c) && e2.supports(c) && c.isToken()) {
-                    out.add(c.toString());
+                    out.add(c);
                 }
             });
         }
         return out;
     }
 
-    public ArrayList<String> getAllTokensAsStrings(SearchBox e1, SearchBox e2) {
-        return getAllTokensAsStrings(
-                EXCHANGES.getElement(e1.getSelectedItem()),
-                EXCHANGES.getElement(e2.getSelectedItem())
+    public ArrayList<LCurrency> getAllTokensByDoubleExchange(SearchBox<Exchange> e1, SearchBox<Exchange> e2) {
+        return getAllTokensByDoubleExchange(
+                e1.getSelectedItem(),
+                e2.getSelectedItem()
         );
     }
 
-    public ArrayList<String> getAllUniqueAssetsAsStrings() {
-        ArrayList<String> out = new ArrayList<>();
+    public ArrayList<LCurrency> getAllUniqueAssets() {
+        ArrayList<LCurrency> out = new ArrayList<>();
         CURRENCIES.forEach(c -> {
             if (c.first() && c != main) {
-                out.add(c.toString());
+                out.add(c);
             }
         });
         STOCKS.forEach(s -> {
             if (s.first()) {
-                out.add(s.toString());
+                out.add(s);
             }
         });
         INVENTORIES.forEach(i -> {
             if (i.first()) {
-                out.add(i.toString());
+                out.add(i);
             }
         });
         return out;
     }
 
-    public ArrayList<String> getAccountTypesAsStrings() {
-        ArrayList<String> out = new ArrayList<>();
-        ACCOUNT_TYPES.forEach(at -> out.add(at.NAME));
-        return out;
-    }
-
-    public ArrayList<String> getExchangesAsStrings() {
-        ArrayList<String> out = new ArrayList<>();
-        EXCHANGES.forEach(e -> out.add(e.NAME));
-        return out;
-    }
-
-    public ArrayList<String> getFeeExchangesAsStrings() {
-        ArrayList<String> out = new ArrayList<>();
-        EXCHANGES.forEach(e -> {
-            if (e.hasFees()) {
-                out.add(e.NAME);
-            }
-        });
-        return out;
-    }
-
-    public ArrayList<String> getAllFeesAsStrings(Exchange e) {
+    public ArrayList<LCurrency> getAllFeesByExchange(Exchange e) {
         if (e == null) {
             return new ArrayList<>();
         } else {
-            ArrayList<String> out = new ArrayList<>();
+            ArrayList<LCurrency> out = new ArrayList<>();
             CURRENCIES.getBaseline().forEach(c -> {
                 if (e.supportsFee(c)) {
-                    out.add(c.toString());
+                    out.add(c);
                 }
             });
             STOCKS.forEach((s -> {
                 if (e.supportsFee(s)) {
-                    out.add(s.toString());
+                    out.add(s);
                 }
             }));
             INVENTORIES.forEach((i -> {
                 if (e.supportsFee(i)) {
-                    out.add(i.toString());
+                    out.add(i);
                 }
             }));
             return out;
         }
     }
 
-    public ArrayList<String> getAllFeesAsStrings(SearchBox e) {
-        return getAllFeesAsStrings(EXCHANGES.getElement(e.getSelectedItem()));
+    public ArrayList<LCurrency> getAllFeesByExchange(SearchBox<Exchange> e) {
+        return getAllFeesByExchange(e.getSelectedItem());
     }
 
-    public ArrayList<String> getAccountsAsStrings() {
-        ArrayList<String> out = new ArrayList<>();
-        ACCOUNTS.forEach(a -> out.add(a.getName()));
-        return out;
-    }
-
-    public ArrayList<String> getAccountsInUseAsStrings() {
-        ArrayList<String> out = new ArrayList<>();
+    public ArrayList<Account> getAccountsInUse() {
+        ArrayList<Account> out = new ArrayList<>();
         ACCOUNTS.forEach(a -> {
             if (a.inUse()) {
-                out.add(a.getName());
+                out.add(a);
             }
         });
         return out;
     }
 
-    public ArrayList<String> getDCAccountsAsStrings() {
-        ArrayList<String> out = new ArrayList<>();
+    public ArrayList<Account> getDCAccounts() {
+        ArrayList<Account> out = new ArrayList<>();
         ACCOUNTS.forEach(a -> {
             if (a.getBroadAccountType() != BroadAccountType.GHOST && a.getBroadAccountType() != BroadAccountType.TRACKING) {
-                out.add(a.getName());
+                out.add(a);
             }
         });
         return out;
     }
 
-    public ArrayList<String> getGhostAccountsAsStrings() {
-        ArrayList<String> out = new ArrayList<>();
+    public ArrayList<Account> getGhostAccounts() {
+        ArrayList<Account> out = new ArrayList<>();
         ACCOUNTS.forEach(a -> {
             if (a.getBroadAccountType() == BroadAccountType.GHOST) {
-                out.add(a.getName());
+                out.add(a);
             }
         });
         return out;
     }
 
-    public ArrayList<String> getTrackingAccountsAsStrings() {
-        ArrayList<String> out = new ArrayList<>();
+    public ArrayList<Account> getTrackingAccounts() {
+        ArrayList<Account> out = new ArrayList<>();
         ACCOUNTS.forEach(a -> {
             if (a.getBroadAccountType() == BroadAccountType.TRACKING) {
-                out.add(a.getName());
+                out.add(a);
             }
         });
         return out;

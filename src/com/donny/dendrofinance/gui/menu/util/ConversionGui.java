@@ -17,7 +17,7 @@ import java.math.BigDecimal;
 
 public class ConversionGui extends RegisterFrame {
     private final JTextField DATE, AMOUNT;
-    private final SearchBox CUR_A, CUR_B;
+    private final SearchBox<LCurrency> CUR_A, CUR_B;
     private final JTextArea DISPLAY;
 
     public ConversionGui(MainGui caller, Instance curInst) {
@@ -29,8 +29,8 @@ public class ConversionGui extends RegisterFrame {
             JLabel b = new JLabel("Amount");
             DATE = new JTextField();
             AMOUNT = new JTextField();
-            CUR_A = new SearchBox("Currency A", CURRENT_INSTANCE.getAllAssetsAsStrings());
-            CUR_B = new SearchBox("Currency B", CURRENT_INSTANCE.getAllAssetsAsStrings());
+            CUR_A = new SearchBox<>("Currency A", CURRENT_INSTANCE.getAllAssets());
+            CUR_B = new SearchBox<>("Currency B", CURRENT_INSTANCE.getAllAssets());
             JScrollPane pane = DendroFactory.getScrollField();
             DISPLAY = (JTextArea) pane.getViewport().getView();
             DISPLAY.setEditable(false);
@@ -102,8 +102,8 @@ public class ConversionGui extends RegisterFrame {
         try {
             LDate date = Validation.validateDate(DATE, CURRENT_INSTANCE);
             if (!DATE.getText().equals("") && !date.toDateString().equals(LDate.now(CURRENT_INSTANCE).toDateString())) {
-                LCurrency a = CURRENT_INSTANCE.getLCurrency(CUR_A.getSelectedItem());
-                LCurrency b = CURRENT_INSTANCE.getLCurrency(CUR_B.getSelectedItem());
+                LCurrency a = CUR_A.getSelectedItem();
+                LCurrency b = CUR_B.getSelectedItem();
                 BigDecimal x = Cleaning.cleanNumber(AMOUNT.getText());
                 if (x.compareTo(BigDecimal.ZERO) == 0) {
                     x = BigDecimal.ONE;
@@ -111,8 +111,8 @@ public class ConversionGui extends RegisterFrame {
                 BigDecimal y = CURRENT_INSTANCE.convert(x, a, b, date);
                 DISPLAY.setText(a.encode(x) + "\n=\n" + b.encode(y));
             } else {
-                LCurrency a = CURRENT_INSTANCE.getLCurrency(CUR_A.getSelectedItem());
-                LCurrency b = CURRENT_INSTANCE.getLCurrency(CUR_B.getSelectedItem());
+                LCurrency a = CUR_A.getSelectedItem();
+                LCurrency b = CUR_B.getSelectedItem();
                 BigDecimal x = Cleaning.cleanNumber(AMOUNT.getText());
                 if (x.compareTo(BigDecimal.ZERO) == 0) {
                     x = BigDecimal.ONE;

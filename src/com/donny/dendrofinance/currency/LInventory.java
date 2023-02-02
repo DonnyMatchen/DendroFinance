@@ -50,9 +50,10 @@ public class LInventory extends LCurrency {
         super(
                 obj.getString("name").getString(),
                 obj.getString("tic").getString(),
-                false,
-                obj.getString("symbol").getString() + "§", true,
-                obj.getDecimal("places").decimal.intValue(), "", false, false, obj, curInst
+                obj.getString("symbol").getString() + "§",
+                obj.getDecimal("places").decimal.intValue(),
+                obj,
+                curInst
         );
         MERCHANDISE = obj.getString("flags").getString().contains("M");
         COMMODITY = obj.getString("flags").getString().contains("C");

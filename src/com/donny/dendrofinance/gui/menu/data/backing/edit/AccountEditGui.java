@@ -1,6 +1,9 @@
 package com.donny.dendrofinance.gui.menu.data.backing.edit;
 
 import com.donny.dendrofinance.account.Account;
+import com.donny.dendrofinance.account.AccountType;
+import com.donny.dendrofinance.account.Exchange;
+import com.donny.dendrofinance.currency.LCurrency;
 import com.donny.dendrofinance.data.backingtable.BackingTableCore;
 import com.donny.dendrofinance.gui.customswing.DendroFactory;
 import com.donny.dendrofinance.gui.customswing.SearchBox;
@@ -13,7 +16,9 @@ import javax.swing.*;
 
 public class AccountEditGui extends BackingEditGui<Account> {
     private JTextField name, aid, budget;
-    private SearchBox currency, type, exchange;
+    private SearchBox<LCurrency> currency;
+    private SearchBox<AccountType> type;
+    private SearchBox<Exchange> exchange;
 
     public AccountEditGui(BackingTableGui<Account> caller, BackingTableCore<Account> core, int index, Instance curInst) {
         super(caller, core, index, curInst);
@@ -25,9 +30,9 @@ public class AccountEditGui extends BackingEditGui<Account> {
         aid = new JTextField();
         budget = new JTextField();
 
-        currency = new SearchBox("Currency", CURRENT_INSTANCE.getAllAssetsAsStrings());
-        type = new SearchBox("Account Type", CURRENT_INSTANCE.getAccountTypesAsStrings());
-        exchange = new SearchBox("Exchange", CURRENT_INSTANCE.getExchangesAsStrings());
+        currency = new SearchBox<>("Currency", CURRENT_INSTANCE.getAllAssets());
+        type = new SearchBox<>("Account Type", CURRENT_INSTANCE.ACCOUNT_TYPES);
+        exchange = new SearchBox<>("Exchange", CURRENT_INSTANCE.EXCHANGES);
 
         JLabel a = new JLabel("Account Name");
         JLabel b = new JLabel("Account ID");
@@ -44,8 +49,8 @@ public class AccountEditGui extends BackingEditGui<Account> {
             name.setText(acc.getName());
             aid.setText("" + acc.getAid());
             budget.setText(acc.getBudgetType());
-            currency.setSelectedIndex("" + acc.getCurrency());
-            type.setSelectedIndex(acc.getAccountType().NAME);
+            currency.setSelectedIndex(acc.getCurrency());
+            type.setSelectedIndex(acc.getAccountType());
             if (acc.inUse()) {
                 name.setEditable(false);
                 name.setBackground(DendroFactory.BACKDROP);
@@ -137,10 +142,10 @@ public class AccountEditGui extends BackingEditGui<Account> {
             Account temp = new Account(
                     Validation.validateString(name),
                     Validation.validateInteger(aid).intValue(),
-                    CURRENT_INSTANCE.getLCurrency(currency.getSelectedItem()),
-                    CURRENT_INSTANCE.ACCOUNT_TYPES.getElement(type.getSelectedItem()),
+                    currency.getSelectedItem(),
+                    type.getSelectedItem(),
                     Validation.validateStringAllowEmpty(budget),
-                    exchange.getSelectedItem() == null ? null : CURRENT_INSTANCE.EXCHANGES.getElement(exchange.getSelectedItem()),
+                    exchange.getSelectedItem() == null ? null : exchange.getSelectedItem(),
                     CURRENT_INSTANCE,
                     true
             );

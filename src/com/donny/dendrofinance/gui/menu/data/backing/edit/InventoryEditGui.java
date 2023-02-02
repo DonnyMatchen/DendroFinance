@@ -11,7 +11,7 @@ import com.donny.dendrofinance.instance.Instance;
 import javax.swing.*;
 
 public class InventoryEditGui extends BackingEditGui<LInventory> {
-    private JTextField name, ticker, symbol, places, val;
+    private JTextField name, ticker, symbol, places, factor, val;
     private JCheckBox merch, comod, publik;
 
     public InventoryEditGui(BackingTableGui<LInventory> caller, BackingTableCore<LInventory> core, int index, Instance curInst) {
@@ -24,6 +24,7 @@ public class InventoryEditGui extends BackingEditGui<LInventory> {
         ticker = new JTextField();
         symbol = new JTextField();
         places = new JTextField();
+        factor = new JTextField();
         val = new JTextField();
         merch = new JCheckBox("Merchandise");
         comod = new JCheckBox("Commodity");
@@ -33,7 +34,8 @@ public class InventoryEditGui extends BackingEditGui<LInventory> {
         JLabel b = new JLabel("Commodity Ticker");
         JLabel c = new JLabel("Inventory Symbol");
         JLabel d = new JLabel("Decimal Places");
-        JLabel e = new JLabel("Static Value");
+        JLabel e = new JLabel("Conversion Factor");
+        JLabel f = new JLabel("Static Value");
 
         JButton cancel = DendroFactory.getButton("Cancel");
         cancel.addActionListener(event -> dispose());
@@ -47,6 +49,7 @@ public class InventoryEditGui extends BackingEditGui<LInventory> {
             ticker.setText(inv.getTicker());
             symbol.setText(inv.getSymbol().replace("§", ""));
             places.setText("" + inv.getPlaces());
+            factor.setText("" + inv.getFactor());
             val.setText(inv.getUnitValue().toString());
             merch.setSelected(inv.isMerchandise());
             comod.setSelected(inv.isCommodity());
@@ -75,6 +78,8 @@ public class InventoryEditGui extends BackingEditGui<LInventory> {
                                                     d, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                             ).addComponent(
                                                     e, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                            ).addComponent(
+                                                    f, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                             )
                                     ).addGap(DendroFactory.SMALL_GAP).addGroup(
                                             main.createParallelGroup(GroupLayout.Alignment.LEADING).addComponent(
@@ -85,6 +90,8 @@ public class InventoryEditGui extends BackingEditGui<LInventory> {
                                                     symbol, 250, 250, Short.MAX_VALUE
                                             ).addComponent(
                                                     places, 250, 250, Short.MAX_VALUE
+                                            ).addComponent(
+                                                    factor, 250, 250, Short.MAX_VALUE
                                             ).addComponent(
                                                     val, 250, 250, Short.MAX_VALUE
                                             )
@@ -137,6 +144,12 @@ public class InventoryEditGui extends BackingEditGui<LInventory> {
                             main.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(
                                     e, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                             ).addComponent(
+                                    factor, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                            )
+                    ).addGap(DendroFactory.SMALL_GAP).addGroup(
+                            main.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(
+                                    f, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                            ).addComponent(
                                     val, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                             )
                     ).addGap(DendroFactory.SMALL_GAP).addComponent(
@@ -166,6 +179,7 @@ public class InventoryEditGui extends BackingEditGui<LInventory> {
                         Validation.validateString(ticker),
                         Validation.validateString(symbol),
                         Validation.validateInteger(places).intValue(),
+                        Validation.validateDecimal(factor),
                         merch.isSelected(),
                         publik.isSelected(),
                         CURRENT_INSTANCE

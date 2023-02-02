@@ -14,7 +14,7 @@ import java.awt.*;
 import java.math.BigDecimal;
 
 public class LedgerGui extends RegisterFrame {
-    private final SearchBox CUR;
+    private final SearchBox<LCurrency> CUR;
     private final DefaultTableModel TABLE_ACCESS;
 
     public LedgerGui(MainGui caller, Instance curInst) {
@@ -26,7 +26,7 @@ public class LedgerGui extends RegisterFrame {
             }, new Object[][]{}, false);
             JTable table = (JTable) pane.getViewport().getView();
             TABLE_ACCESS = (DefaultTableModel) table.getModel();
-            CUR = new SearchBox("Asset", curInst.getAllUniqueAssetsAsStrings());
+            CUR = new SearchBox<>("Asset", curInst.getAllUniqueAssets());
             CUR.addListSelectionListener(event -> update());
 
             //back
@@ -61,7 +61,7 @@ public class LedgerGui extends RegisterFrame {
             TABLE_ACCESS.removeRow(0);
         }
         if (CUR.getSelectedItem() != null) {
-            LCurrency currency = CURRENT_INSTANCE.getLCurrency(CUR.getSelectedItem());
+            LCurrency currency = CUR.getSelectedItem();
             for (LedgerMetadata meta : CURRENT_INSTANCE.DATA_HANDLER.getLedgerMeta(currency)) {
                 if (meta.FROM.equals(currency)) {
                     if (meta.TO_AMNT.compareTo(BigDecimal.ZERO) == 0) {

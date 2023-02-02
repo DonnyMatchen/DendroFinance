@@ -1,6 +1,9 @@
 package com.donny.dendrofinance.gui.menu.transactions;
 
+import com.donny.dendrofinance.account.Account;
 import com.donny.dendrofinance.account.BroadAccountType;
+import com.donny.dendrofinance.account.Exchange;
+import com.donny.dendrofinance.currency.LCurrency;
 import com.donny.dendrofinance.gui.MainGui;
 import com.donny.dendrofinance.gui.customswing.DendroFactory;
 import com.donny.dendrofinance.gui.customswing.ModalFrame;
@@ -22,7 +25,9 @@ public class SpecialTransactionEntryGui extends ModalFrame {
     private final ButtonGroup GROUP;
     private final JLabel A, B, C, D, E, F;
     private final JTextField DATE, DESCRIPTION, COST, F_AMOUNT, T_AMOUNT, FEE_AMOUNT, UNIT, FEE_UNIT, AUTOMATIC;
-    private final SearchBox F_EXCHANGE, T_EXCHANGE, F_CURRENCY, T_CURRENCY, FEE_CURRENCY, ACCOUNTS;
+    private final SearchBox<Exchange> F_EXCHANGE, T_EXCHANGE;
+    private final SearchBox<LCurrency> F_CURRENCY, T_CURRENCY, FEE_CURRENCY;
+    private final SearchBox<Account> ACCOUNTS;
     private final JButton INSERT;
 
     public SpecialTransactionEntryGui(MainGui caller, Instance curInst) {
@@ -75,12 +80,12 @@ public class SpecialTransactionEntryGui extends ModalFrame {
             AUTOMATIC = new JTextField();
             AUTOMATIC.setBackground(DendroFactory.DISABLED);
             AUTOMATIC.setEditable(false);
-            F_EXCHANGE = new SearchBox("", new ArrayList<>());
-            T_EXCHANGE = new SearchBox("", new ArrayList<>());
-            F_CURRENCY = new SearchBox("", new ArrayList<>());
-            T_CURRENCY = new SearchBox("", new ArrayList<>());
-            FEE_CURRENCY = new SearchBox("", new ArrayList<>());
-            ACCOUNTS = new SearchBox("", new ArrayList<>());
+            F_EXCHANGE = new SearchBox<>("", new ArrayList<>());
+            T_EXCHANGE = new SearchBox<>("", new ArrayList<>());
+            F_CURRENCY = new SearchBox<>("", new ArrayList<>());
+            T_CURRENCY = new SearchBox<>("", new ArrayList<>());
+            FEE_CURRENCY = new SearchBox<>("", new ArrayList<>());
+            ACCOUNTS = new SearchBox<>("", new ArrayList<>());
 
             //group layout
             {
@@ -205,10 +210,10 @@ public class SpecialTransactionEntryGui extends ModalFrame {
         switch (getSelectedRadio()) {
             case "Purchase/Sale" -> {
                 A.setText("Date");
-                B.setText("Cost");
-                C.setText("Amount");
+                B.setText("Main Amount");
+                C.setText("Asset Amount");
                 F_EXCHANGE.setTitle("Exchange");
-                F_EXCHANGE.setMaster(CURRENT_INSTANCE.getExchangesAsStrings());
+                F_EXCHANGE.setMaster(CURRENT_INSTANCE.EXCHANGES);
                 F_EXCHANGE.addListSelectionListener(event -> updateCur(F_CURRENCY, F_EXCHANGE));
                 F_CURRENCY.setTitle("Currency");
                 F_CURRENCY.setMaster(new ArrayList<>());
@@ -273,13 +278,13 @@ public class SpecialTransactionEntryGui extends ModalFrame {
             }
             case "Purchase/Sale With Fee" -> {
                 A.setText("Date");
-                B.setText("Cost");
-                C.setText("Amount");
+                B.setText("Main Amount");
+                C.setText("Asset Amount");
                 D.setText("Fee Amount");
                 E.setText("Fee Unit");
                 F_EXCHANGE.setTitle("Exchange");
-                F_EXCHANGE.setMaster(CURRENT_INSTANCE.getExchangesAsStrings());
-                F_EXCHANGE.addListSelectionListener(eveng -> {
+                F_EXCHANGE.setMaster(CURRENT_INSTANCE.EXCHANGES);
+                F_EXCHANGE.addListSelectionListener(event -> {
                     updateCur(F_CURRENCY, F_EXCHANGE);
                     updateFeeCur(FEE_CURRENCY, F_EXCHANGE);
                 });
@@ -373,10 +378,10 @@ public class SpecialTransactionEntryGui extends ModalFrame {
             case "Income/Payment" -> {
                 A.setText("Date");
                 B.setText("Description");
-                C.setText("Amount");
+                C.setText("Asset Amount");
                 D.setText("Unit Price");
                 F_EXCHANGE.setTitle("Exchange");
-                F_EXCHANGE.setMaster(CURRENT_INSTANCE.getExchangesAsStrings());
+                F_EXCHANGE.setMaster(CURRENT_INSTANCE.EXCHANGES);
                 F_EXCHANGE.addListSelectionListener(event -> updateCur(F_CURRENCY, F_EXCHANGE));
                 F_CURRENCY.setTitle("Currency");
                 F_CURRENCY.setMaster(new ArrayList<>());
@@ -452,18 +457,18 @@ public class SpecialTransactionEntryGui extends ModalFrame {
             case "Mining" -> {
                 A.setText("Date");
                 B.setText("Description");
-                C.setText("Amount");
+                C.setText("Asset Amount");
                 D.setText("Unit Price");
                 E.setText("Currency");
                 ACCOUNTS.setTitle("Account");
-                ArrayList<String> master = new ArrayList<>();
+                ArrayList<Account> master = new ArrayList<>();
                 CURRENT_INSTANCE.ACCOUNTS.forEach(acc -> {
                     if (acc.getBroadAccountType() == BroadAccountType.TRACKING && acc.EXPORT) {
-                        master.add(acc.getName());
+                        master.add(acc);
                     }
                 });
                 ACCOUNTS.setMaster(master);
-                ACCOUNTS.addListSelectionListener(event -> AUTOMATIC.setText(CURRENT_INSTANCE.ACCOUNTS.getElement(ACCOUNTS.getSelectedItem()).getCurrency().toString()));
+                ACCOUNTS.addListSelectionListener(event -> AUTOMATIC.setText(ACCOUNTS.getSelectedItem().getCurrency().toString()));
                 INSERT.addActionListener(event -> mnInsert());
                 //group layout
                 {
@@ -545,9 +550,9 @@ public class SpecialTransactionEntryGui extends ModalFrame {
                 C.setText("To Amount");
                 D.setText("Unit Price");
                 F_EXCHANGE.setTitle("From Exchange");
-                F_EXCHANGE.setMaster(CURRENT_INSTANCE.getExchangesAsStrings());
+                F_EXCHANGE.setMaster(CURRENT_INSTANCE.EXCHANGES);
                 T_EXCHANGE.setTitle("To Exchange");
-                T_EXCHANGE.setMaster(CURRENT_INSTANCE.getExchangesAsStrings());
+                T_EXCHANGE.setMaster(CURRENT_INSTANCE.EXCHANGES);
                 F_EXCHANGE.addListSelectionListener(event -> update2ECur(F_CURRENCY, F_EXCHANGE, T_EXCHANGE));
                 T_EXCHANGE.addListSelectionListener(event -> update2ECur(F_CURRENCY, F_EXCHANGE, T_EXCHANGE));
                 F_CURRENCY.setTitle("Currency");
@@ -633,9 +638,9 @@ public class SpecialTransactionEntryGui extends ModalFrame {
                 E.setText("Transfer Unit");
                 F.setText("Fee Unit");
                 F_EXCHANGE.setTitle("From Exchange");
-                F_EXCHANGE.setMaster(CURRENT_INSTANCE.getExchangesAsStrings());
+                F_EXCHANGE.setMaster(CURRENT_INSTANCE.EXCHANGES);
                 T_EXCHANGE.setTitle("To Exchange");
-                T_EXCHANGE.setMaster(CURRENT_INSTANCE.getExchangesAsStrings());
+                T_EXCHANGE.setMaster(CURRENT_INSTANCE.EXCHANGES);
                 F_EXCHANGE.addListSelectionListener(event -> {
                     update2ECur(F_CURRENCY, F_EXCHANGE, T_EXCHANGE);
                     updateToken(FEE_CURRENCY, F_EXCHANGE, T_EXCHANGE);
@@ -745,11 +750,11 @@ public class SpecialTransactionEntryGui extends ModalFrame {
             }
             case "Trade" -> {
                 A.setText("Date");
-                B.setText("From AMount");
+                B.setText("From Amount");
                 C.setText("To Amount");
                 D.setText("From Unit");
                 F_EXCHANGE.setTitle("Exchange");
-                F_EXCHANGE.setMaster(CURRENT_INSTANCE.getExchangesAsStrings());
+                F_EXCHANGE.setMaster(CURRENT_INSTANCE.EXCHANGES);
                 F_EXCHANGE.addListSelectionListener(event -> {
                     updateCur(F_CURRENCY, F_EXCHANGE);
                     updateCur(T_CURRENCY, F_EXCHANGE);
@@ -848,25 +853,25 @@ public class SpecialTransactionEntryGui extends ModalFrame {
         return "";
     }
 
-    private void updateCur(SearchBox cur, SearchBox exchange) {
-        cur.setMaster(CURRENT_INSTANCE.getAllAssetsAsStrings(exchange));
+    private void updateCur(SearchBox<LCurrency> cur, SearchBox<Exchange> exchange) {
+        cur.setMaster(CURRENT_INSTANCE.getAllAssetsByExchange(exchange));
     }
 
-    private void updateFeeCur(SearchBox cur, SearchBox exchange) {
-        cur.setMaster(CURRENT_INSTANCE.getAllFeesAsStrings(exchange));
+    private void updateFeeCur(SearchBox<LCurrency> fee, SearchBox<Exchange> exchange) {
+        fee.setMaster(CURRENT_INSTANCE.getAllFeesByExchange(exchange));
     }
 
-    private void updateToken(SearchBox cur, SearchBox exchange1, SearchBox exchange2) {
-        cur.setMaster(CURRENT_INSTANCE.getAllTokensAsStrings(exchange1, exchange2));
+    private void updateToken(SearchBox<LCurrency> cur, SearchBox<Exchange> exchange1, SearchBox<Exchange> exchange2) {
+        cur.setMaster(CURRENT_INSTANCE.getAllTokensByDoubleExchange(exchange1, exchange2));
     }
 
-    private void update2ECur(SearchBox cur, SearchBox exchange1, SearchBox exchange2) {
-        cur.setMaster(CURRENT_INSTANCE.getAllAssetsAsStrings(exchange1, exchange2));
+    private void update2ECur(SearchBox<LCurrency> cur, SearchBox<Exchange> exchange1, SearchBox<Exchange> exchange2) {
+        cur.setMaster(CURRENT_INSTANCE.getAllAssetsByDoubleExchange(exchange1, exchange2));
     }
 
     private void psInsert() {
         try {
-            if (CURRENT_INSTANCE.DATA_HANDLER.buySell(
+            if (CURRENT_INSTANCE.DATA_HANDLER.purchaseSale(
                     Validation.validateDate(DATE, CURRENT_INSTANCE),
                     Validation.validateDecimal(F_AMOUNT),
                     Validation.validateDecimal(COST),
@@ -886,7 +891,7 @@ public class SpecialTransactionEntryGui extends ModalFrame {
 
     private void pfInsert() {
         try {
-            if (CURRENT_INSTANCE.DATA_HANDLER.buySellFee(
+            if (CURRENT_INSTANCE.DATA_HANDLER.purchaseSaleFee(
                     Validation.validateDate(DATE, CURRENT_INSTANCE),
                     Validation.validateDecimal(F_AMOUNT),
                     Validation.validateDecimal(COST),
@@ -910,7 +915,7 @@ public class SpecialTransactionEntryGui extends ModalFrame {
 
     private void ipInsert() {
         try {
-            if (CURRENT_INSTANCE.DATA_HANDLER.incPay(
+            if (CURRENT_INSTANCE.DATA_HANDLER.incomePayment(
                     Validation.validateDate(DATE, CURRENT_INSTANCE),
                     Validation.validateString(DESCRIPTION),
                     Validation.validateDecimal(F_AMOUNT),
@@ -931,7 +936,7 @@ public class SpecialTransactionEntryGui extends ModalFrame {
 
     private void mnInsert() {
         try {
-            if (CURRENT_INSTANCE.DATA_HANDLER.minInc(
+            if (CURRENT_INSTANCE.DATA_HANDLER.miningIncome(
                     Validation.validateDate(DATE, CURRENT_INSTANCE),
                     Validation.validateString(DESCRIPTION),
                     Validation.validateDecimal(F_AMOUNT),

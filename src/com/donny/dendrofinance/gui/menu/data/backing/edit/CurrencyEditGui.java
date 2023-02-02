@@ -11,7 +11,7 @@ import com.donny.dendrofinance.instance.Instance;
 import javax.swing.*;
 
 public class CurrencyEditGui extends BackingEditGui<LCurrency> {
-    private JTextField name, alt, ticker, symbol, places;
+    private JTextField name, alt, ticker, symbol, places, factor;
     private JCheckBox fiat, extinct, token, forwards;
 
     public CurrencyEditGui(BackingTableGui<LCurrency> caller, BackingTableCore<LCurrency> core, int index, Instance curInst) {
@@ -25,6 +25,7 @@ public class CurrencyEditGui extends BackingEditGui<LCurrency> {
         ticker = new JTextField();
         symbol = new JTextField();
         places = new JTextField();
+        factor = new JTextField();
         JPanel flags = new JPanel();
         fiat = new JCheckBox("Fiat");
         extinct = new JCheckBox("Extinct");
@@ -36,7 +37,8 @@ public class CurrencyEditGui extends BackingEditGui<LCurrency> {
         JLabel c = new JLabel("Currency Ticker");
         JLabel d = new JLabel("Currency Symbol");
         JLabel e = new JLabel("Number of places");
-        JLabel f = new JLabel("Flags");
+        JLabel f = new JLabel("Factor");
+        JLabel g = new JLabel("Flags");
 
         JButton cancel = DendroFactory.getButton("Cancel");
         cancel.addActionListener(event -> dispose());
@@ -51,6 +53,7 @@ public class CurrencyEditGui extends BackingEditGui<LCurrency> {
             ticker.setText(cur.getTicker());
             symbol.setText(cur.getSymbol());
             places.setText("" + cur.getPlaces());
+            factor.setText("" + cur.getFactor());
             fiat.setSelected(cur.isFiat());
             extinct.setSelected(cur.isDead());
             token.setSelected(cur.isToken());
@@ -114,6 +117,8 @@ public class CurrencyEditGui extends BackingEditGui<LCurrency> {
                                                     e, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                             ).addComponent(
                                                     f, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                            ).addComponent(
+                                                    g, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                             )
                                     ).addGap(DendroFactory.SMALL_GAP).addGroup(
                                             main.createParallelGroup(GroupLayout.Alignment.LEADING).addComponent(
@@ -126,6 +131,8 @@ public class CurrencyEditGui extends BackingEditGui<LCurrency> {
                                                     symbol, 250, 250, Short.MAX_VALUE
                                             ).addComponent(
                                                     places, 250, 250, Short.MAX_VALUE
+                                            ).addComponent(
+                                                    factor, 250, 250, Short.MAX_VALUE
                                             ).addComponent(
                                                     flags, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
                                             )
@@ -177,6 +184,12 @@ public class CurrencyEditGui extends BackingEditGui<LCurrency> {
                                     main.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(
                                             f, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                     ).addComponent(
+                                            factor, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                    )
+                            ).addGap(DendroFactory.SMALL_GAP).addGroup(
+                                    main.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(
+                                            g, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                    ).addComponent(
                                             flags, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                     )
                             )
@@ -201,6 +214,7 @@ public class CurrencyEditGui extends BackingEditGui<LCurrency> {
                     Validation.validateString(symbol),
                     forwards.isSelected(),
                     Validation.validateInteger(places).intValue(),
+                    Validation.validateDecimal(factor),
                     Validation.validateString(alt),
                     token.isSelected(),
                     extinct.isSelected(),

@@ -1,3 +1,21 @@
+## v0.10.1
+* factor now allowed for inventory and stock
+* added "last" functions to JsonArray
+* optimized `SearchBox`
+  * no more Strings
+* fixes to transaction insertion
+  * special transactions now more clearly labeled
+  * class `ItemField` removed
+  * no longer reloads when switching between D and C, or C and D
+* minor bug fixes
+  * fixed small error in `MarketApiEditGui`
+  * fixed minor issue with conversion
+    * A hardcoded `5` was eradicated
+  * adjusted conversions for the possibility of private stock/inventory prices listed ahead of time
+  * more helpful error messages in retrieving private stock/inventory
+  * removed redundant code
+  * minor optimizations
+
 ## v0.10.0
 * date format improvements and documentation
   * date format input widened and improved

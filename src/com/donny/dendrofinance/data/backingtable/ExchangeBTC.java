@@ -67,9 +67,10 @@ public class ExchangeBTC extends BackingTableCore<Exchange> {
 
     @Override
     public int getIndex(String identifier) {
-        for (Exchange exch : TABLE) {
+        for (int i = 0; i < TABLE.size(); i++) {
+            Exchange exch = TABLE.get(i);
             if (exch.NAME.equalsIgnoreCase(identifier)) {
-                return TABLE.indexOf(exch);
+                return i;
             }
         }
         return -1;

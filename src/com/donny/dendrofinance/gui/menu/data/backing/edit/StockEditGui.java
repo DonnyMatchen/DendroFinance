@@ -11,7 +11,7 @@ import com.donny.dendrofinance.instance.Instance;
 import javax.swing.*;
 
 public class StockEditGui extends BackingEditGui<LStock> {
-    private JTextField name, ticker;
+    private JTextField name, ticker, factor;
     private JCheckBox publik, dead;
 
     public StockEditGui(BackingTableGui<LStock> caller, BackingTableCore<LStock> core, int index, Instance curInst) {
@@ -24,9 +24,11 @@ public class StockEditGui extends BackingEditGui<LStock> {
         ticker = new JTextField();
         publik = new JCheckBox("Publicly Traded");
         dead = new JCheckBox("No Longer Traded");
+        factor = new JTextField();
 
         JLabel a = new JLabel("Company Name");
         JLabel b = new JLabel("Stock Ticker");
+        JLabel c = new JLabel("Factor");
 
         JButton cancel = DendroFactory.getButton("Cancel");
         cancel.addActionListener(event -> dispose());
@@ -40,6 +42,7 @@ public class StockEditGui extends BackingEditGui<LStock> {
             ticker.setText(stk.getTicker());
             publik.setSelected(stk.isPublic());
             dead.setSelected(stk.isDead());
+            factor.setText("" + stk.getFactor());
             if (stk.inAccount()) {
                 ticker.setEditable(false);
                 ticker.setBackground(DendroFactory.BACKDROP);
@@ -58,12 +61,16 @@ public class StockEditGui extends BackingEditGui<LStock> {
                                                     a, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                             ).addComponent(
                                                     b, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                            ).addComponent(
+                                                    c, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                             )
                                     ).addGap(DendroFactory.SMALL_GAP).addGroup(
                                             main.createParallelGroup(GroupLayout.Alignment.LEADING).addComponent(
                                                     name, 250, 250, Short.MAX_VALUE
                                             ).addComponent(
                                                     ticker, 250, 250, Short.MAX_VALUE
+                                            ).addComponent(
+                                                    factor, 250, 250, Short.MAX_VALUE
                                             )
                                     )
                             ).addGroup(
@@ -96,6 +103,12 @@ public class StockEditGui extends BackingEditGui<LStock> {
                             ).addComponent(
                                     ticker, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                             )
+                    ).addGap(DendroFactory.SMALL_GAP).addGroup(
+                            main.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(
+                                    c, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                            ).addComponent(
+                                    factor, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                            )
                     ).addGap(DendroFactory.SMALL_GAP).addComponent(
                             publik, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                     ).addGap(DendroFactory.SMALL_GAP).addComponent(
@@ -119,6 +132,7 @@ public class StockEditGui extends BackingEditGui<LStock> {
                         Validation.validateString(name),
                         Validation.validateString(ticker),
                         publik.isSelected(),
+                        Validation.validateDecimal(factor),
                         dead.isSelected(),
                         CURRENT_INSTANCE
                 ));
@@ -132,6 +146,7 @@ public class StockEditGui extends BackingEditGui<LStock> {
                         Validation.validateString(name),
                         Validation.validateString(ticker),
                         publik.isSelected(),
+                        Validation.validateDecimal(factor),
                         dead.isSelected(),
                         CURRENT_INSTANCE
                 ));

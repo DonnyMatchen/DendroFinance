@@ -30,6 +30,14 @@ public class LInventory extends LCurrency {
         STATIC_VALUE = BigDecimal.ZERO;
     }
 
+    public LInventory(String name, String ticker, String symbol, int places, BigDecimal factor, boolean merch, boolean pub, Instance curInst) {
+        super(name, ticker, false, symbol + "§", true, places, factor, "", false, false, curInst);
+        MERCHANDISE = merch;
+        COMMODITY = true;
+        PUBLIC = pub;
+        STATIC_VALUE = BigDecimal.ZERO;
+    }
+
     public LInventory(String name, BigDecimal val, boolean merch, Instance curInst) {
         super(name, "", false, "§", true, 0, "", false, false, curInst);
         MERCHANDISE = merch;
@@ -42,9 +50,10 @@ public class LInventory extends LCurrency {
         super(
                 obj.getString("name").getString(),
                 obj.getString("tic").getString(),
-                false,
-                obj.getString("symbol").getString() + "§", true,
-                obj.getDecimal("places").decimal.intValue(), "", false, false, curInst
+                obj.getString("symbol").getString() + "§",
+                obj.getDecimal("places").decimal.intValue(),
+                obj,
+                curInst
         );
         MERCHANDISE = obj.getString("flags").getString().contains("M");
         COMMODITY = obj.getString("flags").getString().contains("C");
@@ -126,6 +135,9 @@ public class LInventory extends LCurrency {
         } else {
             obj.put("flags", new JsonString("c"));
             obj.put("value", new JsonDecimal(STATIC_VALUE));
+        }
+        if (getFactor().compareTo(BigDecimal.ONE) != 0) {
+            obj.put("factor", new JsonDecimal(getFactor()));
         }
         return obj;
     }

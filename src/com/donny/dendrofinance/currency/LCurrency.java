@@ -37,6 +37,24 @@ public class LCurrency implements ExportableToJson, Serializable {
         FORWARDS = forwards;
     }
 
+    protected LCurrency(String name, String tic, String symbol, int places, JsonObject obj, Instance curInst) {
+        CURRENT_INSTANCE = curInst;
+        NAME = name;
+        TIC = tic;
+        FIAT = false;
+        SYMBOL = symbol;
+        PLACES = places;
+        EXTINCT = false;
+        TOKEN = false;
+        if (obj.containsKey("factor")) {
+            FACTOR = obj.getDecimal("factor").decimal;
+        } else {
+            FACTOR = BigDecimal.ONE;
+        }
+        ALT_NAME = "";
+        FORWARDS = true;
+    }
+
     public LCurrency(String name, String tic, boolean fiat, String symbol, boolean forwards, int places,
                      String alt, boolean token, boolean dead, Instance curInst) {
         this(name, tic, fiat, symbol, forwards, places, BigDecimal.ONE, alt, token, dead, curInst);

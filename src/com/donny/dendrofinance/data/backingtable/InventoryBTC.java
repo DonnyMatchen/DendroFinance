@@ -47,7 +47,7 @@ public class InventoryBTC extends BackingTableCore<LInventory> {
 
     @Override
     public int contentIdentifierIndex() {
-        return 1;
+        return 0;
     }
 
     @Override
@@ -109,11 +109,12 @@ public class InventoryBTC extends BackingTableCore<LInventory> {
 
     @Override
     public int getIndex(String identifier) {
-        for (LInventory inv : TABLE) {
+        for (int i = 0; i < TABLE.size(); i++) {
+            LInventory inv = TABLE.get(i);
             if (inv.toString().equalsIgnoreCase(identifier)
                     || inv.getName().equalsIgnoreCase(identifier)
                     || inv.getTicker().equalsIgnoreCase(identifier)) {
-                return TABLE.indexOf(inv);
+                return i;
             }
         }
         return -1;

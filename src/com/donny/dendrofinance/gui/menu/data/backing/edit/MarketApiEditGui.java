@@ -498,7 +498,7 @@ public class MarketApiEditGui extends BackingEditGui<LMarketApi> {
                         list.add(c);
                     }
                 }
-                temp.resetExcluded(new ArrayList<>(list));
+                temp.resetIncluded(new ArrayList<>(list));
             }
             if (!excluded_.getText().equals("")) {
                 list = new ArrayList<>();

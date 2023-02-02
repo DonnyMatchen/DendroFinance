@@ -1,5 +1,9 @@
 package com.donny.dendrofinance.gui.customswing;
 
+import com.donny.dendrofinance.data.backingtable.BackingTableCore;
+import com.donny.dendrofinance.json.JsonFormattingException;
+import com.donny.dendrofinance.util.ExportableToJson;
+
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -7,13 +11,13 @@ import javax.swing.event.ListSelectionListener;
 import java.awt.*;
 import java.util.ArrayList;
 
-public class SearchBox extends JPanel {
+public class SearchBox<E extends ExportableToJson> extends JPanel {
     private final JLabel TITLE;
     private final JTextField SEARCH;
-    private final JList<String> LIST;
-    private ArrayList<String> master;
+    private final JList<E> LIST;
+    private ArrayList<E> master;
 
-    public SearchBox(String name, ArrayList<String> master) {
+    public SearchBox(String name, ArrayList<E> master) {
         super();
         this.master = master;
 
@@ -22,7 +26,8 @@ public class SearchBox extends JPanel {
             setBorder(null);
             TITLE = new JLabel(name);
             SEARCH = new JTextField();
-            LIST = DendroFactory.getList();
+            LIST = new JList<>(new DefaultListModel<>());
+            LIST.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
             JScrollPane pane = DendroFactory.getScrollPane(false, true);
             pane.setViewportView(LIST);
 
@@ -70,7 +75,74 @@ public class SearchBox extends JPanel {
         updateList("");
     }
 
-    public void setMaster(ArrayList<String> newMaster) {
+    public SearchBox(String name, BackingTableCore<E> master) {
+        super();
+        ArrayList<E> newMaster = new ArrayList<>();
+        master.forEach(newMaster::add);
+        this.master = newMaster;
+
+        //gui setup
+        {
+            setBorder(null);
+            TITLE = new JLabel(name);
+            SEARCH = new JTextField();
+            LIST = new JList<>(new DefaultListModel<>());
+            LIST.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+            JScrollPane pane = DendroFactory.getScrollPane(false, true);
+            pane.setViewportView(LIST);
+
+            SEARCH.getDocument().addDocumentListener(new DocumentListener() {
+                @Override
+                public void changedUpdate(DocumentEvent e) {
+                    updateList(SEARCH.getText());
+                }
+
+                @Override
+                public void removeUpdate(DocumentEvent e) {
+                    updateList(SEARCH.getText());
+                }
+
+                @Override
+                public void insertUpdate(DocumentEvent e) {
+                    updateList(SEARCH.getText());
+                }
+            });
+
+            //Group Layout
+            {
+                GroupLayout main = new GroupLayout(this);
+                setLayout(main);
+                main.setHorizontalGroup(
+                        main.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(
+                                TITLE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                        ).addComponent(
+                                SEARCH, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
+                        ).addComponent(
+                                pane, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
+                        )
+                );
+                main.setVerticalGroup(
+                        main.createSequentialGroup().addComponent(
+                                TITLE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                        ).addGap(DendroFactory.SMALL_GAP).addComponent(
+                                SEARCH, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                        ).addGap(DendroFactory.SMALL_GAP).addComponent(
+                                pane, 21, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                        )
+                );
+            }
+        }
+        updateList("");
+    }
+
+    public void setMaster(ArrayList<E> newMaster) {
+        master = newMaster;
+        updateList(SEARCH.getText());
+    }
+
+    public void setMaster(BackingTableCore<E> core) {
+        ArrayList<E> newMaster = new ArrayList<>();
+        core.forEach(newMaster::add);
         master = newMaster;
         updateList(SEARCH.getText());
     }
@@ -87,7 +159,7 @@ public class SearchBox extends JPanel {
         return LIST.getMaxSelectionIndex();
     }
 
-    public String getSelectedItem() {
+    public E getSelectedItem() {
         int x = LIST.getSelectedIndex();
         if (x < 0) {
             return null;
@@ -96,7 +168,7 @@ public class SearchBox extends JPanel {
         }
     }
 
-    public boolean setSelectedIndex(String item) {
+    public boolean setSelectedIndex(E item) {
         for (int i = 0; i < LIST.getModel().getSize(); i++) {
             if (LIST.getModel().getElementAt(i).equals(item)) {
                 LIST.setSelectedIndex(i);
@@ -136,10 +208,13 @@ public class SearchBox extends JPanel {
     }
 
     private void updateList(String term) {
-        ((DefaultListModel<String>) LIST.getModel()).removeAllElements();
-        master.forEach(s -> {
-            if (s.toLowerCase().contains(term.toLowerCase())) {
-                ((DefaultListModel<String>) LIST.getModel()).add(LIST.getModel().getSize(), s);
+        ((DefaultListModel<E>) LIST.getModel()).removeAllElements();
+        master.forEach(e -> {
+            try {
+                if (e.export().toString().toLowerCase().contains(term.toLowerCase())) {
+                    ((DefaultListModel<E>) LIST.getModel()).add(LIST.getModel().getSize(), e);
+                }
+            } catch (JsonFormattingException ex) {
             }
         });
     }

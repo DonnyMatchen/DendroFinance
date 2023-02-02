@@ -47,7 +47,7 @@ public class CurrencyBTC extends BackingTableCore<LCurrency> {
 
     @Override
     public int contentIdentifierIndex() {
-        return 1;
+        return 0;
     }
 
     @Override
@@ -86,10 +86,10 @@ public class CurrencyBTC extends BackingTableCore<LCurrency> {
             }
             StringBuilder name = new StringBuilder(cur.getName());
             if (!cur.getAltName().equals("")) {
-                name.append(" (").append(cur.getAltName()).append(")");
+                name.append(" [").append(cur.getAltName()).append("]");
             }
             if (cur.isDead()) {
-                name = new StringBuilder("[" + name + "]");
+                name.append(" [Dead]");
             }
             StringBuilder type = new StringBuilder(cur.isFiat() ? "Fiat" : "Cryptocurrency");
             if (cur.isToken()) {
@@ -121,15 +121,16 @@ public class CurrencyBTC extends BackingTableCore<LCurrency> {
 
     @Override
     public int getIndex(String identifier) {
-        for (LCurrency cur : TABLE) {
+        if (identifier.contains("[")) {
+            identifier = identifier.split("\\[")[0].trim();
+        }
+        for (int i = 0; i < TABLE.size(); i++) {
+            LCurrency cur = TABLE.get(i);
             if (cur.toString().equalsIgnoreCase(identifier)
                     || cur.getName().equalsIgnoreCase(identifier)
-                    || cur.getTicker().equalsIgnoreCase(identifier)) {
-                return TABLE.indexOf(cur);
-            }
-            String ticker = cur.getTicker();
-            if (ticker.equals(identifier)) {
-                return TABLE.indexOf(cur);
+                    || cur.getTicker().equalsIgnoreCase(identifier)
+            ) {
+                return i;
             }
         }
         return -1;

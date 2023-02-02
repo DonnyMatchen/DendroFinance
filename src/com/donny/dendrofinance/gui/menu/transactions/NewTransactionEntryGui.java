@@ -1,11 +1,11 @@
 package com.donny.dendrofinance.gui.menu.transactions;
 
+import com.donny.dendrofinance.account.Account;
 import com.donny.dendrofinance.currency.LCurrency;
 import com.donny.dendrofinance.entry.TemplateEntry;
 import com.donny.dendrofinance.entry.TransactionEntry;
 import com.donny.dendrofinance.gui.MainGui;
 import com.donny.dendrofinance.gui.customswing.DendroFactory;
-import com.donny.dendrofinance.gui.customswing.ItemField;
 import com.donny.dendrofinance.gui.customswing.ModalFrame;
 import com.donny.dendrofinance.gui.customswing.SearchBox;
 import com.donny.dendrofinance.gui.form.Cleaning;
@@ -27,12 +27,12 @@ public class NewTransactionEntryGui extends ModalFrame {
     public final MainGui MAIN;
     public final long UUID;
     public final boolean CLONE;
-    private final JTextField DATE, ENT, ITM, DESC;
+    private final JTextField DATE, ENT, ITM, DESC, ACC;
     private final JComboBox<String> TYPE;
-    private final ItemField ACC;
     private final JTextArea META;
     private final JTable TABLE;
     public JsonObject metaObject;
+    private int column;
 
     public NewTransactionEntryGui(MainGui caller, Instance curInst) {
         this(caller, 0, false, curInst);
@@ -70,7 +70,7 @@ public class NewTransactionEntryGui extends ModalFrame {
                 JButton cancel = DendroFactory.getButton("Cancel");
                 cancel.addActionListener(event -> dispose());
 
-                ACC = new ItemField(CURRENT_INSTANCE.getAccountsAsStrings());
+                ACC = new JTextField();
 
                 JComboBox<String> type = new JComboBox<>();
                 type.addItem("Debit");
@@ -78,18 +78,32 @@ public class NewTransactionEntryGui extends ModalFrame {
                 type.addItem("Ghost");
                 type.addItem("Tracking");
                 JTextField amount = new JTextField();
-                SearchBox account = new SearchBox("Account", CURRENT_INSTANCE.getDCAccountsAsStrings());
+                SearchBox<Account> account = new SearchBox<>("Account", CURRENT_INSTANCE.getDCAccounts());
+                column = 0;
                 type.addItemListener(event -> {
-                    switch (type.getSelectedIndex()) {
-                        case 0, 1 -> account.setMaster(CURRENT_INSTANCE.getDCAccountsAsStrings());
-                        case 2 -> account.setMaster(CURRENT_INSTANCE.getGhostAccountsAsStrings());
-                        case 3 -> account.setMaster(CURRENT_INSTANCE.getTrackingAccountsAsStrings());
-                        default -> account.setMaster(CURRENT_INSTANCE.getAccountsAsStrings());
+                    int x = type.getSelectedIndex();
+                    switch (x) {
+                        case 0, 1 -> {
+                            if(column > 1) {
+                                account.setMaster(CURRENT_INSTANCE.getDCAccounts());
+                            }
+                        }
+                        case 2 -> account.setMaster(CURRENT_INSTANCE.getGhostAccounts());
+                        case 3 -> account.setMaster(CURRENT_INSTANCE.getTrackingAccounts());
+                        default -> account.setMaster(CURRENT_INSTANCE.ACCOUNTS);
                     }
+                    column = x;
                 });
                 JButton addAcc = DendroFactory.getButton("Add");
                 addAcc.addActionListener(event -> {
-                    ACC.addText(((String) type.getSelectedItem()).charAt(0) + "!" + account.getSelectedItem() + "(" + Cleaning.cleanNumber(amount.getText()) + "), ");
+                    String now = ACC.getText();
+                    ACC.setText(
+                            now +
+                                    ((String) type.getSelectedItem()).charAt(0) +
+                                    "!" +
+                                    account.getSelectedItem() +
+                                    "(" + Cleaning.cleanNumber(amount.getText()) + "), "
+                    );
                     amount.setText("");
                     type.setSelectedIndex(0);
                     account.clear();

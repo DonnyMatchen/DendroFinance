@@ -24,7 +24,7 @@ import java.util.HashMap;
 
 public class AssetStatusGui extends RegisterFrame {
     private final JTextField DATE;
-    private final SearchBox CURRENCY;
+    private final SearchBox<LCurrency> CURRENCY;
     private final DefaultTableModel TABLE_ACCESS;
 
     public AssetStatusGui(MainGui caller, Instance curInst) {
@@ -43,7 +43,7 @@ public class AssetStatusGui extends RegisterFrame {
                 }
             });
 
-            CURRENCY = new SearchBox("Currency", curInst.getAllAssetsAsStrings());
+            CURRENCY = new SearchBox<>("Currency", curInst.getAllAssets());
 
             JButton enter = DendroFactory.getButton("Enter");
             enter.addActionListener(event -> enterAction(getCurrency()));
@@ -201,11 +201,11 @@ public class AssetStatusGui extends RegisterFrame {
     }
 
     private LCurrency getCurrency() {
-        String selected = CURRENCY.getSelectedItem();
+        LCurrency selected = CURRENCY.getSelectedItem();
         if (selected == null) {
             return CURRENT_INSTANCE.main;
         } else {
-            return CURRENT_INSTANCE.getLCurrency(CURRENCY.getSelectedItem());
+            return selected;
         }
     }
 }

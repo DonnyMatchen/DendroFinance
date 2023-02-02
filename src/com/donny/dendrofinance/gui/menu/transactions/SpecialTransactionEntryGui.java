@@ -24,7 +24,9 @@ public class SpecialTransactionEntryGui extends ModalFrame {
     private final JPanel FORM;
     private final ButtonGroup GROUP;
     private final JLabel A, B, C, D, E, F;
-    private final JTextField DATE, DESCRIPTION, COST, F_AMOUNT, T_AMOUNT, FEE_AMOUNT, UNIT, FEE_UNIT, AUTOMATIC;
+    private final JTextField DATE, COST, F_AMOUNT, T_AMOUNT, FEE_AMOUNT, UNIT, FEE_UNIT, AUTOMATIC;
+    private final JScrollPane DESCRIPTION;
+    private final JTextArea DESCRIPTION_TEXT;
     private final SearchBox<Exchange> F_EXCHANGE, T_EXCHANGE;
     private final SearchBox<LCurrency> F_CURRENCY, T_CURRENCY, FEE_CURRENCY;
     private final SearchBox<Account> ACCOUNTS;
@@ -70,7 +72,8 @@ public class SpecialTransactionEntryGui extends ModalFrame {
             E = new JLabel("");
             F = new JLabel("");
             DATE = new JTextField();
-            DESCRIPTION = new JTextField();
+            DESCRIPTION = DendroFactory.getLongField();
+            DESCRIPTION_TEXT = (JTextArea) DESCRIPTION.getViewport().getView();
             COST = new JTextField();
             F_AMOUNT = new JTextField();
             T_AMOUNT = new JTextField();
@@ -429,7 +432,7 @@ public class SpecialTransactionEntryGui extends ModalFrame {
                                             DATE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                     )
                             ).addGap(DendroFactory.SMALL_GAP).addGroup(
-                                    main.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(
+                                    main.createParallelGroup(GroupLayout.Alignment.LEADING).addComponent(
                                             B, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                     ).addComponent(
                                             DESCRIPTION, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
@@ -515,7 +518,7 @@ public class SpecialTransactionEntryGui extends ModalFrame {
                                             DATE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                     )
                             ).addGap(DendroFactory.SMALL_GAP).addGroup(
-                                    main.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(
+                                    main.createParallelGroup(GroupLayout.Alignment.LEADING).addComponent(
                                             B, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                     ).addComponent(
                                             DESCRIPTION, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
@@ -917,7 +920,7 @@ public class SpecialTransactionEntryGui extends ModalFrame {
         try {
             if (CURRENT_INSTANCE.DATA_HANDLER.incomePayment(
                     Validation.validateDate(DATE, CURRENT_INSTANCE),
-                    Validation.validateString(DESCRIPTION),
+                    Validation.validateString(DESCRIPTION_TEXT),
                     Validation.validateDecimal(F_AMOUNT),
                     Validation.validateDecimal(UNIT),
                     F_EXCHANGE.getSelectedItem(),
@@ -938,7 +941,7 @@ public class SpecialTransactionEntryGui extends ModalFrame {
         try {
             if (CURRENT_INSTANCE.DATA_HANDLER.miningIncome(
                     Validation.validateDate(DATE, CURRENT_INSTANCE),
-                    Validation.validateString(DESCRIPTION),
+                    Validation.validateString(DESCRIPTION_TEXT),
                     Validation.validateDecimal(F_AMOUNT),
                     Validation.validateDecimal(UNIT),
                     ACCOUNTS.getSelectedItem())

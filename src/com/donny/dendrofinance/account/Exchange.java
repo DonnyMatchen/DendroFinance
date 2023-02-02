@@ -197,4 +197,9 @@ public class Exchange implements ExportableToJson, Serializable {
         }
         return obj;
     }
+
+    @Override
+    public String toString() {
+        return NAME;
+    }
 }

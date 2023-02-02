@@ -10,6 +10,7 @@ import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.plaf.basic.BasicScrollBarUI;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.text.AbstractDocument;
 import java.awt.*;
 import java.io.IOException;
 import java.io.InputStream;
@@ -87,6 +88,8 @@ public class DendroFactory {
         JTextArea textArea = (JTextArea) pane.getViewport().getView();
         textArea.setLineWrap(false);
         textArea.setWrapStyleWord(false);
+        AbstractDocument doc = (AbstractDocument) textArea.getDocument();
+        doc.setDocumentFilter(new EnterCatcher());
         return pane;
     }
 

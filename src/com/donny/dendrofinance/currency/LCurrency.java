@@ -114,7 +114,7 @@ public class LCurrency implements ExportableToJson, Serializable {
             if (FORWARDS) {
                 return "(" + SYMBOL + format.format(num) + ")";
             } else {
-                return "(" + format.format(num) + " " + SYMBOL + ")";
+                return "(" + format.format(num) + SYMBOL + ")";
             }
         }
     }
@@ -157,11 +157,6 @@ public class LCurrency implements ExportableToJson, Serializable {
 
     public String getAltName() {
         return ALT_NAME;
-    }
-
-    public BigDecimal reverseTotal(BigDecimal amount) {
-        BigDecimal temp = getTotal(BigDecimal.ONE);
-        return !temp.equals(BigDecimal.ZERO) ? amount.divide(temp, CURRENT_INSTANCE.precision) : BigDecimal.ZERO;
     }
 
     public BigDecimal getTotal(BigDecimal amount) {
@@ -231,7 +226,7 @@ public class LCurrency implements ExportableToJson, Serializable {
     }
 
     public boolean matches(LCurrency b) {
-        return getTicker().equals(b.getTicker()) && getClass() == b.getClass() && (isFiat() == b.isFiat());
+        return getTicker().equals(b.getTicker()) && getClass() == b.getClass() && isFiat() == b.isFiat();
     }
 
     @Override

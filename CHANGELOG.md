@@ -1,3 +1,7 @@
+## v0.10.3
+* code cleanup
+  * `LCurrency`
+
 ## v0.10.2
 * updates to insertion
   * items, description, and accounts are now long fields

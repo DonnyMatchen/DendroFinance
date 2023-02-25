@@ -1,3 +1,6 @@
+## v0.11.0
+* {X} Moved to HSQLDB from JSON for transactions.
+
 ## v0.10.3
 * code cleanup
   * `LCurrency`

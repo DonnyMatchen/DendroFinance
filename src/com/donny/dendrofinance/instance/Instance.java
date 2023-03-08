@@ -15,7 +15,7 @@ import com.donny.dendrofinance.data.backingtable.*;
 import com.donny.dendrofinance.fileio.ExportHandler;
 import com.donny.dendrofinance.fileio.FileHandler;
 import com.donny.dendrofinance.fileio.ImportHandler;
-import com.donny.dendrofinance.fileio.encryption.EncryptionHandler;
+import com.donny.dendrofinance.fileio.EncryptionHandler;
 import com.donny.dendrofinance.gui.MainGui;
 import com.donny.dendrofinance.gui.customswing.DendroFactory;
 import com.donny.dendrofinance.gui.customswing.SearchBox;

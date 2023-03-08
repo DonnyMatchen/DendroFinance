@@ -114,7 +114,7 @@ public class ExportGui extends RegisterFrame {
     private void exportAction() {
         LDate[] range = RANGE.getRange(CURRENT_INSTANCE);
         if (range != null) {
-            CURRENT_INSTANCE.EXPORT_HANDLER.export(range[0], range[1], (String) TYPE.getSelectedItem(), NAME.getText());
+            CURRENT_INSTANCE.EXPORT_HANDLER.export(range[0], range[1], (String) TYPE.getSelectedItem(), NAME.getText(), this);
             dispose();
         }
     }

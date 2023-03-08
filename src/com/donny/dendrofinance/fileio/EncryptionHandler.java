@@ -1,4 +1,4 @@
-package com.donny.dendrofinance.fileio.encryption;
+package com.donny.dendrofinance.fileio;
 
 import com.donny.dendrofinance.instance.Instance;
 
@@ -15,6 +15,8 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 
 public class EncryptionHandler {
+    private static final String ALGO = "AES/CBC/PKCS5Padding";
+
     /**
      * @param key a password as a raw byte array
      * @return <code>Object[]</code>
@@ -69,14 +71,36 @@ public class EncryptionHandler {
         return key != null && iv != null;
     }
 
+    public Cipher getEcnryptionCipher() {
+        try {
+            Cipher cipher = Cipher.getInstance(ALGO);
+            cipher.init(Cipher.ENCRYPT_MODE, key, iv);
+            return cipher;
+        } catch (InvalidKeyException | NoSuchPaddingException | NoSuchAlgorithmException |
+                 InvalidAlgorithmParameterException e) {
+            CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Your java vendor does not support \"" + ALGO + "\"\n" + e);
+            return null;
+        }
+    }
+
+    public Cipher getDecryptionCipher() {
+        try {
+            Cipher cipher = Cipher.getInstance(ALGO);
+            cipher.init(Cipher.DECRYPT_MODE, key, iv);
+            return cipher;
+        } catch (InvalidKeyException | NoSuchPaddingException | NoSuchAlgorithmException |
+                 InvalidAlgorithmParameterException e) {
+            CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Your java vendor does not support \"" + ALGO + "\"\n" + e);
+            return null;
+        }
+    }
+
     public byte[] encrypt(byte[] bytes) {
         if (keysInitiated()) {
             try {
-                Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
-                cipher.init(Cipher.ENCRYPT_MODE, key, iv);
+                Cipher cipher = getEcnryptionCipher();
                 return cipher.doFinal(bytes);
-            } catch (BadPaddingException | IllegalBlockSizeException | InvalidKeyException | NoSuchPaddingException |
-                     NoSuchAlgorithmException | InvalidAlgorithmParameterException e) {
+            } catch (BadPaddingException | IllegalBlockSizeException e) {
                 CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Something went wrong attempting to encrypt\n" + e);
             }
         }
@@ -87,11 +111,9 @@ public class EncryptionHandler {
     public byte[] decrypt(byte[] bytes) {
         if (keysInitiated()) {
             try {
-                Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
-                cipher.init(Cipher.DECRYPT_MODE, key, iv);
+                Cipher cipher = getDecryptionCipher();
                 return cipher.doFinal(bytes);
-            } catch (BadPaddingException | NoSuchPaddingException | NoSuchAlgorithmException |
-                     IllegalBlockSizeException | InvalidKeyException | InvalidAlgorithmParameterException e) {
+            } catch (BadPaddingException | IllegalBlockSizeException e) {
                 CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Something went wrong attempting to decrypt\n" + e);
             }
         }
@@ -100,7 +122,7 @@ public class EncryptionHandler {
     }
 
     public String getDataBaseEncryptionString() {
-        return "crypt_key=" + getHexString(key.getEncoded()) + ";crypt_iv=" + getHexString(iv.getIV()) + ";crypt_type=AES/CBC/PKCS5Padding";
+        return "crypt_key=" + getHexString(key.getEncoded()) + ";crypt_iv=" + getHexString(iv.getIV()) + ";crypt_type=" + ALGO;
     }
 
     private String getHexString(byte[] key) {

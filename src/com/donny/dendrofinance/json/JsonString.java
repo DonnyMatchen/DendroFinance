@@ -1,8 +1,5 @@
 package com.donny.dendrofinance.json;
 
-import com.donny.dendrofinance.fileio.encryption.EncryptionOutputStream;
-import com.donny.dendrofinance.instance.Instance;
-
 import java.io.FileWriter;
 import java.io.IOException;
 
@@ -51,10 +48,5 @@ public class JsonString extends JsonItem {
     @Override
     protected void stream(FileWriter writer) throws IOException {
         writer.write('"' + string + '"');
-    }
-
-    @Override
-    protected void streamEncrypt(EncryptionOutputStream stream) throws IOException {
-        stream.write(('"' + string + '"').getBytes(Instance.CHARSET));
     }
 }

@@ -1,8 +1,5 @@
 package com.donny.dendrofinance.json;
 
-import com.donny.dendrofinance.fileio.encryption.EncryptionOutputStream;
-import com.donny.dendrofinance.instance.Instance;
-
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -168,26 +165,6 @@ public class JsonObject extends JsonItem {
                     writer.write(",");
                 } else {
                     writer.write("}");
-                }
-            }
-        }
-    }
-
-    @Override
-    protected void streamEncrypt(EncryptionOutputStream stream) throws IOException {
-        if (CONTENTS.keySet().size() == 0) {
-            stream.write("{}".getBytes(Instance.CHARSET));
-        } else {
-            stream.write("{".getBytes(Instance.CHARSET));
-            ArrayList<String> keys = new ArrayList<>(CONTENTS.keySet());
-            int x = keys.size();
-            for (int i = 0; i < x; i++) {
-                stream.write(('"' + keys.get(i) + "\":").getBytes(Instance.CHARSET));
-                CONTENTS.get(keys.get(i)).streamEncrypt(stream);
-                if (i < x - 1) {
-                    stream.write(",".getBytes(Instance.CHARSET));
-                } else {
-                    stream.write("}".getBytes(Instance.CHARSET));
                 }
             }
         }

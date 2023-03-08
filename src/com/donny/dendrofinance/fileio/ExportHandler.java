@@ -4,11 +4,13 @@ import com.donny.dendrofinance.capsules.BudgetCapsule;
 import com.donny.dendrofinance.capsules.StateCapsule;
 import com.donny.dendrofinance.capsules.TemplateCapsule;
 import com.donny.dendrofinance.capsules.TransactionCapsule;
+import com.donny.dendrofinance.gui.password.UnkPasswordGui;
 import com.donny.dendrofinance.instance.Instance;
 import com.donny.dendrofinance.json.JsonArray;
 import com.donny.dendrofinance.json.JsonFormattingException;
 import com.donny.dendrofinance.types.LDate;
 
+import javax.swing.*;
 import java.io.File;
 
 public class ExportHandler {
@@ -21,7 +23,7 @@ public class ExportHandler {
         CURRENT_INSTANCE.LOG_HANDLER.trace(getClass(), "ExportHandler initiated");
     }
 
-    public void export(LDate start, LDate end, String extension, String name) {
+    public void export(LDate start, LDate end, String extension, String name, JFrame caller) {
         LDate now = LDate.now(CURRENT_INSTANCE);
         File directory = new File(DIR.getPath() +
                 File.separator + now.toDateString().replace("/", "-") +
@@ -70,7 +72,7 @@ public class ExportHandler {
                 CURRENT_INSTANCE.FILE_HANDLER.writeJson(states, array);
             }
             case "XTBL" -> {
-                File transactions = new File(directory.getPath() + File.separator + name + "(" + start.toFileSafeDateString() + "_to_" + end.toFileSafeDateString() + ")-Transactions.xtbl");
+                EncryptionHandler encrypt = UnkPasswordGui.getTestPassword(caller, "exports", CURRENT_INSTANCE);
                 JsonArray array = new JsonArray();
                 for (TransactionCapsule capsule : CURRENT_INSTANCE.DATA_HANDLER.DATABASE.TRANSACTIONS.getRange(start, end)) {
                     try {
@@ -79,9 +81,8 @@ public class ExportHandler {
                         CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Damaged Transaction Entry: " + capsule.getUUID() + "\n" + ex);
                     }
                 }
-                CURRENT_INSTANCE.FILE_HANDLER.writeEncryptJson(transactions, array);
+                CURRENT_INSTANCE.FILE_HANDLER.writeEncryptJson(directory, name + "(" + start.toFileSafeDateString() + "_to_" + end.toFileSafeDateString() + ")-Transactions.xtbl", array, encrypt);
 
-                File budgets = new File(directory.getPath() + File.separator + name + "-Budgets.xtbl");
                 array = new JsonArray();
                 for (BudgetCapsule capsule : CURRENT_INSTANCE.DATA_HANDLER.DATABASE.BUDGETS.getBudgets()) {
                     try {
@@ -90,9 +91,8 @@ public class ExportHandler {
                         CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Damaged Budget Entry: " + capsule.getName() + "\n" + ex);
                     }
                 }
-                CURRENT_INSTANCE.FILE_HANDLER.writeEncryptJson(budgets, array);
+                CURRENT_INSTANCE.FILE_HANDLER.writeEncryptJson(directory, name + "-Budgets.xtbl", array, encrypt);
 
-                File templates = new File(directory.getPath() + File.separator + name + "-Templates.xtbl");
                 array = new JsonArray();
                 for (TemplateCapsule capsule : CURRENT_INSTANCE.DATA_HANDLER.DATABASE.TEMPLATES.getTemplates()) {
                     try {
@@ -101,14 +101,13 @@ public class ExportHandler {
                         CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Damaged Template Entry: " + capsule.getName() + "\n" + ex);
                     }
                 }
-                CURRENT_INSTANCE.FILE_HANDLER.writeEncryptJson(templates, array);
+                CURRENT_INSTANCE.FILE_HANDLER.writeEncryptJson(directory, name + "-Templates.xtbl", array, encrypt);
 
-                File states = new File(directory.getPath() + File.separator + name + "-States.xtbl");
                 array = new JsonArray();
                 for (StateCapsule capsule : CURRENT_INSTANCE.DATA_HANDLER.DATABASE.STATES.getStates()) {
                     array.add(capsule.export());
                 }
-                CURRENT_INSTANCE.FILE_HANDLER.writeEncryptJson(states, array);
+                CURRENT_INSTANCE.FILE_HANDLER.writeEncryptJson(directory, name + "-States.xtbl", array, encrypt);
             }
         }
     }

@@ -1,6 +1,5 @@
 package com.donny.dendrofinance.json;
 
-import com.donny.dendrofinance.fileio.encryption.EncryptionOutputStream;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonParser;
@@ -110,13 +109,7 @@ public abstract class JsonItem implements Serializable {
 
     protected abstract void stream(FileWriter writer) throws IOException;
 
-    protected abstract void streamEncrypt(EncryptionOutputStream stream) throws IOException;
-
     public static void save(JsonItem item, FileWriter writer) throws IOException {
         item.stream(writer);
-    }
-
-    public static void saveEncrypt(JsonItem item, EncryptionOutputStream stream) throws IOException {
-        item.streamEncrypt(stream);
     }
 }

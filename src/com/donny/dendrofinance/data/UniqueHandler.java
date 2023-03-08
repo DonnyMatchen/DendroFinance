@@ -43,7 +43,7 @@ public class UniqueHandler {
         while (flag) {
             i++;
             try {
-                flag = checkName(base + "_" + i, table);
+                flag = !checkName(base + "_" + i, table);
             } catch (SQLException e) {
                 failure++;
                 if (failure > 100) {

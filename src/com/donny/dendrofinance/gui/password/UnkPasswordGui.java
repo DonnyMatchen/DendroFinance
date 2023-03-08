@@ -1,6 +1,6 @@
 package com.donny.dendrofinance.gui.password;
 
-import com.donny.dendrofinance.fileio.encryption.EncryptionHandler;
+import com.donny.dendrofinance.fileio.EncryptionHandler;
 import com.donny.dendrofinance.gui.customswing.DendroFactory;
 import com.donny.dendrofinance.gui.customswing.ModalFrame;
 import com.donny.dendrofinance.instance.Instance;
@@ -20,9 +20,7 @@ public class UnkPasswordGui extends ModalFrame {
     public static EncryptionHandler getTestPassword(JFrame caller, String nameFor, Instance curInst) {
         UnkPasswordGui unk = new UnkPasswordGui(caller, nameFor, curInst);
         unk.setVisible(true);
-        EncryptionHandler ret = unk.getEncryptionHandler();
-        unk.dispose();
-        return ret;
+        return unk.getEncryptionHandler();
     }
 
     private UnkPasswordGui(JFrame caller, String nameFor, Instance curInst) {
@@ -57,6 +55,8 @@ public class UnkPasswordGui extends ModalFrame {
                                 PASSWORD, GroupLayout.PREFERRED_SIZE, 250, Short.MAX_VALUE
                         ).addGap(DendroFactory.SMALL_GAP).addComponent(
                                 enter, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                        ).addGap(DendroFactory.SMALL_GAP).addComponent(
+                                defaultButton, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                         ).addContainerGap()
                 );
                 main.setVerticalGroup(
@@ -67,6 +67,8 @@ public class UnkPasswordGui extends ModalFrame {
                                         PASSWORD, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                 ).addComponent(
                                         enter, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                ).addComponent(
+                                        defaultButton, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                 )
                         ).addContainerGap()
                 );

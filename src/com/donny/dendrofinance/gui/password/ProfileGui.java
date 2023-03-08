@@ -205,6 +205,8 @@ public class ProfileGui extends ModalFrame {
                                                             RANGE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
                                                     )
                                             )
+                                    ).addComponent(
+                                            AUTO, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                     ).addGroup(
                                             main.createSequentialGroup().addComponent(
                                                     cancel2, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
@@ -230,6 +232,8 @@ public class ProfileGui extends ModalFrame {
                                             ).addComponent(
                                                     RANGE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                             )
+                                    ).addGap(DendroFactory.SMALL_GAP).addComponent(
+                                            AUTO, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                     )
                             ).addGap(
                                     DendroFactory.SMALL_GAP, DendroFactory.MEDIUM_GAP, Short.MAX_VALUE

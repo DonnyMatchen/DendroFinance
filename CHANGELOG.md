@@ -37,6 +37,11 @@
     * `ChangePasswordGui` - functionality temporarily removed
     * `RevExpGui` - functionality removed
     * `StatisticsGui` - functionality temporarily removed
+* stream encryption removed for the time being
+  * block-size left in for future
+  * `DecryptionInputStream` & `EncryptionOutputStream` removed
+  * encryption and decryption temporarily handled separately from fileio
+  * NOT COMPATIBLE CURRENTLY WITH OLD .XTBL!
 
 ## v0.10.3
 * code cleanup
@@ -298,7 +303,7 @@
   * replaced date with .export() in json exports
 * updated `README.md`
 * added `Serializable` where appropriate, though exporting to JSON is more compact
-* added export to capsule totals
+* added export to entry totals
   * added export to `OrderBookEntry`
   * added export to `Position`
     * added export to `PositionElement`
@@ -344,7 +349,7 @@
   * removed `LType` and replaced with interface calls
 * removed `ToolBox`
 * changed `ExportableToJsonObject` to `ExportableToJson`
-* added capsule imports to `Examples`
+* added entry imports to `Examples`
   * added transaction import
     * added metadata
   * added budget import

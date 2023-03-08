@@ -1,4 +1,4 @@
-package com.donny.dendrofinance.entry.meta;
+package com.donny.dendrofinance.capsules.meta;
 
 import com.donny.dendrofinance.instance.Instance;
 import com.donny.dendrofinance.json.JsonDecimal;
@@ -23,19 +23,26 @@ public class LoanChangeMetadata {
     }
 
     public LoanChangeMetadata(long uuid, LDate date, JsonObject obj, Instance curInst) {
-        this(uuid,
-                obj.containsKey("date") ? new LDate(obj.getDecimal("date"), curInst) : date,
-                obj.getString("name").getString(),
-                obj.getDecimal("change").decimal
+        this(
+                obj.containsKey(new String[]{"u", "ref", "uuid"}) ? obj.getDecimal(new String[]{"u", "ref", "uuid"}).decimal.longValue() : uuid,
+                obj.containsKey(new String[]{"t", "date", "timestamp"}) ? new LDate(obj.getDecimal(new String[]{"t", "date", "timestamp"}), curInst) : date,
+                obj.getString(new String[]{"n", "name"}).getString(),
+                obj.getDecimal(new String[]{"v", "val", "value", "change"}).decimal
         );
     }
 
 
     public JsonObject export() throws JsonFormattingException {
         JsonObject obj = new JsonObject();
-        obj.put("date", DATE.export());
-        obj.put("name", new JsonString(NAME));
-        obj.put("change", new JsonDecimal(CHANGE));
+        obj.put("t", DATE.export());
+        obj.put("n", new JsonString(NAME));
+        obj.put("v", new JsonDecimal(CHANGE));
+        return obj;
+    }
+
+    public JsonObject fullExport() throws JsonFormattingException {
+        JsonObject obj = export();
+        obj.put("u", new JsonDecimal(UUID));
         return obj;
     }
 

@@ -8,7 +8,6 @@ import com.donny.dendrofinance.instance.Instance;
 import com.donny.dendrofinance.json.JsonFormattingException;
 import com.donny.dendrofinance.json.JsonItem;
 import com.donny.dendrofinance.json.JsonObject;
-import com.donny.dendrofinance.util.Partitioner;
 import com.fasterxml.jackson.core.JsonFactory;
 
 import javax.swing.*;
@@ -74,11 +73,7 @@ public class FileHandler {
         ensure(file.getParentFile());
         try {
             JsonItem item;
-            if (CURRENT_INSTANCE.large) {
-                item = JsonItem.digest(new JsonFactory().createParser(file));
-            } else {
-                item = JsonItem.digest(new JsonFactory().createParser(read(file)));
-            }
+            item = JsonItem.digest(new JsonFactory().createParser(file));
             CURRENT_INSTANCE.LOG_HANDLER.debug(getClass(), "JSON file read: " + file);
             return item;
         } catch (IOException e) {
@@ -97,25 +92,7 @@ public class FileHandler {
     public JsonItem readDecryptJson(File file) {
         ensure(file.getParentFile());
         try {
-            JsonItem item;
-            if (CURRENT_INSTANCE.large) {
-                item = JsonItem.digest(new JsonFactory().createParser(new DecryptionInputStream(file, CURRENT_INSTANCE)));
-            } else {
-                byte[] code = readBytes(file);
-                byte[] rest = new byte[code.length - 1];
-                System.arraycopy(code, 1, rest, 0, rest.length);
-                ArrayList<Byte> bytes = new ArrayList<>();
-                for (byte[] cod : Partitioner.partition(rest, code[0] * 16 + 16)) {
-                    for (byte b : CURRENT_INSTANCE.ENCRYPTION_HANDLER.decrypt(cod)) {
-                        bytes.add(b);
-                    }
-                }
-                byte[] raw = new byte[bytes.size()];
-                for (int i = 0; i < bytes.size(); i++) {
-                    raw[i] = bytes.get(i);
-                }
-                item = JsonItem.digest(new JsonFactory().createParser(new String(raw, Instance.CHARSET).substring(6)));
-            }
+            JsonItem item = JsonItem.digest(new JsonFactory().createParser(new DecryptionInputStream(file, CURRENT_INSTANCE)));
             CURRENT_INSTANCE.LOG_HANDLER.debug(getClass(), "Encrypted json file read: " + file);
             return item;
         } catch (JsonFormattingException e) {
@@ -136,25 +113,7 @@ public class FileHandler {
         EncryptionHandler decrypt = UnkPasswordGui.getTestPassword(caller, file.getName(), CURRENT_INSTANCE);
         if (decrypt != null) {
             try {
-                JsonItem item;
-                if (CURRENT_INSTANCE.large) {
-                    item = JsonItem.digest(new JsonFactory().createParser(new DecryptionInputStream(file, decrypt, CURRENT_INSTANCE)));
-                } else {
-                    byte[] code = readBytes(file);
-                    byte[] rest = new byte[code.length - 1];
-                    System.arraycopy(code, 1, rest, 0, rest.length);
-                    ArrayList<Byte> bytes = new ArrayList<>();
-                    for (byte[] cod : Partitioner.partition(rest, code[0] * 16 + 24)) {
-                        for (byte b : decrypt.decrypt(cod)) {
-                            bytes.add(b);
-                        }
-                    }
-                    byte[] raw = new byte[bytes.size()];
-                    for (int i = 0; i < bytes.size(); i++) {
-                        raw[i] = bytes.get(i);
-                    }
-                    item = JsonItem.digest(new JsonFactory().createParser(new String(raw, Instance.CHARSET).substring(6)));
-                }
+                JsonItem item = JsonItem.digest(new JsonFactory().createParser(new DecryptionInputStream(file, decrypt, CURRENT_INSTANCE)));
                 CURRENT_INSTANCE.LOG_HANDLER.debug(getClass(), "Encrypted json file read: " + file);
                 return item;
             } catch (JsonFormattingException e) {
@@ -199,11 +158,7 @@ public class FileHandler {
     public void writeJson(File file, JsonItem item) {
         ensure(file.getParentFile());
         try (FileWriter writer = new FileWriter(file, Instance.CHARSET)) {
-            if (CURRENT_INSTANCE.large) {
-                JsonItem.save(item, writer);
-            } else {
-                write(file, item.print());
-            }
+            JsonItem.save(item, writer);
             CURRENT_INSTANCE.LOG_HANDLER.debug(getClass(), "json file written: " + file.getAbsolutePath());
         } catch (IOException e) {
             CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Unable to write json file: " + file + "\n" + e);
@@ -216,29 +171,12 @@ public class FileHandler {
 
     public void writeEncryptJson(File file, JsonItem item) {
         ensure(file.getParentFile());
-        if (CURRENT_INSTANCE.large) {
-            try (EncryptionOutputStream stream = new EncryptionOutputStream(file, CURRENT_INSTANCE)) {
-                stream.write("passwd".getBytes(Instance.CHARSET));
-                JsonItem.saveEncrypt(item, stream);
-                CURRENT_INSTANCE.LOG_HANDLER.debug(getClass(), "json file written and encrypted: " + file.getAbsolutePath());
-            } catch (IOException e) {
-                CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Unable to write encrypted json file: " + file + "\n" + e);
-            }
-        } else {
-            String json = "passwd" + item.toString();
-            ArrayList<Byte> bytes = new ArrayList<>();
-            bytes.add((byte) (CURRENT_INSTANCE.blockSize));
-            for (byte[] segment : Partitioner.partition(json.getBytes(Instance.CHARSET), CURRENT_INSTANCE.blockSize * 16)) {
-                for (byte b : CURRENT_INSTANCE.ENCRYPTION_HANDLER.encrypt(segment)) {
-                    bytes.add(b);
-                }
-            }
-            byte[] out = new byte[bytes.size()];
-            for (int i = 0; i < bytes.size(); i++) {
-                out[i] = bytes.get(i);
-            }
-            writeBytes(file, out);
+        try (EncryptionOutputStream stream = new EncryptionOutputStream(file, CURRENT_INSTANCE)) {
+            stream.write("passwd".getBytes(Instance.CHARSET));
+            JsonItem.saveEncrypt(item, stream);
             CURRENT_INSTANCE.LOG_HANDLER.debug(getClass(), "json file written and encrypted: " + file.getAbsolutePath());
+        } catch (IOException e) {
+            CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Unable to write encrypted json file: " + file + "\n" + e);
         }
     }
 
@@ -250,29 +188,12 @@ public class FileHandler {
         ensure(file.getParentFile());
         EncryptionHandler encrypt = UnkPasswordGui.getTestPassword(caller, file.getName(), CURRENT_INSTANCE);
         if (encrypt != null) {
-            if (CURRENT_INSTANCE.large) {
-                try (EncryptionOutputStream stream = new EncryptionOutputStream(file, encrypt, CURRENT_INSTANCE)) {
-                    stream.write("passwd".getBytes(Instance.CHARSET));
-                    JsonItem.saveEncrypt(item, stream);
-                    CURRENT_INSTANCE.LOG_HANDLER.debug(getClass(), "Json file written and encrypted: " + file.getAbsolutePath());
-                } catch (IOException e) {
-                    CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Unable to write encrypted json file: " + file + "\n" + e);
-                }
-            } else {
-                String json = "passwd" + item.toString();
-                ArrayList<Byte> bytes = new ArrayList<>();
-                bytes.add((byte) (CURRENT_INSTANCE.blockSize));
-                for (byte[] segment : Partitioner.partition(json.getBytes(Instance.CHARSET), CURRENT_INSTANCE.blockSize * 16)) {
-                    for (byte b : encrypt.encrypt(segment)) {
-                        bytes.add(b);
-                    }
-                }
-                byte[] out = new byte[bytes.size()];
-                for (int i = 0; i < bytes.size(); i++) {
-                    out[i] = bytes.get(i);
-                }
-                writeBytes(file, out);
-                CURRENT_INSTANCE.LOG_HANDLER.debug(getClass(), "json file written and encrypted: " + file.getAbsolutePath());
+            try (EncryptionOutputStream stream = new EncryptionOutputStream(file, encrypt, CURRENT_INSTANCE)) {
+                stream.write("passwd".getBytes(Instance.CHARSET));
+                JsonItem.saveEncrypt(item, stream);
+                CURRENT_INSTANCE.LOG_HANDLER.debug(getClass(), "Json file written and encrypted: " + file.getAbsolutePath());
+            } catch (IOException e) {
+                CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Unable to write encrypted json file: " + file + "\n" + e);
             }
         } else {
             CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Password Entry Failed");

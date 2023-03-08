@@ -8,9 +8,6 @@ import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.MessageDigest;
@@ -102,28 +99,22 @@ public class EncryptionHandler {
         return null;
     }
 
-    public boolean checkPassword() {
-        File directory = new File(CURRENT_INSTANCE.data.getPath() + File.separator + "Entries");
-        File[] directoryList = directory.listFiles();
-        if (directory.isDirectory() && directoryList != null) {
-            for (File f : directoryList) {
-                if (f.getName().contains(".xtbl")) {
-                    try (DecryptionInputStream test = new DecryptionInputStream(f, CURRENT_INSTANCE)) {
-                        if (!test.check()) {
-                            CURRENT_INSTANCE.LOG_HANDLER.warn(getClass(), "File: " + f + ", Status: " + test.getStatus());
-                            return false;
-                        }
-                    } catch (FileNotFoundException e) {
-                        CURRENT_INSTANCE.LOG_HANDLER.fatal(getClass(), "Something has gone horribly wrong");
-                        return false;
-                    } catch (IOException e) {
-                        CURRENT_INSTANCE.LOG_HANDLER.fatal(getClass(), "An error occured while testing password\n" + e);
-                        return false;
-                    }
-                }
+    public String getDataBaseEncryptionString() {
+        return "crypt_key=" + getHexString(key.getEncoded()) + ";crypt_iv=" + getHexString(iv.getIV()) + ";crypt_type=AES/CBC/PKCS5Padding";
+    }
+
+    private String getHexString(byte[] key) {
+        StringBuilder output = new StringBuilder();
+        for (byte b : key) {
+            String x = Integer.toHexString(b);
+            if (x.length() == 1) {
+                output.append("0").append(x);
+            } else if (x.length() == 2) {
+                output.append(x);
+            } else {
+                output.append(x.substring(x.length() - 2));
             }
-            return true;
         }
-        return true;
+        return output.toString();
     }
 }

@@ -1,4 +1,4 @@
-package com.donny.dendrofinance.entry.meta;
+package com.donny.dendrofinance.capsules.meta;
 
 import com.donny.dendrofinance.instance.Instance;
 import com.donny.dendrofinance.json.JsonDecimal;
@@ -28,11 +28,11 @@ public class CheckMetadata implements ExportableToJson {
 
     public CheckMetadata(long uuid, LDate issued, JsonObject obj, Instance curInst) {
         this(
-                uuid,
-                obj.containsKey("issued") ? new LDate(obj.getDecimal("issued"), curInst) : issued,
-                new LDate(obj.getDecimal("cashed"), curInst),
-                obj.getString("number").getString(),
-                obj.getDecimal("value").decimal,
+                obj.containsKey(new String[]{"r", "ref"}) ? obj.getDecimal(new String[]{"r", "ref"}).decimal.longValue() : uuid,
+                obj.containsKey(new String[]{"i", "start", "issued"}) ? new LDate(obj.getDecimal(new String[]{"i", "start", "issued"}), curInst) : issued,
+                new LDate(obj.getDecimal(new String[]{"c", "end", "cashed"}), curInst),
+                obj.getString(new String[]{"n", "count", "number"}).getString(),
+                obj.getDecimal(new String[]{"v", "value"}).decimal,
                 curInst
         );
     }
@@ -41,12 +41,19 @@ public class CheckMetadata implements ExportableToJson {
         return CASHED.getTime() == 0;
     }
 
+    @Override
     public JsonObject export() throws JsonFormattingException {
         JsonObject obj = new JsonObject();
-        obj.put("issued", ISSUED.export());
-        obj.put("cashed", CASHED.export());
-        obj.put("number", new JsonString(CHECK_NUMBER));
-        obj.put("value", new JsonDecimal(VALUE));
+        obj.put("i", ISSUED.export());
+        obj.put("c", CASHED.export());
+        obj.put("n", new JsonString(CHECK_NUMBER));
+        obj.put("v", new JsonDecimal(VALUE));
+        return obj;
+    }
+
+    public JsonObject fullExport() throws JsonFormattingException {
+        JsonObject obj = export();
+        obj.put("r", new JsonDecimal(REF));
         return obj;
     }
 

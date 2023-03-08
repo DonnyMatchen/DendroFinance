@@ -2,12 +2,14 @@ package com.donny.dendrofinance.util;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
-import java.util.Objects;
 
 public class Aggregation<T> extends HashMap<T, BigDecimal> {
     public boolean add(T key, BigDecimal val) {
         if (containsKey(key)) {
             put(key, val.add(get(key)));
+            if (get(key).compareTo(BigDecimal.ZERO) == 0) {
+                remove(key);
+            }
             return true;
         } else {
             put(key, val);
@@ -17,6 +19,6 @@ public class Aggregation<T> extends HashMap<T, BigDecimal> {
 
     @Override
     public BigDecimal get(Object key) {
-        return Objects.requireNonNullElse(super.get(key), BigDecimal.ZERO);
+        return getOrDefault(key, BigDecimal.ZERO);
     }
 }

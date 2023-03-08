@@ -1,11 +1,10 @@
 package com.donny.dendrofinance.gui.menu.reports;
 
-import com.donny.dendrofinance.entry.meta.CheckMetadata;
+import com.donny.dendrofinance.capsules.meta.CheckMetadata;
 import com.donny.dendrofinance.gui.MainGui;
+import com.donny.dendrofinance.gui.customswing.DateRange;
 import com.donny.dendrofinance.gui.customswing.DendroFactory;
 import com.donny.dendrofinance.gui.customswing.RegisterFrame;
-import com.donny.dendrofinance.gui.form.Validation;
-import com.donny.dendrofinance.gui.form.ValidationFailedException;
 import com.donny.dendrofinance.instance.Instance;
 import com.donny.dendrofinance.types.LDate;
 
@@ -17,7 +16,8 @@ import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 
 public class CheckGui extends RegisterFrame {
-    private final JTextField DATE, SEARCH;
+    private final DateRange RANGE;
+    private final JTextField SEARCH;
     private final JCheckBox OUTSTANDING;
     private final JTable TABLE;
     private final DefaultTableModel TABLE_ACCESS;
@@ -27,12 +27,9 @@ public class CheckGui extends RegisterFrame {
 
         //draw gui
         {
-            JLabel a = new JLabel("Date");
-            JLabel b = new JLabel("Search");
-
-            DATE = new JTextField();
-            DATE.setText(LDate.now(CURRENT_INSTANCE).toString(false));
-            DATE.addKeyListener(new KeyAdapter() {
+            JLabel a = new JLabel("Search");
+            RANGE = new DateRange(true);
+            RANGE.addKeyListener(new KeyAdapter() {
                 @Override
                 public void keyTyped(KeyEvent keyEvent) {
                     if (keyEvent.getKeyChar() == '\n') {
@@ -70,15 +67,13 @@ public class CheckGui extends RegisterFrame {
                         main.createSequentialGroup().addContainerGap().addGroup(
                                 main.createParallelGroup(GroupLayout.Alignment.LEADING).addGroup(
                                         main.createSequentialGroup().addComponent(
-                                                a, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
-                                        ).addGap(DendroFactory.SMALL_GAP).addComponent(
-                                                DATE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
+                                                RANGE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
                                         ).addGap(DendroFactory.MEDIUM_GAP).addComponent(
                                                 enter, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                         )
                                 ).addGroup(
                                         main.createSequentialGroup().addComponent(
-                                                b, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                                a, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                         ).addGap(DendroFactory.SMALL_GAP).addComponent(
                                                 SEARCH, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
                                         )
@@ -92,15 +87,13 @@ public class CheckGui extends RegisterFrame {
                 main.setVerticalGroup(
                         main.createSequentialGroup().addContainerGap().addGroup(
                                 main.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(
-                                        a, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
-                                ).addComponent(
-                                        DATE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                        RANGE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                 ).addComponent(
                                         enter, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                 )
                         ).addGap(DendroFactory.SMALL_GAP).addGroup(
                                 main.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(
-                                        b, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                        a, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                 ).addComponent(
                                         SEARCH, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                 )
@@ -112,6 +105,7 @@ public class CheckGui extends RegisterFrame {
                 );
             }
         }
+        RANGE.initDefault(CURRENT_INSTANCE);
         updateTable();
         pack();
         Dimension d = Toolkit.getDefaultToolkit().getScreenSize();
@@ -122,25 +116,22 @@ public class CheckGui extends RegisterFrame {
         while (TABLE.getRowCount() > 0) {
             TABLE_ACCESS.removeRow(0);
         }
-        ArrayList<CheckMetadata> meta;
-        try {
-            meta = CURRENT_INSTANCE.DATA_HANDLER.getChecks(Validation.validateDate(DATE, CURRENT_INSTANCE));
-        } catch (ValidationFailedException e) {
-            CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Not a valid date: " + DATE.getText());
-            meta = CURRENT_INSTANCE.DATA_HANDLER.getChecks();
-        }
-        for (CheckMetadata check : meta) {
-            if (
-                    check.CHECK_NUMBER.toLowerCase().contains(SEARCH.getText().toLowerCase()) &&
-                            (!OUTSTANDING.isSelected() || check.isOutstanding())
-            ) {
-                TABLE_ACCESS.addRow(new String[]{
-                        "" + check.REF,
-                        check.ISSUED.toDateString(),
-                        check.isOutstanding() ? "Outstanding" : check.CASHED.toDateString(),
-                        check.CHECK_NUMBER,
-                        CURRENT_INSTANCE.$(check.VALUE)
-                });
+        LDate[] range = RANGE.getRange(CURRENT_INSTANCE);
+        if (range != null) {
+            ArrayList<CheckMetadata> meta = CURRENT_INSTANCE.DATA_HANDLER.getChecks(range[0], range[1]);
+            for (CheckMetadata check : meta) {
+                if (
+                        check.CHECK_NUMBER.toLowerCase().contains(SEARCH.getText().toLowerCase()) &&
+                                (!OUTSTANDING.isSelected() || check.isOutstanding())
+                ) {
+                    TABLE_ACCESS.addRow(new String[]{
+                            "" + check.REF,
+                            check.ISSUED.toDateString(),
+                            check.isOutstanding() ? "Outstanding" : check.CASHED.toDateString(),
+                            check.CHECK_NUMBER,
+                            CURRENT_INSTANCE.$(check.VALUE)
+                    });
+                }
             }
         }
     }

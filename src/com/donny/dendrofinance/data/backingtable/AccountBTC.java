@@ -32,14 +32,14 @@ public class AccountBTC extends BackingTableCore<Account> {
     @Override
     public void load(JsonArray array) {
         for (JsonObject obj : array.getObjectArray()) {
-            TABLE.add(new Account(obj, CURRENT_INSTANCE));
+            add(new Account(obj, CURRENT_INSTANCE));
         }
     }
 
     @Override
     public String[] getHeader() {
         return new String[]{
-                "AID", "Name", "Currency", "Type", "Column", "Budget", "Auto-Generated", "In Use"
+                "AID", "Name", "Currency", "Type", "Column", "Budget", "Auto-Generated"
         };
     }
 
@@ -51,55 +51,23 @@ public class AccountBTC extends BackingTableCore<Account> {
     @Override
     public ArrayList<String[]> getContents(String search) {
         ArrayList<String[]> out = new ArrayList<>();
-        for (Account a : TABLE) {
-            String check = search;
-            boolean flag = a.inUse(), allow = true;
-            if (check.contains("$U")) {
-                check = check.replace("$U", "").trim();
-                if (!flag) {
-                    allow = false;
-                }
-            }
-            if (check.contains("$u")) {
-                check = check.replace("$u", "").trim();
-                if (flag) {
-                    allow = false;
-                }
-            }
-            if (!((a.getAid() + "").contains(check)
-                    || a.getName().toLowerCase().contains(check.toLowerCase())
-                    || a.getCurrency().getName().toLowerCase().contains(check.toLowerCase())
-                    || a.getCurrency().toString().toLowerCase().contains(check.toLowerCase())
-                    || a.getAccountType().NAME.toLowerCase().contains(check.toLowerCase())
-                    || a.getBudgetType().toLowerCase().contains(check.toLowerCase())
-                    || a.getBroadAccountType().toString().toLowerCase().contains(check.toLowerCase()))) {
-                allow = false;
-            }
+        for (String key : KEYS) {
+            Account a = MAP.get(key);
+            boolean allow = ((a.getAid() + "").contains(search)
+                    || a.getName().toLowerCase().contains(search.toLowerCase())
+                    || a.getCurrency().getName().toLowerCase().contains(search.toLowerCase())
+                    || a.getCurrency().toString().toLowerCase().contains(search.toLowerCase())
+                    || a.getAccountType().NAME.toLowerCase().contains(search.toLowerCase())
+                    || a.getBudgetType().toLowerCase().contains(search.toLowerCase())
+                    || a.getBroadAccountType().toString().toLowerCase().contains(search.toLowerCase()));
             if (allow) {
                 out.add(new String[]{
                         "" + a.getAid(), a.getName(), a.getCurrency().getName(), a.getAccountType().NAME,
-                        a.getBroadAccountType().toString(), a.getBudgetType(), !a.EXPORT ? "X" : "",
-                        flag ? "X" : ""
+                        a.getBroadAccountType().toString(), a.getBudgetType(), !a.EXPORT ? "X" : ""
                 });
             }
         }
         return out;
-    }
-
-    @Override
-    public String getIdentifier(int index) {
-        return TABLE.get(index).getName();
-    }
-
-    @Override
-    public int getIndex(String identifier) {
-        for (int i = 0; i < TABLE.size(); i++) {
-            Account acc = TABLE.get(i);
-            if (acc.getName().equalsIgnoreCase(identifier)) {
-                return i;
-            }
-        }
-        return -1;
     }
 
     @Override
@@ -114,27 +82,36 @@ public class AccountBTC extends BackingTableCore<Account> {
 
     @Override
     public boolean canRemove(String identifier) {
-        return canMove(identifier) && !getElement(identifier).inUse();
+        return canMove(identifier);
     }
 
     @Override
     public void sort() {
-        TABLE.sort(Account::compareTo);
+        ArrayList<Account> list = new ArrayList<>();
+        for (Account a : this) {
+            list.add(a);
+        }
+        list.sort(Account::compareTo);
+        KEYS.clear();
+        for (Account a : list) {
+            KEYS.add(a.getName());
+        }
         changed = true;
     }
 
     @Override
     public JsonArray export() {
-        JsonArray array = new JsonArray();
-        for (Account acc : TABLE) {
+        JsonArray out = new JsonArray();
+        for (String key : KEYS) {
+            Account acc = MAP.get(key);
             if (acc.EXPORT) {
                 try {
-                    array.add(acc.export());
-                } catch (JsonFormattingException ex) {
-                    CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Malformed Account: " + acc);
+                    out.add(MAP.get(key).export());
+                } catch (JsonFormattingException e) {
+                    CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Unable to export: " + key + "\n" + e);
                 }
             }
         }
-        return array;
+        return out;
     }
 }

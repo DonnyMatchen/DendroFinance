@@ -20,24 +20,78 @@ public class JsonObject extends JsonItem {
         return CONTENTS.get(key);
     }
 
+    public JsonItem get(String[] keys) {
+        for (String key : keys) {
+            if (containsKey(key)) {
+                return get(key);
+            }
+        }
+        return null;
+    }
+
     public JsonString getString(String key) {
         return (JsonString) get(key);
+    }
+
+    public JsonString getString(String[] keys) {
+        for (String key : keys) {
+            if (containsKey(key)) {
+                return getString(key);
+            }
+        }
+        return null;
     }
 
     public JsonDecimal getDecimal(String key) {
         return (JsonDecimal) get(key);
     }
 
+    public JsonDecimal getDecimal(String[] keys) {
+        for (String key : keys) {
+            if (containsKey(key)) {
+                return getDecimal(key);
+            }
+        }
+        return null;
+    }
+
     public JsonBool getBoolean(String key) {
         return (JsonBool) get(key);
+    }
+
+    public JsonBool getBoolean(String[] keys) {
+        for (String key : keys) {
+            if (containsKey(key)) {
+                return getBoolean(key);
+            }
+        }
+        return null;
     }
 
     public JsonArray getArray(String key) {
         return (JsonArray) get(key);
     }
 
+    public JsonArray getArray(String[] keys) {
+        for (String key : keys) {
+            if (containsKey(key)) {
+                return getArray(key);
+            }
+        }
+        return null;
+    }
+
     public JsonObject getObject(String key) {
         return (JsonObject) get(key);
+    }
+
+    public JsonObject getObject(String[] keys) {
+        for (String key : keys) {
+            if (containsKey(key)) {
+                return getObject(key);
+            }
+        }
+        return null;
     }
 
     public void put(String key, JsonItem item) {
@@ -48,8 +102,23 @@ public class JsonObject extends JsonItem {
         CONTENTS.remove(key);
     }
 
+    public void remove(String[] keys) {
+        for (String key : keys) {
+            remove(key);
+        }
+    }
+
     public boolean containsKey(String key) {
         return CONTENTS.containsKey(key);
+    }
+
+    public boolean containsKey(String[] keys) {
+        for (String key : keys) {
+            if (containsKey(key)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public ArrayList<String> getFields() {

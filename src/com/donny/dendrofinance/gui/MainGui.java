@@ -3,13 +3,16 @@ package com.donny.dendrofinance.gui;
 import com.donny.dendrofinance.DendroFinance;
 import com.donny.dendrofinance.data.metatable.AssetMTC;
 import com.donny.dendrofinance.data.metatable.LoanMTC;
-import com.donny.dendrofinance.entry.TransactionEntry;
+import com.donny.dendrofinance.capsules.TransactionCapsule;
 import com.donny.dendrofinance.gui.customswing.AlertGui;
+import com.donny.dendrofinance.gui.customswing.DateRange;
 import com.donny.dendrofinance.gui.customswing.DendroFactory;
 import com.donny.dendrofinance.gui.customswing.RegisterFrame;
 import com.donny.dendrofinance.gui.menu.data.*;
 import com.donny.dendrofinance.gui.menu.data.backing.BackingTableGui;
-import com.donny.dendrofinance.gui.menu.file.ChangePasswordGui;
+import com.donny.dendrofinance.gui.menu.data.state.StateGui;
+import com.donny.dendrofinance.gui.menu.data.template.NewTemplateGui;
+import com.donny.dendrofinance.gui.menu.data.template.TemplateGui;
 import com.donny.dendrofinance.gui.menu.file.ExportGui;
 import com.donny.dendrofinance.gui.menu.file.ImportGui;
 import com.donny.dendrofinance.gui.menu.reports.*;
@@ -22,7 +25,6 @@ import com.donny.dendrofinance.gui.menu.transactions.DeleteEntryGui;
 import com.donny.dendrofinance.gui.menu.transactions.NewTransactionEntryGui;
 import com.donny.dendrofinance.gui.menu.transactions.SpecialTransactionEntryGui;
 import com.donny.dendrofinance.gui.menu.util.AccountReplacementGui;
-import com.donny.dendrofinance.gui.menu.util.ArchiveGui;
 import com.donny.dendrofinance.gui.menu.util.ConversionGui;
 import com.donny.dendrofinance.gui.menu.util.LogClearGui;
 import com.donny.dendrofinance.gui.menu.util.acc.AppDepGui;
@@ -30,6 +32,7 @@ import com.donny.dendrofinance.gui.menu.util.acc.NetIncomeGui;
 import com.donny.dendrofinance.gui.menu.util.acc.TaxZeroGui;
 import com.donny.dendrofinance.gui.menu.util.taxgui.TaxGui;
 import com.donny.dendrofinance.instance.Instance;
+import com.donny.dendrofinance.types.LDate;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
@@ -45,7 +48,8 @@ public class MainGui extends JFrame {
     private final JTextArea DISPLAY;
     private final JTable TABLE;
     private final DefaultTableModel TABLE_ACCESS;
-    private final JTextField SEARCH;
+    private final JTextField SEARCH, COUNT;
+    private final DateRange RANGE;
     private boolean force = true;
 
     public MainGui(Instance curInst) {
@@ -68,7 +72,9 @@ public class MainGui extends JFrame {
 
             JLabel a = new JLabel("Transactions");
             JLabel b = new JLabel("Search");
-            JLabel c = new JLabel("Transaction Info");
+            JLabel c = new JLabel("Date Range");
+            JLabel d = new JLabel("Count");
+            JLabel e = new JLabel("Transaction Info");
 
             JScrollPane tablePane = DendroFactory.getTable(new String[]{
                     "UUID", "Date", "Entity", "Items", "Description", "Account", "Debit", "Credit", "Ghost", "Tracking", "Meta"
@@ -121,6 +127,12 @@ public class MainGui extends JFrame {
                 }
             });
 
+            RANGE = new DateRange(false);
+
+            COUNT = new JTextField();
+            COUNT.setEditable(false);
+            COUNT.setBackground(DendroFactory.DISABLED);
+
             //menus
             {
                 JMenuBar bar = new JMenuBar();
@@ -128,11 +140,6 @@ public class MainGui extends JFrame {
                 //file
                 JMenu file = new JMenu("File");
 
-                JMenuItem rel = new JMenuItem("Reload");
-                rel.addActionListener(event -> {
-                    CURRENT_INSTANCE.reloadBackingElements();
-                    CURRENT_INSTANCE.reloadEntries();
-                });
                 JMenuItem save = new JMenuItem("Save");
                 save.addActionListener(event -> CURRENT_INSTANCE.save());
 
@@ -143,17 +150,13 @@ public class MainGui extends JFrame {
 
                 JMenuItem logout = new JMenuItem("Log OUt");
                 logout.addActionListener(event -> new ClosePrompt(this, false).setVisible(true));
-                JMenuItem change = new JMenuItem("Change Password");
-                change.addActionListener(event -> new ChangePasswordGui(this, CURRENT_INSTANCE).setVisible(true));
 
-                file.add(rel);
                 file.add(save);
                 file.add(new JSeparator());
                 file.add(imp);
                 file.add(exp);
                 file.add(new JSeparator());
                 file.add(logout);
-                file.add(change);
 
                 //data
                 JMenu data = new JMenu("Data");
@@ -179,8 +182,8 @@ public class MainGui extends JFrame {
                 budgetTyp.addActionListener(event -> new BudgetTypeGui(this, CURRENT_INSTANCE).setVisible(true));
                 JMenuItem template = new JMenuItem("Templates");
                 template.addActionListener(event -> new TemplateGui(this, CURRENT_INSTANCE).setVisible(true));
-                JMenuItem stats = new JMenuItem("Statistics");
-                stats.addActionListener(event -> new StatisticsGui(this, CURRENT_INSTANCE).setVisible(true));
+                JMenuItem state = new JMenuItem("States");
+                state.addActionListener(event -> new StateGui(this, CURRENT_INSTANCE).setVisible(true));
 
                 data.add(curLst);
                 data.add(stkLst);
@@ -193,7 +196,7 @@ public class MainGui extends JFrame {
                 data.add(accountMeta);
                 data.add(budgetTyp);
                 data.add(template);
-                data.add(stats);
+                data.add(state);
 
                 //transactions
                 JMenu trans = new JMenu("Transactions");
@@ -225,7 +228,7 @@ public class MainGui extends JFrame {
                 JMenuItem newTemplate = new JMenuItem("Save as Template");
                 newTemplate.addActionListener(event -> {
                     if (validSelection())
-                        new NewTemplateGui(this, false, getUUID(TABLE.getSelectedRow()), CURRENT_INSTANCE).setVisible(true);
+                        new NewTemplateGui(this, getUUID(TABLE.getSelectedRow()), CURRENT_INSTANCE).setVisible(true);
                 });
                 thisTrans.add(edit);
                 thisTrans.add(clone);
@@ -250,8 +253,6 @@ public class MainGui extends JFrame {
 
                 JMenuItem budg = new JMenuItem("Budget");
                 budg.addActionListener(event -> new BudgetGui(this, CURRENT_INSTANCE).setVisible(true));
-                JMenuItem flow = new JMenuItem("Revenue and Expenses");
-                flow.addActionListener(event -> new RevExpGui(this, CURRENT_INSTANCE).setVisible(true));
 
                 JMenuItem asset = new JMenuItem("Non-Fungible Assets");
                 asset.addActionListener(event -> new MetaTableGui(this, new AssetMTC(CURRENT_INSTANCE), CURRENT_INSTANCE).setVisible(true));
@@ -265,7 +266,6 @@ public class MainGui extends JFrame {
                 rep.add(acc);
                 rep.add(new JSeparator());
                 rep.add(budg);
-                rep.add(flow);
                 rep.add(new JSeparator());
                 rep.add(asset);
                 rep.add(loans);
@@ -292,8 +292,6 @@ public class MainGui extends JFrame {
                 repl.addActionListener(event -> new AccountReplacementGui(this, CURRENT_INSTANCE).setVisible(true));
                 JMenuItem conv = new JMenuItem("Asset Conversions");
                 conv.addActionListener(event -> new ConversionGui(this, CURRENT_INSTANCE).setVisible(true));
-                JMenuItem arch = new JMenuItem("Archive Transactions");
-                arch.addActionListener(event -> new ArchiveGui(this, CURRENT_INSTANCE).setVisible(true));
                 JMenuItem logs = new JMenuItem("Logs");
                 logs.addActionListener(event -> new LogClearGui(this, CURRENT_INSTANCE).setVisible(true));
 
@@ -308,7 +306,6 @@ public class MainGui extends JFrame {
 
                 util.add(repl);
                 util.add(conv);
-                util.add(arch);
                 util.add(logs);
                 util.add(new JSeparator());
                 util.add(taxes);
@@ -338,10 +335,22 @@ public class MainGui extends JFrame {
                                     tableLayout.createParallelGroup(GroupLayout.Alignment.LEADING).addComponent(
                                             a, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                     ).addGroup(
-                                            tableLayout.createSequentialGroup().addComponent(
-                                                    b, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
-                                            ).addGap(DendroFactory.SMALL_GAP).addComponent(
-                                                    SEARCH, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
+                                            tableLayout.createSequentialGroup().addGroup(
+                                                    tableLayout.createParallelGroup(GroupLayout.Alignment.TRAILING).addComponent(
+                                                            b, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                                    ).addComponent(
+                                                            c, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                                    ).addComponent(
+                                                            d, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                                    )
+                                            ).addGap(DendroFactory.SMALL_GAP).addGroup(
+                                                    tableLayout.createParallelGroup(GroupLayout.Alignment.LEADING).addComponent(
+                                                            SEARCH, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
+                                                    ).addComponent(
+                                                            RANGE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
+                                                    ).addComponent(
+                                                            COUNT, GroupLayout.PREFERRED_SIZE, 50, 50
+                                                    )
                                             )
                                     ).addComponent(
                                             tablePane, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
@@ -357,6 +366,18 @@ public class MainGui extends JFrame {
                                     ).addComponent(
                                             SEARCH, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                     )
+                            ).addGap(DendroFactory.SMALL_GAP).addGroup(
+                                    tableLayout.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(
+                                            c, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                    ).addComponent(
+                                            RANGE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                    )
+                            ).addGap(DendroFactory.SMALL_GAP).addGroup(
+                                    tableLayout.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(
+                                            d, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                    ).addComponent(
+                                            COUNT, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                    )
                             ).addGap(DendroFactory.SMALL_GAP).addComponent(
                                     tablePane, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
                             ).addContainerGap()
@@ -369,7 +390,7 @@ public class MainGui extends JFrame {
                     metaLayout.setHorizontalGroup(
                             metaLayout.createSequentialGroup().addContainerGap().addGroup(
                                     metaLayout.createParallelGroup(GroupLayout.Alignment.LEADING).addComponent(
-                                            c, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                            e, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                     ).addComponent(
                                             displayPane, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
                                     )
@@ -377,7 +398,7 @@ public class MainGui extends JFrame {
                     );
                     metaLayout.setVerticalGroup(
                             metaLayout.createSequentialGroup().addComponent(
-                                    c, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                    e, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                             ).addGap(DendroFactory.MEDIUM_GAP).addComponent(
                                     displayPane, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
                             ).addContainerGap()
@@ -404,6 +425,7 @@ public class MainGui extends JFrame {
                 );
             }
         }
+        RANGE.initDefault(CURRENT_INSTANCE);
         updateTable("");
         CURRENT_INSTANCE.LOG_HANDLER.trace(getClass(), "MainGui Created");
         pack();
@@ -428,24 +450,36 @@ public class MainGui extends JFrame {
     }
 
     public void updateTable() {
-        updateTable(SEARCH.getText());
+        LDate[] range = RANGE.getRange(CURRENT_INSTANCE);
+        if (range != null) {
+            updateTable(range[0], range[1], SEARCH.getText());
+        }
     }
 
-    public final void updateTable(String searchString) {
+    public void updateTable(String search) {
+        LDate[] range = RANGE.getRange(CURRENT_INSTANCE);
+        if (range != null) {
+            updateTable(range[0], range[1], search);
+        }
+    }
+
+    public final void updateTable(LDate start, LDate end, String searchString) {
         while (TABLE_ACCESS.getRowCount() > 0) {
             TABLE_ACCESS.removeRow(0);
         }
-        for (TransactionEntry entry : CURRENT_INSTANCE.DATA_HANDLER.huntTransactions(searchString)) {
-            for (String[] el : entry.display()) {
+        ArrayList<TransactionCapsule> capsules = CURRENT_INSTANCE.DATA_HANDLER.DATABASE.TRANSACTIONS.hunt(start, end, searchString);
+        for (TransactionCapsule capsule : capsules) {
+            for (String[] el : capsule.display()) {
                 TABLE_ACCESS.addRow(el);
             }
         }
+        COUNT.setText("" + capsules.size());
         force = true;
     }
 
     public void tableCursorChanged(int cursor) {
-        TransactionEntry entry = CURRENT_INSTANCE.DATA_HANDLER.getTransactionEntry(getUUID(cursor));
-        DISPLAY.setText(entry.toString());
+        TransactionCapsule capsule = CURRENT_INSTANCE.DATA_HANDLER.DATABASE.TRANSACTIONS.get(getUUID(cursor));
+        DISPLAY.setText(capsule.toString());
     }
 
     /**

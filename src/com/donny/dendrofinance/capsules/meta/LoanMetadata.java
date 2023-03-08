@@ -1,11 +1,8 @@
-package com.donny.dendrofinance.entry.meta;
+package com.donny.dendrofinance.capsules.meta;
 
 import com.donny.dendrofinance.currency.LCurrency;
 import com.donny.dendrofinance.instance.Instance;
-import com.donny.dendrofinance.json.JsonDecimal;
-import com.donny.dendrofinance.json.JsonFormattingException;
-import com.donny.dendrofinance.json.JsonObject;
-import com.donny.dendrofinance.json.JsonString;
+import com.donny.dendrofinance.json.*;
 import com.donny.dendrofinance.types.LDate;
 import com.donny.dendrofinance.util.LMath;
 
@@ -35,15 +32,20 @@ public class LoanMetadata {
 
     public LoanMetadata(long uuid, LDate date, JsonObject obj, Instance curInst) {
         this(
-                uuid,
-                obj.containsKey("date") ? new LDate(obj.getDecimal("date"), curInst) : date,
-                obj.getString("name").getString(),
-                obj.getString("desc").toString(),
-                curInst.getLCurrency(obj.getString("cur").getString()),
-                obj.getDecimal("princ").decimal,
-                obj.getDecimal("rate").decimal,
+                obj.containsKey(new String[]{"r", "ref", "root-ref"}) ? obj.getDecimal(new String[]{"r", "ref", "root-ref"}).decimal.longValue() : uuid,
+                obj.containsKey(new String[]{"t", "date", "timestamp"}) ? new LDate(obj.getDecimal(new String[]{"t", "date", "timestamp"}), curInst) : date,
+                obj.getString(new String[]{"n", "name"}).getString(),
+                obj.getString(new String[]{"d", "desc"}).toString(),
+                curInst.getLCurrency(obj.getString(new String[]{"c", "cur", "currency"}).getString()),
+                obj.getDecimal(new String[]{"p", "princ", "principle"}).decimal,
+                obj.getDecimal(new String[]{"i", "rate", "interest"}).decimal,
                 curInst
         );
+        if (obj.containsKey(new String[]{"e", "events"})) {
+            for (JsonObject event : obj.getArray("events").getObjectArray()) {
+                EVENTS.add(new LoanChangeMetadata(0, null, event, CURRENT_INSTANCE));
+            }
+        }
     }
 
     public ArrayList<Long> getRefs() {
@@ -80,12 +82,23 @@ public class LoanMetadata {
 
     public JsonObject export() throws JsonFormattingException {
         JsonObject obj = new JsonObject();
-        obj.put("date", DATE.export());
-        obj.put("name", new JsonString(NAME));
-        obj.put("desc", new JsonString(DESC));
-        obj.put("cur", new JsonString(CUR.toString()));
-        obj.put("princ", new JsonDecimal(PRINC));
-        obj.put("rate", new JsonDecimal(RATE));
+        obj.put("t", DATE.export());
+        obj.put("n", new JsonString(NAME));
+        obj.put("d", new JsonString(DESC));
+        obj.put("c", new JsonString(CUR.toString()));
+        obj.put("p", new JsonDecimal(PRINC));
+        obj.put("i", new JsonDecimal(RATE));
+        return obj;
+    }
+
+    public JsonObject fullExport() throws JsonFormattingException {
+        JsonObject obj = export();
+        obj.put("r", new JsonDecimal(ROOT_REF));
+        JsonArray array = new JsonArray();
+        for (LoanChangeMetadata event : EVENTS) {
+            array.add(event.fullExport());
+        }
+        obj.put("e", array);
         return obj;
     }
 

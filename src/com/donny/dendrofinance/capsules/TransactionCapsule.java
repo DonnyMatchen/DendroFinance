@@ -1,11 +1,11 @@
-package com.donny.dendrofinance.entry;
+package com.donny.dendrofinance.capsules;
 
 import com.donny.dendrofinance.account.AWColumn;
 import com.donny.dendrofinance.account.Account;
 import com.donny.dendrofinance.account.AccountWrapper;
 import com.donny.dendrofinance.account.BroadAccountType;
 import com.donny.dendrofinance.currency.LCurrency;
-import com.donny.dendrofinance.entry.meta.*;
+import com.donny.dendrofinance.capsules.meta.*;
 import com.donny.dendrofinance.fileio.ImportHandler;
 import com.donny.dendrofinance.instance.Instance;
 import com.donny.dendrofinance.json.*;
@@ -13,16 +13,19 @@ import com.donny.dendrofinance.types.LAccountSet;
 import com.donny.dendrofinance.types.LDate;
 
 import java.math.BigDecimal;
+import java.sql.SQLException;
 import java.util.ArrayList;
 
-public class TransactionEntry extends Entry implements Comparable<TransactionEntry> {
+public class TransactionCapsule extends Capsule implements Comparable<TransactionCapsule> {
+    private final long UUID;
     private LDate date;
     private String entity, items, description;
     private LAccountSet accounts;
     private JsonObject metadata;
 
-    public TransactionEntry(Instance curInst) {
+    public TransactionCapsule(Instance curInst) {
         super(curInst);
+        UUID = curInst.UNIQUE_HANDLER.generateUUID();
         date = LDate.now(curInst);
         entity = "UNKNOWN";
         items = "";
@@ -31,14 +34,67 @@ public class TransactionEntry extends Entry implements Comparable<TransactionEnt
         metadata = new JsonObject();
     }
 
-    public TransactionEntry(JsonObject obj, ImportHandler.ImportMode mode, Instance curInst) {
-        super(obj, mode, curInst);
-        date = new LDate(obj.getDecimal("date"), curInst);
-        entity = obj.getString("entity").getString();
-        items = obj.getString("items").getString();
-        description = obj.getString("description").getString();
-        accounts = new LAccountSet(obj.getArray("accounts"), curInst);
-        metadata = obj.getObject("meta-data");
+    public TransactionCapsule(long uuid, LDate date, String ent, String itm, String desc,
+                              LAccountSet accounts, JsonObject metadata, Instance curInst) {
+        super(curInst);
+        UUID = uuid;
+        this.date = date;
+        entity = ent;
+        items = itm;
+        description = desc;
+        this.accounts = accounts;
+        this.metadata = metadata;
+    }
+
+    public TransactionCapsule(LDate date, String ent, String itm, String desc,
+                              LAccountSet accounts, JsonObject metadata, Instance curInst) {
+        super(curInst);
+        UUID = CURRENT_INSTANCE.UNIQUE_HANDLER.generateUUID();
+        this.date = date;
+        entity = ent;
+        items = itm;
+        description = desc;
+        this.accounts = accounts;
+        this.metadata = metadata;
+    }
+
+    public TransactionCapsule(JsonObject obj, ImportHandler.ImportMode mode, Instance curInst) throws SQLException {
+        super(curInst);
+        if (obj.containsKey(new String[]{"u", "_uuid", "uuid"})) {
+            long candidate = obj.getDecimal(new String[]{"_uuid", "uuid", "u"}).decimal.longValue();
+            boolean safe = CURRENT_INSTANCE.UNIQUE_HANDLER.checkUuid(candidate);
+            if (!safe) {
+                CURRENT_INSTANCE.LOG_HANDLER.warn(getClass(), "Clashing UUID: " + candidate);
+                if (mode == ImportHandler.ImportMode.OVERWRITE) {
+                    UUID = candidate;
+                } else {
+                    UUID = CURRENT_INSTANCE.UNIQUE_HANDLER.generateUUID();
+                }
+            } else {
+                UUID = candidate;
+            }
+        } else {
+            UUID = curInst.UNIQUE_HANDLER.generateUUID();
+        }
+        date = new LDate(obj.getDecimal(new String[]{"t", "date", "timestamp", "dtm"}), curInst);
+        entity = obj.getString(new String[]{"e", "entity", "ent"}).getString();
+        items = obj.getString(new String[]{"i", "items", "itm"}).getString();
+        description = obj.getString(new String[]{"d", "description", "desc", "des"}).getString();
+        accounts = new LAccountSet(obj.getArray(new String[]{"a", "accounts", "accs", "acc"}), curInst);
+        metadata = obj.getObject(new String[]{"m", "meta-data", "meta"});
+    }
+
+    public TransactionCapsule(JsonObject obj, Instance curInst) {
+        super(curInst);
+        UUID = obj.containsKey(new String[]{"u", "_uuid", "uuid"}) ?
+                obj.getDecimal(new String[]{"u", "_uuid", "uuid"}).decimal.longValue() :
+                curInst.UNIQUE_HANDLER.generateUUID();
+        date = new LDate(obj.getDecimal(new String[]{"t", "date", "timestamp", "dtm"}), curInst);
+        entity = obj.getString(new String[]{"e", "entity", "ent"}).getString();
+        items = obj.getString(new String[]{"i", "items", "itm"}).getString();
+        description = obj.getString(new String[]{"d", "description", "desc", "des"}).getString();
+        accounts = new LAccountSet(obj.getArray(new String[]{"a", "accounts", "accs", "acc"}), curInst);
+        metadata = obj.getObject(new String[]{"m", "meta-data", "meta"});
     }
 
     public void insert(LDate date, String ent, String itm, String desc,
@@ -50,6 +106,10 @@ public class TransactionEntry extends Entry implements Comparable<TransactionEnt
         items = itm;
         description = desc;
         this.accounts = accounts;
+    }
+
+    public long getUUID() {
+        return UUID;
     }
 
     public JsonItem getMeta(String key) {
@@ -482,23 +542,22 @@ public class TransactionEntry extends Entry implements Comparable<TransactionEnt
     }
 
     @Override
-    public int compareTo(TransactionEntry entry) {
-        return date.compareTo(entry.date);
+    public int compareTo(TransactionCapsule capsule) {
+        return date.compareTo(capsule.date);
     }
 
-    @Override
     public JsonObject export() throws JsonFormattingException {
-        JsonObject obj = super.export();
-        obj.put("date", date.export());
-        obj.put("entity", new JsonString(entity));
-        obj.put("items", new JsonString(items));
-        obj.put("description", new JsonString(description));
-        obj.put("accounts", accounts.export());
-        obj.put("meta-data", metadata);
+        JsonObject obj = new JsonObject();
+        obj.put("u", new JsonDecimal(UUID));
+        obj.put("t", date.export());
+        obj.put("e", new JsonString(entity));
+        obj.put("i", new JsonString(items));
+        obj.put("d", new JsonString(description));
+        obj.put("a", accounts.export());
+        obj.put("m", metadata);
         return obj;
     }
 
-    @Override
     public String toFlatString() {
         return Long.toUnsignedString(getUUID()) + "\t" + date + "\t" + entity + "\t" + items + "\t" + description + "\t" +
                 accounts.toString() + "\t" + metadata.toString();

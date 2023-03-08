@@ -51,10 +51,6 @@ public class AccountEditGui extends BackingEditGui<Account> {
             budget.setText(acc.getBudgetType());
             currency.setSelectedIndex(acc.getCurrency());
             type.setSelectedIndex(acc.getAccountType());
-            if (acc.inUse()) {
-                name.setEditable(false);
-                name.setBackground(DendroFactory.BACKDROP);
-            }
         }
 
         //Group Layout

@@ -4,9 +4,12 @@ import com.donny.dendrofinance.account.Account;
 import com.donny.dendrofinance.account.AccountType;
 import com.donny.dendrofinance.account.BroadAccountType;
 import com.donny.dendrofinance.gui.MainGui;
+import com.donny.dendrofinance.gui.customswing.DateRange;
 import com.donny.dendrofinance.gui.customswing.DendroFactory;
 import com.donny.dendrofinance.gui.customswing.RegisterFrame;
 import com.donny.dendrofinance.gui.form.Cleaning;
+import com.donny.dendrofinance.gui.form.Validation;
+import com.donny.dendrofinance.gui.form.ValidationFailedException;
 import com.donny.dendrofinance.instance.Instance;
 import com.donny.dendrofinance.types.LDate;
 import com.donny.dendrofinance.util.Aggregation;
@@ -20,7 +23,8 @@ import java.math.BigDecimal;
 import java.util.HashMap;
 
 public class BalanceSheetGui extends RegisterFrame {
-    private final JTextField DATE, FROM, SEARCH, THRESH;
+    private final JTextField DATE, SEARCH, THRESH;
+    private final DateRange RANGE;
     private final DefaultTableModel TABLE_ACCESS;
 
     public BalanceSheetGui(MainGui caller, boolean diff, Instance curInst) {
@@ -30,8 +34,6 @@ public class BalanceSheetGui extends RegisterFrame {
             JLabel a = new JLabel("Threshold");
             JLabel b = new JLabel("Date");
             JLabel c = new JLabel("Search");
-            JLabel d = new JLabel("From");
-            JLabel e = new JLabel("To");
 
             DATE = new JTextField();
             DATE.addKeyListener(new KeyAdapter() {
@@ -43,8 +45,8 @@ public class BalanceSheetGui extends RegisterFrame {
                 }
             });
 
-            FROM = new JTextField();
-            FROM.addKeyListener(new KeyAdapter() {
+            RANGE = new DateRange(true);
+            RANGE.addKeyListener(new KeyAdapter() {
                 @Override
                 public void keyTyped(KeyEvent keyEvent) {
                     if (keyEvent.getKeyChar() == '\n') {
@@ -97,18 +99,8 @@ public class BalanceSheetGui extends RegisterFrame {
                                             ).addGap(DendroFactory.MEDIUM_GAP).addComponent(
                                                     enter, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                             )
-                                    ).addGroup(
-                                            main.createSequentialGroup().addComponent(
-                                                    d, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
-                                            ).addGap(DendroFactory.SMALL_GAP).addComponent(
-                                                    FROM, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
-                                            )
-                                    ).addGroup(
-                                            main.createSequentialGroup().addComponent(
-                                                    e, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
-                                            ).addGap(DendroFactory.SMALL_GAP).addComponent(
-                                                    DATE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
-                                            )
+                                    ).addComponent(
+                                            RANGE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
                                     ).addGroup(
                                             main.createSequentialGroup().addComponent(
                                                     c, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
@@ -129,18 +121,8 @@ public class BalanceSheetGui extends RegisterFrame {
                                     ).addComponent(
                                             enter, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                     )
-                            ).addGap(DendroFactory.MEDIUM_GAP).addGroup(
-                                    main.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(
-                                            d, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
-                                    ).addComponent(
-                                            FROM, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
-                                    )
-                            ).addGap(DendroFactory.MEDIUM_GAP).addGroup(
-                                    main.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(
-                                            e, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
-                                    ).addComponent(
-                                            DATE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
-                                    )
+                            ).addGap(DendroFactory.MEDIUM_GAP).addComponent(
+                                    RANGE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                             ).addGap(DendroFactory.MEDIUM_GAP).addGroup(
                                     main.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(
                                             c, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
@@ -207,8 +189,9 @@ public class BalanceSheetGui extends RegisterFrame {
                 }
             }
         }
-        DATE.setText(LDate.now(curInst).toDateString());
-        FROM.setText(new LDate(LDate.now(curInst).getYear(), 1, 1, curInst).toDateString());
+        LDate now = LDate.now(curInst);
+        DATE.setText(now.toDateString());
+        RANGE.initDefault(CURRENT_INSTANCE);
         updateTable(diff);
         pack();
         Dimension d = Toolkit.getDefaultToolkit().getScreenSize();
@@ -220,209 +203,191 @@ public class BalanceSheetGui extends RegisterFrame {
             TABLE_ACCESS.removeRow(0);
         }
         if (diff) {
-            int y1, y2, m1, m2, d1, d2;
-            String[] tempFrom = FROM.getText().split("/");
-            String[] tempTo = DATE.getText().split("/");
-            y1 = Integer.parseInt(tempFrom[2]);
-            if (CURRENT_INSTANCE.american) {
-                m1 = Integer.parseInt(tempFrom[0]);
-                d1 = Integer.parseInt(tempFrom[1]);
-            } else {
-                d1 = Integer.parseInt(tempFrom[0]);
-                m1 = Integer.parseInt(tempFrom[1]);
-            }
-            y2 = Integer.parseInt(tempTo[2]);
-            if (CURRENT_INSTANCE.american) {
-                m2 = Integer.parseInt(tempTo[0]);
-                d2 = Integer.parseInt(tempTo[1]);
-            } else {
-                d2 = Integer.parseInt(tempTo[0]);
-                m2 = Integer.parseInt(tempTo[1]);
-            }
-            HashMap<Account, BigDecimal> accBegin = CURRENT_INSTANCE.DATA_HANDLER.accountsAsOf(y1, m1, d1);
-            HashMap<Account, BigDecimal> accEnd = CURRENT_INSTANCE.DATA_HANDLER.accountsAsOf(y2, m2, d2);
-            Aggregation<AccountType> accTyp = new Aggregation<>();
-            Aggregation<BroadAccountType> typ = new Aggregation<>();
-            for (Account a : CURRENT_INSTANCE.ACCOUNTS) {
-                if (accBegin.containsKey(a) || accEnd.containsKey(a)) {
-                    BigDecimal compare = BigDecimal.ONE;
-                    BigDecimal thresh = Cleaning.cleanNumber(THRESH.getText());
-                    if (thresh.compareTo(BigDecimal.ZERO) != 0) {
-                        compare = thresh.abs();
-                    } else {
-                        if (a.getCurrency().getPlaces() > 0) {
-                            compare = new BigDecimal("0." + "0".repeat(a.getCurrency().getPlaces() - 1) + "1");
+            LDate[] range = RANGE.getRange(CURRENT_INSTANCE);
+            if (range != null) {
+                HashMap<Account, BigDecimal> accBegin = CURRENT_INSTANCE.DATA_HANDLER.accountsAsOf(range[0]);
+                HashMap<Account, BigDecimal> accEnd = CURRENT_INSTANCE.DATA_HANDLER.accountsAsOf(range[1]);
+                Aggregation<AccountType> accTyp = new Aggregation<>();
+                Aggregation<BroadAccountType> typ = new Aggregation<>();
+                for (Account a : CURRENT_INSTANCE.ACCOUNTS) {
+                    if (accBegin.containsKey(a) || accEnd.containsKey(a)) {
+                        BigDecimal compare = BigDecimal.ONE;
+                        BigDecimal thresh = Cleaning.cleanNumber(THRESH.getText());
+                        if (thresh.compareTo(BigDecimal.ZERO) != 0) {
+                            compare = thresh.abs();
+                        } else {
+                            if (a.getCurrency().getPlaces() > 0) {
+                                compare = new BigDecimal("0." + "0".repeat(a.getCurrency().getPlaces() - 1) + "1");
+                            }
+                        }
+                        BigDecimal begin, end;
+                        if (accBegin.containsKey(a) && a.getCurrency().significant(accBegin.get(a))) {
+                            begin = accBegin.get(a);
+                        } else {
+                            begin = BigDecimal.ZERO;
+                        }
+                        if (accEnd.containsKey(a) && a.getCurrency().significant(accEnd.get(a))) {
+                            end = accEnd.get(a);
+                        } else {
+                            end = BigDecimal.ZERO;
+                        }
+                        BigDecimal change = end.subtract(begin);
+                        if (change.compareTo(compare) >= 0 || change.compareTo(compare.multiply(BigDecimal.valueOf(-1))) <= 0) {
+                            typ.add(a.getBroadAccountType(), change);
+                            accTyp.add(a.getAccountType(), change);
+                            if (
+                                    a.getName().toLowerCase().contains(SEARCH.getText().toLowerCase()) ||
+                                            a.getCurrency().toString().toLowerCase().contains(SEARCH.getText().toLowerCase()) ||
+                                            a.getAccountType().toString().toLowerCase().contains(SEARCH.getText().toLowerCase()) ||
+                                            a.getBroadAccountType().toString().toLowerCase().contains(SEARCH.getText().toLowerCase())
+                            ) {
+                                switch (a.getBroadAccountType()) {
+                                    case ASSET, EQUITY_MINUS, EXPENSE -> TABLE_ACCESS.addRow(new String[]{
+                                            a.getName(), a.getCurrency().encode(change), "", "", ""
+                                    });
+                                    case LIABILITY, EQUITY_PLUS, REVENUE -> TABLE_ACCESS.addRow(new String[]{
+                                            a.getName(), "", a.getCurrency().encode(change), "", ""
+                                    });
+                                    case GHOST -> TABLE_ACCESS.addRow(new String[]{
+                                            a.getName(), "", "", a.getCurrency().encode(change), ""
+                                    });
+                                    case TRACKING -> TABLE_ACCESS.addRow(new String[]{
+                                            a.getName(), "", "", "", a.getCurrency().encode(change)
+                                    });
+                                }
+                            }
                         }
                     }
-                    BigDecimal begin, end;
-                    if (accBegin.containsKey(a) && a.getCurrency().significant(accBegin.get(a))) {
-                        begin = accBegin.get(a);
-                    } else {
-                        begin = BigDecimal.ZERO;
-                    }
-                    if (accEnd.containsKey(a) && a.getCurrency().significant(accEnd.get(a))) {
-                        end = accEnd.get(a);
-                    } else {
-                        end = BigDecimal.ZERO;
-                    }
-                    BigDecimal change = end.subtract(begin);
-                    if (change.compareTo(compare) >= 0 || change.compareTo(compare.multiply(BigDecimal.valueOf(-1))) <= 0) {
-                        typ.add(a.getBroadAccountType(), change);
-                        accTyp.add(a.getAccountType(), change);
-                        if (
-                                a.getName().toLowerCase().contains(SEARCH.getText().toLowerCase()) ||
-                                        a.getCurrency().toString().toLowerCase().contains(SEARCH.getText().toLowerCase()) ||
-                                        a.getAccountType().toString().toLowerCase().contains(SEARCH.getText().toLowerCase()) ||
-                                        a.getBroadAccountType().toString().toLowerCase().contains(SEARCH.getText().toLowerCase())
-                        ) {
-                            switch (a.getBroadAccountType()) {
+                }
+                if (SEARCH.getText().equals("")) {
+                    TABLE_ACCESS.addRow(new String[]{});
+                    for (AccountType type : CURRENT_INSTANCE.ACCOUNT_TYPES) {
+                        if (accTyp.containsKey(type)) {
+                            switch (type.TYPE) {
                                 case ASSET, EQUITY_MINUS, EXPENSE -> TABLE_ACCESS.addRow(new String[]{
-                                        a.getName(), a.getCurrency().encode(change), "", "", ""
+                                        type.NAME, CURRENT_INSTANCE.$(accTyp.get(type)), "", "", ""
                                 });
                                 case LIABILITY, EQUITY_PLUS, REVENUE -> TABLE_ACCESS.addRow(new String[]{
-                                        a.getName(), "", a.getCurrency().encode(change), "", ""
+                                        type.NAME, "", CURRENT_INSTANCE.$(accTyp.get(type)), "", ""
                                 });
-                                case GHOST -> TABLE_ACCESS.addRow(new String[]{
-                                        a.getName(), "", "", a.getCurrency().encode(change), ""
-                                });
-                                case TRACKING -> TABLE_ACCESS.addRow(new String[]{
-                                        a.getName(), "", "", "", a.getCurrency().encode(change)
-                                });
+                                case GHOST, TRACKING -> {
+                                }
                             }
                         }
                     }
+                    TABLE_ACCESS.addRow(new String[]{});
+                    TABLE_ACCESS.addRow(new String[]{
+                            "Assets", CURRENT_INSTANCE.$(typ.get(BroadAccountType.ASSET)), "", "", ""
+                    });
+                    TABLE_ACCESS.addRow(new String[]{
+                            "Liabilities", "", CURRENT_INSTANCE.$(typ.get(BroadAccountType.LIABILITY)), "", ""
+                    });
+                    TABLE_ACCESS.addRow(new String[]{
+                            "Equity", "",
+                            CURRENT_INSTANCE.$(
+                                    typ.get(BroadAccountType.EQUITY_PLUS).subtract(typ.get(BroadAccountType.EQUITY_MINUS))
+                                            .add(typ.get(BroadAccountType.REVENUE)).subtract(typ.get(BroadAccountType.EXPENSE))
+                            ), "", ""
+                    });
+                    TABLE_ACCESS.addRow(new String[]{
+                            "Compare", CURRENT_INSTANCE.$(typ.get(BroadAccountType.ASSET)),
+                            CURRENT_INSTANCE.$(
+                                    typ.get(BroadAccountType.LIABILITY).add(typ.get(BroadAccountType.EQUITY_PLUS))
+                                            .subtract(typ.get(BroadAccountType.EQUITY_MINUS)).add(typ.get(BroadAccountType.REVENUE))
+                                            .subtract(typ.get(BroadAccountType.EXPENSE))
+                            ),
+                            "", ""
+                    });
                 }
-            }
-            if (SEARCH.getText().equals("")) {
-                TABLE_ACCESS.addRow(new String[]{});
-                for (AccountType type : CURRENT_INSTANCE.ACCOUNT_TYPES) {
-                    if (accTyp.containsKey(type)) {
-                        switch (type.TYPE) {
-                            case ASSET, EQUITY_MINUS, EXPENSE -> TABLE_ACCESS.addRow(new String[]{
-                                    type.NAME, CURRENT_INSTANCE.$(accTyp.get(type)), "", "", ""
-                            });
-                            case LIABILITY, EQUITY_PLUS, REVENUE -> TABLE_ACCESS.addRow(new String[]{
-                                    type.NAME, "", CURRENT_INSTANCE.$(accTyp.get(type)), "", ""
-                            });
-                            case GHOST, TRACKING -> {
-                            }
-                        }
-                    }
-                }
-                TABLE_ACCESS.addRow(new String[]{});
-                TABLE_ACCESS.addRow(new String[]{
-                        "Assets", CURRENT_INSTANCE.$(typ.get(BroadAccountType.ASSET)), "", "", ""
-                });
-                TABLE_ACCESS.addRow(new String[]{
-                        "Liabilities", "", CURRENT_INSTANCE.$(typ.get(BroadAccountType.LIABILITY)), "", ""
-                });
-                TABLE_ACCESS.addRow(new String[]{
-                        "Equity", "",
-                        CURRENT_INSTANCE.$(
-                                typ.get(BroadAccountType.EQUITY_PLUS).subtract(typ.get(BroadAccountType.EQUITY_MINUS))
-                                        .add(typ.get(BroadAccountType.REVENUE)).subtract(typ.get(BroadAccountType.EXPENSE))
-                        ), "", ""
-                });
-                TABLE_ACCESS.addRow(new String[]{
-                        "Compare", CURRENT_INSTANCE.$(typ.get(BroadAccountType.ASSET)),
-                        CURRENT_INSTANCE.$(
-                                typ.get(BroadAccountType.LIABILITY).add(typ.get(BroadAccountType.EQUITY_PLUS))
-                                        .subtract(typ.get(BroadAccountType.EQUITY_MINUS)).add(typ.get(BroadAccountType.REVENUE))
-                                        .subtract(typ.get(BroadAccountType.EXPENSE))
-                        ),
-                        "", ""
-                });
             }
         } else {
-            int y, m, d;
-            String[] temp = DATE.getText().split("/");
-            y = Integer.parseInt(temp[2]);
-            if (CURRENT_INSTANCE.american) {
-                m = Integer.parseInt(temp[0]);
-                d = Integer.parseInt(temp[1]);
-            } else {
-                d = Integer.parseInt(temp[0]);
-                m = Integer.parseInt(temp[1]);
-            }
-            HashMap<Account, BigDecimal> acc = CURRENT_INSTANCE.DATA_HANDLER.accountsAsOf(y, m, d);
-            Aggregation<AccountType> accTyp = new Aggregation<>();
-            Aggregation<BroadAccountType> typ = new Aggregation<>();
-            for (Account a : CURRENT_INSTANCE.ACCOUNTS) {
-                if (acc.containsKey(a)) {
-                    BigDecimal compare = BigDecimal.ONE;
-                    BigDecimal thresh = Cleaning.cleanNumber(THRESH.getText());
-                    if (thresh.compareTo(BigDecimal.ZERO) != 0) {
-                        compare = thresh.abs();
-                    } else {
-                        if (a.getCurrency().getPlaces() > 0) {
-                            compare = new BigDecimal("0." + "0".repeat(a.getCurrency().getPlaces() - 1) + "1");
+            try {
+                LDate date = LDate.startDay(Validation.validateDate(DATE, CURRENT_INSTANCE));
+                HashMap<Account, BigDecimal> acc = CURRENT_INSTANCE.DATA_HANDLER.accountsAsOf(date);
+                Aggregation<AccountType> accTyp = new Aggregation<>();
+                Aggregation<BroadAccountType> typ = new Aggregation<>();
+                for (Account a : CURRENT_INSTANCE.ACCOUNTS) {
+                    if (acc.containsKey(a)) {
+                        BigDecimal compare = BigDecimal.ONE;
+                        BigDecimal thresh = Cleaning.cleanNumber(THRESH.getText());
+                        if (thresh.compareTo(BigDecimal.ZERO) != 0) {
+                            compare = thresh.abs();
+                        } else {
+                            if (a.getCurrency().getPlaces() > 0) {
+                                compare = new BigDecimal("0." + "0".repeat(a.getCurrency().getPlaces() - 1) + "1");
+                            }
+                        }
+                        if (acc.get(a).compareTo(compare) >= 0 || acc.get(a).compareTo(compare.multiply(BigDecimal.valueOf(-1))) <= 0) {
+                            typ.add(a.getBroadAccountType(), acc.get(a));
+                            accTyp.add(a.getAccountType(), acc.get(a));
+                            if (
+                                    a.getName().toLowerCase().contains(SEARCH.getText().toLowerCase()) ||
+                                            a.getCurrency().toString().toLowerCase().contains(SEARCH.getText().toLowerCase()) ||
+                                            a.getAccountType().toString().toLowerCase().contains(SEARCH.getText().toLowerCase()) ||
+                                            a.getBroadAccountType().toString().toLowerCase().contains(SEARCH.getText().toLowerCase())
+                            ) {
+                                switch (a.getBroadAccountType()) {
+                                    case ASSET, EQUITY_MINUS, EXPENSE -> TABLE_ACCESS.addRow(new String[]{
+                                            a.getName(), a.getCurrency().encode(acc.get(a)), "", "", ""
+                                    });
+                                    case LIABILITY, EQUITY_PLUS, REVENUE -> TABLE_ACCESS.addRow(new String[]{
+                                            a.getName(), "", a.getCurrency().encode(acc.get(a)), "", ""
+                                    });
+                                    case GHOST -> TABLE_ACCESS.addRow(new String[]{
+                                            a.getName(), "", "", a.getCurrency().encode(acc.get(a)), ""
+                                    });
+                                    case TRACKING -> TABLE_ACCESS.addRow(new String[]{
+                                            a.getName(), "", "", "", a.getCurrency().encode(acc.get(a))
+                                    });
+                                }
+                            }
                         }
                     }
-                    if (acc.get(a).compareTo(compare) >= 0 || acc.get(a).compareTo(compare.multiply(BigDecimal.valueOf(-1))) <= 0) {
-                        typ.add(a.getBroadAccountType(), acc.get(a));
-                        accTyp.add(a.getAccountType(), acc.get(a));
-                        if (
-                                a.getName().toLowerCase().contains(SEARCH.getText().toLowerCase()) ||
-                                        a.getCurrency().toString().toLowerCase().contains(SEARCH.getText().toLowerCase()) ||
-                                        a.getAccountType().toString().toLowerCase().contains(SEARCH.getText().toLowerCase()) ||
-                                        a.getBroadAccountType().toString().toLowerCase().contains(SEARCH.getText().toLowerCase())
-                        ) {
-                            switch (a.getBroadAccountType()) {
+                }
+                if (SEARCH.getText().equals("")) {
+                    TABLE_ACCESS.addRow(new String[]{});
+                    for (AccountType type : CURRENT_INSTANCE.ACCOUNT_TYPES) {
+                        if (accTyp.containsKey(type)) {
+                            switch (type.TYPE) {
                                 case ASSET, EQUITY_MINUS, EXPENSE -> TABLE_ACCESS.addRow(new String[]{
-                                        a.getName(), a.getCurrency().encode(acc.get(a)), "", "", ""
+                                        type.NAME, CURRENT_INSTANCE.$(accTyp.get(type)), "", "", ""
                                 });
                                 case LIABILITY, EQUITY_PLUS, REVENUE -> TABLE_ACCESS.addRow(new String[]{
-                                        a.getName(), "", a.getCurrency().encode(acc.get(a)), "", ""
+                                        type.NAME, "", CURRENT_INSTANCE.$(accTyp.get(type)), "", ""
                                 });
-                                case GHOST -> TABLE_ACCESS.addRow(new String[]{
-                                        a.getName(), "", "", a.getCurrency().encode(acc.get(a)), ""
-                                });
-                                case TRACKING -> TABLE_ACCESS.addRow(new String[]{
-                                        a.getName(), "", "", "", a.getCurrency().encode(acc.get(a))
-                                });
+                                case GHOST, TRACKING -> {
+                                }
                             }
                         }
                     }
+                    TABLE_ACCESS.addRow(new String[]{});
+                    TABLE_ACCESS.addRow(new String[]{
+                            "Assets", CURRENT_INSTANCE.$(typ.get(BroadAccountType.ASSET)), "", "", ""
+                    });
+                    TABLE_ACCESS.addRow(new String[]{
+                            "Liabilities", "", CURRENT_INSTANCE.$(typ.get(BroadAccountType.LIABILITY)), "", ""
+                    });
+                    TABLE_ACCESS.addRow(new String[]{
+                            "Equity", "",
+                            CURRENT_INSTANCE.$(
+                                    typ.get(BroadAccountType.EQUITY_PLUS).subtract(typ.get(BroadAccountType.EQUITY_MINUS))
+                                            .add(typ.get(BroadAccountType.REVENUE)).subtract(typ.get(BroadAccountType.EXPENSE))
+                            ), "", ""
+                    });
+                    TABLE_ACCESS.addRow(new String[]{
+                            "Compare", CURRENT_INSTANCE.$(typ.get(BroadAccountType.ASSET)),
+                            CURRENT_INSTANCE.$(
+                                    typ.get(BroadAccountType.LIABILITY).add(typ.get(BroadAccountType.EQUITY_PLUS))
+                                            .subtract(typ.get(BroadAccountType.EQUITY_MINUS)).add(typ.get(BroadAccountType.REVENUE))
+                                            .subtract(typ.get(BroadAccountType.EXPENSE))
+                            ),
+                            "", ""
+                    });
                 }
-            }
-            if (SEARCH.getText().equals("")) {
-                TABLE_ACCESS.addRow(new String[]{});
-                for (AccountType type : CURRENT_INSTANCE.ACCOUNT_TYPES) {
-                    if (accTyp.containsKey(type)) {
-                        switch (type.TYPE) {
-                            case ASSET, EQUITY_MINUS, EXPENSE -> TABLE_ACCESS.addRow(new String[]{
-                                    type.NAME, CURRENT_INSTANCE.$(accTyp.get(type)), "", "", ""
-                            });
-                            case LIABILITY, EQUITY_PLUS, REVENUE -> TABLE_ACCESS.addRow(new String[]{
-                                    type.NAME, "", CURRENT_INSTANCE.$(accTyp.get(type)), "", ""
-                            });
-                            case GHOST, TRACKING -> {
-                            }
-                        }
-                    }
-                }
-                TABLE_ACCESS.addRow(new String[]{});
-                TABLE_ACCESS.addRow(new String[]{
-                        "Assets", CURRENT_INSTANCE.$(typ.get(BroadAccountType.ASSET)), "", "", ""
-                });
-                TABLE_ACCESS.addRow(new String[]{
-                        "Liabilities", "", CURRENT_INSTANCE.$(typ.get(BroadAccountType.LIABILITY)), "", ""
-                });
-                TABLE_ACCESS.addRow(new String[]{
-                        "Equity", "",
-                        CURRENT_INSTANCE.$(
-                                typ.get(BroadAccountType.EQUITY_PLUS).subtract(typ.get(BroadAccountType.EQUITY_MINUS))
-                                        .add(typ.get(BroadAccountType.REVENUE)).subtract(typ.get(BroadAccountType.EXPENSE))
-                        ), "", ""
-                });
-                TABLE_ACCESS.addRow(new String[]{
-                        "Compare", CURRENT_INSTANCE.$(typ.get(BroadAccountType.ASSET)),
-                        CURRENT_INSTANCE.$(
-                                typ.get(BroadAccountType.LIABILITY).add(typ.get(BroadAccountType.EQUITY_PLUS))
-                                        .subtract(typ.get(BroadAccountType.EQUITY_MINUS)).add(typ.get(BroadAccountType.REVENUE))
-                                        .subtract(typ.get(BroadAccountType.EXPENSE))
-                        ),
-                        "", ""
+            } catch (ValidationFailedException e) {
+                CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Malformed date:\n" + e);
+                TABLE_ACCESS.addRow(new Object[]{
+                        "BAD DATE", "", "", ""
                 });
             }
         }

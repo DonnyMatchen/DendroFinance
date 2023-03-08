@@ -2,12 +2,13 @@ package com.donny.dendrofinance.tax;
 
 import com.donny.dendrofinance.json.*;
 import com.donny.dendrofinance.util.ExportableToJson;
+import com.donny.dendrofinance.util.UniqueName;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 
-public class TaxItem implements ExportableToJson, Serializable {
+public class TaxItem implements UniqueName, Serializable {
     public final String NAME;
     public final boolean BOUNDED;
     public final BigDecimal BOUND, EXEMPTION;
@@ -35,6 +36,11 @@ public class TaxItem implements ExportableToJson, Serializable {
 
     public TaxItem(String name, BigDecimal exemption) {
         this(name, exemption, BigDecimal.ZERO);
+    }
+
+    @Override
+    public String getName() {
+        return NAME;
     }
 
     public BigDecimal process(BigDecimal value, BigDecimal exemption) {

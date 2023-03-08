@@ -5,7 +5,6 @@ import com.donny.dendrofinance.gui.menu.data.backing.BackingTableGui;
 import com.donny.dendrofinance.gui.menu.data.backing.edit.MarketApiEditGui;
 import com.donny.dendrofinance.instance.Instance;
 import com.donny.dendrofinance.json.JsonArray;
-import com.donny.dendrofinance.json.JsonFormattingException;
 import com.donny.dendrofinance.json.JsonObject;
 
 import java.util.ArrayList;
@@ -32,7 +31,7 @@ public class MarketApiBTC extends BackingTableCore<LMarketApi> {
     @Override
     public void load(JsonArray array) {
         for (JsonObject object : array.getObjectArray()) {
-            TABLE.add(new LMarketApi(object, CURRENT_INSTANCE));
+            add(new LMarketApi(object, CURRENT_INSTANCE));
         }
     }
 
@@ -51,7 +50,8 @@ public class MarketApiBTC extends BackingTableCore<LMarketApi> {
     @Override
     public ArrayList<String[]> getContents(String search) {
         ArrayList<String[]> out = new ArrayList<>();
-        for (LMarketApi item : TABLE) {
+        for (String key : KEYS) {
+            LMarketApi item = MAP.get(key);
             out.add(new String[]{
                     item.NAME, item.KEY.equals("") ? "" : "X", item.stocks() ? "X" : "",
                     item.fiatCurrencies() ? "X" : "", item.cryptocurrencies() ? "X" : "",
@@ -59,21 +59,6 @@ public class MarketApiBTC extends BackingTableCore<LMarketApi> {
             });
         }
         return out;
-    }
-
-    @Override
-    public String getIdentifier(int index) {
-        return TABLE.get(index).NAME;
-    }
-
-    @Override
-    public int getIndex(String identifier) {
-        for (int i = 0; i < TABLE.size(); i++) {
-            if (TABLE.get(i).NAME.equalsIgnoreCase(identifier)) {
-                return i;
-            }
-        }
-        return -1;
     }
 
     @Override
@@ -93,18 +78,5 @@ public class MarketApiBTC extends BackingTableCore<LMarketApi> {
 
     @Override
     public void sort() {
-    }
-
-    @Override
-    public JsonArray export() {
-        JsonArray array = new JsonArray();
-        for (LMarketApi item : TABLE) {
-            try {
-                array.add(item.export());
-            } catch (JsonFormattingException ex) {
-                CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Damaged LMarketAPI " + item.NAME);
-            }
-        }
-        return array;
     }
 }

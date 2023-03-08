@@ -10,9 +10,8 @@ import com.donny.dendrofinance.currency.LMarketApi;
 import com.donny.dendrofinance.currency.LStock;
 import com.donny.dendrofinance.data.DataHandler;
 import com.donny.dendrofinance.data.LogHandler;
-import com.donny.dendrofinance.data.UuidHandler;
+import com.donny.dendrofinance.data.UniqueHandler;
 import com.donny.dendrofinance.data.backingtable.*;
-import com.donny.dendrofinance.entry.TransactionEntry;
 import com.donny.dendrofinance.fileio.ExportHandler;
 import com.donny.dendrofinance.fileio.FileHandler;
 import com.donny.dendrofinance.fileio.ImportHandler;
@@ -33,6 +32,7 @@ import java.math.BigDecimal;
 import java.math.MathContext;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.sql.SQLException;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -48,7 +48,7 @@ public class Instance {
     public final LogHandler LOG_HANDLER;
     public final EncryptionHandler ENCRYPTION_HANDLER;
     public final FileHandler FILE_HANDLER;
-    public final UuidHandler UUID_HANDLER;
+    public final UniqueHandler UNIQUE_HANDLER;
     public final CurrencyBTC CURRENCIES;
     public final StockBTC STOCKS;
     public final InventoryBTC INVENTORIES;
@@ -64,12 +64,13 @@ public class Instance {
 
     //flags, api keys, and other minor alterable things
     public MathContext precision;
-    public boolean log, american, day, large;
+    public boolean log, american, day, auto;
     public String mainTicker, main__Ticker;
     public LogHandler.LogLevel logLevel;
     public LCurrency main;
     public LCurrency main__;
-    public int blockSize;
+    public int blockSize, range;
+    public Frequency freq;
 
     public Instance(String iid, String[] args) {
         IID = iid;
@@ -84,10 +85,11 @@ public class Instance {
         MARKET_APIS = new MarketApiBTC(this);
         LOG_HANDLER = new LogHandler(this);
         FILE_HANDLER = new FileHandler(this);
+        loadInitConfig(args);
         DendroFactory.init(this);
         ENCRYPTION_HANDLER = new EncryptionHandler(this);
         PasswordGui password = new PasswordGui(this);
-        UUID_HANDLER = new UuidHandler(this);
+        UNIQUE_HANDLER = new UniqueHandler(this);
         password.setVisible(true);
         while (!password.done) {
             try {
@@ -99,15 +101,24 @@ public class Instance {
 
         //data handler
         DATA_HANDLER = new DataHandler(this);
+        try {
+            DATA_HANDLER.DATABASE.init();
+        } catch (SQLException e) {
+            LOG_HANDLER.fatal(getClass(), "Database error!\n" + e + "\n" + e.getErrorCode() + ": " + e.getSQLState());
+            LOG_HANDLER.save();
+            System.exit(1);
+        }
 
         //ensure folders and data files are set up
         ensureFolders();
         ensureBackingFiles();
         reloadBackingElements();
         checkCurToMain();
+        if (auto) {
+            DATA_HANDLER.createStates();
+        }
 
         //Data
-        reloadEntries();
         IMPORT_HANDLER = new ImportHandler(this);
         EXPORT_HANDLER = new ExportHandler(this);
         new MainGui(this).setVisible(true);
@@ -118,18 +129,44 @@ public class Instance {
         this(DendroFinance.newIid(), args);
     }
 
+    public void loadInitConfig(String[] args) {
+        File init = new File(data.getPath() + File.separator + "init.json");
+        log = true;
+        logLevel = new LogHandler.LogLevel("info");
+        boolean a = false, b = false, ll = false;
+        for (String arg : args) {
+            if (arg.equals("-nl")) {
+                log = false;
+                a = true;
+            } else if (arg.equals("-level")) {
+                ll = true;
+            } else if (ll) {
+                ll = false;
+                b = true;
+                logLevel = new LogHandler.LogLevel(arg);
+            }
+        }
+        if (init.exists()) {
+            JsonObject json = (JsonObject) FILE_HANDLER.readJson(init);
+            if (json != null) {
+                if (json.containsKey("log") && !a) {
+                    log = json.getBoolean("log").bool;
+                }
+                if (json.containsKey("log-level") && !b) {
+                    logLevel = new LogHandler.LogLevel(json.getString("log-level").getString());
+                }
+            }
+        }
+    }
+
     public void ensureFolders() {
-        File archive = new File(data.getPath() + File.separator + "Archives"),
-                pStock = new File(data.getPath() + File.separator + "P_Stock"),
+        File pStock = new File(data.getPath() + File.separator + "P_Stock"),
                 pInv = new File(data.getPath() + File.separator + "P_Inventory"),
                 exp = new File(data.getPath() + File.separator + "Exports"),
                 imp = new File(data.getPath() + File.separator + "Imports");
-        while (!archive.exists() || !pStock.exists() || !pInv.exists() || !exp.exists() || !imp.exists()) {
+        while (!pStock.exists() || !pInv.exists() || !exp.exists() || !imp.exists()) {
             if (!data.exists()) {
                 data.mkdir();
-            }
-            if (!archive.exists()) {
-                archive.mkdir();
             }
             if (!pStock.exists()) {
                 pStock.mkdir();
@@ -498,17 +535,6 @@ public class Instance {
         }
     }
 
-    public void reloadEntries() {
-        DATA_HANDLER.reload();
-        for (TransactionEntry entry : DATA_HANDLER.readTransactions()) {
-            if (!entry.isBalanced()) {
-                LOG_HANDLER.error(getClass(), "Unbalanced entry: " + Long.toUnsignedString(entry.getUUID()));
-            }
-        }
-        DATA_HANDLER.checkLedgers();
-        DATA_HANDLER.checkCG();
-    }
-
     public void checkCurToMain() {
         for (LCurrency currency : CURRENCIES) {
             boolean flag = true;
@@ -523,19 +549,21 @@ public class Instance {
             }
         }
         for (LStock stock : STOCKS) {
-            boolean flag = true;
-            for (LMarketApi marketApi : MARKET_APIS) {
-                if (marketApi.canConvert(stock, main)) {
-                    flag = false;
-                    break;
+            if (stock.isPublic()) {
+                boolean flag = true;
+                for (LMarketApi marketApi : MARKET_APIS) {
+                    if (marketApi.canConvert(stock, main)) {
+                        flag = false;
+                        break;
+                    }
                 }
-            }
-            if (flag) {
-                LOG_HANDLER.error(getClass(), "Stock can't be converted to main: " + stock);
+                if (flag) {
+                    LOG_HANDLER.error(getClass(), "Stock can't be converted to main: " + stock);
+                }
             }
         }
         for (LInventory inventory : INVENTORIES) {
-            if (inventory.isCommodity()) {
+            if (inventory.isCommodity() && inventory.isPublic()) {
                 boolean flag = true;
                 for (LMarketApi marketApi : MARKET_APIS) {
                     if (marketApi.canConvert(inventory, main)) {
@@ -551,7 +579,7 @@ public class Instance {
     }
 
     public void save() {
-        DATA_HANDLER.save();
+        DATA_HANDLER.DATABASE.commitDatabase();
         File currencies = new File(data.getPath() + File.separator + "Currencies" + File.separator + "currencies.json"),
                 stocks = new File(data.getPath() + File.separator + "Currencies" + File.separator + "stocks.json"),
                 inventories = new File(data.getPath() + File.separator + "Currencies" + File.separator + "inventories.json"),
@@ -610,6 +638,7 @@ public class Instance {
         if (save) {
             save();
         }
+        DATA_HANDLER.DATABASE.closeDatabase();
         if (log) {
             LOG_HANDLER.save();
         }
@@ -1241,8 +1270,6 @@ public class Instance {
     public void installPeriod(JComboBox<String> box) {
         box.removeAllItems();
         box.addItem("Year");
-        box.addItem("S1");
-        box.addItem("S2");
         box.addItem("Q1");
         box.addItem("Q2");
         box.addItem("Q3");
@@ -1403,16 +1430,6 @@ public class Instance {
 
     public ArrayList<LCurrency> getAllFeesByExchange(SearchBox<Exchange> e) {
         return getAllFeesByExchange(e.getSelectedItem());
-    }
-
-    public ArrayList<Account> getAccountsInUse() {
-        ArrayList<Account> out = new ArrayList<>();
-        ACCOUNTS.forEach(a -> {
-            if (a.inUse()) {
-                out.add(a);
-            }
-        });
-        return out;
     }
 
     public ArrayList<Account> getDCAccounts() {

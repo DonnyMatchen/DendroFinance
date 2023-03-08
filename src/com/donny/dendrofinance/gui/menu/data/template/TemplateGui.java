@@ -1,4 +1,4 @@
-package com.donny.dendrofinance.gui.menu.data;
+package com.donny.dendrofinance.gui.menu.data.template;
 
 import com.donny.dendrofinance.gui.MainGui;
 import com.donny.dendrofinance.gui.customswing.AlertGui;
@@ -19,14 +19,14 @@ public class TemplateGui extends RegisterFrame {
 
         //draw gui
         {
-            JScrollPane pane = DendroFactory.getTable(new String[]{"UUID", "Name", "Ref"}, new Object[][]{}, false);
+            JScrollPane pane = DendroFactory.getTable(new String[]{"Name", "Ref"}, new Object[][]{}, false);
             TABLE = (JTable) pane.getViewport().getView();
             TABLE_ACCESS = (DefaultTableModel) TABLE.getModel();
 
             JButton edit = DendroFactory.getButton("Edit");
             edit.addActionListener(event -> {
                 if (cursorSelection()) {
-                    new NewTemplateGui(this, true, getUuid(), CURRENT_INSTANCE).setVisible(true);
+                    new NewTemplateGui(this, getCapsuleName(), CURRENT_INSTANCE).setVisible(true);
                 } else {
                     new AlertGui(this, "No Template Selected!", CURRENT_INSTANCE).setVisible(true);
                 }
@@ -35,7 +35,7 @@ public class TemplateGui extends RegisterFrame {
             JButton delete = DendroFactory.getButton("Remove");
             delete.addActionListener(event -> {
                 if (cursorSelection()) {
-                    new DeleteTemplateGui(this, getUuid(), CURRENT_INSTANCE).setVisible(true);
+                    new DeleteTemplateGui(this, getCapsuleName(), CURRENT_INSTANCE).setVisible(true);
                 } else {
                     new AlertGui(this, "No Template Selected!", CURRENT_INSTANCE).setVisible(true);
                 }
@@ -79,13 +79,12 @@ public class TemplateGui extends RegisterFrame {
     }
 
     public final void updateTable() {
-        while (TABLE.getRowCount() > 0) {
+        while (TABLE_ACCESS.getRowCount() > 0) {
             TABLE_ACCESS.removeRow(0);
         }
-        CURRENT_INSTANCE.DATA_HANDLER.readTemplates().forEach(entry -> TABLE_ACCESS.addRow(new String[]{
-                Long.toUnsignedString(entry.getUUID()),
-                entry.getName(),
-                Long.toUnsignedString(entry.getRef())
+        CURRENT_INSTANCE.DATA_HANDLER.DATABASE.TEMPLATES.getTemplates().forEach(capsule -> TABLE_ACCESS.addRow(new String[]{
+                capsule.getName(),
+                Long.toUnsignedString(capsule.getRef())
         }));
     }
 
@@ -93,7 +92,7 @@ public class TemplateGui extends RegisterFrame {
         return TABLE.getSelectedRow() >= 0;
     }
 
-    private long getUuid() {
-        return Long.parseUnsignedLong((String) TABLE_ACCESS.getValueAt(TABLE.getSelectedRow(), 0));
+    private String getCapsuleName() {
+        return (String) TABLE_ACCESS.getValueAt(TABLE.getSelectedRow(), 0);
     }
 }

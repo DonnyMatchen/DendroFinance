@@ -5,7 +5,6 @@ import com.donny.dendrofinance.gui.menu.data.backing.BackingTableGui;
 import com.donny.dendrofinance.gui.menu.data.backing.edit.StockEditGui;
 import com.donny.dendrofinance.instance.Instance;
 import com.donny.dendrofinance.json.JsonArray;
-import com.donny.dendrofinance.json.JsonFormattingException;
 import com.donny.dendrofinance.json.JsonObject;
 
 import java.util.ArrayList;
@@ -33,14 +32,14 @@ public class StockBTC extends BackingTableCore<LStock> {
     @Override
     public void load(JsonArray array) {
         for (JsonObject obj : array.getObjectArray()) {
-            TABLE.add(new LStock(obj, CURRENT_INSTANCE));
+            add(new LStock(obj, CURRENT_INSTANCE));
         }
     }
 
     @Override
     public String[] getHeader() {
         return new String[]{
-                "Name", "Ticker", "In Account", "In Use"
+                "Name", "Ticker", "In Account"
         };
     }
 
@@ -52,22 +51,10 @@ public class StockBTC extends BackingTableCore<LStock> {
     @Override
     public ArrayList<String[]> getContents(String search) {
         ArrayList<String[]> out = new ArrayList<>();
-        for (LStock stk : TABLE) {
+        for (String key : KEYS) {
+            LStock stk = MAP.get(key);
             String check = search;
-            boolean flagU = stk.inUse(), allow = true;
-            boolean flagA = flagU || stk.inAccount();
-            if (check.contains("$U")) {
-                check = check.replace("$U", "").trim();
-                if (!flagU) {
-                    allow = false;
-                }
-            }
-            if (check.contains("$u")) {
-                check = check.replace("$u", "").trim();
-                if (flagU) {
-                    allow = false;
-                }
-            }
+            boolean allow = true, flagA = stk.inAccount();
             if (check.contains("$A")) {
                 check = check.replace("$A", "").trim();
                 if (!flagA) {
@@ -91,7 +78,7 @@ public class StockBTC extends BackingTableCore<LStock> {
             }
             if (allow) {
                 out.add(new String[]{
-                        name, stk.getTicker(), flagA ? "X" : "", flagU ? "X" : ""
+                        name, stk.getTicker(), flagA ? "X" : ""
                 });
             }
         }
@@ -99,24 +86,17 @@ public class StockBTC extends BackingTableCore<LStock> {
     }
 
     @Override
-    public String getIdentifier(int index) {
-        return TABLE.get(index).toString();
-    }
-
-    @Override
-    public int getIndex(String identifier) {
-        if (identifier.contains("[")) {
-            identifier = identifier.split("\\[")[0].trim();
-        }
-        for (int i = 0; i < TABLE.size(); i++) {
-            LStock stk = TABLE.get(i);
-            if (stk.toString().equalsIgnoreCase(identifier)
-                    || stk.getName().equalsIgnoreCase(identifier)
-                    || stk.getTicker().equalsIgnoreCase(identifier)) {
-                return i;
+    public LStock getElement(String identifier) {
+        for (LStock s : this) {
+            if (
+                    s.getName().equalsIgnoreCase(identifier) ||
+                            s.getTicker().equalsIgnoreCase(identifier) ||
+                            s.toString().equalsIgnoreCase(identifier)
+            ) {
+                return s;
             }
         }
-        return -1;
+        return null;
     }
 
     @Override
@@ -136,20 +116,15 @@ public class StockBTC extends BackingTableCore<LStock> {
 
     @Override
     public void sort() {
-        TABLE.sort(Comparator.comparing(LStock::toString));
-        changed = true;
-    }
-
-    @Override
-    public JsonArray export() {
-        JsonArray out = new JsonArray();
-        for (LStock stk : TABLE) {
-            try {
-                out.add(stk.export());
-            } catch (JsonFormattingException ex) {
-                CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Malformed LStock: " + stk);
-            }
+        ArrayList<LStock> list = new ArrayList<>();
+        for (LStock s : this) {
+            list.add(s);
         }
-        return out;
+        list.sort(Comparator.comparing(LStock::toString));
+        KEYS.clear();
+        for (LStock s : list) {
+            KEYS.add(s.getName());
+        }
+        changed = true;
     }
 }

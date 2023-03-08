@@ -1,4 +1,4 @@
-package com.donny.dendrofinance.entry.totals;
+package com.donny.dendrofinance.capsules.totals;
 
 import com.donny.dendrofinance.currency.LCurrency;
 import com.donny.dendrofinance.instance.Instance;
@@ -67,7 +67,7 @@ public class Position implements ExportableToJson {
                 return blank;
             } else if (an && cp) {
                 if (ELEMENTS.isEmpty()) {
-                    CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Sell Out of Order: " + uuid);
+                    CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Sell Out of Order: " + Long.toUnsignedString(uuid));
                 }
                 if (ELEMENTS.get(0).volume.compareTo(amount.abs()) > 0) {
                     ELEMENTS.get(0).volume = ELEMENTS.get(0).volume.add(amount);

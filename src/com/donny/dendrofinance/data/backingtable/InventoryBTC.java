@@ -5,7 +5,6 @@ import com.donny.dendrofinance.gui.menu.data.backing.BackingTableGui;
 import com.donny.dendrofinance.gui.menu.data.backing.edit.InventoryEditGui;
 import com.donny.dendrofinance.instance.Instance;
 import com.donny.dendrofinance.json.JsonArray;
-import com.donny.dendrofinance.json.JsonFormattingException;
 import com.donny.dendrofinance.json.JsonObject;
 
 import java.math.BigDecimal;
@@ -34,7 +33,7 @@ public class InventoryBTC extends BackingTableCore<LInventory> {
     @Override
     public void load(JsonArray array) {
         for (JsonObject obj : array.getObjectArray()) {
-            TABLE.add(new LInventory(obj, CURRENT_INSTANCE));
+            add(new LInventory(obj, CURRENT_INSTANCE));
         }
     }
 
@@ -53,22 +52,10 @@ public class InventoryBTC extends BackingTableCore<LInventory> {
     @Override
     public ArrayList<String[]> getContents(String search) {
         ArrayList<String[]> out = new ArrayList<>();
-        for (LInventory inv : TABLE) {
+        for (String key : KEYS) {
+            LInventory inv = MAP.get(key);
             String check = search;
-            boolean flagU = inv.inUse(), allow = true;
-            boolean flagA = flagU || inv.inAccount();
-            if (check.contains("$U")) {
-                check = check.replace("$U", "").trim();
-                if (!flagU) {
-                    allow = false;
-                }
-            }
-            if (check.contains("$u")) {
-                check = check.replace("$u", "").trim();
-                if (flagU) {
-                    allow = false;
-                }
-            }
+            boolean allow = true, flagA = inv.inAccount();
             if (check.contains("$A")) {
                 check = check.replace("$A", "").trim();
                 if (!flagA) {
@@ -91,8 +78,7 @@ public class InventoryBTC extends BackingTableCore<LInventory> {
             if (allow) {
                 out.add(new String[]{
                         inv.getName(), inv.getTicker(), inv.encode(BigDecimal.ZERO),
-                        flagA ? "X" : "",
-                        flagU ? "X" : ""
+                        flagA ? "X" : ""
                 });
             }
         }
@@ -100,21 +86,17 @@ public class InventoryBTC extends BackingTableCore<LInventory> {
     }
 
     @Override
-    public String getIdentifier(int index) {
-        return TABLE.get(index).toString();
-    }
-
-    @Override
-    public int getIndex(String identifier) {
-        for (int i = 0; i < TABLE.size(); i++) {
-            LInventory inv = TABLE.get(i);
-            if (inv.toString().equalsIgnoreCase(identifier)
-                    || inv.getName().equalsIgnoreCase(identifier)
-                    || inv.getTicker().equalsIgnoreCase(identifier)) {
+    public LInventory getElement(String identifier) {
+        for (LInventory i : this) {
+            if (
+                    i.getName().equalsIgnoreCase(identifier) ||
+                            i.getTicker().equalsIgnoreCase(identifier) ||
+                            i.toString().equalsIgnoreCase(identifier)
+            ) {
                 return i;
             }
         }
-        return -1;
+        return null;
     }
 
     @Override
@@ -134,20 +116,15 @@ public class InventoryBTC extends BackingTableCore<LInventory> {
 
     @Override
     public void sort() {
-        TABLE.sort(Comparator.comparing(LInventory::toString));
-        changed = true;
-    }
-
-    @Override
-    public JsonArray export() {
-        JsonArray out = new JsonArray();
-        for (LInventory inv : TABLE) {
-            try {
-                out.add(inv.export());
-            } catch (JsonFormattingException ex) {
-                CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Malformed Inventory: " + inv);
-            }
+        ArrayList<LInventory> list = new ArrayList<>();
+        for (LInventory i : this) {
+            list.add(i);
         }
-        return out;
+        list.sort(Comparator.comparing(LInventory::toString));
+        KEYS.clear();
+        for (LInventory i : list) {
+            KEYS.add(i.getName());
+        }
+        changed = true;
     }
 }

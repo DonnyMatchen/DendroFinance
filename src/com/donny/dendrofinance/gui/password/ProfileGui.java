@@ -5,6 +5,7 @@ import com.donny.dendrofinance.gui.customswing.ModalFrame;
 import com.donny.dendrofinance.gui.form.Validation;
 import com.donny.dendrofinance.gui.form.ValidationFailedException;
 import com.donny.dendrofinance.instance.Instance;
+import com.donny.dendrofinance.instance.Frequency;
 import com.donny.dendrofinance.json.JsonDecimal;
 import com.donny.dendrofinance.json.JsonFormattingException;
 import com.donny.dendrofinance.json.JsonObject;
@@ -15,8 +16,9 @@ import java.awt.*;
 import java.math.BigDecimal;
 
 public class ProfileGui extends ModalFrame {
-    private final JCheckBox LOG, AMER, DAY, LARGE;
-    private final JTextField NAME, PRECISION, LOG_LEVEL, CUR, CUR2, BLOCK;
+    private final JCheckBox AMER, DAY, AUTO;
+    private final JTextField NAME, PRECISION, CUR, CUR2, BLOCK, RANGE;
+    private final JComboBox<Frequency> FREQ;
     private final PasswordGui CALLER;
 
     public ProfileGui(PasswordGui caller, JsonObject config, Instance curInst) {
@@ -25,186 +27,230 @@ public class ProfileGui extends ModalFrame {
         {
             setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 
+            JTabbedPane back = new JTabbedPane();
+            JPanel regular = new JPanel(), database = new JPanel();
             JPanel flags = new JPanel();
 
             JLabel a = new JLabel("Name");
             JLabel b = new JLabel("Flags");
             JLabel c = new JLabel("Precision");
-            JLabel d = new JLabel("Log Level");
             JLabel e = new JLabel("Main Currency");
             JLabel f = new JLabel("Main Extra");
             JLabel g = new JLabel("Block Size");
 
-            LOG = new JCheckBox("Log");
+            JLabel h = new JLabel("State Frequency");
+            JLabel i = new JLabel("Default Range in Days");
+
             AMER = new JCheckBox("US Date Format");
             DAY = new JCheckBox("Use Day Not Time");
-            LARGE = new JCheckBox("Large");
 
             NAME = new JTextField();
             PRECISION = new JTextField();
-            LOG_LEVEL = new JTextField();
             CUR = new JTextField();
             CUR2 = new JTextField();
             BLOCK = new JTextField();
 
-            JButton save = DendroFactory.getButton("Save");
+            FREQ = new JComboBox<>();
+            for (Frequency freq : Frequency.values()) {
+                FREQ.addItem(freq);
+            }
+            RANGE = new JTextField();
+            AUTO = new JCheckBox("Automatic States");
+
+            JButton save = DendroFactory.getButton("Save"), save2 = DendroFactory.getButton("Save");
             save.addActionListener(event -> save());
-            JButton cancel = DendroFactory.getButton("Cancel");
+            save2.addActionListener(event -> save());
+            JButton cancel = DendroFactory.getButton("Cancel"), cancel2 = DendroFactory.getButton("Cancel");
             cancel.addActionListener(event -> dispose());
+            cancel2.addActionListener(event -> dispose());
 
             //group layouts
             {
-                //flags
+                //regular tab
                 {
-                    GroupLayout layout = new GroupLayout(flags);
-                    flags.setLayout(layout);
-                    layout.setHorizontalGroup(
-                            layout.createSequentialGroup().addContainerGap().addGroup(
-                                    layout.createParallelGroup(GroupLayout.Alignment.LEADING).addComponent(
-                                            AMER, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
-                                    ).addComponent(
-                                            DAY, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
-                                    )
-                            ).addGap(DendroFactory.SMALL_GAP).addGroup(
-                                    layout.createParallelGroup(GroupLayout.Alignment.LEADING).addComponent(
-                                            LOG, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
-                                    ).addComponent(
-                                            LARGE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
-                                    )
-                            )
-                    );
-                    layout.setVerticalGroup(
-                            layout.createSequentialGroup().addContainerGap().addGroup(
-                                    layout.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(
-                                            AMER, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
-                                    ).addComponent(
-                                            LOG, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
-                                    )
-                            ).addGap(DendroFactory.SMALL_GAP).addGroup(
-                                    layout.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(
-                                            DAY, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
-                                    ).addComponent(
-                                            LARGE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                    //flags
+                    {
+                        GroupLayout layout = new GroupLayout(flags);
+                        flags.setLayout(layout);
+                        layout.setHorizontalGroup(
+                                layout.createSequentialGroup().addContainerGap().addGroup(
+                                        layout.createParallelGroup(GroupLayout.Alignment.LEADING).addComponent(
+                                                AMER, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                        ).addComponent(
+                                                DAY, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                        )
+                                )
+                        );
+                        layout.setVerticalGroup(
+                                layout.createSequentialGroup().addContainerGap().addComponent(
+                                        AMER, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                ).addGap(DendroFactory.SMALL_GAP).addComponent(
+                                        DAY, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                ).addContainerGap()
+                        );
+                    }
+
+                    GroupLayout main = new GroupLayout(regular);
+                    regular.setLayout(main);
+                    main.setHorizontalGroup(
+                            main.createSequentialGroup().addContainerGap().addGroup(
+                                    main.createParallelGroup(GroupLayout.Alignment.CENTER).addGroup(
+                                            main.createSequentialGroup().addGroup(
+                                                    main.createParallelGroup(GroupLayout.Alignment.TRAILING).addComponent(
+                                                            a, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                                    ).addComponent(
+                                                            b, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                                    ).addComponent(
+                                                            c, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                                    ).addComponent(
+                                                            e, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                                    ).addComponent(
+                                                            f, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                                    ).addComponent(
+                                                            g, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                                    )
+                                            ).addGap(DendroFactory.SMALL_GAP).addGroup(
+                                                    main.createParallelGroup(GroupLayout.Alignment.LEADING).addComponent(
+                                                            NAME, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
+                                                    ).addComponent(
+                                                            flags, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
+                                                    ).addComponent(
+                                                            PRECISION, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
+                                                    ).addComponent(
+                                                            CUR, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
+                                                    ).addComponent(
+                                                            CUR2, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
+                                                    ).addComponent(
+                                                            BLOCK, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
+                                                    )
+                                            )
+                                    ).addGroup(
+                                            main.createSequentialGroup().addComponent(
+                                                    cancel, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                            ).addGap(
+                                                    DendroFactory.SMALL_GAP, DendroFactory.SMALL_GAP, Short.MAX_VALUE
+                                            ).addComponent(
+                                                    save, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                            )
                                     )
                             ).addContainerGap()
                     );
+                    main.setVerticalGroup(
+                            main.createSequentialGroup().addContainerGap().addGroup(
+                                    main.createSequentialGroup().addGroup(
+                                            main.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(
+                                                    a, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                            ).addComponent(
+                                                    NAME, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                            )
+                                    ).addGap(DendroFactory.SMALL_GAP).addGroup(
+                                            main.createParallelGroup(GroupLayout.Alignment.LEADING).addComponent(
+                                                    b, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                            ).addComponent(
+                                                    flags, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                            )
+                                    ).addGap(DendroFactory.SMALL_GAP).addGroup(
+                                            main.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(
+                                                    c, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                            ).addComponent(
+                                                    PRECISION, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                            )
+                                    ).addGap(DendroFactory.SMALL_GAP).addGroup(
+                                            main.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(
+                                                    e, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                            ).addComponent(
+                                                    CUR, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                            )
+                                    ).addGap(DendroFactory.SMALL_GAP).addGroup(
+                                            main.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(
+                                                    f, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                            ).addComponent(
+                                                    CUR2, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                            )
+                                    ).addGap(DendroFactory.SMALL_GAP).addGroup(
+                                            main.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(
+                                                    g, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                            ).addComponent(
+                                                    BLOCK, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                            )
+                                    )
+                            ).addGap(DendroFactory.MEDIUM_GAP).addGroup(
+                                    main.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(
+                                            cancel, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                    ).addComponent(
+                                            save, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                    )
+                            ).addContainerGap()
+                    );
+                    back.addTab("General", regular);
                 }
 
-                GroupLayout main = new GroupLayout(getContentPane());
-                getContentPane().setLayout(main);
-                main.setHorizontalGroup(
-                        main.createSequentialGroup().addContainerGap().addGroup(
-                                main.createParallelGroup(GroupLayout.Alignment.CENTER).addGroup(
-                                        main.createSequentialGroup().addGroup(
-                                                main.createParallelGroup(GroupLayout.Alignment.TRAILING).addComponent(
-                                                        a, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
-                                                ).addComponent(
-                                                        b, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
-                                                ).addComponent(
-                                                        c, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
-                                                ).addComponent(
-                                                        d, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
-                                                ).addComponent(
-                                                        e, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
-                                                ).addComponent(
-                                                        f, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
-                                                ).addComponent(
-                                                        g, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
-                                                )
-                                        ).addGap(DendroFactory.SMALL_GAP).addGroup(
-                                                main.createParallelGroup(GroupLayout.Alignment.LEADING).addComponent(
-                                                        NAME, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
-                                                ).addComponent(
-                                                        flags, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
-                                                ).addComponent(
-                                                        PRECISION, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
-                                                ).addComponent(
-                                                        LOG_LEVEL, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
-                                                ).addComponent(
-                                                        CUR, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
-                                                ).addComponent(
-                                                        CUR2, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
-                                                ).addComponent(
-                                                        BLOCK, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
-                                                )
-                                        )
-                                ).addGroup(
-                                        main.createSequentialGroup().addComponent(
-                                                cancel, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
-                                        ).addGap(
-                                                DendroFactory.SMALL_GAP, DendroFactory.SMALL_GAP, Short.MAX_VALUE
-                                        ).addComponent(
-                                                save, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
-                                        )
-                                )
-                        ).addContainerGap()
-                );
-                main.setVerticalGroup(
-                        main.createSequentialGroup().addContainerGap().addGroup(
-                                main.createSequentialGroup().addGroup(
-                                        main.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(
-                                                a, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
-                                        ).addComponent(
-                                                NAME, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
-                                        )
-                                ).addGap(DendroFactory.SMALL_GAP).addGroup(
-                                        main.createParallelGroup(GroupLayout.Alignment.LEADING).addComponent(
-                                                b, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
-                                        ).addComponent(
-                                                flags, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
-                                        )
-                                ).addGap(DendroFactory.SMALL_GAP).addGroup(
-                                        main.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(
-                                                c, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
-                                        ).addComponent(
-                                                PRECISION, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
-                                        )
-                                ).addGap(DendroFactory.SMALL_GAP).addGroup(
-                                        main.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(
-                                                d, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
-                                        ).addComponent(
-                                                LOG_LEVEL, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
-                                        )
-                                ).addGap(DendroFactory.SMALL_GAP).addGroup(
-                                        main.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(
-                                                e, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
-                                        ).addComponent(
-                                                CUR, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
-                                        )
-                                ).addGap(DendroFactory.SMALL_GAP).addGroup(
-                                        main.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(
-                                                f, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
-                                        ).addComponent(
-                                                CUR2, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
-                                        )
-                                ).addGap(DendroFactory.SMALL_GAP).addGroup(
-                                        main.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(
-                                                g, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
-                                        ).addComponent(
-                                                BLOCK, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
-                                        )
-                                )
-                        ).addGap(DendroFactory.MEDIUM_GAP).addGroup(
-                                main.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(
-                                        cancel, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
-                                ).addComponent(
-                                        save, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
-                                )
-                        ).addContainerGap()
-                );
+                //profile tab
+                {
+                    GroupLayout main = new GroupLayout(database);
+                    database.setLayout(main);
+                    main.setHorizontalGroup(
+                            main.createSequentialGroup().addContainerGap().addGroup(
+                                    main.createParallelGroup(GroupLayout.Alignment.CENTER).addGroup(
+                                            main.createSequentialGroup().addGroup(
+                                                    main.createParallelGroup(GroupLayout.Alignment.TRAILING).addComponent(
+                                                            h, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                                    ).addComponent(
+                                                            i, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                                    )
+                                            ).addGap(DendroFactory.SMALL_GAP).addGroup(
+                                                    main.createParallelGroup(GroupLayout.Alignment.LEADING).addComponent(
+                                                            FREQ, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
+                                                    ).addComponent(
+                                                            RANGE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
+                                                    )
+                                            )
+                                    ).addGroup(
+                                            main.createSequentialGroup().addComponent(
+                                                    cancel2, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                            ).addGap(
+                                                    DendroFactory.SMALL_GAP, DendroFactory.SMALL_GAP, Short.MAX_VALUE
+                                            ).addComponent(
+                                                    save2, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                            )
+                                    )
+                            ).addContainerGap()
+                    );
+                    main.setVerticalGroup(
+                            main.createSequentialGroup().addContainerGap().addGroup(
+                                    main.createSequentialGroup().addGroup(
+                                            main.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(
+                                                    h, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                            ).addComponent(
+                                                    FREQ, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                            )
+                                    ).addGap(DendroFactory.SMALL_GAP).addGroup(
+                                            main.createParallelGroup(GroupLayout.Alignment.LEADING).addComponent(
+                                                    i, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                            ).addComponent(
+                                                    RANGE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                            )
+                                    )
+                            ).addGap(
+                                    DendroFactory.SMALL_GAP, DendroFactory.MEDIUM_GAP, Short.MAX_VALUE
+                            ).addGroup(
+                                    main.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(
+                                            cancel2, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                    ).addComponent(
+                                            save2, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                    )
+                            ).addContainerGap()
+                    );
+                    back.addTab("Database", database);
+                }
             }
+            add(back);
         }
         if (config.containsKey("name")) {
             NAME.setText(config.getString("name").getString());
         }
         if (config.containsKey("flags")) {
             String flags = config.getString("flags").getString();
-            if (flags.contains("l")) {
-                LOG.setSelected(false);
-            }
-            if (flags.contains("L")) {
-                LOG.setSelected(true);
-            }
             if (flags.contains("A")) {
                 AMER.setSelected(true);
             }
@@ -217,18 +263,15 @@ public class ProfileGui extends ModalFrame {
             if (flags.contains("D")) {
                 DAY.setSelected(true);
             }
-            if (flags.contains("X")) {
-                LARGE.setSelected(true);
+            if (flags.contains("S")) {
+                AUTO.setSelected(true);
             }
-            if (flags.contains("x")) {
-                LARGE.setSelected(false);
+            if (flags.contains("s")) {
+                AUTO.setSelected(false);
             }
         }
         if (config.containsKey("precision")) {
             PRECISION.setText("" + config.getDecimal("precision").decimal);
-        }
-        if (config.containsKey("log")) {
-            LOG_LEVEL.setText(config.getString("log").getString());
         }
         if (config.containsKey("main")) {
             CUR.setText(config.getString("main").getString());
@@ -238,6 +281,12 @@ public class ProfileGui extends ModalFrame {
         }
         if (config.containsKey("block")) {
             BLOCK.setText("" + config.getDecimal("block").decimal);
+        }
+        if (config.containsKey("freq")) {
+            FREQ.setSelectedItem(Frequency.fromString(config.getString("freq").getString()));
+        }
+        if (config.containsKey("range")) {
+            RANGE.setText("" + config.getDecimal("range").decimal);
         }
         pack();
         Dimension d = Toolkit.getDefaultToolkit().getScreenSize();
@@ -257,11 +306,6 @@ public class ProfileGui extends ModalFrame {
             JsonObject config = new JsonObject();
             config.put("name", new JsonString(Validation.validateString(NAME)));
             String flags = "";
-            if (LOG.isSelected()) {
-                flags += "L";
-            } else {
-                flags += "l";
-            }
             if (AMER.isSelected()) {
                 flags += "A";
             } else {
@@ -272,17 +316,19 @@ public class ProfileGui extends ModalFrame {
             } else {
                 flags += "d";
             }
-            if (LARGE.isSelected()) {
-                flags += "X";
+            if (AUTO.isSelected()) {
+                flags += "S";
             } else {
-                flags += "x";
+                flags += "s";
             }
             config.put("flags", new JsonString(flags));
             config.put("precision", new JsonDecimal(new BigDecimal(Validation.validateInteger(PRECISION))));
-            config.put("log", new JsonString(Validation.validateString(LOG_LEVEL)));
             config.put("main", new JsonString(Validation.validateString(CUR)));
             config.put("main__", new JsonString(Validation.validateString(CUR2)));
             config.put("block", new JsonDecimal(new BigDecimal(Validation.validateInteger(BLOCK))));
+            config.put("freq", new JsonString((FREQ.getSelectedItem()).toString()));
+            CURRENT_INSTANCE.range = 90;
+            config.put("range", new JsonDecimal(Integer.parseInt(RANGE.getText())));
             CALLER.addProfile(config, true);
             dispose();
         } catch (JsonFormattingException e) {

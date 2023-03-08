@@ -1,18 +1,17 @@
 package com.donny.dendrofinance.account;
 
 import com.donny.dendrofinance.currency.LCurrency;
-import com.donny.dendrofinance.entry.TransactionEntry;
 import com.donny.dendrofinance.instance.Instance;
 import com.donny.dendrofinance.json.JsonDecimal;
 import com.donny.dendrofinance.json.JsonFormattingException;
 import com.donny.dendrofinance.json.JsonObject;
 import com.donny.dendrofinance.json.JsonString;
-import com.donny.dendrofinance.util.ExportableToJson;
+import com.donny.dendrofinance.util.UniqueName;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
 
-public class Account implements ExportableToJson, Serializable {
+public class Account implements UniqueName, Serializable {
     public static String portfolioName,
             stockName, inventoryName, fiatName, cryptoName,
             tradIncName, tradExpName,
@@ -260,23 +259,13 @@ public class Account implements ExportableToJson, Serializable {
         return CUR;
     }
 
+    @Override
     public String getName() {
         return NAME;
     }
 
     public int getAid() {
         return AID;
-    }
-
-    public boolean inUse() {
-        for (TransactionEntry entry : CURRENT_INSTANCE.DATA_HANDLER.readTransactions()) {
-            for (AccountWrapper aw : entry.getAccounts()) {
-                if (aw.ACCOUNT.equals(this)) {
-                    return true;
-                }
-            }
-        }
-        return false;
     }
 
     public boolean inSpecial() {

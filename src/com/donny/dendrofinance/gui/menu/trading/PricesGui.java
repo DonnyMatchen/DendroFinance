@@ -1,12 +1,14 @@
 package com.donny.dendrofinance.gui.menu.trading;
 
 import com.donny.dendrofinance.currency.LCurrency;
-import com.donny.dendrofinance.entry.meta.LedgerMetadata;
+import com.donny.dendrofinance.capsules.meta.LedgerMetadata;
 import com.donny.dendrofinance.gui.MainGui;
+import com.donny.dendrofinance.gui.customswing.DateRange;
 import com.donny.dendrofinance.gui.customswing.DendroFactory;
 import com.donny.dendrofinance.gui.customswing.RegisterFrame;
 import com.donny.dendrofinance.gui.customswing.SearchBox;
 import com.donny.dendrofinance.instance.Instance;
+import com.donny.dendrofinance.types.LDate;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -14,6 +16,7 @@ import java.awt.*;
 import java.math.BigDecimal;
 
 public class PricesGui extends RegisterFrame {
+    private final DateRange RANGE;
     private final SearchBox<LCurrency> CUR;
     private final DefaultTableModel TABLE_ACCESS;
 
@@ -26,6 +29,7 @@ public class PricesGui extends RegisterFrame {
             }, new Object[][]{}, false);
             JTable table = (JTable) pane.getViewport().getView();
             TABLE_ACCESS = (DefaultTableModel) table.getModel();
+            RANGE = new DateRange(true);
             CUR = new SearchBox<>("Asset", curInst.getAllUniqueAssets());
             CUR.addListSelectionListener(event -> update());
 
@@ -36,6 +40,8 @@ public class PricesGui extends RegisterFrame {
                 main.setHorizontalGroup(
                         main.createSequentialGroup().addContainerGap().addGroup(
                                 main.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(
+                                        RANGE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
+                                ).addComponent(
                                         CUR, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
                                 ).addComponent(
                                         pane, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
@@ -44,6 +50,8 @@ public class PricesGui extends RegisterFrame {
                 );
                 main.setVerticalGroup(
                         main.createSequentialGroup().addContainerGap().addComponent(
+                                RANGE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                        ).addGap(DendroFactory.SMALL_GAP).addComponent(
                                 CUR, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                         ).addGap(DendroFactory.SMALL_GAP).addComponent(
                                 pane, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
@@ -51,6 +59,7 @@ public class PricesGui extends RegisterFrame {
                 );
             }
         }
+        RANGE.initDefault(CURRENT_INSTANCE);
         pack();
         Dimension d = Toolkit.getDefaultToolkit().getScreenSize();
         setLocation(d.width / 2 - getWidth() / 2, d.height / 2 - getHeight() / 2);
@@ -61,17 +70,20 @@ public class PricesGui extends RegisterFrame {
             while (TABLE_ACCESS.getRowCount() > 0) {
                 TABLE_ACCESS.removeRow(0);
             }
-            LCurrency currency = CUR.getSelectedItem();
-            for (LedgerMetadata meta : CURRENT_INSTANCE.DATA_HANDLER.getLedgerMeta(currency)) {
-                if (meta.MAIN_VALUE.compareTo(BigDecimal.ZERO) > 0 && meta.FROM_AMNT.compareTo(BigDecimal.ZERO) < 0 && meta.TO_AMNT.compareTo(BigDecimal.ZERO) > 0) {
-                    if (meta.FROM.equals(currency)) {
-                        TABLE_ACCESS.addRow(new String[]{
-                                meta.DATE.toString(), CURRENT_INSTANCE.$$(meta.fromMain())
-                        });
-                    } else {
-                        TABLE_ACCESS.addRow(new String[]{
-                                meta.DATE.toString(), CURRENT_INSTANCE.$$(meta.toMain())
-                        });
+            LDate[] range = RANGE.getRange(CURRENT_INSTANCE);
+            if (range != null) {
+                LCurrency currency = CUR.getSelectedItem();
+                for (LedgerMetadata meta : CURRENT_INSTANCE.DATA_HANDLER.getLedgers(range[0], range[1], currency)) {
+                    if (meta.MAIN_VALUE.compareTo(BigDecimal.ZERO) > 0 && meta.FROM_AMNT.compareTo(BigDecimal.ZERO) < 0 && meta.TO_AMNT.compareTo(BigDecimal.ZERO) > 0) {
+                        if (meta.FROM.equals(currency)) {
+                            TABLE_ACCESS.addRow(new String[]{
+                                    meta.DATE.toString(), CURRENT_INSTANCE.$$(meta.fromMain())
+                            });
+                        } else {
+                            TABLE_ACCESS.addRow(new String[]{
+                                    meta.DATE.toString(), CURRENT_INSTANCE.$$(meta.toMain())
+                            });
+                        }
                     }
                 }
             }

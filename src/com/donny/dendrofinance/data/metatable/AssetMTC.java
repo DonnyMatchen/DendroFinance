@@ -1,7 +1,7 @@
 package com.donny.dendrofinance.data.metatable;
 
 import com.donny.dendrofinance.currency.LCurrency;
-import com.donny.dendrofinance.entry.meta.AssetMetadata;
+import com.donny.dendrofinance.capsules.meta.AssetMetadata;
 import com.donny.dendrofinance.instance.Instance;
 import com.donny.dendrofinance.types.LDate;
 

@@ -2,8 +2,9 @@ package com.donny.dendrofinance.gui.menu.transactions;
 
 import com.donny.dendrofinance.account.Account;
 import com.donny.dendrofinance.currency.LCurrency;
-import com.donny.dendrofinance.entry.TemplateEntry;
-import com.donny.dendrofinance.entry.TransactionEntry;
+import com.donny.dendrofinance.capsules.TemplateCapsule;
+import com.donny.dendrofinance.capsules.TransactionCapsule;
+import com.donny.dendrofinance.fileio.ImportHandler;
 import com.donny.dendrofinance.gui.MainGui;
 import com.donny.dendrofinance.gui.customswing.DendroFactory;
 import com.donny.dendrofinance.gui.customswing.ModalFrame;
@@ -28,7 +29,8 @@ public class NewTransactionEntryGui extends ModalFrame {
     public final long UUID;
     public final boolean CLONE;
     private final JTextField DATE, ENT;
-    private final JTextArea ITM, DESC, ACC;;
+    private final JTextArea ITM, DESC, ACC;
+
     private final JComboBox<String> TYPE;
     private final JTextArea META;
     private final JTable TABLE;
@@ -87,7 +89,7 @@ public class NewTransactionEntryGui extends ModalFrame {
                     int x = type.getSelectedIndex();
                     switch (x) {
                         case 0, 1 -> {
-                            if(column > 1) {
+                            if (column > 1) {
                                 account.setMaster(CURRENT_INSTANCE.getDCAccounts());
                             }
                         }
@@ -108,24 +110,24 @@ public class NewTransactionEntryGui extends ModalFrame {
                                     "(" + Cleaning.cleanNumber(amount.getText()) + "), "
                     );
                     amount.setText("");
-                    if(type.getSelectedIndex() > 1) {
+                    if (type.getSelectedIndex() > 1) {
                         type.setSelectedIndex(0);
                     }
                     account.clear();
                 });
 
-                JComboBox<TemplateEntry> templates = new JComboBox<>();
-                CURRENT_INSTANCE.DATA_HANDLER.readTemplates().forEach(templates::addItem);
+                JComboBox<TemplateCapsule> templates = new JComboBox<>();
+                CURRENT_INSTANCE.DATA_HANDLER.DATABASE.TEMPLATES.getTemplates().forEach(templates::addItem);
                 JButton load = DendroFactory.getButton("Load Template");
                 load.addActionListener(event -> {
                     if (templates.getSelectedIndex() >= 0) {
-                        TransactionEntry entry = CURRENT_INSTANCE.DATA_HANDLER.getTransactionEntry(((TemplateEntry) templates.getSelectedItem()).getRef());
-                        DATE.setText(entry.getDate().toString());
-                        ENT.setText(entry.getEntity());
-                        ITM.setText(entry.getItems());
-                        DESC.setText(entry.getDescription());
-                        ACC.setText(entry.getAccounts().toString());
-                        metaObject = entry.getMeta();
+                        TransactionCapsule capsule = CURRENT_INSTANCE.DATA_HANDLER.DATABASE.TRANSACTIONS.get(((TemplateCapsule) templates.getSelectedItem()).getRef());
+                        DATE.setText(capsule.getDate().toString());
+                        ENT.setText(capsule.getEntity());
+                        ITM.setText(capsule.getItems());
+                        DESC.setText(capsule.getDescription());
+                        ACC.setText(capsule.getAccounts().toString());
+                        metaObject = capsule.getMeta();
                     }
                 });
 
@@ -356,13 +358,13 @@ public class NewTransactionEntryGui extends ModalFrame {
         if (UUID == 0) {
             metaObject = new JsonObject();
         } else {
-            TransactionEntry entry = CURRENT_INSTANCE.DATA_HANDLER.getTransactionEntry(UUID);
-            DATE.setText(entry.getDate().toString());
-            ENT.setText(entry.getEntity());
-            ITM.setText(entry.getItems());
-            DESC.setText(entry.getDescription());
-            ACC.setText(entry.getAccounts().toString());
-            metaObject = entry.getMeta();
+            TransactionCapsule capsule = CURRENT_INSTANCE.DATA_HANDLER.DATABASE.TRANSACTIONS.get(UUID);
+            DATE.setText(capsule.getDate().toString());
+            ENT.setText(capsule.getEntity());
+            ITM.setText(capsule.getItems());
+            DESC.setText(capsule.getDescription());
+            ACC.setText(capsule.getAccounts().toString());
+            metaObject = capsule.getMeta();
         }
         META.setText(metaObject.print());
         TYPE.addItem("New NF Asset");
@@ -504,22 +506,22 @@ public class NewTransactionEntryGui extends ModalFrame {
 
     public void insertAction() {
         try {
-            TransactionEntry entry;
+            TransactionCapsule capsule;
             if (UUID == 0 || CLONE) {
-                entry = new TransactionEntry(CURRENT_INSTANCE);
+                capsule = new TransactionCapsule(CURRENT_INSTANCE);
             } else {
-                entry = CURRENT_INSTANCE.DATA_HANDLER.getTransactionEntry(UUID);
+                capsule = CURRENT_INSTANCE.DATA_HANDLER.DATABASE.TRANSACTIONS.get(UUID);
             }
-            entry.insert(
+            capsule.insert(
                     Validation.validateDate(DATE, CURRENT_INSTANCE),
                     Validation.validateString(ENT),
                     Validation.validateStringAllowEmpty(ITM),
                     Validation.validateStringAllowEmpty(DESC),
                     Validation.validateAccountSet(ACC, CURRENT_INSTANCE)
             );
-            entry.setMeta(Validation.validateJsonObject(META));
+            capsule.setMeta(Validation.validateJsonObject(META));
             if (UUID == 0 || CLONE) {
-                CURRENT_INSTANCE.DATA_HANDLER.addTransaction(entry);
+                CURRENT_INSTANCE.DATA_HANDLER.DATABASE.TRANSACTIONS.add(capsule, ImportHandler.ImportMode.OVERWRITE);
             }
             MAIN.updateTable();
             dispose();

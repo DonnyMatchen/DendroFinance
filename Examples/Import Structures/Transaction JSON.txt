@@ -18,7 +18,7 @@ Transaction{
   "meta-data": object
 }
 
-_uuid: unique identifier for the entry
+_uuid: unique identifier for the capsule
 date: the date of the transaction as a unix millisecond timestamp
 entity: the legal entity or person the transaction was with
 items: the items bought, sold, or traded, if applicable

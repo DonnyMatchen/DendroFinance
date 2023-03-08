@@ -4,22 +4,22 @@ import com.donny.dendrofinance.account.AWColumn;
 import com.donny.dendrofinance.account.Account;
 import com.donny.dendrofinance.account.AccountWrapper;
 import com.donny.dendrofinance.account.BroadAccountType;
-import com.donny.dendrofinance.entry.BudgetEntry;
-import com.donny.dendrofinance.entry.TransactionEntry;
+import com.donny.dendrofinance.capsules.BudgetCapsule;
+import com.donny.dendrofinance.capsules.TransactionCapsule;
 import com.donny.dendrofinance.gui.MainGui;
 import com.donny.dendrofinance.gui.customswing.DendroFactory;
 import com.donny.dendrofinance.gui.customswing.RegisterFrame;
 import com.donny.dendrofinance.gui.form.Cleaning;
+import com.donny.dendrofinance.instance.Frequency;
 import com.donny.dendrofinance.instance.Instance;
 import com.donny.dendrofinance.json.JsonDecimal;
+import com.donny.dendrofinance.types.LDate;
 import com.donny.dendrofinance.util.Aggregation;
-import com.donny.dendrofinance.util.Curation;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.math.BigDecimal;
-import java.util.Comparator;
 import java.util.Objects;
 
 public class BudgetGui extends RegisterFrame {
@@ -55,15 +55,10 @@ public class BudgetGui extends RegisterFrame {
                 COLLAPSED.setSelected(true);
                 EXPANDED.addActionListener(event -> updateView());
                 COLLAPSED.addActionListener(event -> updateView());
-                Curation<Integer> years = new Curation<>();
-                for (TransactionEntry entry : curInst.DATA_HANDLER.readTransactions()) {
-                    if (!entry.getEntity().equals("PRIOR")) {
-                        years.add(entry.getDate().getYear());
-                    }
-                }
-                years.sort(Comparator.naturalOrder());
-                for (int y : years) {
-                    YEAR.addItem("" + y);
+                LDate first = new LDate(CURRENT_INSTANCE.DATA_HANDLER.DATABASE.TRANSACTIONS.getMinDate(), CURRENT_INSTANCE);
+                LDate last = new LDate(CURRENT_INSTANCE.DATA_HANDLER.DATABASE.TRANSACTIONS.getMaxDate(), CURRENT_INSTANCE);
+                for (int i = first.getYear(); i < last.getYear() + 1; i++) {
+                    YEAR.addItem("" + i);
                 }
                 YEAR.addItemListener(event -> updateView());
                 PERIOD = new JComboBox<>();
@@ -223,56 +218,44 @@ public class BudgetGui extends RegisterFrame {
     public final void updateBudget() {
         BUDGET.removeAllItems();
         BUDGET.addItem("<none>");
-        for (BudgetEntry entry : CURRENT_INSTANCE.DATA_HANDLER.readBudgets()) {
-            BUDGET.addItem(entry.getName());
+        for (BudgetCapsule capsule : CURRENT_INSTANCE.DATA_HANDLER.DATABASE.BUDGETS.getBudgets()) {
+            BUDGET.addItem(capsule.getName());
         }
 
         EDIT_B.removeAllItems();
-        for (BudgetEntry entry : CURRENT_INSTANCE.DATA_HANDLER.readBudgets()) {
-            EDIT_B.addItem(entry.getName());
+        for (BudgetCapsule capsule : CURRENT_INSTANCE.DATA_HANDLER.DATABASE.BUDGETS.getBudgets()) {
+            EDIT_B.addItem(capsule.getName());
         }
     }
 
     private void updateView() {
         BigDecimal total = BigDecimal.ZERO, bTotal = BigDecimal.ZERO;
         BigDecimal beta = BigDecimal.ONE;
+        Frequency freq = Frequency.ANNUAL;
+        int param = 0;
         String period = Objects.requireNonNullElse((String) PERIOD.getSelectedItem(), "Year");
         if (period.length() == 2) {
-            if (period.contains("S")) {
-                beta = new BigDecimal("0.5");
-            } else {
-                beta = new BigDecimal("0.25");
-            }
+            beta = new BigDecimal("0.25");
+            freq = Frequency.QUARTERLY;
+            param = Integer.parseInt(period.substring(1));
         } else if (!period.equals("Year")) {
-            beta = new BigDecimal("0.08" + ("0".repeat(CURRENT_INSTANCE.precision.getPrecision() - 2)));
+            beta = new BigDecimal("0.08" + ("3".repeat(CURRENT_INSTANCE.precision.getPrecision() - 2)));
+            freq = Frequency.MONTHLY;
+            param = LDate.getMonth(period);
         }
         if (COLLAPSED.isSelected()) {
             Aggregation<String> budgets = new Aggregation<>();
-            for (TransactionEntry entry : CURRENT_INSTANCE.DATA_HANDLER.readTransactions()) {
-                if (!entry.getDescription().contains("Net Income")) {
-                    if (entry.getDate().getYear() == Integer.parseInt((String) YEAR.getSelectedItem())) {
-                        boolean flag;
-                        if (period.equals("Year")) {
-                            flag = true;
-                        } else if (period.length() == 2) {
-                            if (period.contains("S")) {
-                                flag = period.equals(entry.getDate().getSemi());
-                            } else {
-                                flag = period.equals(entry.getDate().getQuarter());
+            for (TransactionCapsule capsule : CURRENT_INSTANCE.DATA_HANDLER.DATABASE.TRANSACTIONS.getRange(
+                    LDate.getRange(Integer.parseInt((String) YEAR.getSelectedItem()),
+                            param, freq, CURRENT_INSTANCE))) {
+                if (!capsule.getDescription().contains("Net Income")) {
+                    for (AccountWrapper wrapper : capsule.getAccounts()) {
+                        if (!wrapper.ACCOUNT.getBudgetType().equals("")) {
+                            BigDecimal val = wrapper.VALUE;
+                            if (wrapper.COLUMN == AWColumn.DEBIT) {
+                                val = val.multiply(BigDecimal.valueOf(-1));
                             }
-                        } else {
-                            flag = period.equals(entry.getDate().getMonthString());
-                        }
-                        if (flag) {
-                            for (AccountWrapper wrapper : entry.getAccounts()) {
-                                if (!wrapper.ACCOUNT.getBudgetType().equals("")) {
-                                    BigDecimal val = wrapper.VALUE;
-                                    if (wrapper.COLUMN == AWColumn.DEBIT) {
-                                        val = val.multiply(BigDecimal.valueOf(-1));
-                                    }
-                                    budgets.add(wrapper.ACCOUNT.getBudgetType(), val);
-                                }
-                            }
+                            budgets.add(wrapper.ACCOUNT.getBudgetType(), val);
                         }
                     }
                 }
@@ -284,14 +267,14 @@ public class BudgetGui extends RegisterFrame {
             if (budgetName != null) {
                 boolean flag = true;
                 if (!budgetName.equals("<none>")) {
-                    for (BudgetEntry entry : CURRENT_INSTANCE.DATA_HANDLER.readBudgets()) {
-                        if (entry.getName().equals(budgetName)) {
+                    for (BudgetCapsule capsule : CURRENT_INSTANCE.DATA_HANDLER.DATABASE.BUDGETS.getBudgets()) {
+                        if (capsule.getName().equals(budgetName)) {
                             flag = false;
                             for (String budgetType : CURRENT_INSTANCE.DATA_HANDLER.getBudgetTypes()) {
                                 BigDecimal budgeted = BigDecimal.ZERO;
                                 for (Account account : CURRENT_INSTANCE.ACCOUNTS) {
                                     if (account.getBudgetType().equals(budgetType)) {
-                                        budgeted = budgeted.add(entry.getBudget().getDecimal(account.getName()).decimal);
+                                        budgeted = budgeted.add(capsule.getBudget().getDecimal(account.getName()).decimal);
                                     }
                                 }
                                 if (budgets.get(budgetType).abs().add(budgeted.abs()).compareTo(BigDecimal.ZERO) > 0) {
@@ -337,31 +320,17 @@ public class BudgetGui extends RegisterFrame {
             }
         } else if (EXPANDED.isSelected()) {
             Aggregation<Account> accRevExp = new Aggregation<>();
-            for (TransactionEntry entry : CURRENT_INSTANCE.DATA_HANDLER.readTransactions()) {
-                if (!entry.getDescription().contains("Net Income")) {
-                    if (entry.getDate().getYear() == Integer.parseInt((String) YEAR.getSelectedItem())) {
-                        boolean flag;
-                        if (period.equals("Year")) {
-                            flag = true;
-                        } else if (period.length() == 2) {
-                            if (period.contains("S")) {
-                                flag = period.equals(entry.getDate().getSemi());
-                            } else {
-                                flag = period.equals(entry.getDate().getQuarter());
+            for (TransactionCapsule capsule : CURRENT_INSTANCE.DATA_HANDLER.DATABASE.TRANSACTIONS.getRange(
+                    LDate.getRange(Integer.parseInt((String) YEAR.getSelectedItem()),
+                            param, freq, CURRENT_INSTANCE))) {
+                if (!capsule.getDescription().contains("Net Income")) {
+                    for (AccountWrapper wrapper : capsule.getAccounts()) {
+                        if (wrapper.ACCOUNT.getBroadAccountType() == BroadAccountType.REVENUE || wrapper.ACCOUNT.getBroadAccountType() == BroadAccountType.EXPENSE) {
+                            BigDecimal val = wrapper.VALUE;
+                            if (wrapper.COLUMN == AWColumn.DEBIT) {
+                                val = val.multiply(BigDecimal.valueOf(-1));
                             }
-                        } else {
-                            flag = period.equals(entry.getDate().getMonthString());
-                        }
-                        if (flag) {
-                            for (AccountWrapper wrapper : entry.getAccounts()) {
-                                if (wrapper.ACCOUNT.getBroadAccountType() == BroadAccountType.REVENUE || wrapper.ACCOUNT.getBroadAccountType() == BroadAccountType.EXPENSE) {
-                                    BigDecimal val = wrapper.VALUE;
-                                    if (wrapper.COLUMN == AWColumn.DEBIT) {
-                                        val = val.multiply(BigDecimal.valueOf(-1));
-                                    }
-                                    accRevExp.add(wrapper.ACCOUNT, val);
-                                }
-                            }
+                            accRevExp.add(wrapper.ACCOUNT, val);
                         }
                     }
                 }
@@ -373,20 +342,20 @@ public class BudgetGui extends RegisterFrame {
             if (budgetName != null) {
                 boolean flag = true;
                 if (!budgetName.equals("<none>")) {
-                    for (BudgetEntry entry : CURRENT_INSTANCE.DATA_HANDLER.readBudgets()) {
-                        if (entry.getName().equals(budgetName)) {
+                    for (BudgetCapsule capsule : CURRENT_INSTANCE.DATA_HANDLER.DATABASE.BUDGETS.getBudgets()) {
+                        if (capsule.getName().equals(budgetName)) {
                             flag = false;
                             for (Account account : CURRENT_INSTANCE.ACCOUNTS) {
                                 if (!account.getBudgetType().equals("")) {
-                                    if (accRevExp.get(account).abs().add(entry.getBudget().getDecimal(account.getName()).decimal.abs()).compareTo(BigDecimal.ZERO) > 0) {
+                                    if (accRevExp.get(account).abs().add(capsule.getBudget().getDecimal(account.getName()).decimal.abs()).compareTo(BigDecimal.ZERO) > 0) {
                                         VIEW_TABLE_ACCESS.addRow(new String[]{
                                                 account.getName(),
                                                 CURRENT_INSTANCE.$(accRevExp.get(account)),
-                                                CURRENT_INSTANCE.$(entry.getBudget().getDecimal(account.getName()).decimal.multiply(beta)),
-                                                CURRENT_INSTANCE.$(accRevExp.get(account).subtract(entry.getBudget().getDecimal(account.getName()).decimal.multiply(beta)))
+                                                CURRENT_INSTANCE.$(capsule.getBudget().getDecimal(account.getName()).decimal.multiply(beta)),
+                                                CURRENT_INSTANCE.$(accRevExp.get(account).subtract(capsule.getBudget().getDecimal(account.getName()).decimal.multiply(beta)))
                                         });
                                         total = total.add(accRevExp.get(account));
-                                        bTotal = bTotal.add(entry.getBudget().getDecimal(account.getName()).decimal.multiply(beta));
+                                        bTotal = bTotal.add(capsule.getBudget().getDecimal(account.getName()).decimal.multiply(beta));
                                     }
                                 }
                             }
@@ -433,13 +402,13 @@ public class BudgetGui extends RegisterFrame {
         }
         String pick = (String) EDIT_B.getSelectedItem();
         if (pick != null) {
-            for (BudgetEntry entry : CURRENT_INSTANCE.DATA_HANDLER.readBudgets()) {
-                if (entry.getName().equals(pick)) {
+            for (BudgetCapsule capsule : CURRENT_INSTANCE.DATA_HANDLER.DATABASE.BUDGETS.getBudgets()) {
+                if (capsule.getName().equals(pick)) {
                     for (Account account : CURRENT_INSTANCE.ACCOUNTS) {
                         if (!account.getBudgetType().equals("")) {
                             EDIT_TABLE_ACCESS.addRow(new String[]{
                                     account.getName(),
-                                    CURRENT_INSTANCE.$(entry.getBudget().getDecimal(account.getName()).decimal)
+                                    CURRENT_INSTANCE.$(capsule.getBudget().getDecimal(account.getName()).decimal)
                             });
                         }
                     }
@@ -452,18 +421,18 @@ public class BudgetGui extends RegisterFrame {
     private void saveBudget() {
         String pick = (String) EDIT_B.getSelectedItem();
         if (pick != null) {
-            BudgetEntry entry = null;
-            for (BudgetEntry e : CURRENT_INSTANCE.DATA_HANDLER.readBudgets()) {
+            BudgetCapsule capsule = null;
+            for (BudgetCapsule e : CURRENT_INSTANCE.DATA_HANDLER.DATABASE.BUDGETS.getBudgets()) {
                 if (e.getName().equals(pick)) {
-                    entry = e;
+                    capsule = e;
                     break;
                 }
             }
             for (int i = 0; i < EDIT_TABLE_ACCESS.getRowCount(); i++) {
                 String a = (String) EDIT_TABLE_ACCESS.getValueAt(i, 0);
                 String b = (String) EDIT_TABLE_ACCESS.getValueAt(i, 1);
-                if (entry != null) {
-                    entry.getBudget().put(a, new JsonDecimal(Cleaning.cleanNumber(b)));
+                if (capsule != null) {
+                    capsule.getBudget().put(a, new JsonDecimal(Cleaning.cleanNumber(b)));
                 }
             }
             updateBudget();

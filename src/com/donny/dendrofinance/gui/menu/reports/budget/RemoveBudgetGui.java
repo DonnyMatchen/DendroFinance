@@ -1,6 +1,6 @@
 package com.donny.dendrofinance.gui.menu.reports.budget;
 
-import com.donny.dendrofinance.entry.BudgetEntry;
+import com.donny.dendrofinance.capsules.BudgetCapsule;
 import com.donny.dendrofinance.gui.customswing.DendroFactory;
 import com.donny.dendrofinance.gui.customswing.ModalFrame;
 import com.donny.dendrofinance.instance.Instance;
@@ -61,15 +61,15 @@ public class RemoveBudgetGui extends ModalFrame {
     }
 
     private void yesAction(BudgetGui caller, String budget) {
-        BudgetEntry entry = null;
-        for (BudgetEntry e : CURRENT_INSTANCE.DATA_HANDLER.readBudgets()) {
+        BudgetCapsule capsule = null;
+        for (BudgetCapsule e : CURRENT_INSTANCE.DATA_HANDLER.DATABASE.BUDGETS.getBudgets()) {
             if (e.getName().equals(budget)) {
-                entry = e;
+                capsule = e;
                 break;
             }
         }
-        if (entry != null) {
-            CURRENT_INSTANCE.DATA_HANDLER.deleteBudget(entry.getUUID());
+        if (capsule != null) {
+            CURRENT_INSTANCE.DATA_HANDLER.DATABASE.BUDGETS.delete(capsule.getName());
             caller.updateBudget();
         }
         dispose();

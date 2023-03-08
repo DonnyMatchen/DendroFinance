@@ -1,20 +1,18 @@
-package com.donny.dendrofinance.entry.meta;
+package com.donny.dendrofinance.capsules.meta;
 
 import com.donny.dendrofinance.currency.LCurrency;
 import com.donny.dendrofinance.instance.Instance;
-import com.donny.dendrofinance.json.JsonDecimal;
-import com.donny.dendrofinance.json.JsonFormattingException;
-import com.donny.dendrofinance.json.JsonObject;
-import com.donny.dendrofinance.json.JsonString;
+import com.donny.dendrofinance.json.*;
 import com.donny.dendrofinance.types.LDate;
 import com.donny.dendrofinance.util.Aggregation;
 import com.donny.dendrofinance.util.Curation;
+import com.donny.dendrofinance.util.ExportableToJson;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class AssetMetadata {
+public class AssetMetadata implements ExportableToJson {
     public final String NAME, DESC;
     public final long ROOT_REF;
     public final LDate DATE;
@@ -35,15 +33,19 @@ public class AssetMetadata {
 
     public AssetMetadata(long uuid, LDate date, JsonObject obj, Instance curInst) {
         this(
-                uuid,
-                obj.containsKey("date") ? new LDate(obj.getDecimal("date"), curInst) : date,
-                obj.getString("name").getString(),
-                obj.getString("desc").getString(),
-                curInst.getLCurrency(obj.getString("currency").getString()),
-                obj.getDecimal("val").decimal,
-                obj.getDecimal("count").decimal
+                obj.containsKey(new String[]{"r", "ref", "root-ref"}) ? obj.getDecimal(new String[]{"r", "ref", "root-ref"}).decimal.longValue() : uuid,
+                obj.containsKey(new String[]{"t", "date", "timestamp"}) ? new LDate(obj.getDecimal(new String[]{"t", "date", "timestamp"}), curInst) : date,
+                obj.getString(new String[]{"n", "name"}).getString(),
+                obj.getString(new String[]{"d", "desc"}).getString(),
+                curInst.getLCurrency(obj.getString(new String[]{"c", "cur", "currency"}).getString()),
+                obj.getDecimal(new String[]{"v", "val", "value"}).decimal,
+                obj.getDecimal(new String[]{"z", "number", "count"}).decimal
         );
-
+        if (obj.containsKey(new String[]{"e", "events"})) {
+            for (JsonObject event : obj.getArray(new String[]{"e", "events"}).getObjectArray()) {
+                EVENTS.add(new AssetChangeMetadata(0, null, event, curInst));
+            }
+        }
     }
 
     public ArrayList<Long> getRefs() {
@@ -93,14 +95,26 @@ public class AssetMetadata {
         return getTotalCount().compareTo(BigDecimal.ZERO) != 0;
     }
 
+    @Override
     public JsonObject export() throws JsonFormattingException {
         JsonObject obj = new JsonObject();
-        obj.put("date", DATE.export());
-        obj.put("name", new JsonString(NAME));
-        obj.put("desc", new JsonString(DESC));
-        obj.put("currency", new JsonString(CURRENCY.toString()));
-        obj.put("val", new JsonDecimal(VAL));
-        obj.put("count", new JsonDecimal(COUNT));
+        obj.put("t", DATE.export());
+        obj.put("n", new JsonString(NAME));
+        obj.put("d", new JsonString(DESC));
+        obj.put("c", new JsonString(CURRENCY.toString()));
+        obj.put("v", new JsonDecimal(VAL));
+        obj.put("z", new JsonDecimal(COUNT));
+        return obj;
+    }
+
+    public JsonObject fullExport() throws JsonFormattingException {
+        JsonObject obj = export();
+        obj.put("r", new JsonDecimal(ROOT_REF));
+        JsonArray array = new JsonArray();
+        for (AssetChangeMetadata event : EVENTS) {
+            array.add(event.fullExport());
+        }
+        obj.put("e", array);
         return obj;
     }
 

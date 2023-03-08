@@ -1,4 +1,4 @@
-package com.donny.dendrofinance.entry.meta;
+package com.donny.dendrofinance.capsules.meta;
 
 import com.donny.dendrofinance.currency.LCurrency;
 import com.donny.dendrofinance.instance.Instance;

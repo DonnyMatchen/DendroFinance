@@ -21,7 +21,7 @@ public class DeleteEntryGui extends ModalFrame {
         JTextArea area = (JTextArea) pane.getViewport().getView();
         {
             JLabel text1 = new JLabel("Are you sure you'd like to delete");
-            JLabel text2 = new JLabel("the entry bellow?");
+            JLabel text2 = new JLabel("the capsule bellow?");
 
             JButton ok = DendroFactory.getButton("Yes");
             ok.addActionListener(event -> yes());
@@ -67,14 +67,14 @@ public class DeleteEntryGui extends ModalFrame {
                 );
             }
         }
-        area.setText(CURRENT_INSTANCE.DATA_HANDLER.getTransactionEntry(UUID).toString());
+        area.setText(CURRENT_INSTANCE.DATA_HANDLER.DATABASE.TRANSACTIONS.get(UUID).toString());
         pack();
         Dimension d = Toolkit.getDefaultToolkit().getScreenSize();
         setLocation(d.width / 2 - getWidth() / 2, d.height / 2 - getHeight() / 2);
     }
 
     public void yes() {
-        CURRENT_INSTANCE.DATA_HANDLER.deleteTransaction(UUID);
+        CURRENT_INSTANCE.DATA_HANDLER.DATABASE.TRANSACTIONS.delete(UUID);
         MAIN.updateTable();
         dispose();
     }

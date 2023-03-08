@@ -25,7 +25,7 @@ public class LAccountSet implements ExportableToJson, Comparable<LAccountSet>, I
     public LAccountSet(JsonArray array, Instance curInst) {
         this(curInst);
         for (JsonObject obj : array.getObjectArray()) {
-            if (obj.containsKey("acc") && obj.containsKey("col") && obj.containsKey("val")) {
+            if (obj.containsKey(new String[]{"a", "acc"}) && obj.containsKey(new String[]{"c", "col"}) && obj.containsKey(new String[]{"v", "val"})) {
                 REGISTRY.add(new AccountWrapper(obj, CURRENT_INSTANCE));
             }
         }

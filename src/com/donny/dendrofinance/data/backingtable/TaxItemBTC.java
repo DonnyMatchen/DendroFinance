@@ -32,7 +32,7 @@ public class TaxItemBTC extends BackingTableCore<TaxItem> {
     @Override
     public void load(JsonArray array) {
         for (JsonObject obj : array.getObjectArray()) {
-            TABLE.add(new TaxItem(obj));
+            add(new TaxItem(obj));
         }
     }
 
@@ -52,22 +52,6 @@ public class TaxItemBTC extends BackingTableCore<TaxItem> {
     }
 
     @Override
-    public String getIdentifier(int index) {
-        return TABLE.get(index).NAME;
-    }
-
-    @Override
-    public int getIndex(String identifier) {
-        for (int i = 0; i < TABLE.size(); i++) {
-            TaxItem item = TABLE.get(i);
-            if (item.NAME.equalsIgnoreCase(identifier)) {
-                return i;
-            }
-        }
-        return -1;
-    }
-
-    @Override
     public boolean canMove(String identifier) {
         return false;
     }
@@ -84,18 +68,26 @@ public class TaxItemBTC extends BackingTableCore<TaxItem> {
 
     @Override
     public void sort() {
-        TABLE.sort(Comparator.comparing(taxItem -> taxItem.NAME));
+        ArrayList<TaxItem> list = new ArrayList<>();
+        for (TaxItem t : this) {
+            list.add(t);
+        }
+        list.sort(Comparator.comparing(taxItem -> taxItem.NAME));
+        KEYS.clear();
+        for (TaxItem t : list) {
+            KEYS.add(t.getName());
+        }
         changed = true;
     }
 
     @Override
     public JsonArray export() {
         JsonArray array = new JsonArray();
-        for (TaxItem item : TABLE) {
+        for (String key : MAP.keySet()) {
             try {
-                array.add(item.export());
+                array.add(MAP.get(key).export());
             } catch (JsonFormattingException ex) {
-                CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Malformed taxItem: " + item.NAME);
+                CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Malformed taxItem: " + MAP.get(key).NAME);
             }
         }
         return array;

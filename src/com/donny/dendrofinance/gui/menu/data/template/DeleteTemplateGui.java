@@ -1,4 +1,4 @@
-package com.donny.dendrofinance.gui.menu.data;
+package com.donny.dendrofinance.gui.menu.data.template;
 
 import com.donny.dendrofinance.gui.customswing.DendroFactory;
 import com.donny.dendrofinance.gui.customswing.ModalFrame;
@@ -8,7 +8,7 @@ import javax.swing.*;
 import java.awt.*;
 
 public class DeleteTemplateGui extends ModalFrame {
-    public DeleteTemplateGui(JFrame caller, long uuid, Instance curInst) {
+    public DeleteTemplateGui(JFrame caller, String name, Instance curInst) {
         super(caller, "Delete Template", curInst);
         //draw gui
         {
@@ -16,11 +16,11 @@ public class DeleteTemplateGui extends ModalFrame {
             JScrollPane pane = DendroFactory.getScrollField();
             JTextArea text = (JTextArea) pane.getViewport().getView();
             text.setEditable(false);
-            text.setText(curInst.DATA_HANDLER.getTemplateEntry(uuid).toFlatString());
+            text.setText(curInst.DATA_HANDLER.DATABASE.TEMPLATES.get(name).toString());
             JButton cancel = DendroFactory.getButton("Cancel");
             cancel.addActionListener(event -> dispose());
             JButton delete = DendroFactory.getButton("Ok");
-            delete.addActionListener(event -> deleteAction(uuid, caller));
+            delete.addActionListener(event -> deleteAction(name, caller));
 
             //group layout
             {
@@ -63,8 +63,8 @@ public class DeleteTemplateGui extends ModalFrame {
         setLocation(d.width / 2 - getWidth() / 2, d.height / 2 - getHeight() / 2);
     }
 
-    public void deleteAction(long uuid, JFrame caller) {
-        CURRENT_INSTANCE.DATA_HANDLER.deleteTemplate(uuid);
+    public void deleteAction(String name, JFrame caller) {
+        CURRENT_INSTANCE.DATA_HANDLER.DATABASE.TEMPLATES.delete(name);
         if (caller instanceof TemplateGui) {
             ((TemplateGui) caller).updateTable();
         }

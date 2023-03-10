@@ -3,7 +3,6 @@
 * mass removing transactions
 * cash flow
 * statistics gui replacement
-* updates to documentation
 
 ## v0.11.0
 * JsonObject now accepts multiple attempts at a key for get

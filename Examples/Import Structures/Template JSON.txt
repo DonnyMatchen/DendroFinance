@@ -1,0 +1,7 @@
+TemplateCapsule{
+    "n": string
+    "r": integer
+}
+
+n: name of the template
+r: uuid of the transaction it references

@@ -1,5 +1,7 @@
 package com.donny.dendrofinance.json;
 
+import com.donny.dendrofinance.fileio.xarc.XarcOutputStream;
+
 import java.io.FileWriter;
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -62,5 +64,9 @@ public class JsonDecimal extends JsonItem {
     @Override
     protected void stream(FileWriter writer) throws IOException {
         writer.write(decimal.toString());
+    }
+    @Override
+    protected void stream(XarcOutputStream out) {
+        out.write(decimal.toString());
     }
 }

@@ -1,5 +1,6 @@
 package com.donny.dendrofinance.json;
 
+import com.donny.dendrofinance.fileio.xarc.XarcOutputStream;
 import com.donny.dendrofinance.instance.Instance;
 import com.donny.dendrofinance.util.ExportableToJson;
 
@@ -185,6 +186,23 @@ public class JsonArray extends JsonItem {
                     writer.write(",");
                 } else {
                     writer.write("]");
+                }
+            }
+        }
+    }
+    @Override
+    protected void stream(XarcOutputStream out) {
+        if (ARRAY.size() == 0) {
+            out.write("[]");
+        } else {
+            out.write("[");
+            int x = ARRAY.size();
+            for (int i = 0; i < x; i++) {
+                ARRAY.get(i).stream(out);
+                if (i < x - 1) {
+                    out.write(",");
+                } else {
+                    out.write("]");
                 }
             }
         }

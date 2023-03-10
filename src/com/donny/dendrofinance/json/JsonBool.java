@@ -1,5 +1,7 @@
 package com.donny.dendrofinance.json;
 
+import com.donny.dendrofinance.fileio.xarc.XarcOutputStream;
+
 import java.io.FileWriter;
 import java.io.IOException;
 
@@ -39,6 +41,14 @@ public class JsonBool extends JsonItem {
             writer.write("true");
         } else {
             writer.write("false");
+        }
+    }
+    @Override
+    protected void stream(XarcOutputStream out) {
+        if (bool) {
+            out.write("true");
+        } else {
+            out.write("false");
         }
     }
 }

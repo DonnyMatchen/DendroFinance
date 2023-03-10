@@ -1,5 +1,7 @@
 package com.donny.dendrofinance.json;
 
+import com.donny.dendrofinance.fileio.xarc.XarcOutputStream;
+
 import java.io.FileWriter;
 import java.io.IOException;
 
@@ -21,5 +23,9 @@ public class JsonNull extends JsonItem {
     @Override
     protected void stream(FileWriter writer) throws IOException {
         writer.write("null");
+    }
+    @Override
+    protected void stream(XarcOutputStream out) {
+        out.write("null");
     }
 }

@@ -37,11 +37,9 @@
     * `ChangePasswordGui` - functionality temporarily removed
     * `RevExpGui` - functionality removed
     * `StatisticsGui` - functionality temporarily removed
-* stream encryption removed for the time being
-  * block-size left in for future
+* stream encryption reworked
   * `DecryptionInputStream` & `EncryptionOutputStream` removed
-  * encryption and decryption temporarily handled separately from fileio
-  * NOT COMPATIBLE CURRENTLY WITH OLD .XTBL!
+  * added .xarc option for export and import
 
 ## v0.10.3
 * code cleanup

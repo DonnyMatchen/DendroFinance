@@ -1,5 +1,7 @@
 package com.donny.dendrofinance.json;
 
+import com.donny.dendrofinance.fileio.xarc.XarcOutputStream;
+
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -165,6 +167,25 @@ public class JsonObject extends JsonItem {
                     writer.write(",");
                 } else {
                     writer.write("}");
+                }
+            }
+        }
+    }
+    @Override
+    protected void stream(XarcOutputStream out) {
+        if (CONTENTS.keySet().size() == 0) {
+            out.write("{}");
+        } else {
+            out.write("{");
+            ArrayList<String> keys = new ArrayList<>(CONTENTS.keySet());
+            int x = keys.size();
+            for (int i = 0; i < x; i++) {
+                out.write('"' + keys.get(i) + "\":");
+                CONTENTS.get(keys.get(i)).stream(out);
+                if (i < x - 1) {
+                    out.write(",");
+                } else {
+                    out.write("}");
                 }
             }
         }

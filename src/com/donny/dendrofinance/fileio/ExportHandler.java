@@ -4,14 +4,17 @@ import com.donny.dendrofinance.capsules.BudgetCapsule;
 import com.donny.dendrofinance.capsules.StateCapsule;
 import com.donny.dendrofinance.capsules.TemplateCapsule;
 import com.donny.dendrofinance.capsules.TransactionCapsule;
+import com.donny.dendrofinance.fileio.xarc.XarcOutputStream;
 import com.donny.dendrofinance.gui.password.UnkPasswordGui;
 import com.donny.dendrofinance.instance.Instance;
 import com.donny.dendrofinance.json.JsonArray;
 import com.donny.dendrofinance.json.JsonFormattingException;
+import com.donny.dendrofinance.json.JsonItem;
 import com.donny.dendrofinance.types.LDate;
 
 import javax.swing.*;
 import java.io.File;
+import java.io.IOException;
 
 public class ExportHandler {
     private final Instance CURRENT_INSTANCE;
@@ -23,7 +26,7 @@ public class ExportHandler {
         CURRENT_INSTANCE.LOG_HANDLER.trace(getClass(), "ExportHandler initiated");
     }
 
-    public void export(LDate start, LDate end, String extension, String name, JFrame caller) {
+    public void export(LDate start, LDate end, String extension, String name, JFrame caller, boolean[] flags) {
         LDate now = LDate.now(CURRENT_INSTANCE);
         File directory = new File(DIR.getPath() +
                 File.separator + now.toDateString().replace("/", "-") +
@@ -31,83 +34,145 @@ public class ExportHandler {
         CURRENT_INSTANCE.FILE_HANDLER.ensure(directory);
         switch (extension) {
             case "JSON" -> {
-                File transactions = new File(directory.getPath() + File.separator + name + "(" + start.toFileSafeDateString() + "_to_" + end.toFileSafeDateString() + ")-Transactions.json");
-                JsonArray array = new JsonArray();
-                for (TransactionCapsule capsule : CURRENT_INSTANCE.DATA_HANDLER.DATABASE.TRANSACTIONS.getRange(start, end)) {
-                    try {
-                        array.add(capsule.export());
-                    } catch (JsonFormattingException ex) {
-                        CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Damaged Transaction Entry: " + capsule.getUUID() + "\n" + ex);
+                if(flags[0]) {
+                    JsonArray array = new JsonArray();
+                    for (TransactionCapsule capsule : CURRENT_INSTANCE.DATA_HANDLER.DATABASE.TRANSACTIONS.getRange(start, end)) {
+                        try {
+                            array.add(capsule.export());
+                        } catch (JsonFormattingException ex) {
+                            CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Damaged Transaction Entry: " + capsule.getUUID() + "\n" + ex);
+                        }
                     }
+                    CURRENT_INSTANCE.FILE_HANDLER.writeJson(directory, name + "(" + start.toFileSafeDateString() + "_to_" + end.toFileSafeDateString() + ")-Transactions.json", array);
                 }
-                CURRENT_INSTANCE.FILE_HANDLER.writeJson(transactions, array);
 
-                File budgets = new File(directory.getPath() + File.separator + name + "-Budgets.json");
-                array = new JsonArray();
-                for (BudgetCapsule capsule : CURRENT_INSTANCE.DATA_HANDLER.DATABASE.BUDGETS.getBudgets()) {
-                    try {
-                        array.add(capsule.export());
-                    } catch (JsonFormattingException ex) {
-                        CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Damaged Budget Entry: " + capsule.getName() + "\n" + ex);
+                if(flags[1]) {
+                    JsonArray array = new JsonArray();
+                    for (BudgetCapsule capsule : CURRENT_INSTANCE.DATA_HANDLER.DATABASE.BUDGETS.getBudgets()) {
+                        try {
+                            array.add(capsule.export());
+                        } catch (JsonFormattingException ex) {
+                            CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Damaged Budget Entry: " + capsule.getName() + "\n" + ex);
+                        }
                     }
+                    CURRENT_INSTANCE.FILE_HANDLER.writeJson(directory, name + "-Budgets.json", array);
                 }
-                CURRENT_INSTANCE.FILE_HANDLER.writeJson(budgets, array);
 
-                File templates = new File(directory.getPath() + File.separator + name + "-Templates.json");
-                array = new JsonArray();
-                for (TemplateCapsule capsule : CURRENT_INSTANCE.DATA_HANDLER.DATABASE.TEMPLATES.getTemplates()) {
-                    try {
-                        array.add(capsule.export());
-                    } catch (JsonFormattingException ex) {
-                        CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Damaged Template Entry: " + capsule.getName() + "\n" + ex);
+                if(flags[2]) {
+                    JsonArray array = new JsonArray();
+                    for (TemplateCapsule capsule : CURRENT_INSTANCE.DATA_HANDLER.DATABASE.TEMPLATES.getTemplates()) {
+                        try {
+                            array.add(capsule.export());
+                        } catch (JsonFormattingException ex) {
+                            CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Damaged Template Entry: " + capsule.getName() + "\n" + ex);
+                        }
                     }
+                    CURRENT_INSTANCE.FILE_HANDLER.writeJson(directory, name + "-Templates.json", array);
                 }
-                CURRENT_INSTANCE.FILE_HANDLER.writeJson(templates, array);
 
-                File states = new File(directory.getPath() + File.separator + name + "-States.json");
-                array = new JsonArray();
-                for (StateCapsule capsule : CURRENT_INSTANCE.DATA_HANDLER.DATABASE.STATES.getStates()) {
-                    array.add(capsule.export());
+                if(flags[3]) {
+                    JsonArray array = new JsonArray();
+                    for (StateCapsule capsule : CURRENT_INSTANCE.DATA_HANDLER.DATABASE.STATES.getStates()) {
+                        array.add(capsule.export());
+                    }
+                    CURRENT_INSTANCE.FILE_HANDLER.writeJson(directory, name + "-States.json", array);
                 }
-                CURRENT_INSTANCE.FILE_HANDLER.writeJson(states, array);
             }
             case "XTBL" -> {
                 EncryptionHandler encrypt = UnkPasswordGui.getTestPassword(caller, "exports", CURRENT_INSTANCE);
-                JsonArray array = new JsonArray();
-                for (TransactionCapsule capsule : CURRENT_INSTANCE.DATA_HANDLER.DATABASE.TRANSACTIONS.getRange(start, end)) {
-                    try {
-                        array.add(capsule.export());
-                    } catch (JsonFormattingException ex) {
-                        CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Damaged Transaction Entry: " + capsule.getUUID() + "\n" + ex);
+                if(flags[0]) {
+                    JsonArray array = new JsonArray();
+                    for (TransactionCapsule capsule : CURRENT_INSTANCE.DATA_HANDLER.DATABASE.TRANSACTIONS.getRange(start, end)) {
+                        try {
+                            array.add(capsule.export());
+                        } catch (JsonFormattingException ex) {
+                            CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Damaged Transaction Entry: " + capsule.getUUID() + "\n" + ex);
+                        }
                     }
+                    CURRENT_INSTANCE.FILE_HANDLER.writeEncryptJson(directory, name + "(" + start.toFileSafeDateString() + "_to_" + end.toFileSafeDateString() + ")-Transactions.xtbl", array, encrypt);
                 }
-                CURRENT_INSTANCE.FILE_HANDLER.writeEncryptJson(directory, name + "(" + start.toFileSafeDateString() + "_to_" + end.toFileSafeDateString() + ")-Transactions.xtbl", array, encrypt);
 
-                array = new JsonArray();
-                for (BudgetCapsule capsule : CURRENT_INSTANCE.DATA_HANDLER.DATABASE.BUDGETS.getBudgets()) {
-                    try {
-                        array.add(capsule.export());
-                    } catch (JsonFormattingException ex) {
-                        CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Damaged Budget Entry: " + capsule.getName() + "\n" + ex);
+                if(flags[1]) {
+                    JsonArray array = new JsonArray();
+                    for (BudgetCapsule capsule : CURRENT_INSTANCE.DATA_HANDLER.DATABASE.BUDGETS.getBudgets()) {
+                        try {
+                            array.add(capsule.export());
+                        } catch (JsonFormattingException ex) {
+                            CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Damaged Budget Entry: " + capsule.getName() + "\n" + ex);
+                        }
                     }
+                    CURRENT_INSTANCE.FILE_HANDLER.writeEncryptJson(directory, name + "-Budgets.xtbl", array, encrypt);
                 }
-                CURRENT_INSTANCE.FILE_HANDLER.writeEncryptJson(directory, name + "-Budgets.xtbl", array, encrypt);
 
-                array = new JsonArray();
-                for (TemplateCapsule capsule : CURRENT_INSTANCE.DATA_HANDLER.DATABASE.TEMPLATES.getTemplates()) {
-                    try {
-                        array.add(capsule.export());
-                    } catch (JsonFormattingException ex) {
-                        CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Damaged Template Entry: " + capsule.getName() + "\n" + ex);
+                if(flags[2]) {
+                    JsonArray array = new JsonArray();
+                    for (TemplateCapsule capsule : CURRENT_INSTANCE.DATA_HANDLER.DATABASE.TEMPLATES.getTemplates()) {
+                        try {
+                            array.add(capsule.export());
+                        } catch (JsonFormattingException ex) {
+                            CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Damaged Template Entry: " + capsule.getName() + "\n" + ex);
+                        }
                     }
+                    CURRENT_INSTANCE.FILE_HANDLER.writeEncryptJson(directory, name + "-Templates.xtbl", array, encrypt);
                 }
-                CURRENT_INSTANCE.FILE_HANDLER.writeEncryptJson(directory, name + "-Templates.xtbl", array, encrypt);
 
-                array = new JsonArray();
-                for (StateCapsule capsule : CURRENT_INSTANCE.DATA_HANDLER.DATABASE.STATES.getStates()) {
-                    array.add(capsule.export());
+                if(flags[3]) {
+                    JsonArray array = new JsonArray();
+                    for (StateCapsule capsule : CURRENT_INSTANCE.DATA_HANDLER.DATABASE.STATES.getStates()) {
+                        array.add(capsule.export());
+                    }
+                    CURRENT_INSTANCE.FILE_HANDLER.writeEncryptJson(directory, name + "-States.xtbl", array, encrypt);
                 }
-                CURRENT_INSTANCE.FILE_HANDLER.writeEncryptJson(directory, name + "-States.xtbl", array, encrypt);
+            }
+            case "XARC" -> {
+                try{
+                    EncryptionHandler encrypt = UnkPasswordGui.getTestPassword(caller, "exports", CURRENT_INSTANCE);
+                    if(flags[0]) {
+                        JsonArray array = new JsonArray();
+                        for (TransactionCapsule capsule : CURRENT_INSTANCE.DATA_HANDLER.DATABASE.TRANSACTIONS.getRange(start, end)) {
+                            try {
+                                array.add(capsule.export());
+                            } catch (JsonFormattingException ex) {
+                                CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Damaged Transaction Entry: " + capsule.getUUID() + "\n" + ex);
+                            }
+                        }
+                        JsonItem.save(array, new XarcOutputStream(directory, name + "(" + start.toFileSafeDateString() + "_to_" + end.toFileSafeDateString() + ")-Transactions.xtbl", encrypt, CURRENT_INSTANCE));
+                    }
+
+                    if(flags[1]) {
+                        JsonArray array = new JsonArray();
+                        for (BudgetCapsule capsule : CURRENT_INSTANCE.DATA_HANDLER.DATABASE.BUDGETS.getBudgets()) {
+                            try {
+                                array.add(capsule.export());
+                            } catch (JsonFormattingException ex) {
+                                CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Damaged Budget Entry: " + capsule.getName() + "\n" + ex);
+                            }
+                        }
+                        JsonItem.save(array, new XarcOutputStream(directory, name + "-Budgets.xtbl", encrypt, CURRENT_INSTANCE));
+                    }
+
+                    if(flags[2]) {
+                        JsonArray array = new JsonArray();
+                        for (TemplateCapsule capsule : CURRENT_INSTANCE.DATA_HANDLER.DATABASE.TEMPLATES.getTemplates()) {
+                            try {
+                                array.add(capsule.export());
+                            } catch (JsonFormattingException ex) {
+                                CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Damaged Template Entry: " + capsule.getName() + "\n" + ex);
+                            }
+                        }
+                        JsonItem.save(array, new XarcOutputStream(directory, name + "-Templates.xtbl", encrypt, CURRENT_INSTANCE));
+                    }
+
+                    if(flags[3]) {
+                        JsonArray array = new JsonArray();
+                        for (StateCapsule capsule : CURRENT_INSTANCE.DATA_HANDLER.DATABASE.STATES.getStates()) {
+                            array.add(capsule.export());
+                        }
+                        JsonItem.save(array, new XarcOutputStream(directory, name + "-States.xtbl", encrypt, CURRENT_INSTANCE));
+                    }
+                } catch (IOException e) {
+                    CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Error in output\n" + e);
+                }
             }
         }
     }

@@ -14,6 +14,7 @@ public class ExportGui extends RegisterFrame {
     private final DateRange RANGE;
     private final JTextField NAME;
     private final JComboBox<String> TYPE;
+    private final JCheckBox TRANSACTION, BUDGET, TEMPLATE, STATE;
 
     public ExportGui(MainGui caller, Instance curInst) {
         super(caller, "Export", curInst);
@@ -24,6 +25,7 @@ public class ExportGui extends RegisterFrame {
             JLabel b = new JLabel("Date Range");
             JLabel c = new JLabel("Label");
             JLabel d = new JLabel("Extension");
+            JLabel e = new JLabel("Tables");
 
             RANGE = new DateRange(false);
             DateRange display = new DateRange(false);
@@ -37,6 +39,12 @@ public class ExportGui extends RegisterFrame {
             TYPE = new JComboBox<>();
             TYPE.addItem("JSON");
             TYPE.addItem("XTBL");
+            TYPE.addItem("XARC");
+
+            TRANSACTION = new JCheckBox("Transactions");
+            BUDGET = new JCheckBox("Budgets");
+            TEMPLATE = new JCheckBox("Templates");
+            STATE = new JCheckBox("States");
 
             JButton export = DendroFactory.getButton("Export");
             export.addActionListener(event -> exportAction());
@@ -57,6 +65,8 @@ public class ExportGui extends RegisterFrame {
                                                         c, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                                 ).addComponent(
                                                         d, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                                ).addComponent(
+                                                        e, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                                 )
                                         ).addGap(DendroFactory.SMALL_GAP).addGroup(
                                                 main.createParallelGroup(GroupLayout.Alignment.LEADING).addComponent(
@@ -67,6 +77,16 @@ public class ExportGui extends RegisterFrame {
                                                         NAME, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
                                                 ).addComponent(
                                                         TYPE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
+                                                ).addGroup(
+                                                        main.createSequentialGroup().addComponent(
+                                                                TRANSACTION, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                                        ).addGap(DendroFactory.SMALL_GAP).addComponent(
+                                                                BUDGET, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                                        ).addGap(DendroFactory.SMALL_GAP).addComponent(
+                                                                TEMPLATE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                                        ).addGap(DendroFactory.SMALL_GAP).addComponent(
+                                                                STATE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                                        )
                                                 )
                                         )
                                 ).addComponent(
@@ -99,12 +119,25 @@ public class ExportGui extends RegisterFrame {
                                 ).addComponent(
                                         TYPE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                 )
+                        ).addGap(DendroFactory.SMALL_GAP).addGroup(
+                                main.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(
+                                        e, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                ).addComponent(
+                                        TRANSACTION, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                ).addComponent(
+                                        BUDGET, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                ).addComponent(
+                                        TEMPLATE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                ).addComponent(
+                                        STATE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                )
                         ).addGap(DendroFactory.MEDIUM_GAP).addComponent(
                                 export, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                         ).addContainerGap()
                 );
             }
         }
+        TRANSACTION.setSelected(true);
         RANGE.initDefault(CURRENT_INSTANCE);
         pack();
         Dimension d = Toolkit.getDefaultToolkit().getScreenSize();
@@ -114,7 +147,12 @@ public class ExportGui extends RegisterFrame {
     private void exportAction() {
         LDate[] range = RANGE.getRange(CURRENT_INSTANCE);
         if (range != null) {
-            CURRENT_INSTANCE.EXPORT_HANDLER.export(range[0], range[1], (String) TYPE.getSelectedItem(), NAME.getText(), this);
+            CURRENT_INSTANCE.EXPORT_HANDLER.export(range[0], range[1], (String) TYPE.getSelectedItem(), NAME.getText(), this, new boolean[]{
+                    TRANSACTION.isSelected(),
+                    BUDGET.isSelected(),
+                    TEMPLATE.isSelected(),
+                    STATE.isSelected()
+            });
             dispose();
         }
     }

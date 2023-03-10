@@ -105,7 +105,7 @@ public class EncryptionHandler {
             }
         }
         CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Incorrect password");
-        return null;
+        return new byte[0];
     }
 
     public byte[] decrypt(byte[] bytes) {
@@ -118,7 +118,7 @@ public class EncryptionHandler {
             }
         }
         CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Incorrect password");
-        return null;
+        return new byte[0];
     }
 
     public String getDataBaseEncryptionString() {

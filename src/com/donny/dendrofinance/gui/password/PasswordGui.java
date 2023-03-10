@@ -215,8 +215,8 @@ public class PasswordGui extends JFrame {
         config.put("main", new JsonString("USD"));
         CURRENT_INSTANCE.main__Ticker = "USD Extra";
         config.put("main__", new JsonString("USD Extra"));
-        CURRENT_INSTANCE.blockSize = 4;
-        config.put("block", new JsonDecimal(4));
+        CURRENT_INSTANCE.blockSize = 16;
+        config.put("block", new JsonDecimal(16));
         CURRENT_INSTANCE.freq = Frequency.NEVER;
         config.put("freq", new JsonString("NEVER"));
         CURRENT_INSTANCE.range = 90;

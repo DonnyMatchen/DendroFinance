@@ -17,6 +17,7 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class PositionGui extends RegisterFrame {
     private final JTextField DATE;
@@ -36,7 +37,7 @@ public class PositionGui extends RegisterFrame {
             TABLE_ACCESS = ((DefaultTableModel) table.getModel());
 
             JButton recalculate = DendroFactory.getButton("Recalculate");
-            recalculate.addActionListener(event -> reCalcAction());
+            recalculate.addActionListener(event -> update());
 
             //group layout
             {
@@ -77,7 +78,7 @@ public class PositionGui extends RegisterFrame {
         setLocation(d.width / 2 - getWidth() / 2, d.height / 2 - getHeight() / 2);
     }
 
-    public final void reCalcAction() {
+    public final void update() {
         while (TABLE_ACCESS.getRowCount() > 0) {
             TABLE_ACCESS.removeRow(0);
         }
@@ -88,7 +89,7 @@ public class PositionGui extends RegisterFrame {
         } else {
             try {
                 LDate date = Validation.validateDate(DATE, CURRENT_INSTANCE);
-                if (date.toDateString().equals(LDate.now(CURRENT_INSTANCE).toDateString())) {
+                if (date.toDateString().equals(point.toDateString())) {
                     useDate = false;
                 } else {
                     useDate = true;
@@ -101,12 +102,13 @@ public class PositionGui extends RegisterFrame {
         }
         BigDecimal tCost = BigDecimal.ZERO, tVal = BigDecimal.ZERO;
         ArrayList<Position> positions = CURRENT_INSTANCE.DATA_HANDLER.getPositions(point);
+        HashMap<LCurrency, BigDecimal> prices = CURRENT_INSTANCE.DATA_HANDLER.pricesAsOf(CURRENT_INSTANCE.main, point);
         for (LStock stock : CURRENT_INSTANCE.STOCKS) {
             for (Position p : positions) {
                 if (p.ASSET.equals(stock)) {
                     BigDecimal[] analog = p.collapse();
                     if (analog[0].compareTo(BigDecimal.ONE.divide(BigDecimal.TEN.pow(p.ASSET.getPlaces() - 1), CURRENT_INSTANCE.precision)) > 0) {
-                        BigDecimal val = useDate ? p.ASSET.getTotal(analog[0], point) : p.ASSET.getTotal(analog[0]);
+                        BigDecimal val = prices.get(stock).multiply(analog[0]);;
                         tCost = tCost.add(analog[1]);
                         tVal = tVal.add(val);
                         TABLE_ACCESS.addRow(new String[]{
@@ -127,7 +129,7 @@ public class PositionGui extends RegisterFrame {
                 if (p.ASSET.equals(currency)) {
                     BigDecimal[] analog = p.collapse();
                     if (analog[0].compareTo(BigDecimal.ONE.divide(BigDecimal.TEN.pow(p.ASSET.getPlaces() - 1), CURRENT_INSTANCE.precision)) > 0) {
-                        BigDecimal val = useDate ? p.ASSET.getTotal(analog[0], point) : p.ASSET.getTotal(analog[0]);
+                        BigDecimal val = prices.get(currency).multiply(analog[0]);;
                         tCost = tCost.add(analog[1]);
                         tVal = tVal.add(val);
                         TABLE_ACCESS.addRow(new String[]{
@@ -154,7 +156,7 @@ public class PositionGui extends RegisterFrame {
                         over = analog[0].compareTo(BigDecimal.ONE.divide(BigDecimal.TEN, CURRENT_INSTANCE.precision)) >= 0;
                     }
                     if (over) {
-                        BigDecimal val = useDate ? p.ASSET.getTotal(analog[0], point) : p.ASSET.getTotal(analog[0]);
+                        BigDecimal val = prices.get(inventory).multiply(analog[0]);
                         tCost = tCost.add(analog[1]);
                         tVal = tVal.add(val);
                         TABLE_ACCESS.addRow(new String[]{

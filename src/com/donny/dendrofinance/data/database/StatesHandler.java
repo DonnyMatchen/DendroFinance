@@ -106,29 +106,16 @@ public class StatesHandler extends TableHandler<Long, StateCapsule> {
     }
     public StateCapsule getBefore(Long timestamp) {
         try {
-            if (!CURRENT_INSTANCE.UNIQUE_HANDLER.checkTimestamp(timestamp)) {
-                Statement statement = CURRENT_INSTANCE.DATA_HANDLER.DATABASE.con.createStatement();
-                statement.execute("SELECT TOP 1 dtm FROM STATES WHERE dtm < " + timestamp + " ORDER BY dtm DESC");
-                ResultSet set = statement.getResultSet();
-                if (set.next()) {
-                    return new StateCapsule(
-                            new LDate(set.getLong(1), CURRENT_INSTANCE),
-                            (JsonObject) JsonItem.digest(SqlEscape.eat(set.getString(2))),
-                            (JsonArray) JsonItem.digest(SqlEscape.eat(set.getString(3))),
-                            (JsonObject) JsonItem.digest(SqlEscape.eat(set.getString(4))),
-                            CURRENT_INSTANCE
-                    );
-                } else {
-                    return null;
-                }
+            Statement statement = CURRENT_INSTANCE.DATA_HANDLER.DATABASE.con.createStatement();
+            statement.execute("SELECT TOP 1 dtm FROM STATES WHERE dtm < " + timestamp + " ORDER BY dtm DESC");
+            ResultSet set = statement.getResultSet();
+            if (set.next()) {
+                return get(set.getLong(1));
             } else {
                 return null;
             }
         } catch (SQLException e) {
-            CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Unable to retrieve state: " + Long.toUnsignedString(timestamp) + "\n" + e);
-            return null;
-        } catch (JsonFormattingException e) {
-            CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Malformed contents for state: " + Long.toUnsignedString(timestamp) + "\n" + e);
+            CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Unable to retrieve a state before: " + Long.toUnsignedString(timestamp) + "\n" + e);
             return null;
         }
     }

@@ -72,9 +72,10 @@ public class MainGui extends JFrame {
 
             JLabel a = new JLabel("Transactions");
             JLabel b = new JLabel("Search");
-            JLabel c = new JLabel("Date Range");
-            JLabel d = new JLabel("Count");
-            JLabel e = new JLabel("Transaction Info");
+            JLabel c = new JLabel("Full Range");
+            JLabel d = new JLabel("Date Range");
+            JLabel e = new JLabel("Count");
+            JLabel f = new JLabel("Transaction Info");
 
             JScrollPane tablePane = DendroFactory.getTable(new String[]{
                     "UUID", "Date", "Entity", "Items", "Description", "Account", "Debit", "Credit", "Ghost", "Tracking", "Meta"
@@ -128,6 +129,20 @@ public class MainGui extends JFrame {
             });
 
             RANGE = new DateRange(false);
+            RANGE.addKeyListener(new KeyAdapter() {
+                @Override
+                public void keyTyped(KeyEvent keyEvent) {
+                    if (keyEvent.getKeyChar() == '\n') {
+                        updateTable();
+                    }
+                }
+            });
+            DateRange full = new DateRange(false);
+            full.setEditable(false);
+            full.init(
+                    new LDate(CURRENT_INSTANCE.DATA_HANDLER.DATABASE.TRANSACTIONS.getMinDate(), CURRENT_INSTANCE),
+                    new LDate(CURRENT_INSTANCE.DATA_HANDLER.DATABASE.TRANSACTIONS.getMaxDate(), CURRENT_INSTANCE)
+            );
 
             COUNT = new JTextField();
             COUNT.setEditable(false);
@@ -342,10 +357,14 @@ public class MainGui extends JFrame {
                                                             c, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                                     ).addComponent(
                                                             d, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                                    ).addComponent(
+                                                            e, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                                     )
                                             ).addGap(DendroFactory.SMALL_GAP).addGroup(
                                                     tableLayout.createParallelGroup(GroupLayout.Alignment.LEADING).addComponent(
                                                             SEARCH, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
+                                                    ).addComponent(
+                                                            full, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
                                                     ).addComponent(
                                                             RANGE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
                                                     ).addComponent(
@@ -370,11 +389,17 @@ public class MainGui extends JFrame {
                                     tableLayout.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(
                                             c, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                     ).addComponent(
-                                            RANGE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                            full, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                     )
                             ).addGap(DendroFactory.SMALL_GAP).addGroup(
                                     tableLayout.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(
                                             d, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                    ).addComponent(
+                                            RANGE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                    )
+                            ).addGap(DendroFactory.SMALL_GAP).addGroup(
+                                    tableLayout.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(
+                                            e, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                     ).addComponent(
                                             COUNT, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                     )
@@ -390,7 +415,7 @@ public class MainGui extends JFrame {
                     metaLayout.setHorizontalGroup(
                             metaLayout.createSequentialGroup().addContainerGap().addGroup(
                                     metaLayout.createParallelGroup(GroupLayout.Alignment.LEADING).addComponent(
-                                            e, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                            f, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                     ).addComponent(
                                             displayPane, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
                                     )
@@ -398,7 +423,7 @@ public class MainGui extends JFrame {
                     );
                     metaLayout.setVerticalGroup(
                             metaLayout.createSequentialGroup().addComponent(
-                                    e, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                    f, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                             ).addGap(DendroFactory.MEDIUM_GAP).addComponent(
                                     displayPane, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
                             ).addContainerGap()

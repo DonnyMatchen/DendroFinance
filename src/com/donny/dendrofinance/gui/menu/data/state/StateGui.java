@@ -22,7 +22,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class StateGui extends RegisterFrame {
-    private final DateRange RANGE, FULL;
+    private final DateRange RANGE;
     private final JComboBox<LDate> DATE;
     private final DefaultTableModel ACCOUNTS, POSITIONS, ASSETS, LOANS;
 
@@ -33,9 +33,9 @@ public class StateGui extends RegisterFrame {
         {
             RANGE = new DateRange(false);
             RANGE.initRange(365, CURRENT_INSTANCE);
-            FULL = new DateRange(false);
-            FULL.setEditable(false);
-            FULL.init(
+            DateRange full = new DateRange(false);
+            full.setEditable(false);
+            full.init(
                     new LDate(CURRENT_INSTANCE.DATA_HANDLER.DATABASE.STATES.getMinDate(), CURRENT_INSTANCE),
                     new LDate(CURRENT_INSTANCE.DATA_HANDLER.DATABASE.STATES.getMaxDate(), CURRENT_INSTANCE)
             );
@@ -106,7 +106,7 @@ public class StateGui extends RegisterFrame {
                                                 )
                                         ).addGap(DendroFactory.SMALL_GAP).addGroup(
                                                 main.createParallelGroup(GroupLayout.Alignment.LEADING).addComponent(
-                                                        FULL, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
+                                                        full, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
                                                 ).addGroup(
                                                         main.createSequentialGroup().addComponent(
                                                                 RANGE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
@@ -165,7 +165,7 @@ public class StateGui extends RegisterFrame {
                                 main.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(
                                         a, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                 ).addComponent(
-                                        FULL, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                        full, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                 )
                         ).addGap(DendroFactory.SMALL_GAP).addGroup(
                                 main.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(

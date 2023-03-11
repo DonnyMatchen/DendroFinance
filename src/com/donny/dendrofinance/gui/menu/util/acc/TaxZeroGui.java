@@ -2,7 +2,8 @@ package com.donny.dendrofinance.gui.menu.util.acc;
 
 import com.donny.dendrofinance.account.Account;
 import com.donny.dendrofinance.account.BroadAccountType;
-import com.donny.dendrofinance.entry.TransactionEntry;
+import com.donny.dendrofinance.capsules.TransactionCapsule;
+import com.donny.dendrofinance.fileio.ImportHandler;
 import com.donny.dendrofinance.gui.MainGui;
 import com.donny.dendrofinance.gui.customswing.DendroFactory;
 import com.donny.dendrofinance.gui.customswing.RegisterFrame;
@@ -80,15 +81,15 @@ public class TaxZeroGui extends RegisterFrame {
                     sb.append(", G!").append(a.getName()).append("(").append(accounts.get(a).multiply(BigDecimal.valueOf(-1))).append(")");
                 }
             }
-            TransactionEntry entry = new TransactionEntry(CURRENT_INSTANCE);
-            entry.insert(
+            TransactionCapsule capsule = new TransactionCapsule(CURRENT_INSTANCE);
+            capsule.insert(
                     date,
                     "ACC",
                     "",
                     "Tax Zeroing",
                     new LAccountSet(sb.substring(2), CURRENT_INSTANCE)
             );
-            CURRENT_INSTANCE.DATA_HANDLER.addTransaction(entry);
+            CURRENT_INSTANCE.DATA_HANDLER.DATABASE.TRANSACTIONS.add(capsule, ImportHandler.ImportMode.KEEP);
             CALLER.updateTable();
             dispose();
         } catch (ValidationFailedException e) {

@@ -1,9 +1,9 @@
 package com.donny.dendrofinance.gui.password;
 
 import com.donny.dendrofinance.DendroFinance;
-import com.donny.dendrofinance.data.LogHandler;
 import com.donny.dendrofinance.gui.customswing.DendroFactory;
 import com.donny.dendrofinance.instance.Instance;
+import com.donny.dendrofinance.instance.Frequency;
 import com.donny.dendrofinance.json.*;
 
 import javax.swing.*;
@@ -147,7 +147,7 @@ public class PasswordGui extends JFrame {
         }
         CURRENT_INSTANCE.ENCRYPTION_HANDLER.changeKey(PASSWORD.getPassword());
         PASSWORD.setText("");
-        if (CURRENT_INSTANCE.ENCRYPTION_HANDLER.keysInitiated() && CURRENT_INSTANCE.ENCRYPTION_HANDLER.checkPassword()) {
+        if (CURRENT_INSTANCE.ENCRYPTION_HANDLER.keysInitiated()) {
             done = true;
             setVisible(false);
         } else {
@@ -161,12 +161,6 @@ public class PasswordGui extends JFrame {
         CURRENT_INSTANCE.data = new File(CURRENT_INSTANCE.data.getPath() + File.separator + config.getString("name").getString());
         if (config.containsKey("flags")) {
             String flags = config.getString("flags").getString();
-            if (flags.contains("l")) {
-                CURRENT_INSTANCE.log = false;
-            }
-            if (flags.contains("L")) {
-                CURRENT_INSTANCE.log = true;
-            }
             if (flags.contains("A")) {
                 CURRENT_INSTANCE.american = true;
             }
@@ -179,18 +173,15 @@ public class PasswordGui extends JFrame {
             if (flags.contains("D")) {
                 CURRENT_INSTANCE.day = true;
             }
-            if (flags.contains("X")) {
-                CURRENT_INSTANCE.large = true;
+            if (flags.contains("S")) {
+                CURRENT_INSTANCE.auto = true;
             }
-            if (flags.contains("x")) {
-                CURRENT_INSTANCE.large = false;
+            if (flags.contains("s")) {
+                CURRENT_INSTANCE.auto = false;
             }
         }
         if (config.containsKey("precision")) {
             CURRENT_INSTANCE.precision = new MathContext(config.getDecimal("precision").decimal.intValue());
-        }
-        if (config.containsKey("log")) {
-            CURRENT_INSTANCE.logLevel = new LogHandler.LogLevel(config.getString("log").getString());
         }
         if (config.containsKey("main")) {
             CURRENT_INSTANCE.mainTicker = (config.getString("main").getString());
@@ -203,26 +194,33 @@ public class PasswordGui extends JFrame {
         if (config.containsKey("block")) {
             CURRENT_INSTANCE.blockSize = config.getDecimal("block").decimal.intValue();
         }
+        if (config.containsKey("freq")) {
+            CURRENT_INSTANCE.freq = Frequency.fromString(config.getString("freq").getString());
+        }
+        if (config.containsKey("range")) {
+            CURRENT_INSTANCE.range = config.getDecimal("range").decimal.intValue();
+        }
     }
 
     public JsonObject getConfig(String name) throws JsonFormattingException {
         JsonObject config = new JsonObject();
         config.put("name", new JsonString(name));
-        CURRENT_INSTANCE.log = false;
         CURRENT_INSTANCE.american = true;
         CURRENT_INSTANCE.day = false;
-        CURRENT_INSTANCE.large = false;
-        config.put("flags", new JsonString("lAdx"));
+        CURRENT_INSTANCE.auto = false;
+        config.put("flags", new JsonString("Ads"));
         CURRENT_INSTANCE.precision = new MathContext(20);
         config.put("precision", new JsonDecimal(20));
-        CURRENT_INSTANCE.logLevel = new LogHandler.LogLevel("info");
-        config.put("log", new JsonString("info"));
         CURRENT_INSTANCE.mainTicker = "USD";
         config.put("main", new JsonString("USD"));
         CURRENT_INSTANCE.main__Ticker = "USD Extra";
         config.put("main__", new JsonString("USD Extra"));
-        CURRENT_INSTANCE.blockSize = 4;
-        config.put("block", new JsonDecimal(4));
+        CURRENT_INSTANCE.blockSize = 16;
+        config.put("block", new JsonDecimal(16));
+        CURRENT_INSTANCE.freq = Frequency.NEVER;
+        config.put("freq", new JsonString("NEVER"));
+        CURRENT_INSTANCE.range = 90;
+        config.put("range", new JsonDecimal(90));
         return config;
     }
 

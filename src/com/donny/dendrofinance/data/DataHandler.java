@@ -4,18 +4,18 @@ import com.donny.dendrofinance.account.AWColumn;
 import com.donny.dendrofinance.account.Account;
 import com.donny.dendrofinance.account.AccountWrapper;
 import com.donny.dendrofinance.account.Exchange;
+import com.donny.dendrofinance.capsules.StateCapsule;
 import com.donny.dendrofinance.currency.LCurrency;
 import com.donny.dendrofinance.currency.LInventory;
 import com.donny.dendrofinance.currency.LStock;
-import com.donny.dendrofinance.entry.BudgetEntry;
-import com.donny.dendrofinance.entry.EntryType;
-import com.donny.dendrofinance.entry.TemplateEntry;
-import com.donny.dendrofinance.entry.TransactionEntry;
-import com.donny.dendrofinance.entry.meta.*;
-import com.donny.dendrofinance.entry.totals.OrderBookEntry;
-import com.donny.dendrofinance.entry.totals.Position;
+import com.donny.dendrofinance.data.database.*;
+import com.donny.dendrofinance.capsules.TransactionCapsule;
+import com.donny.dendrofinance.capsules.meta.*;
+import com.donny.dendrofinance.capsules.totals.OrderBookEntry;
+import com.donny.dendrofinance.capsules.totals.Position;
 import com.donny.dendrofinance.fileio.ImportHandler;
 import com.donny.dendrofinance.instance.Instance;
+import com.donny.dendrofinance.json.JsonObject;
 import com.donny.dendrofinance.types.LAccountSet;
 import com.donny.dendrofinance.types.LDate;
 import com.donny.dendrofinance.util.Aggregation;
@@ -24,217 +24,194 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.HashMap;
 
 public class DataHandler {
     protected final Instance CURRENT_INSTANCE;
-    protected final DataSet<TransactionEntry> TRANSACTIONS;
-    protected final DataSet<BudgetEntry> BUDGETS;
-    protected final DataSet<TemplateEntry> TEMPLATES;
     protected final ArrayList<String> BUDGET_TYPES;
+    public final DatabaseHandler DATABASE;
     public boolean budgetTypesChanged = false;
 
     public DataHandler(Instance curInst) {
         CURRENT_INSTANCE = curInst;
-        TRANSACTIONS = new DataSet<>("Transactions", EntryType.TRANSACTION, CURRENT_INSTANCE);
-        BUDGETS = new DataSet<>("Budgets", EntryType.BUDGET, CURRENT_INSTANCE);
-        TEMPLATES = new DataSet<>("Templates", EntryType.TEMPLATE, CURRENT_INSTANCE);
+        DATABASE = new DatabaseHandler(CURRENT_INSTANCE);
         BUDGET_TYPES = new ArrayList<>();
         CURRENT_INSTANCE.LOG_HANDLER.trace(getClass(), "DataHandler Initiated");
     }
 
-    public void reload() {
-        CURRENT_INSTANCE.UUID_HANDLER.UUIDS.clear();
-        TRANSACTIONS.reload();
-        BUDGETS.reload();
-        TEMPLATES.reload();
+    //Budget type operations
+    public ArrayList<String> getBudgetTypes() {
+        return new ArrayList<>(BUDGET_TYPES);
     }
 
-    public boolean addTransaction(TransactionEntry entry, ImportHandler.ImportMode mode) {
-        if (entry.clashing) {
-            switch (mode) {
-                case IGNORE -> {
-                    return false;
-                }
-                case KEEP -> {
-                    return TRANSACTIONS.add(entry);
-                }
-                case OVERWRITE -> {
-                    TransactionEntry orig = null;
-                    for (TransactionEntry candidate : readTransactions()) {
-                        if (candidate.getUUID() == entry.getUUID()) {
-                            orig = candidate;
-                            break;
+    public void addBudgetType(String budgetType) {
+        BUDGET_TYPES.add(budgetType);
+    }
+
+    public void resetBudgetTypes(ArrayList<String> newTypes) {
+        BUDGET_TYPES.clear();
+        BUDGET_TYPES.addAll(newTypes);
+    }
+
+    //state formation
+    public void createStates() {
+        LDate now = LDate.now(CURRENT_INSTANCE);
+        LDate dawn = new LDate(DATABASE.TRANSACTIONS.getMinDate(), CURRENT_INSTANCE);
+        switch (CURRENT_INSTANCE.freq) {
+            case NEVER -> {
+            }
+            case ANNUAL -> {
+                for (int y = dawn.getYear() + 1; y < now.getYear() + 1; y++) {
+                    LDate check = new LDate(y, 1, 1, 0, 0, 0, 0, CURRENT_INSTANCE);
+                    long c = check.getTime() - 1;
+                    if (DATABASE.STATES.get(check.getTime() - 1) == null) {
+                        StateCapsule capsule = new StateCapsule(new LDate(c, CURRENT_INSTANCE), CURRENT_INSTANCE);
+                        if (capsule.hasContents()) {
+                            DATABASE.STATES.add(capsule, ImportHandler.ImportMode.OVERWRITE);
+                            CURRENT_INSTANCE.LOG_HANDLER.info(getClass(), "New State added automatically: " + new LDate(c, CURRENT_INSTANCE));
                         }
                     }
-                    if (orig != null) {
-                        TRANSACTIONS.remove(orig);
-                    }
-                    return TRANSACTIONS.add(entry);
                 }
             }
-        }
-        return TRANSACTIONS.add(entry);
-    }
-
-    public boolean addTransaction(TransactionEntry entry) {
-        return addTransaction(entry, ImportHandler.ImportMode.KEEP);
-    }
-
-    public boolean addBudget(BudgetEntry entry, ImportHandler.ImportMode mode) {
-        if (entry.clashing) {
-            switch (mode) {
-                case IGNORE -> {
-                    return false;
+            case QUARTERLY -> {
+                int y = dawn.getYear(), m = dawn.getMonth();
+                String q = dawn.getQuarter();
+                switch (q) {
+                    case "Q1" -> q = "Q2";
+                    case "Q2" -> q = "Q3";
+                    case "Q3" -> q = "Q4";
+                    case "Q4" -> {
+                        q = "Q1";
+                        y++;
+                    }
                 }
-                case KEEP -> {
-                    return BUDGETS.add(entry);
+                switch (q) {
+                    case "Q1" -> m = 1;
+                    case "Q2" -> m = 4;
+                    case "Q3" -> m = 7;
+                    case "Q4" -> m = 10;
                 }
-                case OVERWRITE -> {
-                    BudgetEntry orig = null;
-                    for (BudgetEntry candidate : readBudgets()) {
-                        if (candidate.getUUID() == entry.getUUID()) {
-                            orig = candidate;
-                            break;
+                LDate check = new LDate(y, m, 1, 0, 0, 0, 0, CURRENT_INSTANCE);
+                while (check.compareTo(now) < 0) {
+                    long c = check.getTime() - 1;
+                    if (DATABASE.STATES.get(check.getTime() - 1) == null) {
+                        StateCapsule capsule = new StateCapsule(new LDate(c, CURRENT_INSTANCE), CURRENT_INSTANCE);
+                        if (capsule.hasContents()) {
+                            DATABASE.STATES.add(capsule, ImportHandler.ImportMode.OVERWRITE);
                         }
                     }
-                    if (orig != null) {
-                        BUDGETS.remove(orig);
+                    m += 3;
+                    if (m > 12) {
+                        m -= 12;
+                        y++;
                     }
-                    return BUDGETS.add(entry);
+                    check = new LDate(y, m, 1, 0, 0, 0, 0, CURRENT_INSTANCE);
                 }
             }
-        }
-        return BUDGETS.add(entry);
-    }
-
-    public boolean addBudget(BudgetEntry entry) {
-        return addBudget(entry, ImportHandler.ImportMode.KEEP);
-    }
-
-    public boolean addTemplate(TemplateEntry entry, ImportHandler.ImportMode mode) {
-        if (entry.clashing) {
-            switch (mode) {
-                case IGNORE -> {
-                    return false;
+            case MONTHLY -> {
+                int y = dawn.getYear(), m = dawn.getMonth();
+                m++;
+                if (m == 13) {
+                    m = 1;
+                    y++;
                 }
-                case KEEP -> {
-                    return TEMPLATES.add(entry);
-                }
-                case OVERWRITE -> {
-                    TemplateEntry orig = null;
-                    for (TemplateEntry candidate : readTemplates()) {
-                        if (candidate.getUUID() == entry.getUUID()) {
-                            orig = candidate;
-                            break;
+                LDate check = new LDate(y, m, 1, 0, 0, 0, 0, CURRENT_INSTANCE);
+                while (check.compareTo(now) < 0) {
+                    long c = check.getTime() - 1;
+                    if (DATABASE.STATES.get(check.getTime() - 1) == null) {
+                        StateCapsule capsule = new StateCapsule(new LDate(c, CURRENT_INSTANCE), CURRENT_INSTANCE);
+                        if (capsule.hasContents()) {
+                            DATABASE.STATES.add(capsule, ImportHandler.ImportMode.OVERWRITE);
                         }
                     }
-                    if (orig != null) {
-                        TEMPLATES.remove(orig);
+                    m++;
+                    if (m == 13) {
+                        m = 1;
+                        y++;
                     }
-                    return TEMPLATES.add(entry);
+                    check = new LDate(y, m, 1, 0, 0, 0, 0, CURRENT_INSTANCE);
                 }
             }
         }
-        return TEMPLATES.add(entry);
     }
 
-    public boolean addTemplate(TemplateEntry entry) {
-        return addTemplate(entry, ImportHandler.ImportMode.KEEP);
-    }
-
-    public boolean deleteTransaction(long uuid) {
-        TransactionEntry cand = null;
-        for (TransactionEntry entry : readTransactions()) {
-            if (entry.getUUID() == uuid) {
-                cand = entry;
-                break;
+    //meta aggregation
+    public ArrayList<CheckMetadata> getChecks(LDate start, LDate end) {
+        ArrayList<CheckMetadata> meta = new ArrayList<>();
+        for (TransactionCapsule capsule : DATABASE.TRANSACTIONS.getRange(start, end)) {
+            if (capsule.hasMeta("check")) {
+                meta.addAll(capsule.getCheckMetadata());
             }
         }
-        if (cand == null) {
-            return false;
+        return meta;
+    }
+
+    public ArrayList<CheckMetadata> getOutstandingChecks(LDate start, LDate end) {
+        ArrayList<CheckMetadata> out = new ArrayList<>();
+        for (CheckMetadata check : getChecks(start, end)) {
+            if (check.isOutstanding()) {
+                out.add(check);
+            }
+        }
+        return out;
+    }
+
+    public ArrayList<LedgerMetadata> getLedgers(LDate start, LDate end) {
+        ArrayList<LedgerMetadata> meta = new ArrayList<>();
+        for (TransactionCapsule capsule : DATABASE.TRANSACTIONS.getRange(start, end)) {
+            if (capsule.hasMeta("ledger")) {
+                meta.addAll(capsule.getLedgerMeta());
+            }
+        }
+        return meta;
+    }
+
+    public ArrayList<LedgerMetadata> getLedgers(LDate start, LDate end, LCurrency cur) {
+        ArrayList<LedgerMetadata> range = getLedgers(start, end);
+        ArrayList<LedgerMetadata> out = new ArrayList<>();
+        for (LedgerMetadata meta : range) {
+            if (meta.FROM.matches(cur) || meta.TO.matches(cur)) {
+                out.add(meta);
+            }
+        }
+        return out;
+    }
+
+    //transactions + states
+    public Aggregation<Account> accountsAsOf(LDate date) {
+        StateCapsule baseline = DATABASE.STATES.getBefore(date.getTime());
+        Aggregation<Account> accounts = new Aggregation<>();
+        if (baseline != null) {
+            JsonObject acc = baseline.exportAccounts();
+            for (String key : acc.getFields()) {
+                accounts.add(CURRENT_INSTANCE.ACCOUNTS.getElement(key), acc.getDecimal(key).decimal);
+            }
+            for (TransactionCapsule capsule : DATABASE.TRANSACTIONS.getRange(baseline.getDate(), date)) {
+                for (AccountWrapper wrapper : capsule.getAccounts()) {
+                    accounts.add(wrapper.ACCOUNT, wrapper.getAlphaProcessed());
+                }
+            }
         } else {
-            return TRANSACTIONS.remove(cand);
-        }
-    }
-
-    public boolean deleteBudget(long uuid) {
-        BudgetEntry cand = null;
-        for (BudgetEntry entry : readBudgets()) {
-            if (entry.getUUID() == uuid) {
-                cand = entry;
-                break;
+            for (TransactionCapsule capsule : DATABASE.TRANSACTIONS.getRange(date)) {
+                for (AccountWrapper wrapper : capsule.getAccounts()) {
+                    accounts.add(wrapper.ACCOUNT, wrapper.getAlphaProcessed());
+                }
             }
         }
-        if (cand == null) {
-            return false;
-        } else {
-            return BUDGETS.remove(cand);
-        }
+        return accounts;
     }
 
-    public boolean deleteTemplate(long uuid) {
-        TemplateEntry cand = null;
-        for (TemplateEntry entry : readTemplates()) {
-            if (entry.getUUID() == uuid) {
-                cand = entry;
-                break;
-            }
-        }
-        if (cand == null) {
-            return false;
-        } else {
-            return TEMPLATES.remove(cand);
-        }
-    }
-
-    public ArrayList<TransactionEntry> readTransactions() {
-        return TRANSACTIONS.read();
-    }
-
-    public ArrayList<BudgetEntry> readBudgets() {
-        return BUDGETS.read();
-    }
-
-    public ArrayList<TemplateEntry> readTemplates() {
-        return TEMPLATES.read();
-    }
-
-    public TransactionEntry getPrior() {
-        for (TransactionEntry entry : readTransactions()) {
-            if (entry.getEntity().equals("PRIOR")) {
-                return entry;
-            }
-        }
-        return null;
+    public BigDecimal accountAsOf(Account account, LDate date) {
+        return accountsAsOf(date).get(account);
     }
 
     public BigDecimal accountAsOf(String name, LDate date) {
-        if (CURRENT_INSTANCE.ACCOUNTS.getElement(name) != null) {
-            return accountAsOf(CURRENT_INSTANCE.ACCOUNTS.getElement(name), date);
-        } else {
-            return null;
-        }
-    }
-
-    public BigDecimal accountAsOf(Account acc, LDate date) {
-        BigDecimal x = BigDecimal.ZERO;
-        for (TransactionEntry entry : readTransactions()) {
-            if (entry.getAccounts().toString().contains(acc.getName()) && entry.getDate().compareTo(date) <= 0) {
-                for (AccountWrapper wrapper : entry.getAccounts()) {
-                    if (wrapper.ACCOUNT.equals(acc)) {
-                        x = x.add(wrapper.getAlphaProcessed());
-                    }
-                }
-            }
-        }
-        return x;
+        return accountAsOf(CURRENT_INSTANCE.ACCOUNTS.getElement(name), date);
     }
 
     public HashMap<LCurrency, BigDecimal> pricesAsOf(LCurrency cur, LDate date) {
         CURRENT_INSTANCE.LOG_HANDLER.trace(getClass(), "Price-get started");
-        HashMap<Account, BigDecimal> acc = accountsAsOf(date.getYear(), date.getMonth(), date.getDay());
+        HashMap<Account, BigDecimal> acc = accountsAsOf(LDate.endDay(date));
         Aggregation<LCurrency> assets = new Aggregation<>();
         ArrayList<LCurrency> significant = new ArrayList<>();
         for (Account a : acc.keySet()) {
@@ -256,70 +233,37 @@ public class DataHandler {
         return out;
     }
 
-    public HashMap<Account, BigDecimal> accountsAsOf(LDate date) {
-        Aggregation<Account> accounts = new Aggregation<>();
-        for (TransactionEntry entry : readTransactions()) {
-            if (entry.getDate().compareTo(date) <= 0) {
-                for (AccountWrapper wrapper : entry.getAccounts()) {
-                    accounts.add(wrapper.ACCOUNT, wrapper.getAlphaProcessed());
-                }
-            }
-        }
-        return accounts;
-    }
-
-    public HashMap<Account, BigDecimal> accountsAsOf(int y, int m, int d) {
-        Aggregation<Account> accounts = new Aggregation<>();
-        for (TransactionEntry entry : readTransactions()) {
-            if (entry.getDate().compareTo(y, m, d) <= 0) {
-                for (AccountWrapper wrapper : entry.getAccounts()) {
-                    accounts.add(wrapper.ACCOUNT, wrapper.getAlphaProcessed());
-                }
-            }
-        }
-        return accounts;
-    }
-
-    public ArrayList<AssetMetadata> assetTotals() {
-        ArrayList<AssetMetadata> assets = new ArrayList<>();
-        for (TransactionEntry entry : readTransactions()) {
-            if (entry.hasMeta("asset")) {
-                assets.addAll(entry.getAssetMeta());
-            }
-            if (entry.hasMeta("asset-change")) {
-                for (AssetChangeMetadata meta : entry.getAssetChangeMeta()) {
-                    for (AssetMetadata ass : assets) {
-                        if (meta.NAME.equals(ass.NAME)) {
-                            ass.EVENTS.add(meta);
-                            break;
-                        }
-                    }
-                }
-            }
-        }
-        return assets;
-    }
-
     public ArrayList<AssetMetadata> assetsAsOf(LDate date) {
+        StateCapsule baseline = DATABASE.STATES.getBefore(date.getTime());
         ArrayList<AssetMetadata> assets = new ArrayList<>();
-        for (TransactionEntry entry : readTransactions()) {
-            if (entry.getDate().compareTo(date) <= 0) {
-                if (entry.hasMeta("asset")) {
-                    assets.addAll(entry.getAssetMeta());
-                }
-                if (entry.hasMeta("asset-change")) {
-                    for (AssetChangeMetadata meta : entry.getAssetChangeMeta()) {
-                        for (AssetMetadata ass : assets) {
-                            if (meta.NAME.equals(ass.NAME)) {
-                                ass.EVENTS.add(meta);
-                                break;
-                            }
+        ArrayList<TransactionCapsule> range;
+        if (baseline != null) {
+            assets.addAll(baseline.getAssets());
+            range = DATABASE.TRANSACTIONS.getRange(baseline.getDate(), date);
+        } else {
+            range = DATABASE.TRANSACTIONS.getRange(date);
+        }
+        for (TransactionCapsule capsule : range) {
+            if (capsule.hasMeta("asset")) {
+                assets.addAll(capsule.getAssetMeta());
+            }
+            if (capsule.hasMeta("asset-change")) {
+                for (AssetChangeMetadata change : capsule.getAssetChangeMeta()) {
+                    for (AssetMetadata sup : assets) {
+                        if (sup.NAME.equals(change.NAME)) {
+                            sup.EVENTS.add(change);
                         }
                     }
                 }
             }
         }
-        return assets;
+        ArrayList<AssetMetadata> out = new ArrayList<>();
+        for (AssetMetadata meta : assets) {
+            if (meta.getTotalCount().compareTo(BigDecimal.ZERO) >= 0) {
+                out.add(meta);
+            }
+        }
+        return out;
     }
 
     public AssetMetadata assetAsOf(String name, LDate date) {
@@ -331,46 +275,37 @@ public class DataHandler {
         return null;
     }
 
-    public ArrayList<LoanMetadata> loanTotals() {
-        ArrayList<LoanMetadata> loans = new ArrayList<>();
-        for (TransactionEntry entry : readTransactions()) {
-            if (entry.hasMeta("loan")) {
-                loans.addAll(entry.getLoanMeta());
-            }
-            if (entry.hasMeta("loan-change")) {
-                for (LoanChangeMetadata meta : entry.getLoanChangeMeta()) {
-                    for (LoanMetadata lon : loans) {
-                        if (meta.NAME.equals(lon.NAME)) {
-                            lon.EVENTS.add(meta);
-                            break;
-                        }
-                    }
-                }
-            }
-        }
-        return loans;
-    }
-
     public ArrayList<LoanMetadata> loansAsOf(LDate date) {
+        StateCapsule baseline = DATABASE.STATES.getBefore(date.getTime());
         ArrayList<LoanMetadata> loans = new ArrayList<>();
-        for (TransactionEntry entry : readTransactions()) {
-            if (entry.getDate().compareTo(date) <= 0) {
-                if (entry.hasMeta("loan")) {
-                    loans.addAll(entry.getLoanMeta());
-                }
-                if (entry.hasMeta("loan-change")) {
-                    for (LoanChangeMetadata meta : entry.getLoanChangeMeta()) {
-                        for (LoanMetadata lon : loans) {
-                            if (meta.NAME.equals(lon.NAME)) {
-                                lon.EVENTS.add(meta);
-                                break;
-                            }
+        ArrayList<TransactionCapsule> range;
+        if (baseline != null) {
+            loans.addAll(baseline.getLoans());
+            range = DATABASE.TRANSACTIONS.getRange(baseline.getDate(), date);
+        } else {
+            range = DATABASE.TRANSACTIONS.getRange(date);
+        }
+        for (TransactionCapsule capsule : range) {
+            if (capsule.hasMeta("loan")) {
+                loans.addAll(capsule.getLoanMeta());
+            }
+            if (capsule.hasMeta("loan-change")) {
+                for (LoanChangeMetadata change : capsule.getLoanChangeMeta()) {
+                    for (LoanMetadata sup : loans) {
+                        if (sup.NAME.equals(change.NAME)) {
+                            sup.EVENTS.add(change);
                         }
                     }
                 }
             }
         }
-        return loans;
+        ArrayList<LoanMetadata> out = new ArrayList<>();
+        for (LoanMetadata meta : loans) {
+            if (meta.isCurrent()) {
+                out.add(meta);
+            }
+        }
+        return out;
     }
 
     public LoanMetadata loanAsOf(String name, LDate date) {
@@ -382,271 +317,67 @@ public class DataHandler {
         return null;
     }
 
-    /**
-     * The following is a list of implemented features of this search function
-     * searching <code>a b c</code> will check separately for the presence of the character sequences <code>a</code>, <code>b</code>, and <code>c</code>.  Only entries with all three present will be included.
-     * searching <code>"a b c"</code> will check for the character sequence <code>a b c</code> and only entries with that character sequence will be included
-     * $G will return entries that have a ghost account
-     * $g will return entries that do not have a ghost account
-     * $B will return entries that have a budget account
-     * $b will return entries that do not have a budget account
-     * $T will return entries that have a tracking account
-     * $t will return entries that do not have a tracking account
-     * $L will return entries that have trading metadata
-     * $l will return entries that do not have trading metadata
-     * $A will return entries that have asset metadata
-     * $a will return entries that do not have asset metadata
-     * $D will return entries that have loan metadata
-     * $d will return entries that do not have loan metadata
-     * $@ will return entries that are unbalanced
-     * $or(<code>[tokens]</code>) acts as an or test rather than the default and with the included tokens.
-     *
-     * @param search a search string, encoded as above
-     * @return an <code>ArrayList</code> of transaction entries that met the search criteria
-     */
-    public ArrayList<TransactionEntry> huntTransactions(String search) {
-        ArrayList<TransactionEntry> correct = new ArrayList<>();
-        ArrayList<String> tokens = tokenize(search);
-        for (TransactionEntry entry : readTransactions()) {
-            boolean flag = true;
-            OUTER:
-            for (String token : tokens) {
-                if (!token.equals("")) {
-                    switch (token.charAt(0)) {
-                        case '$' -> {
-                            switch (token) {
-                                case "$G" -> {
-                                    if (!entry.hasGhostAccounts()) {
-                                        flag = false;
-                                    }
-                                }
-                                case "$g" -> {
-                                    if (entry.hasGhostAccounts()) {
-                                        flag = false;
-                                    }
-                                }
-                                case "$B" -> {
-                                    if (!entry.hasBudgetAccounts()) {
-                                        flag = false;
-                                    }
-                                }
-                                case "$b" -> {
-                                    if (entry.hasBudgetAccounts()) {
-                                        flag = false;
-                                    }
-                                }
-                                case "$T" -> {
-                                    if (!entry.hasTrackingAccounts()) {
-                                        flag = false;
-                                    }
-                                }
-                                case "$t" -> {
-                                    if (entry.hasTrackingAccounts()) {
-                                        flag = false;
-                                    }
-                                }
-                                case "$L" -> {
-                                    if (!entry.hasMeta("ledger")) {
-                                        flag = false;
-                                    }
-                                }
-                                case "$l" -> {
-                                    if (entry.hasMeta("ledger")) {
-                                        flag = false;
-                                    }
-                                }
-                                case "$A" -> {
-                                    if (!(entry.hasMeta("asset") || entry.hasMeta("asset-change"))) {
-                                        flag = false;
-                                    }
-                                }
-                                case "$a" -> {
-                                    if (entry.hasMeta("asset") || entry.hasMeta("asset-change")) {
-                                        flag = false;
-                                    }
-                                }
-                                case "$D" -> {
-                                    if (!(entry.hasMeta("loan") || entry.hasMeta("loan-change"))) {
-                                        flag = false;
-                                    }
-                                }
-                                case "$d" -> {
-                                    if (entry.hasMeta("loan") || entry.hasMeta("loan-change")) {
-                                        flag = false;
-                                    }
-                                }
-                                case "$@" -> {
-                                    if (entry.isBalanced()) {
-                                        flag = false;
-                                    }
-                                }
-                                default -> {
-                                    if (token.length() > 5) {
-                                        if (token.substring(0, 3).equalsIgnoreCase("$or")) {
-                                            ArrayList<String> subTokens = tokenize(token.substring(4, token.length() - 1));
-                                            boolean test = false;
-                                            for (String sToken : subTokens) {
-                                                if (entry.toString().contains(sToken)) {
-                                                    test = true;
-                                                }
-                                            }
-                                            if (!test) {
-                                                flag = false;
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                            if (!flag) {
-                                break OUTER;
-                            }
-                        }
-                        case '-' -> {
-                            if (entry.toFlatString().replace("\t", " ").toLowerCase().contains(token.replace("\"", "").replace("\\$", "$").replace("-", "").toLowerCase())) {
-                                flag = false;
-                                break OUTER;
-                            }
-                        }
-                        default -> {
-                            if (!entry.toFlatString().replace("\t", " ").toLowerCase().contains(token.replace("\"", "").replace("\\$", "$").toLowerCase())) {
-                                flag = false;
-                                break OUTER;
-                            }
-                        }
-                    }
-                }
-            }
-            if (flag) {
-                correct.add(entry);
-            }
-        }
-        correct.sort(Comparator.comparing(TransactionEntry::getDate));
-        return correct;
-    }
-
-    public ArrayList<String> getBudgetTypes() {
-        return new ArrayList<>(BUDGET_TYPES);
-    }
-
-    public void addBudgetType(String budgetType) {
-        BUDGET_TYPES.add(budgetType);
-    }
-
-    public void resetBudgetTypes(ArrayList<String> newTypes) {
-        BUDGET_TYPES.clear();
-        BUDGET_TYPES.addAll(newTypes);
-    }
-
-    public ArrayList<String> tokenize(String raw) {
-        ArrayList<String> tokens = new ArrayList<>();
-        StringBuilder sb = new StringBuilder();
-        boolean quote = false, function = false;
-        for (char c : raw.toCharArray()) {
-            if (c == '"') {
-                quote = !quote;
-            }
-            if (c == '(') {
-                function = true;
-            }
-            if (c == ')') {
-                function = false;
-            }
-            if (c == ' ' && !quote && !function) {
-                tokens.add(sb.toString());
-                sb = new StringBuilder();
-            } else {
-                sb.append(c);
-            }
-        }
-        tokens.add(sb.toString());
-        return tokens;
-    }
-
-    public TransactionEntry getTransactionEntry(long uuid) {
-        for (TransactionEntry entry : readTransactions()) {
-            if (entry.getUUID() == uuid) {
-                return entry;
-            }
-        }
-        return null;
-    }
-
-    public TemplateEntry getTemplateEntry(long uuid) {
-        for (TemplateEntry entry : readTemplates()) {
-            if (entry.getUUID() == uuid) {
-                return entry;
-            }
-        }
-        return null;
-    }
-
-    /**
-     * @return Object[]{
-     * ArrayList<Position> positions
-     * ArrayList<OrderBookEntry> order book
-     * }
-     */
-    public Object[] ledgerize(LDate date) {
-        ArrayList<Position> positions = new ArrayList<>();
+    public ArrayList<OrderBookEntry> getOrderBook(LDate start, LDate end) {
         ArrayList<OrderBookEntry> orderBook = new ArrayList<>();
-        for (TransactionEntry entry : readTransactions()) {
-            if (entry.hasMeta("ledger") && entry.getDate().compareTo(date) <= 0) {
-                for (LedgerMetadata meta : entry.getLedgerMeta()) {
+        ArrayList<Position> positions = getPositions(start);
+        for (TransactionCapsule capsule : DATABASE.TRANSACTIONS.getRange(start, end)) {
+            if (capsule.hasMeta("ledger")) {
+                for (LedgerMetadata meta : capsule.getLedgerMeta()) {
                     boolean flag = true, auxFlag = true;
                     if (meta.FROM.equals(CURRENT_INSTANCE.main)) {
                         LCurrency a = meta.TO;
                         for (Position p : positions) {
                             if (p.ASSET.equals(a)) {
-                                orderBook.addAll(p.change(entry.getUUID(), meta.DATE, meta.TO, meta.TO_AMNT, meta.FROM_AMNT));
+                                orderBook.addAll(p.change(capsule.getUUID(), meta.DATE, meta.TO, meta.TO_AMNT, meta.FROM_AMNT));
                                 flag = false;
                                 break;
                             }
                         }
                         if (flag) {
                             Position newP = new Position(meta.TO, CURRENT_INSTANCE);
-                            orderBook.addAll(newP.change(entry.getUUID(), meta.DATE, meta.TO, meta.TO_AMNT, meta.FROM_AMNT));
+                            orderBook.addAll(newP.change(capsule.getUUID(), meta.DATE, meta.TO, meta.TO_AMNT, meta.FROM_AMNT));
                             positions.add(newP);
                         }
                     } else if (meta.TO.equals(CURRENT_INSTANCE.main)) {
                         LCurrency a = meta.FROM;
                         for (Position p : positions) {
                             if (p.ASSET.equals(a)) {
-                                orderBook.addAll(p.change(entry.getUUID(), meta.DATE, meta.FROM, meta.FROM_AMNT, meta.TO_AMNT));
+                                orderBook.addAll(p.change(capsule.getUUID(), meta.DATE, meta.FROM, meta.FROM_AMNT, meta.TO_AMNT));
                                 flag = false;
                                 break;
                             }
                         }
                         if (flag) {
                             Position newP = new Position(meta.FROM, CURRENT_INSTANCE);
-                            orderBook.addAll(newP.change(entry.getUUID(), meta.DATE, meta.FROM, meta.FROM_AMNT, meta.TO_AMNT));
+                            orderBook.addAll(newP.change(capsule.getUUID(), meta.DATE, meta.FROM, meta.FROM_AMNT, meta.TO_AMNT));
                             positions.add(newP);
                         }
                     } else {
                         LCurrency a = meta.TO, b = meta.FROM;
                         for (Position p : positions) {
                             if (p.ASSET.equals(a)) {
-                                orderBook.addAll(p.change(entry.getUUID(), meta.DATE, meta.TO, meta.TO_AMNT, meta.negativeMainValue()));
+                                orderBook.addAll(p.change(capsule.getUUID(), meta.DATE, meta.TO, meta.TO_AMNT, meta.negativeMainValue()));
                                 flag = false;
                             }
                             if (p.ASSET.equals(b)) {
-                                orderBook.addAll(p.change(entry.getUUID(), meta.DATE, meta.FROM, meta.FROM_AMNT, meta.MAIN_VALUE));
+                                orderBook.addAll(p.change(capsule.getUUID(), meta.DATE, meta.FROM, meta.FROM_AMNT, meta.MAIN_VALUE));
                                 auxFlag = false;
                             }
                         }
                         if (flag && auxFlag) {
                             Position newP = new Position(meta.TO, CURRENT_INSTANCE);
-                            orderBook.addAll(newP.change(entry.getUUID(), meta.DATE, meta.TO, meta.TO_AMNT, meta.negativeMainValue()));
+                            orderBook.addAll(newP.change(capsule.getUUID(), meta.DATE, meta.TO, meta.TO_AMNT, meta.negativeMainValue()));
                             positions.add(newP);
                             newP = new Position(meta.FROM, CURRENT_INSTANCE);
-                            orderBook.addAll(newP.change(entry.getUUID(), meta.DATE, meta.FROM, meta.FROM_AMNT, meta.MAIN_VALUE));
+                            orderBook.addAll(newP.change(capsule.getUUID(), meta.DATE, meta.FROM, meta.FROM_AMNT, meta.MAIN_VALUE));
                             positions.add(newP);
                         } else if (flag) {
                             Position newP = new Position(meta.TO, CURRENT_INSTANCE);
-                            orderBook.addAll(newP.change(entry.getUUID(), meta.DATE, meta.TO, meta.TO_AMNT, meta.negativeMainValue()));
+                            orderBook.addAll(newP.change(capsule.getUUID(), meta.DATE, meta.TO, meta.TO_AMNT, meta.negativeMainValue()));
                             positions.add(newP);
                         } else if (auxFlag) {
                             Position newP = new Position(meta.FROM, CURRENT_INSTANCE);
-                            orderBook.addAll(newP.change(entry.getUUID(), meta.DATE, meta.FROM, meta.FROM_AMNT, meta.MAIN_VALUE));
+                            orderBook.addAll(newP.change(capsule.getUUID(), meta.DATE, meta.FROM, meta.FROM_AMNT, meta.MAIN_VALUE));
                             positions.add(newP);
                         }
                     }
@@ -659,47 +390,12 @@ public class DataHandler {
                 }
             }
         }
-        return new Object[]{positions, orderBook};
+        return orderBook;
     }
 
-    public Object[] ledgerize() {
-        return ledgerize(LDate.now(CURRENT_INSTANCE));
-    }
-
-    public ArrayList<LedgerMetadata> getLedgerMeta(LCurrency currency) {
-        ArrayList<LedgerMetadata> out = new ArrayList<>();
-        for (TransactionEntry entry : readTransactions()) {
-            if (entry.hasMeta("ledger")) {
-                for (LedgerMetadata meta : entry.getLedgerMeta()) {
-                    if (meta.FROM.equals(currency) || meta.TO.equals(currency)) {
-                        out.add(meta);
-                    }
-                }
-            }
-        }
-        return out;
-    }
-
-    public ArrayList<Position> getPositions() {
-        return (ArrayList<Position>) ledgerize()[0];
-    }
-
-    public Position getPosition(LCurrency asset) {
-        for (Position p : getPositions()) {
-            if (p.ASSET.equals(asset)) {
-                return p;
-            }
-        }
-        return null;
-    }
-
-    public ArrayList<OrderBookEntry> getOrderBook() {
-        return (ArrayList<OrderBookEntry>) ledgerize()[1];
-    }
-
-    public ArrayList<OrderBookEntry> getOrderBook(LCurrency asset) {
+    public ArrayList<OrderBookEntry> getOrderBook(LDate start, LDate end, LCurrency asset) {
         ArrayList<OrderBookEntry> out = new ArrayList<>();
-        for (OrderBookEntry entry : getOrderBook()) {
+        for (OrderBookEntry entry : getOrderBook(start, end)) {
             if (entry.ASSET.equals(asset)) {
                 out.add(entry);
             }
@@ -707,22 +403,87 @@ public class DataHandler {
         return out;
     }
 
-    public ArrayList<LedgerMetadata> getLedgerMeta(LCurrency currency, LDate date) {
-        ArrayList<LedgerMetadata> out = new ArrayList<>();
-        for (TransactionEntry entry : readTransactions()) {
-            if (entry.hasMeta("ledger") && entry.getDate().compareTo(date) <= 0) {
-                for (LedgerMetadata meta : entry.getLedgerMeta()) {
-                    if (meta.FROM.equals(currency) || meta.TO.equals(currency)) {
-                        out.add(meta);
+    public ArrayList<Position> getPositions(LDate date) {
+        ArrayList<Position> positions = new ArrayList<>();
+        StateCapsule baseline = DATABASE.STATES.getBefore(date.getTime());
+        ArrayList<TransactionCapsule> range;
+        if (baseline != null) {
+            positions.addAll(baseline.getPositions());
+            range = DATABASE.TRANSACTIONS.getRange(baseline.getDate(), date);
+        } else {
+            range = DATABASE.TRANSACTIONS.getRange(date);
+        }
+        for (TransactionCapsule capsule : range) {
+            if (capsule.hasMeta("ledger")) {
+                for (LedgerMetadata meta : capsule.getLedgerMeta()) {
+                    boolean flag = true, auxFlag = true;
+                    if (meta.FROM.equals(CURRENT_INSTANCE.main)) {
+                        LCurrency a = meta.TO;
+                        for (Position p : positions) {
+                            if (p.ASSET.equals(a)) {
+                                p.change(capsule.getUUID(), meta.DATE, meta.TO, meta.TO_AMNT, meta.FROM_AMNT);
+                                flag = false;
+                                break;
+                            }
+                        }
+                        if (flag) {
+                            Position newP = new Position(meta.TO, CURRENT_INSTANCE);
+                            newP.change(capsule.getUUID(), meta.DATE, meta.TO, meta.TO_AMNT, meta.FROM_AMNT);
+                            positions.add(newP);
+                        }
+                    } else if (meta.TO.equals(CURRENT_INSTANCE.main)) {
+                        LCurrency a = meta.FROM;
+                        for (Position p : positions) {
+                            if (p.ASSET.equals(a)) {
+                                p.change(capsule.getUUID(), meta.DATE, meta.FROM, meta.FROM_AMNT, meta.TO_AMNT);
+                                flag = false;
+                                break;
+                            }
+                        }
+                        if (flag) {
+                            Position newP = new Position(meta.FROM, CURRENT_INSTANCE);
+                            newP.change(capsule.getUUID(), meta.DATE, meta.FROM, meta.FROM_AMNT, meta.TO_AMNT);
+                            positions.add(newP);
+                        }
+                    } else {
+                        LCurrency a = meta.TO, b = meta.FROM;
+                        for (Position p : positions) {
+                            if (p.ASSET.equals(a)) {
+                                p.change(capsule.getUUID(), meta.DATE, meta.TO, meta.TO_AMNT, meta.negativeMainValue());
+                                flag = false;
+                            }
+                            if (p.ASSET.equals(b)) {
+                                p.change(capsule.getUUID(), meta.DATE, meta.FROM, meta.FROM_AMNT, meta.MAIN_VALUE);
+                                auxFlag = false;
+                            }
+                        }
+                        if (flag && auxFlag) {
+                            Position newP = new Position(meta.TO, CURRENT_INSTANCE);
+                            newP.change(capsule.getUUID(), meta.DATE, meta.TO, meta.TO_AMNT, meta.negativeMainValue());
+                            positions.add(newP);
+                            newP = new Position(meta.FROM, CURRENT_INSTANCE);
+                            newP.change(capsule.getUUID(), meta.DATE, meta.FROM, meta.FROM_AMNT, meta.MAIN_VALUE);
+                            positions.add(newP);
+                        } else if (flag) {
+                            Position newP = new Position(meta.TO, CURRENT_INSTANCE);
+                            newP.change(capsule.getUUID(), meta.DATE, meta.TO, meta.TO_AMNT, meta.negativeMainValue());
+                            positions.add(newP);
+                        } else if (auxFlag) {
+                            Position newP = new Position(meta.FROM, CURRENT_INSTANCE);
+                            newP.change(capsule.getUUID(), meta.DATE, meta.FROM, meta.FROM_AMNT, meta.MAIN_VALUE);
+                            positions.add(newP);
+                        }
+                    }
+                }
+                ArrayList<Position> temp = new ArrayList<>(positions);
+                for (Position t : temp) {
+                    if (t.ELEMENTS.isEmpty()) {
+                        positions.remove(t);
                     }
                 }
             }
         }
-        return out;
-    }
-
-    public ArrayList<Position> getPositions(LDate date) {
-        return (ArrayList<Position>) ledgerize(date)[0];
+        return positions;
     }
 
     public Position getPosition(LCurrency asset, LDate date) {
@@ -732,48 +493,6 @@ public class DataHandler {
             }
         }
         return null;
-    }
-
-    public ArrayList<OrderBookEntry> getOrderBook(LDate date) {
-        return (ArrayList<OrderBookEntry>) ledgerize(date)[1];
-    }
-
-    public ArrayList<OrderBookEntry> getOrderBook(LCurrency asset, LDate date) {
-        ArrayList<OrderBookEntry> out = new ArrayList<>();
-        for (OrderBookEntry entry : getOrderBook(date)) {
-            if (entry.ASSET.equals(asset)) {
-                out.add(entry);
-            }
-        }
-        return out;
-    }
-
-    public ArrayList<CheckMetadata> getChecks(LDate date) {
-        ArrayList<CheckMetadata> meta = new ArrayList<>();
-        for (TransactionEntry entry : readTransactions()) {
-            if (entry.getDate().compareTo(date) <= 0 && entry.hasMeta("check")) {
-                meta.addAll(entry.getCheckMetadata());
-            }
-        }
-        return meta;
-    }
-
-    public ArrayList<CheckMetadata> getChecks() {
-        return getChecks(LDate.now(CURRENT_INSTANCE));
-    }
-
-    public ArrayList<CheckMetadata> getOutstandingChecks(LDate date) {
-        ArrayList<CheckMetadata> out = new ArrayList<>();
-        for (CheckMetadata check : getChecks(date)) {
-            if (check.isOutstanding()) {
-                out.add(check);
-            }
-        }
-        return out;
-    }
-
-    public ArrayList<CheckMetadata> getOutstandingChecks() {
-        return getOutstandingChecks(LDate.now(CURRENT_INSTANCE));
     }
 
     public boolean purchaseSale(LDate date, BigDecimal amount, BigDecimal cost, Exchange exchange, LCurrency currency) {
@@ -794,9 +513,9 @@ public class DataHandler {
             } else if (currency.isFiat()) {
                 acc = Account.fiatName;
             }
-            TransactionEntry entry = new TransactionEntry(CURRENT_INSTANCE);
+            TransactionCapsule capsule = new TransactionCapsule(CURRENT_INSTANCE);
             if (amount.compareTo(BigDecimal.ZERO) > 0) {
-                entry.insert(
+                capsule.insert(
                         date,
                         exchange.NAME,
                         currency.toString(),
@@ -809,12 +528,12 @@ public class DataHandler {
                                         + cost + "), T!" + exchange.NAME + "_" + currency.getTicker() + "("
                                         + amount + ")", CURRENT_INSTANCE)
                 );
-                entry.addLedgerMeta(CURRENT_INSTANCE.main, currency, cost.multiply(BigDecimal.valueOf(-1)), amount, cost);
-                addTransaction(entry);
+                capsule.addLedgerMeta(CURRENT_INSTANCE.main, currency, cost.multiply(BigDecimal.valueOf(-1)), amount, cost);
+                DATABASE.TRANSACTIONS.add(capsule, ImportHandler.ImportMode.KEEP);
                 return true;
             } else if (amount.compareTo(BigDecimal.ZERO) < 0) {
-                Position temp = getPosition(currency);
-                ArrayList<OrderBookEntry> orders = temp.change(entry.getUUID(), date, currency, amount, cost);
+                Position temp = getPosition(currency, date);
+                ArrayList<OrderBookEntry> orders = temp.change(capsule.getUUID(), date, currency, amount, cost);
                 BigDecimal profitSR = BigDecimal.ZERO, profitLR = BigDecimal.ZERO;
                 for (OrderBookEntry order : orders) {
                     if (order.longTerm()) {
@@ -854,7 +573,7 @@ public class DataHandler {
                     }
                     gl += "(" + profitLR.abs().setScale(CURRENT_INSTANCE.main.getPlaces(), RoundingMode.HALF_UP) + ")";
                 }
-                entry.insert(
+                capsule.insert(
                         date,
                         exchange.NAME,
                         currency.toString(),
@@ -866,8 +585,8 @@ public class DataHandler {
                                 + cost + "), T!" + exchange.NAME + "_" + currency.getTicker() + "("
                                 + amount + ")" + gl, CURRENT_INSTANCE)
                 );
-                entry.addLedgerMeta(currency, CURRENT_INSTANCE.main, amount, cost, cost);
-                addTransaction(entry);
+                capsule.addLedgerMeta(currency, CURRENT_INSTANCE.main, amount, cost, cost);
+                DATABASE.TRANSACTIONS.add(capsule, ImportHandler.ImportMode.KEEP);
                 return true;
             } else {
                 return false;
@@ -899,10 +618,10 @@ public class DataHandler {
             } else if (currency.isFiat()) {
                 acc = Account.fiatName;
             }
-            TransactionEntry entry = new TransactionEntry(CURRENT_INSTANCE);
+            TransactionCapsule capsule = new TransactionCapsule(CURRENT_INSTANCE);
             if (amount.compareTo(BigDecimal.ZERO) > 0) {
                 //buy
-                entry.insert(
+                capsule.insert(
                         date,
                         exchange.NAME,
                         currency.toString(),
@@ -916,14 +635,14 @@ public class DataHandler {
                                         + amount + "), T!" + exchange.NAME + "_" + feeCur.getTicker() + "("
                                         + fee.multiply(BigDecimal.valueOf(-1)) + ")", CURRENT_INSTANCE)
                 );
-                entry.addLedgerMeta(CURRENT_INSTANCE.main, currency, cost.multiply(BigDecimal.valueOf(-1)), amount, cost);
-                entry.addLedgerMeta(feeCur, CURRENT_INSTANCE.main, fee.multiply(BigDecimal.valueOf(-1)), BigDecimal.ZERO, feeVal);
-                addTransaction(entry);
+                capsule.addLedgerMeta(CURRENT_INSTANCE.main, currency, cost.multiply(BigDecimal.valueOf(-1)), amount, cost);
+                capsule.addLedgerMeta(feeCur, CURRENT_INSTANCE.main, fee.multiply(BigDecimal.valueOf(-1)), BigDecimal.ZERO, feeVal);
+                DATABASE.TRANSACTIONS.add(capsule, ImportHandler.ImportMode.KEEP);
                 return true;
             } else if (amount.compareTo(BigDecimal.ZERO) < 0) {
                 //sell
-                Position temp = getPosition(currency);
-                ArrayList<OrderBookEntry> orders = temp.change(entry.getUUID(), date, currency, amount, cost);
+                Position temp = getPosition(currency, date);
+                ArrayList<OrderBookEntry> orders = temp.change(capsule.getUUID(), date, currency, amount, cost);
                 BigDecimal profitSR = BigDecimal.ZERO, profitLR = BigDecimal.ZERO;
                 for (OrderBookEntry order : orders) {
                     if (order.longTerm()) {
@@ -963,7 +682,7 @@ public class DataHandler {
                     }
                     gl += "(" + profitSR.abs().setScale(CURRENT_INSTANCE.main.getPlaces(), RoundingMode.HALF_UP) + ")";
                 }
-                entry.insert(
+                capsule.insert(
                         date,
                         exchange.NAME,
                         currency.toString(),
@@ -976,9 +695,9 @@ public class DataHandler {
                                 + amount + "), T!" + exchange.NAME + "_" + feeCur.getTicker() + "("
                                 + fee.multiply(BigDecimal.valueOf(-1)) + ")" + gl, CURRENT_INSTANCE)
                 );
-                entry.addLedgerMeta(currency, CURRENT_INSTANCE.main, amount, cost, cost);
-                entry.addLedgerMeta(feeCur, CURRENT_INSTANCE.main, fee.multiply(BigDecimal.valueOf(-1)), BigDecimal.ZERO, feeVal);
-                addTransaction(entry);
+                capsule.addLedgerMeta(currency, CURRENT_INSTANCE.main, amount, cost, cost);
+                capsule.addLedgerMeta(feeCur, CURRENT_INSTANCE.main, fee.multiply(BigDecimal.valueOf(-1)), BigDecimal.ZERO, feeVal);
+                DATABASE.TRANSACTIONS.add(capsule, ImportHandler.ImportMode.KEEP);
                 return true;
             } else {
                 return false;
@@ -1008,9 +727,9 @@ public class DataHandler {
             } else if (currency.isFiat()) {
                 acc = Account.fiatName;
             }
-            TransactionEntry entry = new TransactionEntry(CURRENT_INSTANCE);
+            TransactionCapsule capsule = new TransactionCapsule(CURRENT_INSTANCE);
             if (amount.compareTo(BigDecimal.ZERO) > 0) {
-                entry.insert(
+                capsule.insert(
                         date,
                         exchange.NAME,
                         currency.toString(),
@@ -1020,11 +739,11 @@ public class DataHandler {
                                 + cost + "), T!" + exchange.NAME + "_" + currency.getTicker() + (s ? "_S" : "") + "("
                                 + amount + ")", CURRENT_INSTANCE)
                 );
-                entry.addLedgerMeta(CURRENT_INSTANCE.main, currency, BigDecimal.ZERO, amount, cost);
-                addTransaction(entry);
+                capsule.addLedgerMeta(CURRENT_INSTANCE.main, currency, BigDecimal.ZERO, amount, cost);
+                DATABASE.TRANSACTIONS.add(capsule, ImportHandler.ImportMode.KEEP);
                 return true;
             } else if (amount.compareTo(BigDecimal.ZERO) < 0) {
-                entry.insert(
+                capsule.insert(
                         date,
                         exchange.NAME,
                         currency.toString(),
@@ -1034,8 +753,8 @@ public class DataHandler {
                                 + cost + "), T!" + exchange.NAME + "_" + currency.getTicker() + "("
                                 + amount + ")", CURRENT_INSTANCE)
                 );
-                entry.addLedgerMeta(currency, CURRENT_INSTANCE.main, amount, BigDecimal.ZERO, cost);
-                addTransaction(entry);
+                capsule.addLedgerMeta(currency, CURRENT_INSTANCE.main, amount, BigDecimal.ZERO, cost);
+                DATABASE.TRANSACTIONS.add(capsule, ImportHandler.ImportMode.KEEP);
                 return true;
             } else {
                 return false;
@@ -1070,9 +789,9 @@ public class DataHandler {
             } else if (c.isFiat()) {
                 acc = Account.fiatName;
             }
-            TransactionEntry entry = new TransactionEntry(CURRENT_INSTANCE);
+            TransactionCapsule capsule = new TransactionCapsule(CURRENT_INSTANCE);
             if (amount.compareTo(BigDecimal.ZERO) > 0) {
-                entry.insert(
+                capsule.insert(
                         date,
                         c.getName(),
                         c.toString(),
@@ -1082,8 +801,8 @@ public class DataHandler {
                                 + cost + "), T!" + account.getName() + "(" + amount + ")"
                                 + ", G!" + Account.selfIncName + "(" + cost + ")", CURRENT_INSTANCE)
                 );
-                entry.addLedgerMeta(CURRENT_INSTANCE.main, nw, cost.multiply(BigDecimal.valueOf(-1)), adjAmount, cost);
-                addTransaction(entry);
+                capsule.addLedgerMeta(CURRENT_INSTANCE.main, nw, cost.multiply(BigDecimal.valueOf(-1)), adjAmount, cost);
+                DATABASE.TRANSACTIONS.add(capsule, ImportHandler.ImportMode.KEEP);
                 return true;
             } else {
                 return false;
@@ -1126,8 +845,8 @@ public class DataHandler {
             } else {
                 ent = fromExchange.NAME + ", " + toExchange.NAME;
             }
-            TransactionEntry entry = new TransactionEntry(CURRENT_INSTANCE);
-            entry.insert(
+            TransactionCapsule capsule = new TransactionCapsule(CURRENT_INSTANCE);
+            capsule.insert(
                     date,
                     ent,
                     currency.toString(),
@@ -1138,8 +857,8 @@ public class DataHandler {
                             + fromAmount + "), T!" + toExchange.NAME + "_" + currency.getTicker() + "("
                             + toAmount + ")", CURRENT_INSTANCE)
             );
-            entry.addLedgerMeta(currency, CURRENT_INSTANCE.main, fee, BigDecimal.ZERO, cost);
-            addTransaction(entry);
+            capsule.addLedgerMeta(currency, CURRENT_INSTANCE.main, fee, BigDecimal.ZERO, cost);
+            DATABASE.TRANSACTIONS.add(capsule, ImportHandler.ImportMode.KEEP);
             return true;
         } catch (NumberFormatException ex) {
             return false;
@@ -1176,8 +895,8 @@ public class DataHandler {
             } else {
                 ent = fromExchange.NAME + ", " + toExchange.NAME;
             }
-            TransactionEntry entry = new TransactionEntry(CURRENT_INSTANCE);
-            entry.insert(
+            TransactionCapsule capsule = new TransactionCapsule(CURRENT_INSTANCE);
+            capsule.insert(
                     date,
                     ent,
                     transCur + ", " + costCur,
@@ -1190,10 +909,10 @@ public class DataHandler {
                             + toAmount + ")", CURRENT_INSTANCE)
             );
             if (transitLoss.compareTo(BigDecimal.ZERO) != 0) {
-                entry.addLedgerMeta(transCur, CURRENT_INSTANCE.main, transitLoss, BigDecimal.ZERO, cost1.abs());
+                capsule.addLedgerMeta(transCur, CURRENT_INSTANCE.main, transitLoss, BigDecimal.ZERO, cost1.abs());
             }
-            entry.addLedgerMeta(costCur, CURRENT_INSTANCE.main, fee, BigDecimal.ZERO, cost2.abs());
-            addTransaction(entry);
+            capsule.addLedgerMeta(costCur, CURRENT_INSTANCE.main, fee, BigDecimal.ZERO, cost2.abs());
+            DATABASE.TRANSACTIONS.add(capsule, ImportHandler.ImportMode.KEEP);
             return true;
         } catch (NumberFormatException ex) {
             return false;
@@ -1218,9 +937,9 @@ public class DataHandler {
             }
             fromAmount = fromAmount.setScale(fromCur.getPlaces(), RoundingMode.HALF_UP);
             toAmount = toAmount.setScale(toCur.getPlaces(), RoundingMode.HALF_UP);
-            TransactionEntry entry = new TransactionEntry(CURRENT_INSTANCE);
-            Position temp = getPosition(fromCur);
-            ArrayList<OrderBookEntry> orders = temp.change(entry.getUUID(), date, fromCur, fromAmount, cost);
+            TransactionCapsule capsule = new TransactionCapsule(CURRENT_INSTANCE);
+            Position temp = getPosition(fromCur, date);
+            ArrayList<OrderBookEntry> orders = temp.change(capsule.getUUID(), date, fromCur, fromAmount, cost);
             BigDecimal profitSR = BigDecimal.ZERO, profitLR = BigDecimal.ZERO;
             for (OrderBookEntry order : orders) {
                 if (order.longTerm()) {
@@ -1260,7 +979,7 @@ public class DataHandler {
                 }
                 gl += "(" + profitSR.abs().setScale(CURRENT_INSTANCE.main.getPlaces(), RoundingMode.HALF_UP) + ")";
             }
-            entry.insert(
+            capsule.insert(
                     date,
                     exchange.NAME,
                     fromCur + ", " + toCur,
@@ -1269,32 +988,27 @@ public class DataHandler {
                             + fromAmount + "), T!" + exchange.NAME + "_" + toCur.getTicker() + "("
                             + toAmount + ")" + gl, CURRENT_INSTANCE)
             );
-            entry.addLedgerMeta(fromCur, toCur, fromAmount, toAmount, cost);
-            addTransaction(entry);
+            capsule.addLedgerMeta(fromCur, toCur, fromAmount, toAmount, cost);
+            DATABASE.TRANSACTIONS.add(capsule, ImportHandler.ImportMode.KEEP);
             return true;
         } catch (NumberFormatException ex) {
             return false;
         }
     }
 
-    public void save() {
-        TRANSACTIONS.save();
-        BUDGETS.save();
-        TEMPLATES.save();
-    }
-
-    public void checkLedgers() {
-        for (TransactionEntry entry : CURRENT_INSTANCE.DATA_HANDLER.readTransactions()) {
-            if (entry.hasMeta("ledger")) {
+    //checks
+    public void checkLedgers(LDate start, LDate end) {
+        for (TransactionCapsule capsule : DATABASE.TRANSACTIONS.getRange(start, end)) {
+            if (capsule.hasMeta("ledger")) {
                 Aggregation<String> curAg = new Aggregation<>();
                 Aggregation<String> ledgAg = new Aggregation<>();
-                for (AccountWrapper wrapper : entry.getAccounts()) {
+                for (AccountWrapper wrapper : capsule.getAccounts()) {
                     if (wrapper.COLUMN == AWColumn.TRACKER) {
                         String c = wrapper.ACCOUNT.getCurrency().toUnifiedString();
                         curAg.add(c, wrapper.VALUE);
                     }
                 }
-                for (LedgerMetadata meta : entry.getLedgerMeta()) {
+                for (LedgerMetadata meta : capsule.getLedgerMeta()) {
                     if (!meta.FROM.equals(CURRENT_INSTANCE.main)) {
                         ledgAg.add(meta.FROM.toString(), meta.FROM_AMNT);
                     }
@@ -1305,10 +1019,10 @@ public class DataHandler {
                 for (String cur : curAg.keySet()) {
                     if (!ledgAg.containsKey(cur)) {
                         if (curAg.get(cur).compareTo(BigDecimal.ZERO) != 0) {
-                            CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Damaged or missing ledger metadata for entry: " + Long.toUnsignedString(entry.getUUID()));
+                            CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Damaged or missing ledger metadata for capsule: " + Long.toUnsignedString(capsule.getUUID()));
                         }
                     } else if (curAg.get(cur).compareTo(ledgAg.get(cur)) != 0) {
-                        CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Damaged ledger metadata for entry: " + Long.toUnsignedString(entry.getUUID()));
+                        CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Damaged ledger metadata for capsule: " + Long.toUnsignedString(capsule.getUUID()));
                         CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Disparity: " + cur + ": " + curAg.get(cur) + " / " + ledgAg.get(cur));
                     }
                 }
@@ -1316,7 +1030,7 @@ public class DataHandler {
         }
     }
 
-    public void checkCG() {
+    public void checkCG(LDate start, LDate end) {
         ArrayList<String> gains = new ArrayList<>(Arrays.asList(
                 Account.cgStockName, Account.cgInventoryName, Account.cgFiatName, Account.cgCryptoName,
                 Account.cgltStockName, Account.cgltInventoryName, Account.cgltFiatName, Account.cgltCryptoName
@@ -1325,15 +1039,15 @@ public class DataHandler {
                 Account.clltStockName, Account.clltInventoryName, Account.clltFiatName, Account.clltCryptoName
         ));
         Aggregation<Long> map = new Aggregation<>();
-        for (OrderBookEntry entry : getOrderBook()) {
+        for (OrderBookEntry entry : getOrderBook(start, end)) {
             map.add(entry.END_REF, entry.profit());
         }
         for (Long uuid : map.keySet()) {
-            TransactionEntry entry = getTransactionEntry(uuid);
+            TransactionCapsule capsule = DATABASE.TRANSACTIONS.get(uuid);
             boolean flag = false;
             BigDecimal total = BigDecimal.ZERO;
-            if (entry.hasGhostAccounts()) {
-                for (AccountWrapper wrapper : entry.getAccounts()) {
+            if (capsule.hasGhostAccounts()) {
+                for (AccountWrapper wrapper : capsule.getAccounts()) {
                     if (wrapper.COLUMN == AWColumn.GHOST) {
                         if (gains.contains(wrapper.ACCOUNT.getName())) {
                             total = total.add(wrapper.VALUE);
@@ -1353,8 +1067,8 @@ public class DataHandler {
                     );
                 }
             }
-            if (!flag && !entry.equals(getPrior())) {
-                CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Missing Capital Gain/Loss: " + Long.toUnsignedString(entry.getUUID()));
+            if (!flag) {
+                CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Missing Capital Gain/Loss: " + Long.toUnsignedString(capsule.getUUID()));
                 CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Expected: " + CURRENT_INSTANCE.$(map.get(uuid)));
             }
         }

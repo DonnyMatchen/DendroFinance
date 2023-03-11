@@ -1,3 +1,49 @@
+## Planned
+* ability to change password
+* mass removing transactions
+* cash flow
+* statistics gui replacement
+
+## v0.11.0
+* JsonObject now accepts multiple attempts at a key for get
+  * minimized size of certain export json while maintaining backwards compatibility
+    * transactions
+    * budget
+    * template
+* moved to HSQLDB from JSON for transactions, budgets, templates, and states.
+  * added database tab to profile
+  * added states
+    * added `StateCapsule`
+      * moved UUID to `TransactionCapsule`
+      * unique check handled on object creation
+    * automatic state handling
+  * moved database specific functions to its own class
+  * added comments to delineate functions within `DataHandler`
+    * added comment for section: operations that use transactions and states
+    * added comment for section: budget types
+  * implemented database
+    * removed datasets
+    * created `DateRange` custom swing component
+* created init parameters
+  * moved logging toggle and log level to init.json
+  * removed large flag
+* removed classes:
+  * data handling
+    * `Dataset` - replaced by HSQLDB engine
+    * `Entry` - replaced by `Capsule`
+  * gui
+    * `ArchiveGui` - functionality rolled into `ExportGui`, states, and mass-deleting of transactions
+    * `ChangePasswordGui` - functionality temporarily removed
+    * `RevExpGui` - functionality removed
+    * `StatisticsGui` - functionality temporarily removed
+* stream encryption reworked
+  * `DecryptionInputStream` & `EncryptionOutputStream` removed
+  * added .xarc option for export and import
+
+## v0.10.3
+* code cleanup
+  * `LCurrency`
+
 ## v0.10.2
 * updates to insertion
   * items, description, and accounts are now long fields

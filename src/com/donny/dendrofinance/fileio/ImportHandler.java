@@ -1,8 +1,11 @@
 package com.donny.dendrofinance.fileio;
 
-import com.donny.dendrofinance.entry.BudgetEntry;
-import com.donny.dendrofinance.entry.TemplateEntry;
-import com.donny.dendrofinance.entry.TransactionEntry;
+import com.donny.dendrofinance.capsules.BudgetCapsule;
+import com.donny.dendrofinance.capsules.StateCapsule;
+import com.donny.dendrofinance.capsules.TemplateCapsule;
+import com.donny.dendrofinance.capsules.TransactionCapsule;
+import com.donny.dendrofinance.fileio.xarc.XarcInputStream;
+import com.donny.dendrofinance.gui.password.UnkPasswordGui;
 import com.donny.dendrofinance.instance.Instance;
 import com.donny.dendrofinance.json.JsonArray;
 import com.donny.dendrofinance.json.JsonFormattingException;
@@ -10,9 +13,13 @@ import com.donny.dendrofinance.json.JsonItem;
 import com.donny.dendrofinance.json.JsonObject;
 import com.donny.dendrofinance.types.LAccountSet;
 import com.donny.dendrofinance.types.LDate;
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonParseException;
 
 import javax.swing.*;
 import java.io.File;
+import java.io.IOException;
+import java.sql.SQLException;
 import java.text.ParseException;
 
 public class ImportHandler {
@@ -57,15 +64,17 @@ public class ImportHandler {
     /*
      * It is expected that JSON imports might be encrypted, but CSVs never will be
      */
-    public final void load(String path, JFrame caller, ImportMode mode) {
+    public final void load(String path, JFrame caller, ImportMode mode) throws SQLException {
         File file = new File(path);
         if (file.exists()) {
             if (path.toLowerCase().contains(".csv")) {
                 loadCSV(file);
             } else if (path.toLowerCase().contains(".json")) {
                 loadJSON(file, mode);
-            } else if (path.toLowerCase().contains(".xtbl") || path.toLowerCase().contains(".xarc")) {
+            } else if (path.toLowerCase().contains(".xtbl")) {
                 loadXTBL(file, caller, mode);
+            } else if (path.toLowerCase().contains(".xarc")) {
+                loadXARC(file, caller, mode);
             }
         }
     }
@@ -74,9 +83,9 @@ public class ImportHandler {
         String raw = CURRENT_INSTANCE.FILE_HANDLER.read(file);
         for (String line : raw.replace("\r", "").split("\n")) {
             String[] fields = line.split("\t");
-            TransactionEntry entry = new TransactionEntry(CURRENT_INSTANCE);
+            TransactionCapsule capsule = new TransactionCapsule(CURRENT_INSTANCE);
             try {
-                entry.insert(
+                capsule.insert(
                         new LDate(fields[0], CURRENT_INSTANCE),
                         fields[1],
                         fields[2],
@@ -84,36 +93,43 @@ public class ImportHandler {
                         new LAccountSet(fields[4], CURRENT_INSTANCE)
                 );
                 if (!fields[5].equals("{}")) {
-                    entry.setMeta((JsonObject) JsonItem.digest(fields[6]));
+                    capsule.setMeta((JsonObject) JsonItem.digest(fields[6]));
                 }
             } catch (JsonFormattingException e) {
                 CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Bad Metadata: " + fields[6]);
             } catch (ParseException e) {
                 CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Bad Date: " + fields[0]);
             }
-            CURRENT_INSTANCE.DATA_HANDLER.addTransaction(entry);
+            CURRENT_INSTANCE.DATA_HANDLER.DATABASE.TRANSACTIONS.add(capsule, ImportMode.KEEP);
         }
         CURRENT_INSTANCE.FILE_HANDLER.delete(file);
     }
 
-    public void loadJSON(File file, ImportMode mode) {
+    public void loadJSON(File file, ImportMode mode) throws SQLException {
         boolean imported = false;
         if (file.getName().toLowerCase().contains("transaction")) {
             JsonArray array = (JsonArray) CURRENT_INSTANCE.FILE_HANDLER.readJson(file);
             for (JsonObject obj : array.getObjectArray()) {
-                CURRENT_INSTANCE.DATA_HANDLER.addTransaction(new TransactionEntry(obj, mode, CURRENT_INSTANCE), mode);
+                CURRENT_INSTANCE.DATA_HANDLER.DATABASE.TRANSACTIONS.add(new TransactionCapsule(obj, mode, CURRENT_INSTANCE), mode);
             }
             imported = true;
         } else if (file.getName().toLowerCase().contains("budget")) {
             JsonArray array = (JsonArray) CURRENT_INSTANCE.FILE_HANDLER.readJson(file);
             for (JsonObject obj : array.getObjectArray()) {
-                CURRENT_INSTANCE.DATA_HANDLER.addBudget(new BudgetEntry(obj, mode, CURRENT_INSTANCE), mode);
+                CURRENT_INSTANCE.DATA_HANDLER.DATABASE.BUDGETS.add(new BudgetCapsule(obj, mode, CURRENT_INSTANCE), mode);
             }
             imported = true;
         } else if (file.getName().toLowerCase().contains("template")) {
             JsonArray array = (JsonArray) CURRENT_INSTANCE.FILE_HANDLER.readJson(file);
             for (JsonObject obj : array.getObjectArray()) {
-                CURRENT_INSTANCE.DATA_HANDLER.addTemplate(new TemplateEntry(obj, mode, CURRENT_INSTANCE), mode);
+                CURRENT_INSTANCE.DATA_HANDLER.DATABASE.TEMPLATES.add(new TemplateCapsule(obj, mode, CURRENT_INSTANCE), mode);
+            }
+            imported = true;
+        } else if (file.getName().toLowerCase().contains("state")) {
+            JsonItem item = CURRENT_INSTANCE.FILE_HANDLER.readJson(file);
+            JsonArray array = (JsonArray) item;
+            for (JsonObject obj : array.getObjectArray()) {
+                CURRENT_INSTANCE.DATA_HANDLER.DATABASE.STATES.add(new StateCapsule(obj, CURRENT_INSTANCE), mode);
             }
             imported = true;
         }
@@ -122,7 +138,7 @@ public class ImportHandler {
         }
     }
 
-    public void loadXTBL(File file, JFrame caller, ImportMode mode) {
+    public void loadXTBL(File file, JFrame caller, ImportMode mode) throws SQLException {
         boolean imported = false;
         if (file.getName().toLowerCase().contains("transaction") || file.getName().toLowerCase().contains(".xarc")) {
             JsonItem item = CURRENT_INSTANCE.FILE_HANDLER.readDecryptJsonUnknownPassword(file, caller);
@@ -131,7 +147,7 @@ public class ImportHandler {
             } else {
                 JsonArray array = (JsonArray) item;
                 for (JsonObject obj : array.getObjectArray()) {
-                    CURRENT_INSTANCE.DATA_HANDLER.addTransaction(new TransactionEntry(obj, mode, CURRENT_INSTANCE));
+                    CURRENT_INSTANCE.DATA_HANDLER.DATABASE.TRANSACTIONS.add(new TransactionCapsule(obj, mode, CURRENT_INSTANCE), mode);
                 }
                 imported = true;
             }
@@ -142,7 +158,7 @@ public class ImportHandler {
             } else {
                 JsonArray array = (JsonArray) item;
                 for (JsonObject obj : array.getObjectArray()) {
-                    CURRENT_INSTANCE.DATA_HANDLER.addBudget(new BudgetEntry(obj, mode, CURRENT_INSTANCE));
+                    CURRENT_INSTANCE.DATA_HANDLER.DATABASE.BUDGETS.add(new BudgetCapsule(obj, mode, CURRENT_INSTANCE), mode);
                 }
                 imported = true;
             }
@@ -153,10 +169,65 @@ public class ImportHandler {
             } else {
                 JsonArray array = (JsonArray) item;
                 for (JsonObject obj : array.getObjectArray()) {
-                    CURRENT_INSTANCE.DATA_HANDLER.addTemplate(new TemplateEntry(obj, mode, CURRENT_INSTANCE));
+                    CURRENT_INSTANCE.DATA_HANDLER.DATABASE.TEMPLATES.add(new TemplateCapsule(obj, mode, CURRENT_INSTANCE), mode);
                 }
                 imported = true;
             }
+        } else if (file.getName().toLowerCase().contains("state")) {
+            JsonItem item = CURRENT_INSTANCE.FILE_HANDLER.readDecryptJsonUnknownPassword(file, caller);
+            if (item == null) {
+                CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Incorrect password for file: " + file.getPath());
+            } else {
+                JsonArray array = (JsonArray) item;
+                for (JsonObject obj : array.getObjectArray()) {
+                    CURRENT_INSTANCE.DATA_HANDLER.DATABASE.STATES.add(new StateCapsule(obj, CURRENT_INSTANCE), mode);
+                }
+                imported = true;
+            }
+        }
+        if (imported) {
+            CURRENT_INSTANCE.FILE_HANDLER.delete(file);
+        }
+    }
+
+    public void loadXARC(File file, JFrame caller, ImportMode mode) throws SQLException {
+        boolean imported = false;
+        EncryptionHandler handler = UnkPasswordGui.getTestPassword(caller, file.getName(), CURRENT_INSTANCE);
+        try{
+            JsonItem item = JsonItem.digest(new JsonFactory().createParser(new XarcInputStream(file, handler, CURRENT_INSTANCE)));
+            if (item == null) {
+                CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Incorrect password for file: " + file.getPath());
+            } else {
+                if (file.getName().toLowerCase().contains("transaction")) {
+                    JsonArray array = (JsonArray) item;
+                    for (JsonObject obj : array.getObjectArray()) {
+                        CURRENT_INSTANCE.DATA_HANDLER.DATABASE.TRANSACTIONS.add(new TransactionCapsule(obj, mode, CURRENT_INSTANCE), mode);
+                    }
+                    imported = true;
+                } else if (file.getName().toLowerCase().contains("budget")) {
+                    JsonArray array = (JsonArray) item;
+                    for (JsonObject obj : array.getObjectArray()) {
+                        CURRENT_INSTANCE.DATA_HANDLER.DATABASE.BUDGETS.add(new BudgetCapsule(obj, mode, CURRENT_INSTANCE), mode);
+                    }
+                    imported = true;
+                } else if (file.getName().toLowerCase().contains("template")) {
+                    JsonArray array = (JsonArray) item;
+                    for (JsonObject obj : array.getObjectArray()) {
+                        CURRENT_INSTANCE.DATA_HANDLER.DATABASE.TEMPLATES.add(new TemplateCapsule(obj, mode, CURRENT_INSTANCE), mode);
+                    }
+                    imported = true;
+                } else if (file.getName().toLowerCase().contains("state")) {
+                    JsonArray array = (JsonArray) item;
+                    for (JsonObject obj : array.getObjectArray()) {
+                        CURRENT_INSTANCE.DATA_HANDLER.DATABASE.STATES.add(new StateCapsule(obj, CURRENT_INSTANCE), mode);
+                    }
+                    imported = true;
+                }
+            }
+        } catch (IOException e) {
+            CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Something went wrong importing " + file.getPath() + "\n" + e);
+        } catch (JsonFormattingException e) {
+            CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Malformed json: " + file.getPath() + "\n" + e);
         }
         if (imported) {
             CURRENT_INSTANCE.FILE_HANDLER.delete(file);

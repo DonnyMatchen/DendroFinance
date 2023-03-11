@@ -3,19 +3,18 @@ package com.donny.dendrofinance.account;
 import com.donny.dendrofinance.currency.LCurrency;
 import com.donny.dendrofinance.currency.LInventory;
 import com.donny.dendrofinance.currency.LStock;
-import com.donny.dendrofinance.entry.TransactionEntry;
 import com.donny.dendrofinance.instance.Instance;
 import com.donny.dendrofinance.json.JsonArray;
 import com.donny.dendrofinance.json.JsonFormattingException;
 import com.donny.dendrofinance.json.JsonObject;
 import com.donny.dendrofinance.json.JsonString;
-import com.donny.dendrofinance.util.ExportableToJson;
+import com.donny.dendrofinance.util.UniqueName;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Comparator;
 
-public class Exchange implements ExportableToJson, Serializable {
+public class Exchange implements UniqueName, Serializable {
     private final Instance CURRENT_INSTANCE;
     public final String NAME, ALT;
     public final ArrayList<String> SUPPORTED;
@@ -55,6 +54,11 @@ public class Exchange implements ExportableToJson, Serializable {
         if (obj.containsKey("staking")) {
             STAKING.addAll(obj.getArray("staking").getObjectArray());
         }
+    }
+
+    @Override
+    public String getName() {
+        return NAME;
     }
 
     public boolean supports(LCurrency currency) {
@@ -135,19 +139,8 @@ public class Exchange implements ExportableToJson, Serializable {
             }
         }
         return new String[]{
-                NAME, ALT, "" + fiat, "" + stock, "" + crypto, "" + inv, inUse() ? "X" : ""
+                NAME, ALT, "" + fiat, "" + stock, "" + crypto, "" + inv
         };
-    }
-
-    public boolean inUse() {
-        for (TransactionEntry entry : CURRENT_INSTANCE.DATA_HANDLER.readTransactions()) {
-            for (AccountWrapper aw : entry.getAccounts()) {
-                if (aw.ACCOUNT.EXCHANGE == this) {
-                    return true;
-                }
-            }
-        }
-        return false;
     }
 
     public ArrayList<String> aNames() {
@@ -155,21 +148,6 @@ public class Exchange implements ExportableToJson, Serializable {
         SUPPORTED.forEach(cur -> out.add(NAME + "_" + cur.split("!")[1]));
         STAKING.forEach(pair -> out.add(NAME + "_" + pair.getString("cur").getString().split("!")[1] + "_S"));
         return out;
-    }
-
-    public ArrayList<String> aNamesInUse() {
-        ArrayList<String> reduced = new ArrayList<>();
-        for (String name : aNames()) {
-            Account a = CURRENT_INSTANCE.ACCOUNTS.getElement(name);
-            if (a == null) {
-                CURRENT_INSTANCE.LOG_HANDLER.info(getClass(), "You might have a missing currency (" + name + ")");
-            } else {
-                if (a.inUse()) {
-                    reduced.add(name);
-                }
-            }
-        }
-        return reduced;
     }
 
     @Override

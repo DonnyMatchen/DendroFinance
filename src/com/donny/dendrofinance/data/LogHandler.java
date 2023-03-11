@@ -1,6 +1,7 @@
 package com.donny.dendrofinance.data;
 
 import com.donny.dendrofinance.instance.Instance;
+import com.donny.dendrofinance.types.LDate;
 
 import java.io.File;
 import java.text.DateFormat;
@@ -37,10 +38,9 @@ public class LogHandler {
         if (!dir.exists()) {
             dir.mkdir();
         }
-        Date now = new Date();
-        DateFormat format = new SimpleDateFormat("yyyy-MM-dd_HH;mm;ss_z");
-        CURRENT_INSTANCE.FILE_HANDLER.write(dir, format.format(now) + ".log", LOG.toString());
-        CURRENT_INSTANCE.FILE_HANDLER.write(dir, format.format(now) + ".trace.log", TRACE.toString());
+        String name = LDate.now(CURRENT_INSTANCE).toFileSafeString();
+        CURRENT_INSTANCE.FILE_HANDLER.write(dir, name + ".log", LOG.toString());
+        CURRENT_INSTANCE.FILE_HANDLER.write(dir, name + ".trace.log", TRACE.toString());
     }
 
     public void fatal(Class cause, String message) {

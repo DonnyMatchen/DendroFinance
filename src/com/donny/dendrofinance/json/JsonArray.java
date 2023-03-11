@@ -1,6 +1,6 @@
 package com.donny.dendrofinance.json;
 
-import com.donny.dendrofinance.fileio.encryption.EncryptionOutputStream;
+import com.donny.dendrofinance.fileio.xarc.XarcOutputStream;
 import com.donny.dendrofinance.instance.Instance;
 import com.donny.dendrofinance.util.ExportableToJson;
 
@@ -190,20 +190,19 @@ public class JsonArray extends JsonItem {
             }
         }
     }
-
     @Override
-    protected void streamEncrypt(EncryptionOutputStream stream) throws IOException {
+    protected void stream(XarcOutputStream out) {
         if (ARRAY.size() == 0) {
-            stream.write("[]".getBytes(Instance.CHARSET));
+            out.write("[]");
         } else {
-            stream.write("[".getBytes(Instance.CHARSET));
+            out.write("[");
             int x = ARRAY.size();
             for (int i = 0; i < x; i++) {
-                ARRAY.get(i).streamEncrypt(stream);
+                ARRAY.get(i).stream(out);
                 if (i < x - 1) {
-                    stream.write(",".getBytes(Instance.CHARSET));
+                    out.write(",");
                 } else {
-                    stream.write("]".getBytes(Instance.CHARSET));
+                    out.write("]");
                 }
             }
         }

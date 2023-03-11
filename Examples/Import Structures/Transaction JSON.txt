@@ -1,30 +1,30 @@
 AccountWrapper{
-  "acc": string
-  "col": string
-  "val": decimal
+  "a": string
+  "c": string
+  "v": decimal
 }
 
-acc: the account name
-col: D for debit, C for credit, G for ghost, or T for tracking
-val: the value.  this should generally be a positive number if debit or credit
+a: the account name
+c: D for debit, C for credit, G for ghost, or T for tracking
+v: the value.  this should generally be a positive number if debit or credit
 
-Transaction{
-  "_uuid": integer
-  "date": integer
-  "entity": string
-  "items": string
-  "description": string
-  "accounts": array(AccountWrapper)
-  "meta-data": object
+TransactionCapsule{
+  "u": integer
+  "t": integer
+  "e": string
+  "i": string
+  "d": string
+  "a": array(AccountWrapper)
+  "m": object
 }
 
-_uuid: unique identifier for the entry
-date: the date of the transaction as a unix millisecond timestamp
-entity: the legal entity or person the transaction was with
-items: the items bought, sold, or traded, if applicable
-description: notes about the transaction
-accounts: a series of accounts and values that, hopefully, are balanced
-meta-data: transaction metadata.  Anything can be added, but the program will only recognize certain structures.
+u: unique identifier for the capsule
+t: the date of the transaction as a unix millisecond timestamp
+e: the legal entity or person the transaction was with
+i: the items bought, sold, or traded, if applicable
+d: notes about the transaction
+a: a series of accounts and values that, hopefully, are balanced
+m: transaction metadata.  Anything can be added, but the program will only recognize certain structures.
 
 AssetChangeMetadata array: "asset-change"
 AssetMetadata array: "asset"

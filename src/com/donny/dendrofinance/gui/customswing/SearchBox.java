@@ -2,7 +2,7 @@ package com.donny.dendrofinance.gui.customswing;
 
 import com.donny.dendrofinance.data.backingtable.BackingTableCore;
 import com.donny.dendrofinance.json.JsonFormattingException;
-import com.donny.dendrofinance.util.ExportableToJson;
+import com.donny.dendrofinance.util.UniqueName;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
@@ -11,7 +11,7 @@ import javax.swing.event.ListSelectionListener;
 import java.awt.*;
 import java.util.ArrayList;
 
-public class SearchBox<E extends ExportableToJson> extends JPanel {
+public class SearchBox<E extends UniqueName> extends JPanel {
     private final JLabel TITLE;
     private final JTextField SEARCH;
     private final JList<E> LIST;

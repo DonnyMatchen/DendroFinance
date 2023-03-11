@@ -100,12 +100,11 @@ public class AssetStatusGui extends RegisterFrame {
 
     public final void enterAction(LCurrency currency) {
         try {
-            LDate date = Validation.validateDate(DATE, CURRENT_INSTANCE);
+            LDate date = LDate.endDay(Validation.validateDate(DATE, CURRENT_INSTANCE));
             while (TABLE_ACCESS.getRowCount() > 0) {
                 TABLE_ACCESS.removeRow(0);
             }
-            int y = date.getYear(), m = date.getMonth(), d = date.getDay();
-            HashMap<Account, BigDecimal> acc = CURRENT_INSTANCE.DATA_HANDLER.accountsAsOf(y, m, d);
+            HashMap<Account, BigDecimal> acc = CURRENT_INSTANCE.DATA_HANDLER.accountsAsOf(date);
             HashMap<LCurrency, BigDecimal> prices = CURRENT_INSTANCE.DATA_HANDLER.pricesAsOf(currency, date);
             BigDecimal stock = BigDecimal.ZERO, crypt = BigDecimal.ZERO, inv = BigDecimal.ZERO, fiat = BigDecimal.ZERO,
                     main = BigDecimal.ZERO, total = BigDecimal.ZERO, nf = BigDecimal.ZERO, rec = BigDecimal.ZERO, debts = BigDecimal.ZERO;
@@ -197,7 +196,6 @@ public class AssetStatusGui extends RegisterFrame {
         } catch (ValidationFailedException e) {
             CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Validation error: " + e.getMessage());
         }
-
     }
 
     private LCurrency getCurrency() {

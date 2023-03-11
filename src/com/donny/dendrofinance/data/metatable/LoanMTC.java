@@ -1,6 +1,6 @@
 package com.donny.dendrofinance.data.metatable;
 
-import com.donny.dendrofinance.entry.meta.LoanMetadata;
+import com.donny.dendrofinance.capsules.meta.LoanMetadata;
 import com.donny.dendrofinance.instance.Instance;
 import com.donny.dendrofinance.types.LDate;
 

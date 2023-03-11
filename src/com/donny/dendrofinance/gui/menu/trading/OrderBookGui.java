@@ -1,11 +1,12 @@
 package com.donny.dendrofinance.gui.menu.trading;
 
-import com.donny.dendrofinance.entry.totals.OrderBookEntry;
+import com.donny.dendrofinance.capsules.totals.OrderBookEntry;
 import com.donny.dendrofinance.gui.MainGui;
 import com.donny.dendrofinance.gui.customswing.DendroFactory;
 import com.donny.dendrofinance.gui.customswing.RegisterFrame;
+import com.donny.dendrofinance.instance.Frequency;
 import com.donny.dendrofinance.instance.Instance;
-import com.donny.dendrofinance.util.Curation;
+import com.donny.dendrofinance.types.LDate;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -29,34 +30,15 @@ public class OrderBookGui extends RegisterFrame {
             TABLE_ACCESS = (DefaultTableModel) table.getModel();
             YEAR = new JComboBox<>();
             PERIOD = new JComboBox<>();
-            PERIOD.addItem("Year");
-            PERIOD.addItem("S1");
-            PERIOD.addItem("S2");
-            PERIOD.addItem("Q1");
-            PERIOD.addItem("Q2");
-            PERIOD.addItem("Q3");
-            PERIOD.addItem("Q4");
-            PERIOD.addItem("January");
-            PERIOD.addItem("February");
-            PERIOD.addItem("March");
-            PERIOD.addItem("April");
-            PERIOD.addItem("May");
-            PERIOD.addItem("June");
-            PERIOD.addItem("July");
-            PERIOD.addItem("August");
-            PERIOD.addItem("September");
-            PERIOD.addItem("October");
-            PERIOD.addItem("November");
-            PERIOD.addItem("December");
+            CURRENT_INSTANCE.installPeriod(PERIOD);
             YEAR.addItemListener(event -> update());
             PERIOD.addItemListener(event -> update());
-            Curation<Integer> years = new Curation<>();
-            for (OrderBookEntry entry : CURRENT_INSTANCE.DATA_HANDLER.getOrderBook()) {
-                years.add(entry.END.getYear());
+            LDate first = new LDate(CURRENT_INSTANCE.DATA_HANDLER.DATABASE.TRANSACTIONS.getMinDate(), CURRENT_INSTANCE);
+            LDate last = new LDate(CURRENT_INSTANCE.DATA_HANDLER.DATABASE.TRANSACTIONS.getMaxDate(), CURRENT_INSTANCE);
+            for (int i = first.getYear(); i < last.getYear() + 1; i++) {
+                YEAR.addItem("" + i);
             }
-            for (int y : years) {
-                YEAR.addItem("" + y);
-            }
+
             //back
             {
                 GroupLayout main = new GroupLayout(getContentPane());
@@ -107,34 +89,32 @@ public class OrderBookGui extends RegisterFrame {
             while (TABLE_ACCESS.getRowCount() > 0) {
                 TABLE_ACCESS.removeRow(0);
             }
+            Frequency freq = Frequency.ANNUAL;
+            int param = 0;
+            String period = Objects.requireNonNullElse((String) PERIOD.getSelectedItem(), "Year");
+            if (period.length() == 2) {
+                freq = Frequency.QUARTERLY;
+                param = Integer.parseInt(period.substring(1));
+            } else if (!period.equals("Year")) {
+                freq = Frequency.MONTHLY;
+                param = LDate.getMonth(period);
+            }
             int y = Integer.parseInt((String) YEAR.getSelectedItem());
             String per = Objects.requireNonNullElse((String) PERIOD.getSelectedItem(), "Year");
-            for (OrderBookEntry entry : CURRENT_INSTANCE.DATA_HANDLER.getOrderBook()) {
-                boolean flag = entry.END.getYear() == y;
-                if (flag && !per.equals("Year")) {
-                    if (per.length() == 2) {
-                        if (per.contains("S")) {
-                            flag = per.equals(entry.END.getSemi());
-                        } else {
-                            flag = per.equals(entry.END.getQuarter());
-                        }
-                    } else {
-                        flag = per.equals(entry.END.getMonthString());
-                    }
-                }
-                if (flag) {
-                    TABLE_ACCESS.addRow(new String[]{
-                            Long.toUnsignedString(entry.START_REF),
-                            entry.START.toDateString(),
-                            Long.toUnsignedString(entry.END_REF),
-                            entry.END.toDateString(),
-                            entry.ASSET.toString(),
-                            entry.ASSET.encode(entry.VOLUME),
-                            CURRENT_INSTANCE.$(entry.COST),
-                            CURRENT_INSTANCE.$(entry.SOLD),
-                            CURRENT_INSTANCE.$(entry.profit()),
-                    });
-                }
+            LDate[] range = LDate.getRange(Integer.parseInt((String) YEAR.getSelectedItem()),
+                    param, freq, CURRENT_INSTANCE);
+            for (OrderBookEntry entry : CURRENT_INSTANCE.DATA_HANDLER.getOrderBook(range[0], range[1])) {
+                TABLE_ACCESS.addRow(new String[]{
+                        Long.toUnsignedString(entry.START_REF),
+                        entry.START.toDateString(),
+                        Long.toUnsignedString(entry.END_REF),
+                        entry.END.toDateString(),
+                        entry.ASSET.toString(),
+                        entry.ASSET.encode(entry.VOLUME),
+                        CURRENT_INSTANCE.$(entry.COST),
+                        CURRENT_INSTANCE.$(entry.SOLD),
+                        CURRENT_INSTANCE.$(entry.profit()),
+                });
             }
         }
     }

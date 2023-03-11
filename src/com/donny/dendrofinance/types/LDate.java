@@ -1,6 +1,7 @@
 package com.donny.dendrofinance.types;
 
 import com.donny.dendrofinance.instance.Instance;
+import com.donny.dendrofinance.instance.Frequency;
 import com.donny.dendrofinance.json.JsonDecimal;
 import com.donny.dendrofinance.util.ExportableToJson;
 
@@ -80,6 +81,109 @@ public class LDate implements ExportableToJson, Comparable<LDate> {
         MONTH_SECOND.sort((SimpleDateFormat t1, SimpleDateFormat t2) -> -1 * Integer.compare(t1.toPattern().length(), t2.toPattern().length()));
     }
 
+    public static int getMonth(String name) {
+        return switch (name.toLowerCase()) {
+            case "january", "jan" -> 1;
+            case "february", "feb" -> 2;
+            case "march", "mar" -> 3;
+            case "april", "apr" -> 4;
+            case "may" -> 5;
+            case "june", "jun" -> 6;
+            case "july", "jul" -> 7;
+            case "august", "aug" -> 8;
+            case "september", "sep" -> 9;
+            case "october", "oct" -> 10;
+            case "november", "nov" -> 11;
+            case "december", "dec" -> 12;
+            default -> 0;
+        };
+    }
+
+    public static LDate now(Instance curInst) {
+        return new LDate(new Date(), curInst);
+    }
+
+    public static LDate startDay(LDate date) {
+        return new LDate(date.getYear(), date.getMonth(), date.getDay(), date.CURRENT_INSTANCE);
+    }
+
+    public static LDate endDay(int year, int month, int day, Instance curInst) {
+        return endDay(new LDate(year, month, day, curInst));
+    }
+
+    public static LDate endDay(LDate date) {
+        return new LDate(date.getYear(), date.getMonth(), date.getDay(), 23, 59, 59, 999, date.CURRENT_INSTANCE);
+    }
+
+    public static LDate getRange(int range, LDate end, Instance curInst) {
+        return new LDate(end.getTime() - 86400000L * range, curInst);
+    }
+
+    public static LDate defaultRange(LDate end, Instance curInst) {
+        return getRange(curInst.range, end, curInst);
+    }
+
+    public static int lastDay(int year, int month, Instance curInst) {
+        switch (month) {
+            case 2 -> {
+                return year % 4 == 0 ? 29 : 28;
+            }
+            case 1, 3, 5, 7, 8, 10, 12 -> {
+                return 31;
+            }
+            case 4, 6, 9, 11 -> {
+                return 30;
+            }
+            default -> {
+                curInst.LOG_HANDLER.error(LDate.class, "Invalid Month Selected!");
+                return 0;
+            }
+        }
+    }
+
+    public static LDate[] getRange(int year, int param, Frequency frequency, Instance curInst) {
+        switch (frequency) {
+            case ANNUAL -> {
+                LDate temp = new LDate(year + 1, 1, 1, curInst);
+                return new LDate[]{
+                        new LDate(year, 1, 1, curInst),
+                        new LDate(temp.getTime() - 1, curInst)
+                };
+            }
+            case QUARTERLY -> {
+                int sm, em;
+                em = 3 * param;
+                sm = em - 2;
+                LDate end;
+                if (em == 12) {
+                    end = new LDate(year + 1, 1, 1, curInst);
+                } else {
+                    end = new LDate(year, em + 1, 1, curInst);
+                }
+                return new LDate[]{
+                        new LDate(year, sm, 1, curInst),
+                        new LDate(end.getTime() - 1, curInst)
+                };
+            }
+            case MONTHLY -> {
+                int ey, em;
+                ey = year;
+                em = param + 1;
+                if (param > 12) {
+                    em = 1;
+                    ey = year + 1;
+                }
+                LDate end;
+                end = new LDate(ey, em, 1, curInst);
+                return new LDate[]{
+                        new LDate(year, param, 1, curInst),
+                        new LDate(end.getTime() - 1, curInst)
+                };
+            }
+        }
+        return null;
+    }
+
     private final Date DATE;
     private final Instance CURRENT_INSTANCE;
 
@@ -145,28 +249,6 @@ public class LDate implements ExportableToJson, Comparable<LDate> {
                 throw new ParseException(raw, 0);
             }
             DATE = candidate;
-        }
-    }
-
-    public static LDate now(Instance curInst) {
-        return new LDate(new Date(), curInst);
-    }
-
-    public static int lastDay(int year, int month, Instance curInst) {
-        switch (month) {
-            case 2 -> {
-                return year % 4 == 0 ? 29 : 28;
-            }
-            case 1, 3, 5, 7, 8, 10, 12 -> {
-                return 31;
-            }
-            case 4, 6, 9, 11 -> {
-                return 30;
-            }
-            default -> {
-                curInst.LOG_HANDLER.error(LDate.class, "Invalid Month Selected!");
-                return 0;
-            }
         }
     }
 
@@ -268,22 +350,6 @@ public class LDate implements ExportableToJson, Comparable<LDate> {
         return Long.compare(getTime(), date.getTime());
     }
 
-    public int compareTo(int y, int m, int d) {
-        String[] thisVals = new SimpleDateFormat("yyyy/MM/dd").format(DATE).split("/");
-        int year = Integer.parseInt(thisVals[0]);
-        int month = Integer.parseInt(thisVals[1]);
-        int day = Integer.parseInt(thisVals[2]);
-        if (year == y) {
-            if (month == m) {
-                return Integer.compare(day, d);
-            } else {
-                return Integer.compare(month, m);
-            }
-        } else {
-            return Integer.compare(year, y);
-        }
-    }
-
     @Override
     public JsonDecimal export() {
         return new JsonDecimal(DATE.getTime());
@@ -328,5 +394,13 @@ public class LDate implements ExportableToJson, Comparable<LDate> {
 
     public String toTimeString() {
         return new SimpleDateFormat("HH:mm:ss.SSS zzz").format(DATE);
+    }
+
+    public String toFileSafeString() {
+        return new SimpleDateFormat("yyyy-MM-dd_HH;mm;ss_z").format(DATE);
+    }
+
+    public String toFileSafeDateString() {
+        return new SimpleDateFormat("yyyy-MM-dd").format(DATE);
     }
 }

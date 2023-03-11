@@ -1,6 +1,6 @@
 package com.donny.dendrofinance.currency;
 
-import com.donny.dendrofinance.entry.totals.Position;
+import com.donny.dendrofinance.capsules.totals.Position;
 import com.donny.dendrofinance.instance.Instance;
 import com.donny.dendrofinance.json.JsonDecimal;
 import com.donny.dendrofinance.json.JsonFormattingException;
@@ -86,7 +86,7 @@ public class LInventory extends LCurrency {
         if (COMMODITY) {
             return super.getTotal(amount);
         } else if (MERCHANDISE) {
-            Position p = CURRENT_INSTANCE.DATA_HANDLER.getPosition(this);
+            Position p = CURRENT_INSTANCE.DATA_HANDLER.getPosition(this, LDate.now(CURRENT_INSTANCE));
             if (p == null) {
                 return BigDecimal.ZERO;
             } else {

@@ -32,14 +32,14 @@ public class ExchangeBTC extends BackingTableCore<Exchange> {
     @Override
     public void load(JsonArray array) {
         for (JsonObject obj : array.getObjectArray()) {
-            TABLE.add(new Exchange(obj, CURRENT_INSTANCE, true));
+            add(new Exchange(obj, CURRENT_INSTANCE, true));
         }
     }
 
     @Override
     public String[] getHeader() {
         return new String[]{
-                "Name", "Alternate Name", "# Fiat", "# Stock", "# Crypto", "# Inventory", "In Use"
+                "Name", "Alternate Name", "# Fiat", "# Stock", "# Crypto", "# Inventory"
         };
     }
 
@@ -51,29 +51,14 @@ public class ExchangeBTC extends BackingTableCore<Exchange> {
     @Override
     public ArrayList<String[]> getContents(String search) {
         ArrayList<String[]> out = new ArrayList<>();
-        for (Exchange exch : TABLE) {
+        for (String key : KEYS) {
+            Exchange exch = MAP.get(key);
             if (exch.NAME.toLowerCase().contains(search.toLowerCase())
                     || exch.ALT.toLowerCase().contains(search.toLowerCase())) {
                 out.add(exch.print());
             }
         }
         return out;
-    }
-
-    @Override
-    public String getIdentifier(int index) {
-        return TABLE.get(index).NAME;
-    }
-
-    @Override
-    public int getIndex(String identifier) {
-        for (int i = 0; i < TABLE.size(); i++) {
-            Exchange exch = TABLE.get(i);
-            if (exch.NAME.equalsIgnoreCase(identifier)) {
-                return i;
-            }
-        }
-        return -1;
     }
 
     @Override
@@ -88,7 +73,7 @@ public class ExchangeBTC extends BackingTableCore<Exchange> {
 
     @Override
     public boolean canRemove(String identifier) {
-        return canEdit(identifier) && !getElement(identifier).inUse();
+        return canEdit(identifier);
     }
 
     @Override
@@ -97,14 +82,17 @@ public class ExchangeBTC extends BackingTableCore<Exchange> {
 
     @Override
     public JsonArray export() {
-        JsonArray array = new JsonArray();
-        for (Exchange exch : TABLE) {
-            try {
-                array.add(exch.export());
-            } catch (JsonFormattingException ex) {
-                CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Malformed Exchange: " + exch);
+        JsonArray out = new JsonArray();
+        for (String key : KEYS) {
+            Exchange exchange = MAP.get(key);
+            if (exchange.EXPORT) {
+                try {
+                    out.add(MAP.get(key).export());
+                } catch (JsonFormattingException e) {
+                    CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Unable to export: " + key + "\n" + e);
+                }
             }
         }
-        return array;
+        return out;
     }
 }

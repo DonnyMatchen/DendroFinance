@@ -1,6 +1,4 @@
 Searching backing tables is much simpler than transactions, since backing table elements are much simpler.
 
-$U (if applicable) limits the return to only entries for which inUse() is true.
-$u (if applicable) limits the return to only entries for which inUse() is false.
 $A (if applicable) limits the return to only entries for which inAccount() is true.
 $a (if applicable) limits the return to only entries for which inAccount() is false.

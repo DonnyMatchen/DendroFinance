@@ -1,6 +1,7 @@
 package com.donny.dendrofinance.gui.menu.reports.budget;
 
-import com.donny.dendrofinance.entry.BudgetEntry;
+import com.donny.dendrofinance.capsules.BudgetCapsule;
+import com.donny.dendrofinance.fileio.ImportHandler;
 import com.donny.dendrofinance.gui.customswing.DendroFactory;
 import com.donny.dendrofinance.gui.customswing.ModalFrame;
 import com.donny.dendrofinance.instance.Instance;
@@ -23,8 +24,8 @@ public class NewBudgetGui extends ModalFrame {
             NAME = new JTextField();
             TEMPLATE = new JComboBox<>();
             TEMPLATE.addItem("Blank");
-            for (BudgetEntry entry : CURRENT_INSTANCE.DATA_HANDLER.readBudgets()) {
-                TEMPLATE.addItem(entry.getName());
+            for (BudgetCapsule capsule : CURRENT_INSTANCE.DATA_HANDLER.DATABASE.BUDGETS.getBudgets()) {
+                TEMPLATE.addItem(capsule.getName());
             }
             JButton cancel = DendroFactory.getButton("Cancel");
             cancel.addActionListener(event -> dispose());
@@ -90,26 +91,26 @@ public class NewBudgetGui extends ModalFrame {
 
     public void okAction() {
         boolean flag = true;
-        BudgetEntry template = null;
+        BudgetCapsule template = null;
         if (NAME.getText().equals("")) {
             flag = false;
         }
         if (flag) {
-            for (BudgetEntry entry : CURRENT_INSTANCE.DATA_HANDLER.readBudgets()) {
-                if (entry.getName().equalsIgnoreCase(NAME.getText())) {
+            for (BudgetCapsule capsule : CURRENT_INSTANCE.DATA_HANDLER.DATABASE.BUDGETS.getBudgets()) {
+                if (capsule.getName().equalsIgnoreCase(NAME.getText())) {
                     flag = false;
                     break;
                 }
-                if (entry.getName().equals(TEMPLATE.getSelectedItem().toString())) {
-                    template = entry;
+                if (capsule.getName().equals(TEMPLATE.getSelectedItem().toString())) {
+                    template = capsule;
                 }
             }
         }
         if (flag) {
             if (template == null) {
-                CURRENT_INSTANCE.DATA_HANDLER.addBudget(new BudgetEntry(NAME.getText(), CURRENT_INSTANCE));
+                CURRENT_INSTANCE.DATA_HANDLER.DATABASE.BUDGETS.add(new BudgetCapsule(NAME.getText(), CURRENT_INSTANCE), ImportHandler.ImportMode.KEEP);
             } else {
-                CURRENT_INSTANCE.DATA_HANDLER.addBudget(new BudgetEntry(template, NAME.getText()));
+                CURRENT_INSTANCE.DATA_HANDLER.DATABASE.BUDGETS.add(new BudgetCapsule(template, NAME.getText()), ImportHandler.ImportMode.KEEP);
             }
             CALLER.updateBudget();
             dispose();

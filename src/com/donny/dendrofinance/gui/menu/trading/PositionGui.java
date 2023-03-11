@@ -3,7 +3,7 @@ package com.donny.dendrofinance.gui.menu.trading;
 import com.donny.dendrofinance.currency.LCurrency;
 import com.donny.dendrofinance.currency.LInventory;
 import com.donny.dendrofinance.currency.LStock;
-import com.donny.dendrofinance.entry.totals.Position;
+import com.donny.dendrofinance.capsules.totals.Position;
 import com.donny.dendrofinance.gui.MainGui;
 import com.donny.dendrofinance.gui.customswing.DendroFactory;
 import com.donny.dendrofinance.gui.customswing.RegisterFrame;
@@ -100,7 +100,7 @@ public class PositionGui extends RegisterFrame {
             }
         }
         BigDecimal tCost = BigDecimal.ZERO, tVal = BigDecimal.ZERO;
-        ArrayList<Position> positions = useDate ? CURRENT_INSTANCE.DATA_HANDLER.getPositions(point) : CURRENT_INSTANCE.DATA_HANDLER.getPositions();
+        ArrayList<Position> positions = CURRENT_INSTANCE.DATA_HANDLER.getPositions(point);
         for (LStock stock : CURRENT_INSTANCE.STOCKS) {
             for (Position p : positions) {
                 if (p.ASSET.equals(stock)) {

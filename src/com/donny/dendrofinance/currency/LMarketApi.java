@@ -4,7 +4,7 @@ import com.donny.dendrofinance.fileio.ApiLimitReachedException;
 import com.donny.dendrofinance.instance.Instance;
 import com.donny.dendrofinance.json.*;
 import com.donny.dendrofinance.types.LDate;
-import com.donny.dendrofinance.util.ExportableToJson;
+import com.donny.dendrofinance.util.UniqueName;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -13,7 +13,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.concurrent.TimeUnit;
 
-public class LMarketApi implements ExportableToJson, Serializable {
+public class LMarketApi implements UniqueName, Serializable {
 
     protected static ArrayList<LCurrency[]> partition(ArrayList<LCurrency> list, int limit) {
         ArrayList<LCurrency[]> out = new ArrayList<>();
@@ -148,6 +148,11 @@ public class LMarketApi implements ExportableToJson, Serializable {
                 INCLUDED.add(cur);
             }
         }
+    }
+
+    @Override
+    public String getName() {
+        return NAME;
     }
 
     public boolean hasNat(LCurrency currency) {

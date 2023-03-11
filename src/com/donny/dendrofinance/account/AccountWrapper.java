@@ -30,9 +30,9 @@ public class AccountWrapper implements ExportableToJson {
 
     public AccountWrapper(JsonObject obj, Instance curInst) {
         this(
-                curInst.ACCOUNTS.getElement(obj.getString("acc").getString()),
-                obj.getString("col").getString(),
-                obj.getDecimal("val").decimal
+                curInst.ACCOUNTS.getElement(obj.getString(new String[]{"a", "acc"}).getString()),
+                obj.getString(new String[]{"c", "col"}).getString(),
+                obj.getDecimal(new String[]{"v", "val"}).decimal
         );
     }
 
@@ -69,9 +69,9 @@ public class AccountWrapper implements ExportableToJson {
     @Override
     public JsonObject export() throws JsonFormattingException {
         JsonObject object = new JsonObject();
-        object.put("acc", new JsonString(ACCOUNT.toString()));
-        object.put("col", new JsonString(COLUMN.toString()));
-        object.put("val", new JsonDecimal(VALUE));
+        object.put("a", new JsonString(ACCOUNT.toString()));
+        object.put("c", new JsonString(COLUMN.toString()));
+        object.put("v", new JsonDecimal(VALUE));
         return object;
     }
 

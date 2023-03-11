@@ -3,20 +3,25 @@ package com.donny.dendrofinance.data.backingtable;
 import com.donny.dendrofinance.gui.menu.data.backing.BackingTableGui;
 import com.donny.dendrofinance.instance.Instance;
 import com.donny.dendrofinance.json.JsonArray;
+import com.donny.dendrofinance.json.JsonFormattingException;
 import com.donny.dendrofinance.util.ExportableToJson;
+import com.donny.dendrofinance.util.UniqueName;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 
-public abstract class BackingTableCore<E extends ExportableToJson> implements Iterable<E> {
+public abstract class BackingTableCore<E extends UniqueName> implements Iterable<E>, ExportableToJson {
     public final boolean SORTABLE;
     protected final Instance CURRENT_INSTANCE;
-    protected final ArrayList<E> TABLE;
+    protected final ArrayList<String> KEYS;
+    protected final HashMap<String, E> MAP;
     public boolean changed;
 
     public BackingTableCore(Instance curInst, boolean sort) {
         CURRENT_INSTANCE = curInst;
-        TABLE = new ArrayList<>();
+        KEYS = new ArrayList<>();
+        MAP = new HashMap<>();
         SORTABLE = sort;
         changed = false;
     }
@@ -34,7 +39,11 @@ public abstract class BackingTableCore<E extends ExportableToJson> implements It
     public abstract ArrayList<String[]> getContents(String search);
 
     public boolean add(E element) {
-        if (TABLE.add(element)) {
+        if (MAP.containsKey(element.getName())) {
+            return false;
+        }
+        if (KEYS.add(element.getName())) {
+            MAP.put(element.getName(), element);
             changed = true;
             return true;
         } else {
@@ -43,49 +52,62 @@ public abstract class BackingTableCore<E extends ExportableToJson> implements It
     }
 
     public int indexOf(E element) {
-        return TABLE.indexOf(element);
+        return KEYS.indexOf(element.getName());
     }
 
     public void clear() {
-        TABLE.clear();
+        KEYS.clear();
+        MAP.clear();
     }
 
     public boolean contains(E element) {
-        return TABLE.contains(element);
+        return KEYS.contains(element.getName()) && MAP.containsKey(element.getName());
     }
 
     public int size() {
-        return TABLE.size();
+        return KEYS.size();
     }
 
-    public abstract String getIdentifier(int index);
+    public String getIdentifier(int index) {
+        return KEYS.get(index);
+    }
 
-    public abstract int getIndex(String identifier);
+    public int getIndex(String identifier) {
+        return KEYS.indexOf(identifier);
+    }
 
     public E getElement(String identifier) {
-        int index = getIndex(identifier);
-        if (index == -1) {
-            return null;
+        if (KEYS.contains(identifier)) {
+            return MAP.get(identifier);
         } else {
-            return getElement(index);
+            return null;
         }
     }
 
     public E getElement(int index) {
-        if (index >= 0 && index < TABLE.size()) {
-            return TABLE.get(index);
+        if (index >= 0 && index < KEYS.size()) {
+            return MAP.get(KEYS.get(index));
         } else {
             return null;
         }
     }
 
     public boolean deleteElement(String identifier) {
-        return deleteElement(getIndex(identifier));
+        if (KEYS.contains(identifier)) {
+            KEYS.remove(identifier);
+            MAP.remove(identifier);
+            changed = true;
+            return true;
+        } else {
+            return false;
+        }
     }
 
     public boolean deleteElement(int index) {
-        if (TABLE.size() > index && index >= 0) {
-            TABLE.remove(index);
+        if (KEYS.size() > index && index >= 0) {
+            String key = KEYS.get(index);
+            KEYS.remove(index);
+            MAP.remove(key);
             changed = true;
             return true;
         } else {
@@ -105,17 +127,17 @@ public abstract class BackingTableCore<E extends ExportableToJson> implements It
             return false;
         } else if (index == 0 && !up) {
             return false;
-        } else if (index == TABLE.size() - 1 && up) {
+        } else if (index == KEYS.size() - 1 && up) {
             return false;
         } else {
             if (canMove(getIdentifier(index + (up ? 1 : -1)))) {
-                E temp = TABLE.get(index);
+                String key = KEYS.get(index);
                 if (up) {
-                    TABLE.remove(index);
-                    TABLE.add(index + 1, temp);
+                    KEYS.remove(index);
+                    KEYS.add(index + 1, key);
                 } else {
-                    TABLE.remove(index);
-                    TABLE.add(index - 1, temp);
+                    KEYS.remove(index);
+                    KEYS.add(index - 1, key);
                 }
                 changed = true;
                 return true;
@@ -129,11 +151,11 @@ public abstract class BackingTableCore<E extends ExportableToJson> implements It
         int i = getIndex(id1);
         int j = getIndex(id2);
         if (i >= 0 && j >= 0 && i != j) {
-            E x = getElement(i), y = getElement(j);
-            deleteElement(i);
-            deleteElement(j);
-            TABLE.add(j, x);
-            TABLE.add(i, y);
+            String x = KEYS.get(i), y = KEYS.get(j);
+            KEYS.remove(i);
+            KEYS.remove(j);
+            KEYS.add(j, x);
+            KEYS.add(i, y);
             changed = true;
             return true;
         } else {
@@ -143,16 +165,34 @@ public abstract class BackingTableCore<E extends ExportableToJson> implements It
 
     public abstract void sort();
 
-    public abstract JsonArray export();
+    @Override
+    public JsonArray export() {
+        JsonArray out = new JsonArray();
+        for (String key : KEYS) {
+            try {
+                out.add(MAP.get(key).export());
+            } catch (JsonFormattingException e) {
+                CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Unable to export: " + key + "\n" + e);
+            }
+        }
+        return out;
+    }
 
     public void replace(int index, E element) {
-        TABLE.remove(index);
-        TABLE.add(index, element);
+        String key = KEYS.get(index);
+        KEYS.remove(key);
+        MAP.remove(key);
+        KEYS.add(index, element.getName());
+        MAP.put(element.getName(), element);
         changed = true;
     }
 
     @Override
     public Iterator<E> iterator() {
-        return TABLE.iterator();
+        ArrayList<E> out = new ArrayList<>();
+        for (String key : KEYS) {
+            out.add(MAP.get(key));
+        }
+        return out.iterator();
     }
 }

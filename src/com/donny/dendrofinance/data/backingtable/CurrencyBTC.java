@@ -5,7 +5,6 @@ import com.donny.dendrofinance.gui.menu.data.backing.BackingTableGui;
 import com.donny.dendrofinance.gui.menu.data.backing.edit.CurrencyEditGui;
 import com.donny.dendrofinance.instance.Instance;
 import com.donny.dendrofinance.json.JsonArray;
-import com.donny.dendrofinance.json.JsonFormattingException;
 import com.donny.dendrofinance.json.JsonObject;
 
 import java.math.BigDecimal;
@@ -34,14 +33,14 @@ public class CurrencyBTC extends BackingTableCore<LCurrency> {
     @Override
     public void load(JsonArray array) {
         for (JsonObject obj : array.getObjectArray()) {
-            TABLE.add(new LCurrency(obj, CURRENT_INSTANCE));
+            add(new LCurrency(obj, CURRENT_INSTANCE));
         }
     }
 
     @Override
     public String[] getHeader() {
         return new String[]{
-                "Name", "Ticker", "Presentation", "Type", "In Account", "In Use"
+                "Name", "Ticker", "Presentation", "Type", "In Account"
         };
     }
 
@@ -53,22 +52,10 @@ public class CurrencyBTC extends BackingTableCore<LCurrency> {
     @Override
     public ArrayList<String[]> getContents(String search) {
         ArrayList<String[]> out = new ArrayList<>();
-        for (LCurrency cur : TABLE) {
+        for (String key : KEYS) {
+            LCurrency cur = MAP.get(key);
             String check = search;
-            boolean flagU = cur.inUse(), allow = true;
-            boolean flagA = flagU || cur.inAccount();
-            if (check.contains("$U")) {
-                check = check.replace("$U", "").trim();
-                if (!flagU) {
-                    allow = false;
-                }
-            }
-            if (check.contains("$u")) {
-                check = check.replace("$u", "").trim();
-                if (flagU) {
-                    allow = false;
-                }
-            }
+            boolean allow = true, flagA = cur.inAccount();
             if (check.contains("$A")) {
                 check = check.replace("$A", "").trim();
                 if (!flagA) {
@@ -103,8 +90,7 @@ public class CurrencyBTC extends BackingTableCore<LCurrency> {
             if (allow) {
                 out.add(new String[]{
                         name.toString(), cur.getTicker(), cur.encode(BigDecimal.ZERO), type.toString(),
-                        flagA ? "X" : "",
-                        flagU ? "X" : ""
+                        flagA ? "X" : ""
                 });
             }
         }
@@ -112,25 +98,18 @@ public class CurrencyBTC extends BackingTableCore<LCurrency> {
     }
 
     @Override
-    public String getIdentifier(int index) {
-        return TABLE.get(index).toString();
-    }
-
-    @Override
-    public int getIndex(String identifier) {
-        if (identifier.contains("[")) {
-            identifier = identifier.split("\\[")[0].trim();
-        }
-        for (int i = 0; i < TABLE.size(); i++) {
-            LCurrency cur = TABLE.get(i);
-            if (cur.toString().equalsIgnoreCase(identifier)
-                    || cur.getName().equalsIgnoreCase(identifier)
-                    || cur.getTicker().equalsIgnoreCase(identifier)
+    public LCurrency getElement(String identifier) {
+        for (LCurrency c : this) {
+            if (
+                    c.getName().equalsIgnoreCase(identifier) ||
+                            c.getTicker().equalsIgnoreCase(identifier) ||
+                            c.getAltName().equalsIgnoreCase(identifier) ||
+                            c.toString().equalsIgnoreCase(identifier)
             ) {
-                return i;
+                return c;
             }
         }
-        return -1;
+        return null;
     }
 
     @Override
@@ -150,26 +129,23 @@ public class CurrencyBTC extends BackingTableCore<LCurrency> {
 
     @Override
     public void sort() {
-        TABLE.sort(Comparator.comparing(LCurrency::toString));
+        ArrayList<LCurrency> list = new ArrayList<>();
+        for (LCurrency a : this) {
+            list.add(a);
+        }
+        list.sort(Comparator.comparing(LCurrency::toString));
+        KEYS.clear();
+        for (LCurrency a : list) {
+            KEYS.add(a.getName());
+        }
         changed = true;
     }
 
-    @Override
-    public JsonArray export() {
-        JsonArray out = new JsonArray();
-        for (LCurrency cur : TABLE) {
-            try {
-                out.add(cur.export());
-            } catch (JsonFormattingException ex) {
-                CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Malformed LCurrency: " + cur);
-            }
-        }
-        return out;
-    }
 
     public ArrayList<LCurrency> getBaseline() {
         ArrayList<LCurrency> out = new ArrayList<>();
-        TABLE.forEach(c -> {
+        KEYS.forEach(key -> {
+            LCurrency c = MAP.get(key);
             if (c.first()) {
                 out.add(c);
             }

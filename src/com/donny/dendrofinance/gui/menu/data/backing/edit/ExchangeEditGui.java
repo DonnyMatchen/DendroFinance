@@ -71,10 +71,6 @@ public class ExchangeEditGui extends BackingEditGui<Exchange> {
                 }
                 fText.setText(sb.substring(2));
             }
-            if (exch.inUse()) {
-                name.setEditable(false);
-                name.setBackground(DendroFactory.DISABLED);
-            }
         }
 
         //Group Layout
@@ -165,26 +161,6 @@ public class ExchangeEditGui extends BackingEditGui<Exchange> {
         sText.setBackground(DendroFactory.CONTENT);
         tText.setBackground(DendroFactory.CONTENT);
         try {
-            ArrayList<String> needed = TABLE.getElement(INDEX).aNamesInUse();
-            for (String s : Validation.validateStringAllowEmpty(sText).replace(" ", "").replace("\n", "").split(",")) {
-                String str = "";
-                if (!sText.getText().equals("")) {
-                    for (String n : needed) {
-                        if (n.contains(s.split("!")[1])) {
-                            str = n;
-                            break;
-                        }
-                    }
-                }
-                if (!str.equals("")) {
-                    needed.remove(str);
-                }
-            }
-            if (!needed.isEmpty()) {
-                CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "You have removed exchange accounts that are in use:\n" + Arrays.toString(needed.toArray()));
-                sText.setBackground(DendroFactory.WRONG);
-                throw new ValidationFailedException("invalid removal");
-            }
             Exchange exchange;
             if (tText.getText().equals("")) {
                 exchange = new Exchange(

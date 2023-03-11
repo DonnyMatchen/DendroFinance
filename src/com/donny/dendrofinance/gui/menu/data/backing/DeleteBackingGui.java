@@ -5,12 +5,12 @@ import com.donny.dendrofinance.gui.customswing.DendroFactory;
 import com.donny.dendrofinance.gui.customswing.ModalFrame;
 import com.donny.dendrofinance.instance.Instance;
 import com.donny.dendrofinance.json.JsonFormattingException;
-import com.donny.dendrofinance.util.ExportableToJson;
+import com.donny.dendrofinance.util.UniqueName;
 
 import javax.swing.*;
 import java.awt.*;
 
-public class DeleteBackingGui<E extends ExportableToJson> extends ModalFrame {
+public class DeleteBackingGui<E extends UniqueName> extends ModalFrame {
     public DeleteBackingGui(BackingTableGui<E> caller, BackingTableCore<E> core, int index, Instance curInst) {
         super(caller, "Delete " + core.getName(false), curInst);
 

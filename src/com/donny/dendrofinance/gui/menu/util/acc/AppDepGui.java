@@ -1,7 +1,8 @@
 package com.donny.dendrofinance.gui.menu.util.acc;
 
 import com.donny.dendrofinance.account.Account;
-import com.donny.dendrofinance.entry.TransactionEntry;
+import com.donny.dendrofinance.capsules.TransactionCapsule;
+import com.donny.dendrofinance.fileio.ImportHandler;
 import com.donny.dendrofinance.gui.MainGui;
 import com.donny.dendrofinance.gui.customswing.DendroFactory;
 import com.donny.dendrofinance.gui.customswing.RegisterFrame;
@@ -286,13 +287,13 @@ public class AppDepGui extends RegisterFrame {
         x = x.add(stock).add(crypto).add(inventory).add(fiat);
         try {
             LDate date = Validation.validateDate(DATE, CURRENT_INSTANCE);
-            TransactionEntry entry = new TransactionEntry(CURRENT_INSTANCE);
+            TransactionCapsule capsule = new TransactionCapsule(CURRENT_INSTANCE);
             String accs = (stock.compareTo(BigDecimal.ZERO) == 0 ? "" : stock.compareTo(BigDecimal.ZERO) > 0 ? "D!" + Account.stockName + "(" + stock + "), " : "C!" + Account.stockName + "(" + stock.abs() + "), ")
                     + (crypto.compareTo(BigDecimal.ZERO) == 0 ? "" : crypto.compareTo(BigDecimal.ZERO) > 0 ? "D!" + Account.cryptoName + "(" + crypto + "), " : "C!" + Account.cryptoName + "(" + crypto.abs() + "), ")
                     + (inventory.compareTo(BigDecimal.ZERO) == 0 ? "" : inventory.compareTo(BigDecimal.ZERO) > 0 ? "D!" + Account.inventoryName + "(" + inventory + "), " : "C!" + Account.inventoryName + "(" + inventory.abs() + "), ")
                     + (fiat.compareTo(BigDecimal.ZERO) == 0 ? "" : fiat.compareTo(BigDecimal.ZERO) > 0 ? "D!" + Account.fiatName + "(" + fiat + "), " : "C!" + Account.fiatName + "(" + fiat.abs() + "), ");
             if (x.compareTo(BigDecimal.ZERO) >= 0) {
-                entry.insert(
+                capsule.insert(
                         date,
                         "ACC",
                         "",
@@ -300,7 +301,7 @@ public class AppDepGui extends RegisterFrame {
                         new LAccountSet("C!" + Account.appreciationName + "(" + x + "), " + accs, CURRENT_INSTANCE)
                 );
             } else {
-                entry.insert(
+                capsule.insert(
                         date,
                         "ACC",
                         "",
@@ -308,7 +309,7 @@ public class AppDepGui extends RegisterFrame {
                         new LAccountSet("D!" + Account.depreciationName + "(" + x.abs() + "), " + accs, CURRENT_INSTANCE)
                 );
             }
-            CURRENT_INSTANCE.DATA_HANDLER.addTransaction(entry);
+            CURRENT_INSTANCE.DATA_HANDLER.DATABASE.TRANSACTIONS.add(capsule, ImportHandler.ImportMode.KEEP);
             CALLER.updateTable();
             dispose();
         } catch (ValidationFailedException e) {

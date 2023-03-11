@@ -4,11 +4,11 @@ import com.donny.dendrofinance.data.backingtable.BackingTableCore;
 import com.donny.dendrofinance.gui.customswing.ModalFrame;
 import com.donny.dendrofinance.gui.menu.data.backing.BackingTableGui;
 import com.donny.dendrofinance.instance.Instance;
-import com.donny.dendrofinance.util.ExportableToJson;
+import com.donny.dendrofinance.util.UniqueName;
 
 import java.awt.*;
 
-public abstract class BackingEditGui<E extends ExportableToJson> extends ModalFrame {
+public abstract class BackingEditGui<E extends UniqueName> extends ModalFrame {
     protected final BackingTableCore<E> TABLE;
     protected final int INDEX;
 

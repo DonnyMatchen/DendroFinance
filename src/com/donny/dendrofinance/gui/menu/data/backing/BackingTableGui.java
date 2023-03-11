@@ -5,7 +5,7 @@ import com.donny.dendrofinance.gui.MainGui;
 import com.donny.dendrofinance.gui.customswing.DendroFactory;
 import com.donny.dendrofinance.gui.customswing.RegisterFrame;
 import com.donny.dendrofinance.instance.Instance;
-import com.donny.dendrofinance.util.ExportableToJson;
+import com.donny.dendrofinance.util.UniqueName;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
@@ -17,7 +17,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-public class BackingTableGui<E extends ExportableToJson> extends RegisterFrame {
+public class BackingTableGui<E extends UniqueName> extends RegisterFrame {
     private final BackingTableCore<E> TABLE_CORE;
 
     private final JTextField SEARCH;

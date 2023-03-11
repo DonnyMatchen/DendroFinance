@@ -5,7 +5,6 @@ import com.donny.dendrofinance.gui.menu.data.backing.BackingTableGui;
 import com.donny.dendrofinance.gui.menu.data.backing.edit.AccountTypeEditGui;
 import com.donny.dendrofinance.instance.Instance;
 import com.donny.dendrofinance.json.JsonArray;
-import com.donny.dendrofinance.json.JsonFormattingException;
 import com.donny.dendrofinance.json.JsonObject;
 
 import java.util.ArrayList;
@@ -32,14 +31,14 @@ public class AccountTypeBTC extends BackingTableCore<AccountType> {
     @Override
     public void load(JsonArray array) {
         for (JsonObject obj : array.getObjectArray()) {
-            TABLE.add(new AccountType(obj));
+            add(new AccountType(obj));
         }
     }
 
     @Override
     public String[] getHeader() {
         return new String[]{
-                "Name", "Broad Type", "In Use"
+                "Name", "Broad Type"
         };
     }
 
@@ -51,31 +50,16 @@ public class AccountTypeBTC extends BackingTableCore<AccountType> {
     @Override
     public ArrayList<String[]> getContents(String search) {
         ArrayList<String[]> out = new ArrayList<>();
-        for (AccountType a : TABLE) {
+        for (String key : KEYS) {
+            AccountType a = MAP.get(key);
             if (a.NAME.toLowerCase().contains(search.toLowerCase())
                     || a.TYPE.toString().toLowerCase().contains(search.toLowerCase())) {
                 out.add(new String[]{
-                        a.NAME, "" + a.TYPE, a.inUse(CURRENT_INSTANCE) ? "X" : ""
+                        a.NAME, "" + a.TYPE
                 });
             }
         }
         return out;
-    }
-
-    @Override
-    public String getIdentifier(int index) {
-        return TABLE.get(index).NAME;
-    }
-
-    @Override
-    public int getIndex(String identifier) {
-        for (int i = 0; i < TABLE.size(); i++) {
-            AccountType accTyp = TABLE.get(i);
-            if (accTyp.NAME.equalsIgnoreCase(identifier)) {
-                return i;
-            }
-        }
-        return -1;
     }
 
     @Override
@@ -85,28 +69,15 @@ public class AccountTypeBTC extends BackingTableCore<AccountType> {
 
     @Override
     public boolean canEdit(String identifier) {
-        return !getElement(identifier).inUse(CURRENT_INSTANCE);
+        return true;
     }
 
     @Override
     public boolean canRemove(String identifier) {
-        return !getElement(identifier).inUse(CURRENT_INSTANCE);
+        return true;
     }
 
     @Override
     public void sort() {
-    }
-
-    @Override
-    public JsonArray export() {
-        JsonArray array = new JsonArray();
-        for (AccountType accTyp : TABLE) {
-            try {
-                array.add(accTyp.export());
-            } catch (JsonFormattingException ex) {
-                CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Malformed Account Type: " + accTyp);
-            }
-        }
-        return array;
     }
 }

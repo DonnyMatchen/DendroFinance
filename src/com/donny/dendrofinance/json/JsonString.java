@@ -1,7 +1,6 @@
 package com.donny.dendrofinance.json;
 
-import com.donny.dendrofinance.fileio.encryption.EncryptionOutputStream;
-import com.donny.dendrofinance.instance.Instance;
+import com.donny.dendrofinance.fileio.xarc.XarcOutputStream;
 
 import java.io.FileWriter;
 import java.io.IOException;
@@ -52,9 +51,8 @@ public class JsonString extends JsonItem {
     protected void stream(FileWriter writer) throws IOException {
         writer.write('"' + string + '"');
     }
-
     @Override
-    protected void streamEncrypt(EncryptionOutputStream stream) throws IOException {
-        stream.write(('"' + string + '"').getBytes(Instance.CHARSET));
+    protected void stream(XarcOutputStream out) {
+        out.write('"' + string + '"');
     }
 }

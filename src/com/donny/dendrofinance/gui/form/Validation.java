@@ -44,7 +44,7 @@ public class Validation {
                 return new LDate(field.getText(), curInst);
             } catch (ParseException e) {
                 field.setBackground(DendroFactory.WRONG);
-                throw new ValidationFailedException("Field is not a valid date");
+                throw new ValidationFailedException("Field is not a valid date: " + field.getText());
             }
         }
     }

@@ -9,6 +9,7 @@ import com.donny.dendrofinance.instance.Instance;
 import javax.swing.*;
 import java.awt.*;
 import java.io.File;
+import java.sql.SQLException;
 
 public class ImportGui extends RegisterFrame {
     private final String DIR;
@@ -98,23 +99,31 @@ public class ImportGui extends RegisterFrame {
 
     private void importAction() {
         if (LIST.getSelectedIndex() >= 0) {
-            CURRENT_INSTANCE.IMPORT_HANDLER.load(DIR + File.separator + LIST_ACCESS.get(LIST.getSelectedIndex()),
-                    this,
-                    ImportHandler.ImportMode.fromString((String) MODE.getSelectedItem()));
-            updateList();
-            MAIN_GUI.updateTable();
+            try {
+                CURRENT_INSTANCE.IMPORT_HANDLER.load(DIR + File.separator + LIST_ACCESS.get(LIST.getSelectedIndex()),
+                        this,
+                        ImportHandler.ImportMode.fromString((String) MODE.getSelectedItem()));
+                updateList();
+                MAIN_GUI.updateTable();
+            } catch (SQLException e) {
+                CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "SQL error occured during import: " + e);
+            }
         }
     }
 
     private void importAllAction() {
         if (LIST_ACCESS.getSize() > 0) {
-            for (int i = 0; i < LIST_ACCESS.getSize(); i++) {
-                CURRENT_INSTANCE.IMPORT_HANDLER.load(DIR + File.separator + LIST_ACCESS.get(i),
-                        this,
-                        ImportHandler.ImportMode.fromString((String) MODE.getSelectedItem()));
+            try {
+                for (int i = 0; i < LIST_ACCESS.getSize(); i++) {
+                    CURRENT_INSTANCE.IMPORT_HANDLER.load(DIR + File.separator + LIST_ACCESS.get(i),
+                            this,
+                            ImportHandler.ImportMode.fromString((String) MODE.getSelectedItem()));
+                }
+                updateList();
+                MAIN_GUI.updateTable();
+            } catch (SQLException e) {
+                CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "SQL error occured during import: " + e);
             }
-            updateList();
-            MAIN_GUI.updateTable();
         }
     }
 

@@ -1,21 +1,19 @@
 package com.donny.dendrofinance.currency;
 
 import com.donny.dendrofinance.account.Account;
-import com.donny.dendrofinance.account.AccountWrapper;
-import com.donny.dendrofinance.entry.TransactionEntry;
 import com.donny.dendrofinance.instance.Instance;
 import com.donny.dendrofinance.json.JsonDecimal;
 import com.donny.dendrofinance.json.JsonFormattingException;
 import com.donny.dendrofinance.json.JsonObject;
 import com.donny.dendrofinance.json.JsonString;
 import com.donny.dendrofinance.types.LDate;
-import com.donny.dendrofinance.util.ExportableToJson;
+import com.donny.dendrofinance.util.UniqueName;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 
-public class LCurrency implements ExportableToJson, Serializable {
+public class LCurrency implements UniqueName, Serializable {
     protected final Instance CURRENT_INSTANCE;
     private final String NAME, TIC, SYMBOL, ALT_NAME;
     private final int PLACES;
@@ -114,11 +112,12 @@ public class LCurrency implements ExportableToJson, Serializable {
             if (FORWARDS) {
                 return "(" + SYMBOL + format.format(num) + ")";
             } else {
-                return "(" + format.format(num) + " " + SYMBOL + ")";
+                return "(" + format.format(num) + SYMBOL + ")";
             }
         }
     }
 
+    @Override
     public String getName() {
         return NAME;
     }
@@ -159,11 +158,6 @@ public class LCurrency implements ExportableToJson, Serializable {
         return ALT_NAME;
     }
 
-    public BigDecimal reverseTotal(BigDecimal amount) {
-        BigDecimal temp = getTotal(BigDecimal.ONE);
-        return !temp.equals(BigDecimal.ZERO) ? amount.divide(temp, CURRENT_INSTANCE.precision) : BigDecimal.ZERO;
-    }
-
     public BigDecimal getTotal(BigDecimal amount) {
         if (EXTINCT) {
             return BigDecimal.ZERO;
@@ -188,21 +182,10 @@ public class LCurrency implements ExportableToJson, Serializable {
         return amount.compareTo(compare) >= 0 || amount.compareTo(compare.multiply(BigDecimal.valueOf(-1))) <= 0;
     }
 
-    public boolean inUse() {
-        for (TransactionEntry entry : CURRENT_INSTANCE.DATA_HANDLER.readTransactions()) {
-            for (AccountWrapper aw : entry.getAccounts()) {
-                if (aw.ACCOUNT.getCurrency().equals(this)) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
     public boolean inAccount() {
         for (Account a : CURRENT_INSTANCE.ACCOUNTS) {
             if (a.getCurrency().equals(this)) {
-                if (a.EXPORT || a.inUse()) {
+                if (a.EXPORT) {
                     return true;
                 }
             }
@@ -231,7 +214,7 @@ public class LCurrency implements ExportableToJson, Serializable {
     }
 
     public boolean matches(LCurrency b) {
-        return getTicker().equals(b.getTicker()) && getClass() == b.getClass() && (isFiat() == b.isFiat());
+        return getTicker().equals(b.getTicker()) && getClass() == b.getClass() && isFiat() == b.isFiat();
     }
 
     @Override

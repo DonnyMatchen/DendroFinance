@@ -84,6 +84,12 @@ public class DateRange extends JPanel {
         END.setText(end.toDateString());
     }
 
+    public void initRange(int range, Instance curInst) {
+        LDate now = LDate.now(curInst);
+        LDate temp = LDate.getRange(range, now, curInst);
+        init(temp, now);
+    }
+
     public void initDefault(Instance curInst) {
         LDate now = LDate.now(curInst);
         LDate temp = LDate.defaultRange(now, curInst);
@@ -94,11 +100,13 @@ public class DateRange extends JPanel {
         LDate start = null, end = null;
         try {
             start = Validation.validateDate(START, curInst);
+            START.setText(start.toDateString());
         } catch (ValidationFailedException e) {
             curInst.LOG_HANDLER.error(getClass(), "Bad date: " + START.getText());
         }
         try {
             end = Validation.validateDate(END, curInst);
+            END.setText(end.toDateString());
         } catch (ValidationFailedException e) {
             curInst.LOG_HANDLER.error(getClass(), "Bad date: " + END.getText());
         }
@@ -119,8 +127,8 @@ public class DateRange extends JPanel {
 
     public void setEditable(boolean editable) {
         START.setEditable(editable);
-        START.setBackground(DendroFactory.DISABLED);
+        START.setBackground(editable ? DendroFactory.CONTENT : DendroFactory.DISABLED);
         END.setEditable(editable);
-        END.setBackground(DendroFactory.DISABLED);
+        END.setBackground(editable ? DendroFactory.CONTENT : DendroFactory.DISABLED);
     }
 }

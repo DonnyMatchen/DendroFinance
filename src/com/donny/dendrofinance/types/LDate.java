@@ -115,8 +115,12 @@ public class LDate implements ExportableToJson, Comparable<LDate> {
         return new LDate(date.getYear(), date.getMonth(), date.getDay(), 23, 59, 59, 999, date.CURRENT_INSTANCE);
     }
 
+    public static LDate getRange(int range, LDate end, Instance curInst) {
+        return new LDate(end.getTime() - 86400000L * range, curInst);
+    }
+
     public static LDate defaultRange(LDate end, Instance curInst) {
-        return new LDate(end.getTime() - 86400000L * curInst.range, curInst);
+        return getRange(curInst.range, end, curInst);
     }
 
     public static int lastDay(int year, int month, Instance curInst) {

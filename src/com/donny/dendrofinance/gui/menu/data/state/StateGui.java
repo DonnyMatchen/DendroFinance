@@ -7,6 +7,7 @@ import com.donny.dendrofinance.capsules.meta.LoanMetadata;
 import com.donny.dendrofinance.capsules.totals.Position;
 import com.donny.dendrofinance.currency.LCurrency;
 import com.donny.dendrofinance.gui.MainGui;
+import com.donny.dendrofinance.gui.customswing.DateRange;
 import com.donny.dendrofinance.gui.customswing.DendroFactory;
 import com.donny.dendrofinance.gui.customswing.RegisterFrame;
 import com.donny.dendrofinance.instance.Instance;
@@ -21,6 +22,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class StateGui extends RegisterFrame {
+    private final DateRange RANGE, FULL;
     private final JComboBox<LDate> DATE;
     private final DefaultTableModel ACCOUNTS, POSITIONS, ASSETS, LOANS;
 
@@ -29,6 +31,14 @@ public class StateGui extends RegisterFrame {
 
         //Draw Gui
         {
+            RANGE = new DateRange(false);
+            RANGE.initRange(365, CURRENT_INSTANCE);
+            FULL = new DateRange(false);
+            FULL.setEditable(false);
+            FULL.init(
+                    new LDate(CURRENT_INSTANCE.DATA_HANDLER.DATABASE.STATES.getMinDate(), CURRENT_INSTANCE),
+                    new LDate(CURRENT_INSTANCE.DATA_HANDLER.DATABASE.STATES.getMaxDate(), CURRENT_INSTANCE)
+            );
             DATE = new JComboBox<>();
             DATE.addItemListener(event -> update());
             JScrollPane accounts = DendroFactory.getTable(
@@ -50,10 +60,15 @@ public class StateGui extends RegisterFrame {
             ASSETS = (DefaultTableModel) ((JTable) assets.getViewport().getView()).getModel();
             LOANS = (DefaultTableModel) ((JTable) loans.getViewport().getView()).getModel();
 
-            JLabel a = new JLabel("Accounts");
-            JLabel b = new JLabel("Positions");
-            JLabel c = new JLabel("Assets");
-            JLabel d = new JLabel("Loans");
+            JLabel a = new JLabel("Full Range");
+            JLabel b = new JLabel("Date Range");
+            JLabel c = new JLabel("Accounts");
+            JLabel d = new JLabel("Positions");
+            JLabel e = new JLabel("Assets");
+            JLabel f = new JLabel("Loans");
+
+            JButton update = DendroFactory.getButton("Update");
+            update.addActionListener(event -> updateDate());
 
             JButton remove = DendroFactory.getButton("Remove");
             remove.addActionListener(event -> {
@@ -62,8 +77,9 @@ public class StateGui extends RegisterFrame {
             });
             JButton removeAll = DendroFactory.getButton("Remove All");
             removeAll.addActionListener(event -> {
-                for (StateCapsule capsule : CURRENT_INSTANCE.DATA_HANDLER.DATABASE.STATES.getStates()) {
-                    CURRENT_INSTANCE.DATA_HANDLER.DATABASE.STATES.delete(capsule.getDate().getTime());
+                for (int i = 0; i < DATE.getItemCount(); i++) {
+                    LDate date = DATE.getItemAt(i);
+                    CURRENT_INSTANCE.DATA_HANDLER.DATABASE.STATES.delete(date.getTime());
                 }
                 updateDate();
             });
@@ -82,6 +98,24 @@ public class StateGui extends RegisterFrame {
                 main.setHorizontalGroup(
                         main.createSequentialGroup().addContainerGap().addGroup(
                                 main.createParallelGroup(GroupLayout.Alignment.CENTER).addGroup(
+                                        main.createSequentialGroup().addGroup(
+                                                main.createParallelGroup(GroupLayout.Alignment.TRAILING).addComponent(
+                                                        a, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                                ).addComponent(
+                                                        b, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                                )
+                                        ).addGap(DendroFactory.SMALL_GAP).addGroup(
+                                                main.createParallelGroup(GroupLayout.Alignment.LEADING).addComponent(
+                                                        FULL, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
+                                                ).addGroup(
+                                                        main.createSequentialGroup().addComponent(
+                                                                RANGE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
+                                                        ).addGap(DendroFactory.SMALL_GAP).addComponent(
+                                                                update, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                                        )
+                                                )
+                                        )
+                                ).addGroup(
                                         main.createSequentialGroup().addComponent(
                                                 add, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                         ).addGap(
@@ -100,25 +134,25 @@ public class StateGui extends RegisterFrame {
                                 ).addGroup(
                                         main.createSequentialGroup().addGroup(
                                                 main.createParallelGroup(GroupLayout.Alignment.LEADING).addComponent(
-                                                        a, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                                        c, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                                 ).addComponent(
                                                         accounts, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
                                                 )
                                         ).addGap(DendroFactory.MEDIUM_GAP).addGroup(
                                                 main.createParallelGroup(GroupLayout.Alignment.LEADING).addComponent(
-                                                        b, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                                        d, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                                 ).addComponent(
                                                         positions, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
                                                 )
                                         ).addGap(DendroFactory.MEDIUM_GAP).addGroup(
                                                 main.createParallelGroup(GroupLayout.Alignment.LEADING).addComponent(
-                                                        c, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                                        e, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                                 ).addComponent(
                                                         assets, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
                                                 )
                                         ).addGap(DendroFactory.MEDIUM_GAP).addGroup(
                                                 main.createParallelGroup(GroupLayout.Alignment.LEADING).addComponent(
-                                                        d, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                                        f, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                                 ).addComponent(
                                                         loans, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
                                                 )
@@ -128,6 +162,20 @@ public class StateGui extends RegisterFrame {
                 );
                 main.setVerticalGroup(
                         main.createSequentialGroup().addContainerGap().addGroup(
+                                main.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(
+                                        a, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                ).addComponent(
+                                        FULL, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                )
+                        ).addGap(DendroFactory.SMALL_GAP).addGroup(
+                                main.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(
+                                        b, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                ).addComponent(
+                                        RANGE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                ).addComponent(
+                                        update, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                )
+                        ).addGap(DendroFactory.SMALL_GAP).addGroup(
                                 main.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(
                                         add, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                 ).addComponent(
@@ -144,25 +192,25 @@ public class StateGui extends RegisterFrame {
                         ).addGap(DendroFactory.MEDIUM_GAP).addGroup(
                                 main.createParallelGroup(GroupLayout.Alignment.CENTER).addGroup(
                                         main.createSequentialGroup().addComponent(
-                                                a, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                                c, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                         ).addGap(DendroFactory.SMALL_GAP).addComponent(
                                                 accounts, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
                                         )
                                 ).addGroup(
                                         main.createSequentialGroup().addComponent(
-                                                b, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                                d, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                         ).addGap(DendroFactory.SMALL_GAP).addComponent(
                                                 positions, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
                                         )
                                 ).addGroup(
                                         main.createSequentialGroup().addComponent(
-                                                c, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                                e, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                         ).addGap(DendroFactory.SMALL_GAP).addComponent(
                                                 assets, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
                                         )
                                 ).addGroup(
                                         main.createSequentialGroup().addComponent(
-                                                d, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                                f, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                         ).addGap(DendroFactory.SMALL_GAP).addComponent(
                                                 loans, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
                                         )
@@ -170,12 +218,12 @@ public class StateGui extends RegisterFrame {
                         ).addContainerGap()
                 );
             }
+            updateDate();
 
             pack();
             Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
             setLocation(dim.width / 2 - getWidth() / 2, dim.height / 2 - getHeight() / 2);
         }
-        updateDate();
     }
 
     public void update() {
@@ -255,8 +303,11 @@ public class StateGui extends RegisterFrame {
 
     void updateDate() {
         DATE.removeAllItems();
-        for (StateCapsule capsule : CURRENT_INSTANCE.DATA_HANDLER.DATABASE.STATES.getStates()) {
-            DATE.addItem(capsule.getDate());
+        LDate[] range = RANGE.getRange(CURRENT_INSTANCE);
+        if(range != null) {
+            for (StateCapsule capsule : CURRENT_INSTANCE.DATA_HANDLER.DATABASE.STATES.getRange(range[0], range[1])) {
+                DATE.addItem(capsule.getDate());
+            }
         }
     }
 }

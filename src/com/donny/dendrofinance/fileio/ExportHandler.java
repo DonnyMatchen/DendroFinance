@@ -72,7 +72,7 @@ public class ExportHandler {
 
                 if(flags[3]) {
                     JsonArray array = new JsonArray();
-                    for (StateCapsule capsule : CURRENT_INSTANCE.DATA_HANDLER.DATABASE.STATES.getStates()) {
+                    for (StateCapsule capsule : CURRENT_INSTANCE.DATA_HANDLER.DATABASE.STATES.getRange(start, end)) {
                         array.add(capsule.export());
                     }
                     CURRENT_INSTANCE.FILE_HANDLER.writeJson(directory, name + "-States.json", array);
@@ -118,7 +118,7 @@ public class ExportHandler {
 
                 if(flags[3]) {
                     JsonArray array = new JsonArray();
-                    for (StateCapsule capsule : CURRENT_INSTANCE.DATA_HANDLER.DATABASE.STATES.getStates()) {
+                    for (StateCapsule capsule : CURRENT_INSTANCE.DATA_HANDLER.DATABASE.STATES.getRange(start, end)) {
                         array.add(capsule.export());
                     }
                     CURRENT_INSTANCE.FILE_HANDLER.writeEncryptJson(directory, name + "-States.xtbl", array, encrypt);
@@ -165,7 +165,7 @@ public class ExportHandler {
 
                     if(flags[3]) {
                         JsonArray array = new JsonArray();
-                        for (StateCapsule capsule : CURRENT_INSTANCE.DATA_HANDLER.DATABASE.STATES.getStates()) {
+                        for (StateCapsule capsule : CURRENT_INSTANCE.DATA_HANDLER.DATABASE.STATES.getRange(start, end)) {
                             array.add(capsule.export());
                         }
                         JsonItem.save(array, new XarcOutputStream(directory, name + "-States.xtbl", encrypt, CURRENT_INSTANCE));

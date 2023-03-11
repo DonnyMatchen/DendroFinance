@@ -135,18 +135,6 @@ public class DataHandler {
         }
     }
 
-    //state retrieval
-    public StateCapsule getState(LDate date) {
-        StateCapsule baseline = null;
-        for (StateCapsule capsule : DATABASE.STATES.getStates()) {
-            if (capsule.getDate().compareTo(date) > 0) {
-                break;
-            }
-            baseline = capsule;
-        }
-        return baseline;
-    }
-
     //meta aggregation
     public ArrayList<CheckMetadata> getChecks(LDate start, LDate end) {
         ArrayList<CheckMetadata> meta = new ArrayList<>();
@@ -191,7 +179,7 @@ public class DataHandler {
 
     //transactions + states
     public Aggregation<Account> accountsAsOf(LDate date) {
-        StateCapsule baseline = getState(date);
+        StateCapsule baseline = DATABASE.STATES.getBefore(date.getTime());
         Aggregation<Account> accounts = new Aggregation<>();
         if (baseline != null) {
             JsonObject acc = baseline.exportAccounts();
@@ -246,7 +234,7 @@ public class DataHandler {
     }
 
     public ArrayList<AssetMetadata> assetsAsOf(LDate date) {
-        StateCapsule baseline = getState(date);
+        StateCapsule baseline = DATABASE.STATES.getBefore(date.getTime());
         ArrayList<AssetMetadata> assets = new ArrayList<>();
         ArrayList<TransactionCapsule> range;
         if (baseline != null) {
@@ -288,7 +276,7 @@ public class DataHandler {
     }
 
     public ArrayList<LoanMetadata> loansAsOf(LDate date) {
-        StateCapsule baseline = getState(date);
+        StateCapsule baseline = DATABASE.STATES.getBefore(date.getTime());
         ArrayList<LoanMetadata> loans = new ArrayList<>();
         ArrayList<TransactionCapsule> range;
         if (baseline != null) {
@@ -417,7 +405,7 @@ public class DataHandler {
 
     public ArrayList<Position> getPositions(LDate date) {
         ArrayList<Position> positions = new ArrayList<>();
-        StateCapsule baseline = getState(date);
+        StateCapsule baseline = DATABASE.STATES.getBefore(date.getTime());
         ArrayList<TransactionCapsule> range;
         if (baseline != null) {
             positions.addAll(baseline.getPositions());

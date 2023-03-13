@@ -6,6 +6,7 @@
 
 ## v0.11.1
 * fixed a really silly error in UUID generation
+* and another in editing transactions
 * `.xarc` files now read the block size byte unsigned
 
 ## v0.11.0

@@ -520,9 +520,7 @@ public class NewTransactionEntryGui extends ModalFrame {
                     Validation.validateAccountSet(ACC, CURRENT_INSTANCE)
             );
             capsule.setMeta(Validation.validateJsonObject(META));
-            if (UUID == 0 || CLONE) {
-                CURRENT_INSTANCE.DATA_HANDLER.DATABASE.TRANSACTIONS.add(capsule, ImportHandler.ImportMode.OVERWRITE);
-            }
+            CURRENT_INSTANCE.DATA_HANDLER.DATABASE.TRANSACTIONS.add(capsule, ImportHandler.ImportMode.OVERWRITE);
             MAIN.updateTable();
             dispose();
         } catch (ValidationFailedException ex) {

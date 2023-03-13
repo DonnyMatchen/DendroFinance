@@ -23,7 +23,7 @@ public class UniqueHandler {
         while (flag) {
             candidate = rand.nextLong();
             try {
-                flag = checkUuid(candidate);
+                flag = !checkUuid(candidate);
             } catch (SQLException e) {
                 failure++;
                 if (failure > 100) {

@@ -30,7 +30,7 @@ public class XarcReader extends Xarc {
     public boolean test() {
         try {
             FILE.seek(0);
-            blockSize = FILE.readByte();
+            blockSize = FILE.read();
             loadBlock(0);
             return BUFFER[0] == 'p' && BUFFER[1] == 'a' && BUFFER[2] == 's' && BUFFER[3] == 's' && BUFFER[4] == 'w' && BUFFER[5] == 'd';
         } catch (IOException e) {

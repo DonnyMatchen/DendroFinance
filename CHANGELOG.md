@@ -4,6 +4,10 @@
 * cash flow
 * statistics gui replacement
 
+## v0.11.1
+* fixed a really silly error in UUID generation
+* `.xarc` files now read the block size byte unsigned
+
 ## v0.11.0
 * JsonObject now accepts multiple attempts at a key for get
   * minimized size of certain export json while maintaining backwards compatibility

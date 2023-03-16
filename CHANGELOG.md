@@ -1,6 +1,5 @@
 ## Planned
 * ability to change password
-* mass removing transactions
 * cash flow
 * statistics gui replacement
 
@@ -8,6 +7,8 @@
 * corrected small issues related to `DataHandler.accountsAsOf` and `StateHandler`
   * balance sheet now behaves as expected
 * moved `TableHandler`s from `DATA_HANDLER.DATABASE` to `DATA_HANDLER`
+* added ability to delete everything in a search
+* code cleanup
 
 ## v0.11.1
 * fixed a really silly error in UUID generation

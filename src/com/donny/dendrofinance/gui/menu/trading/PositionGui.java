@@ -108,7 +108,7 @@ public class PositionGui extends RegisterFrame {
                 if (p.ASSET.equals(stock)) {
                     BigDecimal[] analog = p.collapse();
                     if (analog[0].compareTo(BigDecimal.ONE.divide(BigDecimal.TEN.pow(p.ASSET.getPlaces() - 1), CURRENT_INSTANCE.precision)) > 0) {
-                        BigDecimal val = prices.get(stock).multiply(analog[0]);;
+                        BigDecimal val = prices.get(stock).multiply(analog[0]);
                         tCost = tCost.add(analog[1]);
                         tVal = tVal.add(val);
                         TABLE_ACCESS.addRow(new String[]{
@@ -129,7 +129,7 @@ public class PositionGui extends RegisterFrame {
                 if (p.ASSET.equals(currency)) {
                     BigDecimal[] analog = p.collapse();
                     if (analog[0].compareTo(BigDecimal.ONE.divide(BigDecimal.TEN.pow(p.ASSET.getPlaces() - 1), CURRENT_INSTANCE.precision)) > 0) {
-                        BigDecimal val = prices.get(currency).multiply(analog[0]);;
+                        BigDecimal val = prices.get(currency).multiply(analog[0]);
                         tCost = tCost.add(analog[1]);
                         tVal = tVal.add(val);
                         TABLE_ACCESS.addRow(new String[]{

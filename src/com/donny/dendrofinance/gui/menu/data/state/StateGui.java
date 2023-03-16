@@ -304,7 +304,7 @@ public class StateGui extends RegisterFrame {
     void updateDate() {
         DATE.removeAllItems();
         LDate[] range = RANGE.getRange(CURRENT_INSTANCE);
-        if(range != null) {
+        if (range != null) {
             for (StateCapsule capsule : CURRENT_INSTANCE.DATA_HANDLER.STATES.getRange(range[0], range[1])) {
                 DATE.addItem(capsule.getDate());
             }

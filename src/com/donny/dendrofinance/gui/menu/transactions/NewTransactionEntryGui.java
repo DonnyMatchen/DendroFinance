@@ -83,7 +83,7 @@ public class NewTransactionEntryGui extends ModalFrame {
                 type.addItem("Ghost");
                 type.addItem("Tracking");
                 JTextField amount = new JTextField();
-                SearchBox<Account> account = new SearchBox<>("Account", CURRENT_INSTANCE.getDCAccounts());
+                SearchBox<Account> account = new SearchBox<>("Account", CURRENT_INSTANCE.getDCAccounts(), CURRENT_INSTANCE);
                 column = 0;
                 type.addItemListener(event -> {
                     int x = type.getSelectedIndex();

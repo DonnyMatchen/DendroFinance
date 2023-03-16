@@ -34,7 +34,7 @@ public class ExportHandler {
         CURRENT_INSTANCE.FILE_HANDLER.ensure(directory);
         switch (extension) {
             case "JSON" -> {
-                if(flags[0]) {
+                if (flags[0]) {
                     JsonArray array = new JsonArray();
                     for (TransactionCapsule capsule : CURRENT_INSTANCE.DATA_HANDLER.TRANSACTIONS.getRange(start, end)) {
                         try {
@@ -46,7 +46,7 @@ public class ExportHandler {
                     CURRENT_INSTANCE.FILE_HANDLER.writeJson(directory, name + "(" + start.toFileSafeDateString() + "_to_" + end.toFileSafeDateString() + ")-Transactions.json", array);
                 }
 
-                if(flags[1]) {
+                if (flags[1]) {
                     JsonArray array = new JsonArray();
                     for (BudgetCapsule capsule : CURRENT_INSTANCE.DATA_HANDLER.BUDGETS.getBudgets()) {
                         try {
@@ -58,7 +58,7 @@ public class ExportHandler {
                     CURRENT_INSTANCE.FILE_HANDLER.writeJson(directory, name + "-Budgets.json", array);
                 }
 
-                if(flags[2]) {
+                if (flags[2]) {
                     JsonArray array = new JsonArray();
                     for (TemplateCapsule capsule : CURRENT_INSTANCE.DATA_HANDLER.TEMPLATES.getTemplates()) {
                         try {
@@ -70,7 +70,7 @@ public class ExportHandler {
                     CURRENT_INSTANCE.FILE_HANDLER.writeJson(directory, name + "-Templates.json", array);
                 }
 
-                if(flags[3]) {
+                if (flags[3]) {
                     JsonArray array = new JsonArray();
                     for (StateCapsule capsule : CURRENT_INSTANCE.DATA_HANDLER.STATES.getRange(start, end)) {
                         array.add(capsule.export());
@@ -80,7 +80,7 @@ public class ExportHandler {
             }
             case "XTBL" -> {
                 EncryptionHandler encrypt = UnkPasswordGui.getTestPassword(caller, "exports", CURRENT_INSTANCE);
-                if(flags[0]) {
+                if (flags[0]) {
                     JsonArray array = new JsonArray();
                     for (TransactionCapsule capsule : CURRENT_INSTANCE.DATA_HANDLER.TRANSACTIONS.getRange(start, end)) {
                         try {
@@ -92,7 +92,7 @@ public class ExportHandler {
                     CURRENT_INSTANCE.FILE_HANDLER.writeEncryptJson(directory, name + "(" + start.toFileSafeDateString() + "_to_" + end.toFileSafeDateString() + ")-Transactions.xtbl", array, encrypt);
                 }
 
-                if(flags[1]) {
+                if (flags[1]) {
                     JsonArray array = new JsonArray();
                     for (BudgetCapsule capsule : CURRENT_INSTANCE.DATA_HANDLER.BUDGETS.getBudgets()) {
                         try {
@@ -104,7 +104,7 @@ public class ExportHandler {
                     CURRENT_INSTANCE.FILE_HANDLER.writeEncryptJson(directory, name + "-Budgets.xtbl", array, encrypt);
                 }
 
-                if(flags[2]) {
+                if (flags[2]) {
                     JsonArray array = new JsonArray();
                     for (TemplateCapsule capsule : CURRENT_INSTANCE.DATA_HANDLER.TEMPLATES.getTemplates()) {
                         try {
@@ -116,7 +116,7 @@ public class ExportHandler {
                     CURRENT_INSTANCE.FILE_HANDLER.writeEncryptJson(directory, name + "-Templates.xtbl", array, encrypt);
                 }
 
-                if(flags[3]) {
+                if (flags[3]) {
                     JsonArray array = new JsonArray();
                     for (StateCapsule capsule : CURRENT_INSTANCE.DATA_HANDLER.STATES.getRange(start, end)) {
                         array.add(capsule.export());
@@ -125,9 +125,9 @@ public class ExportHandler {
                 }
             }
             case "XARC" -> {
-                try{
+                try {
                     EncryptionHandler encrypt = UnkPasswordGui.getTestPassword(caller, "exports", CURRENT_INSTANCE);
-                    if(flags[0]) {
+                    if (flags[0]) {
                         JsonArray array = new JsonArray();
                         for (TransactionCapsule capsule : CURRENT_INSTANCE.DATA_HANDLER.TRANSACTIONS.getRange(start, end)) {
                             try {
@@ -139,7 +139,7 @@ public class ExportHandler {
                         JsonItem.save(array, new XarcOutputStream(directory, name + "(" + start.toFileSafeDateString() + "_to_" + end.toFileSafeDateString() + ")-Transactions.xtbl", encrypt, CURRENT_INSTANCE));
                     }
 
-                    if(flags[1]) {
+                    if (flags[1]) {
                         JsonArray array = new JsonArray();
                         for (BudgetCapsule capsule : CURRENT_INSTANCE.DATA_HANDLER.BUDGETS.getBudgets()) {
                             try {
@@ -151,7 +151,7 @@ public class ExportHandler {
                         JsonItem.save(array, new XarcOutputStream(directory, name + "-Budgets.xtbl", encrypt, CURRENT_INSTANCE));
                     }
 
-                    if(flags[2]) {
+                    if (flags[2]) {
                         JsonArray array = new JsonArray();
                         for (TemplateCapsule capsule : CURRENT_INSTANCE.DATA_HANDLER.TEMPLATES.getTemplates()) {
                             try {
@@ -163,7 +163,7 @@ public class ExportHandler {
                         JsonItem.save(array, new XarcOutputStream(directory, name + "-Templates.xtbl", encrypt, CURRENT_INSTANCE));
                     }
 
-                    if(flags[3]) {
+                    if (flags[3]) {
                         JsonArray array = new JsonArray();
                         for (StateCapsule capsule : CURRENT_INSTANCE.DATA_HANDLER.STATES.getRange(start, end)) {
                             array.add(capsule.export());

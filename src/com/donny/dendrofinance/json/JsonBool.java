@@ -43,6 +43,7 @@ public class JsonBool extends JsonItem {
             writer.write("false");
         }
     }
+
     @Override
     protected void stream(XarcOutputStream out) {
         if (bool) {

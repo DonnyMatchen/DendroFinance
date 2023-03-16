@@ -24,6 +24,7 @@ public class JsonNull extends JsonItem {
     protected void stream(FileWriter writer) throws IOException {
         writer.write("null");
     }
+
     @Override
     protected void stream(XarcOutputStream out) {
         out.write("null");

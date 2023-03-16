@@ -15,6 +15,7 @@ public class XarcOutputStream extends FileOutputStream {
         curInst.FILE_HANDLER.ensure(file);
         WRITER = new XarcWriter(file, handler, curInst);
     }
+
     public XarcOutputStream(File dir, String name, EncryptionHandler handler, Instance curInst) throws IOException {
         this(new File(dir.getAbsolutePath() + File.separator + name), handler, curInst);
     }

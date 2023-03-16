@@ -30,9 +30,11 @@ public abstract class Xarc {
     }
 
     public abstract void goTo(long blockIndex, int blockOffset);
+
     public void goTo(long blockIndex) {
         goTo(blockIndex, 0);
     }
+
     public void goTo(long[] location) {
         goTo(location[0], (int) location[1]);
     }
@@ -40,10 +42,6 @@ public abstract class Xarc {
     public void close() throws IOException {
         FILE.close();
     }
-
-
-
-
 
 
 }

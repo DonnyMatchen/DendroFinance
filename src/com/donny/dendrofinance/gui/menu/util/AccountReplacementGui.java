@@ -26,8 +26,8 @@ public class AccountReplacementGui extends RegisterFrame {
         //draw gui
         {
             RANGE = new DateRange(true);
-            OLD = new SearchBox<>("Existing Account", CURRENT_INSTANCE.ACCOUNTS);
-            NEW = new SearchBox<>("Replacement Account", CURRENT_INSTANCE.ACCOUNTS);
+            OLD = new SearchBox<>("Existing Account", CURRENT_INSTANCE.ACCOUNTS, CURRENT_INSTANCE);
+            NEW = new SearchBox<>("Replacement Account", CURRENT_INSTANCE.ACCOUNTS, CURRENT_INSTANCE);
             JButton go = new JButton("Do Change");
             go.addActionListener(event -> goAction());
 

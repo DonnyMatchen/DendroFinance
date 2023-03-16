@@ -5,7 +5,6 @@ import com.donny.dendrofinance.instance.Instance;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
 import java.util.Arrays;
 
@@ -41,21 +40,22 @@ public class XarcWriter extends Xarc {
     }
 
     public void goTo(long blockIndex, int blockOffset, boolean load) {
-        if(block != blockIndex) {
+        if (block != blockIndex) {
             if (cursor != 0) {
                 writeBlock();
             }
             block = blockIndex;
             cursor = blockOffset;
-            if(load) {
-                if(!READER.loadBlock(block, BUFFER)) {
-                    Arrays.fill(BUFFER, (byte)0);
+            if (load) {
+                if (!READER.loadBlock(block, BUFFER)) {
+                    Arrays.fill(BUFFER, (byte) 0);
                 }
             }
         } else {
             cursor = blockOffset;
         }
     }
+
     @Override
     public void goTo(long blockIndex, int blockOffset) {
         goTo(blockIndex, blockOffset, true);
@@ -64,12 +64,12 @@ public class XarcWriter extends Xarc {
     public void write(int b) {
         BUFFER[cursor] = (byte) b;
         cursor++;
-        if(cursor == BUFFER.length) {
+        if (cursor == BUFFER.length) {
             cursor = 0;
             writeBlock();
             block++;
-            if(!READER.loadBlock(block, BUFFER)) {
-                Arrays.fill(BUFFER, (byte)0);
+            if (!READER.loadBlock(block, BUFFER)) {
+                Arrays.fill(BUFFER, (byte) 0);
             }
         }
     }
@@ -79,13 +79,13 @@ public class XarcWriter extends Xarc {
     }
 
     public void write(byte[] array) {
-        for(byte b : array) {
+        for (byte b : array) {
             write(b);
         }
     }
 
     public void write(byte[] array, int offset, int length) {
-        for(int i = 0; i < length; i++) {
+        for (int i = 0; i < length; i++) {
             write(array[i + offset]);
         }
     }
@@ -104,13 +104,14 @@ public class XarcWriter extends Xarc {
             CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Failed to write block " + blockIndex + " to Xarc: " + FILE_NAME);
         }
     }
+
     public void writeBlock() {
         writeBlock(block);
     }
 
     @Override
     public void close() throws IOException {
-        if(cursor != 0) {
+        if (cursor != 0) {
             writeBlock();
         }
         super.close();

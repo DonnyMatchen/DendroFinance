@@ -109,11 +109,13 @@ public abstract class JsonItem implements Serializable {
     }
 
     protected abstract void stream(FileWriter writer) throws IOException;
+
     protected abstract void stream(XarcOutputStream xarc);
 
     public static void save(JsonItem item, FileWriter writer) throws IOException {
         item.stream(writer);
     }
+
     public static void save(JsonItem item, XarcOutputStream xarc) {
         item.stream(xarc);
     }

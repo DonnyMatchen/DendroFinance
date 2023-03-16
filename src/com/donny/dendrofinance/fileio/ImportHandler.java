@@ -14,7 +14,6 @@ import com.donny.dendrofinance.json.JsonObject;
 import com.donny.dendrofinance.types.LAccountSet;
 import com.donny.dendrofinance.types.LDate;
 import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.core.JsonParseException;
 
 import javax.swing.*;
 import java.io.File;
@@ -193,7 +192,7 @@ public class ImportHandler {
     public void loadXARC(File file, JFrame caller, ImportMode mode) throws SQLException {
         boolean imported = false;
         EncryptionHandler handler = UnkPasswordGui.getTestPassword(caller, file.getName(), CURRENT_INSTANCE);
-        try{
+        try {
             JsonItem item = JsonItem.digest(new JsonFactory().createParser(new XarcInputStream(file, handler, CURRENT_INSTANCE)));
             if (item == null) {
                 CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Incorrect password for file: " + file.getPath());

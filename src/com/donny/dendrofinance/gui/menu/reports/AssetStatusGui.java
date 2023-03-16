@@ -43,7 +43,7 @@ public class AssetStatusGui extends RegisterFrame {
                 }
             });
 
-            CURRENCY = new SearchBox<>("Currency", curInst.getAllAssets());
+            CURRENCY = new SearchBox<>("Currency", curInst.getAllAssets(), CURRENT_INSTANCE);
 
             JButton enter = DendroFactory.getButton("Enter");
             enter.addActionListener(event -> enterAction(getCurrency()));

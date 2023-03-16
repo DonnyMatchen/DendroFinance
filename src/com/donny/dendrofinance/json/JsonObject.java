@@ -171,6 +171,7 @@ public class JsonObject extends JsonItem {
             }
         }
     }
+
     @Override
     protected void stream(XarcOutputStream out) {
         if (CONTENTS.keySet().size() == 0) {

@@ -83,7 +83,7 @@ public class NewTransactionEntryGui extends ModalFrame {
                 type.addItem("Ghost");
                 type.addItem("Tracking");
                 JTextField amount = new JTextField();
-                SearchBox<Account> account = new SearchBox<>("Account", CURRENT_INSTANCE.getDCAccounts());
+                SearchBox<Account> account = new SearchBox<>("Account", CURRENT_INSTANCE.getDCAccounts(), CURRENT_INSTANCE);
                 column = 0;
                 type.addItemListener(event -> {
                     int x = type.getSelectedIndex();
@@ -117,11 +117,11 @@ public class NewTransactionEntryGui extends ModalFrame {
                 });
 
                 JComboBox<TemplateCapsule> templates = new JComboBox<>();
-                CURRENT_INSTANCE.DATA_HANDLER.DATABASE.TEMPLATES.getTemplates().forEach(templates::addItem);
+                CURRENT_INSTANCE.DATA_HANDLER.TEMPLATES.getTemplates().forEach(templates::addItem);
                 JButton load = DendroFactory.getButton("Load Template");
                 load.addActionListener(event -> {
                     if (templates.getSelectedIndex() >= 0) {
-                        TransactionCapsule capsule = CURRENT_INSTANCE.DATA_HANDLER.DATABASE.TRANSACTIONS.get(((TemplateCapsule) templates.getSelectedItem()).getRef());
+                        TransactionCapsule capsule = CURRENT_INSTANCE.DATA_HANDLER.TRANSACTIONS.get(((TemplateCapsule) templates.getSelectedItem()).getRef());
                         DATE.setText(capsule.getDate().toString());
                         ENT.setText(capsule.getEntity());
                         ITM.setText(capsule.getItems());
@@ -358,7 +358,7 @@ public class NewTransactionEntryGui extends ModalFrame {
         if (UUID == 0) {
             metaObject = new JsonObject();
         } else {
-            TransactionCapsule capsule = CURRENT_INSTANCE.DATA_HANDLER.DATABASE.TRANSACTIONS.get(UUID);
+            TransactionCapsule capsule = CURRENT_INSTANCE.DATA_HANDLER.TRANSACTIONS.get(UUID);
             DATE.setText(capsule.getDate().toString());
             ENT.setText(capsule.getEntity());
             ITM.setText(capsule.getItems());
@@ -510,7 +510,7 @@ public class NewTransactionEntryGui extends ModalFrame {
             if (UUID == 0 || CLONE) {
                 capsule = new TransactionCapsule(CURRENT_INSTANCE);
             } else {
-                capsule = CURRENT_INSTANCE.DATA_HANDLER.DATABASE.TRANSACTIONS.get(UUID);
+                capsule = CURRENT_INSTANCE.DATA_HANDLER.TRANSACTIONS.get(UUID);
             }
             capsule.insert(
                     Validation.validateDate(DATE, CURRENT_INSTANCE),
@@ -520,7 +520,7 @@ public class NewTransactionEntryGui extends ModalFrame {
                     Validation.validateAccountSet(ACC, CURRENT_INSTANCE)
             );
             capsule.setMeta(Validation.validateJsonObject(META));
-            CURRENT_INSTANCE.DATA_HANDLER.DATABASE.TRANSACTIONS.add(capsule, ImportHandler.ImportMode.OVERWRITE);
+            CURRENT_INSTANCE.DATA_HANDLER.TRANSACTIONS.add(capsule, ImportHandler.ImportMode.OVERWRITE);
             MAIN.updateTable();
             dispose();
         } catch (ValidationFailedException ex) {

@@ -1,6 +1,7 @@
 package com.donny.dendrofinance.gui.customswing;
 
 import com.donny.dendrofinance.data.backingtable.BackingTableCore;
+import com.donny.dendrofinance.instance.Instance;
 import com.donny.dendrofinance.json.JsonFormattingException;
 import com.donny.dendrofinance.util.UniqueName;
 
@@ -12,13 +13,15 @@ import java.awt.*;
 import java.util.ArrayList;
 
 public class SearchBox<E extends UniqueName> extends JPanel {
+    private  final Instance CURRENT_INSTANCE;
     private final JLabel TITLE;
     private final JTextField SEARCH;
     private final JList<E> LIST;
     private ArrayList<E> master;
 
-    public SearchBox(String name, ArrayList<E> master) {
+    public SearchBox(String name, ArrayList<E> master, Instance curInst) {
         super();
+        CURRENT_INSTANCE = curInst;
         this.master = master;
 
         //gui setup
@@ -75,8 +78,9 @@ public class SearchBox<E extends UniqueName> extends JPanel {
         updateList("");
     }
 
-    public SearchBox(String name, BackingTableCore<E> master) {
+    public SearchBox(String name, BackingTableCore<E> master, Instance curInst) {
         super();
+        CURRENT_INSTANCE = curInst;
         ArrayList<E> newMaster = new ArrayList<>();
         master.forEach(newMaster::add);
         this.master = newMaster;
@@ -215,6 +219,7 @@ public class SearchBox<E extends UniqueName> extends JPanel {
                     ((DefaultListModel<E>) LIST.getModel()).add(LIST.getModel().getSize(), e);
                 }
             } catch (JsonFormattingException ex) {
+                CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Bad item in SearchBox: " + e.getName());
             }
         });
     }

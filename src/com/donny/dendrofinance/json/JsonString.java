@@ -51,6 +51,7 @@ public class JsonString extends JsonItem {
     protected void stream(FileWriter writer) throws IOException {
         writer.write('"' + string + '"');
     }
+
     @Override
     protected void stream(XarcOutputStream out) {
         out.write('"' + string + '"');

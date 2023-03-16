@@ -157,7 +157,7 @@ public class NewTemplateGui extends ModalFrame {
                         ).addContainerGap()
                 );
             }
-            TemplateCapsule capsule = CURRENT_INSTANCE.DATA_HANDLER.DATABASE.TEMPLATES.get(name);
+            TemplateCapsule capsule = CURRENT_INSTANCE.DATA_HANDLER.TEMPLATES.get(name);
             ID.setText(Long.toUnsignedString(capsule.getRef()));
             NAME.setText(capsule.getName());
         }
@@ -168,7 +168,7 @@ public class NewTemplateGui extends ModalFrame {
 
     private void saveAction() {
         try {
-            CURRENT_INSTANCE.DATA_HANDLER.DATABASE.TEMPLATES.add(
+            CURRENT_INSTANCE.DATA_HANDLER.TEMPLATES.add(
                     new TemplateCapsule(
                             Validation.validateString(NAME),
                             Cleaning.cleanInteger(ID.getText()).longValue(),

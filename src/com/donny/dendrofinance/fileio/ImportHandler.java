@@ -14,7 +14,6 @@ import com.donny.dendrofinance.json.JsonObject;
 import com.donny.dendrofinance.types.LAccountSet;
 import com.donny.dendrofinance.types.LDate;
 import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.core.JsonParseException;
 
 import javax.swing.*;
 import java.io.File;
@@ -100,7 +99,7 @@ public class ImportHandler {
             } catch (ParseException e) {
                 CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Bad Date: " + fields[0]);
             }
-            CURRENT_INSTANCE.DATA_HANDLER.DATABASE.TRANSACTIONS.add(capsule, ImportMode.KEEP);
+            CURRENT_INSTANCE.DATA_HANDLER.TRANSACTIONS.add(capsule, ImportMode.KEEP);
         }
         CURRENT_INSTANCE.FILE_HANDLER.delete(file);
     }
@@ -110,26 +109,26 @@ public class ImportHandler {
         if (file.getName().toLowerCase().contains("transaction")) {
             JsonArray array = (JsonArray) CURRENT_INSTANCE.FILE_HANDLER.readJson(file);
             for (JsonObject obj : array.getObjectArray()) {
-                CURRENT_INSTANCE.DATA_HANDLER.DATABASE.TRANSACTIONS.add(new TransactionCapsule(obj, mode, CURRENT_INSTANCE), mode);
+                CURRENT_INSTANCE.DATA_HANDLER.TRANSACTIONS.add(new TransactionCapsule(obj, mode, CURRENT_INSTANCE), mode);
             }
             imported = true;
         } else if (file.getName().toLowerCase().contains("budget")) {
             JsonArray array = (JsonArray) CURRENT_INSTANCE.FILE_HANDLER.readJson(file);
             for (JsonObject obj : array.getObjectArray()) {
-                CURRENT_INSTANCE.DATA_HANDLER.DATABASE.BUDGETS.add(new BudgetCapsule(obj, mode, CURRENT_INSTANCE), mode);
+                CURRENT_INSTANCE.DATA_HANDLER.BUDGETS.add(new BudgetCapsule(obj, mode, CURRENT_INSTANCE), mode);
             }
             imported = true;
         } else if (file.getName().toLowerCase().contains("template")) {
             JsonArray array = (JsonArray) CURRENT_INSTANCE.FILE_HANDLER.readJson(file);
             for (JsonObject obj : array.getObjectArray()) {
-                CURRENT_INSTANCE.DATA_HANDLER.DATABASE.TEMPLATES.add(new TemplateCapsule(obj, mode, CURRENT_INSTANCE), mode);
+                CURRENT_INSTANCE.DATA_HANDLER.TEMPLATES.add(new TemplateCapsule(obj, mode, CURRENT_INSTANCE), mode);
             }
             imported = true;
         } else if (file.getName().toLowerCase().contains("state")) {
             JsonItem item = CURRENT_INSTANCE.FILE_HANDLER.readJson(file);
             JsonArray array = (JsonArray) item;
             for (JsonObject obj : array.getObjectArray()) {
-                CURRENT_INSTANCE.DATA_HANDLER.DATABASE.STATES.add(new StateCapsule(obj, CURRENT_INSTANCE), mode);
+                CURRENT_INSTANCE.DATA_HANDLER.STATES.add(new StateCapsule(obj, CURRENT_INSTANCE), mode);
             }
             imported = true;
         }
@@ -147,7 +146,7 @@ public class ImportHandler {
             } else {
                 JsonArray array = (JsonArray) item;
                 for (JsonObject obj : array.getObjectArray()) {
-                    CURRENT_INSTANCE.DATA_HANDLER.DATABASE.TRANSACTIONS.add(new TransactionCapsule(obj, mode, CURRENT_INSTANCE), mode);
+                    CURRENT_INSTANCE.DATA_HANDLER.TRANSACTIONS.add(new TransactionCapsule(obj, mode, CURRENT_INSTANCE), mode);
                 }
                 imported = true;
             }
@@ -158,7 +157,7 @@ public class ImportHandler {
             } else {
                 JsonArray array = (JsonArray) item;
                 for (JsonObject obj : array.getObjectArray()) {
-                    CURRENT_INSTANCE.DATA_HANDLER.DATABASE.BUDGETS.add(new BudgetCapsule(obj, mode, CURRENT_INSTANCE), mode);
+                    CURRENT_INSTANCE.DATA_HANDLER.BUDGETS.add(new BudgetCapsule(obj, mode, CURRENT_INSTANCE), mode);
                 }
                 imported = true;
             }
@@ -169,7 +168,7 @@ public class ImportHandler {
             } else {
                 JsonArray array = (JsonArray) item;
                 for (JsonObject obj : array.getObjectArray()) {
-                    CURRENT_INSTANCE.DATA_HANDLER.DATABASE.TEMPLATES.add(new TemplateCapsule(obj, mode, CURRENT_INSTANCE), mode);
+                    CURRENT_INSTANCE.DATA_HANDLER.TEMPLATES.add(new TemplateCapsule(obj, mode, CURRENT_INSTANCE), mode);
                 }
                 imported = true;
             }
@@ -180,7 +179,7 @@ public class ImportHandler {
             } else {
                 JsonArray array = (JsonArray) item;
                 for (JsonObject obj : array.getObjectArray()) {
-                    CURRENT_INSTANCE.DATA_HANDLER.DATABASE.STATES.add(new StateCapsule(obj, CURRENT_INSTANCE), mode);
+                    CURRENT_INSTANCE.DATA_HANDLER.STATES.add(new StateCapsule(obj, CURRENT_INSTANCE), mode);
                 }
                 imported = true;
             }
@@ -193,7 +192,7 @@ public class ImportHandler {
     public void loadXARC(File file, JFrame caller, ImportMode mode) throws SQLException {
         boolean imported = false;
         EncryptionHandler handler = UnkPasswordGui.getTestPassword(caller, file.getName(), CURRENT_INSTANCE);
-        try{
+        try {
             JsonItem item = JsonItem.digest(new JsonFactory().createParser(new XarcInputStream(file, handler, CURRENT_INSTANCE)));
             if (item == null) {
                 CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Incorrect password for file: " + file.getPath());
@@ -201,25 +200,25 @@ public class ImportHandler {
                 if (file.getName().toLowerCase().contains("transaction")) {
                     JsonArray array = (JsonArray) item;
                     for (JsonObject obj : array.getObjectArray()) {
-                        CURRENT_INSTANCE.DATA_HANDLER.DATABASE.TRANSACTIONS.add(new TransactionCapsule(obj, mode, CURRENT_INSTANCE), mode);
+                        CURRENT_INSTANCE.DATA_HANDLER.TRANSACTIONS.add(new TransactionCapsule(obj, mode, CURRENT_INSTANCE), mode);
                     }
                     imported = true;
                 } else if (file.getName().toLowerCase().contains("budget")) {
                     JsonArray array = (JsonArray) item;
                     for (JsonObject obj : array.getObjectArray()) {
-                        CURRENT_INSTANCE.DATA_HANDLER.DATABASE.BUDGETS.add(new BudgetCapsule(obj, mode, CURRENT_INSTANCE), mode);
+                        CURRENT_INSTANCE.DATA_HANDLER.BUDGETS.add(new BudgetCapsule(obj, mode, CURRENT_INSTANCE), mode);
                     }
                     imported = true;
                 } else if (file.getName().toLowerCase().contains("template")) {
                     JsonArray array = (JsonArray) item;
                     for (JsonObject obj : array.getObjectArray()) {
-                        CURRENT_INSTANCE.DATA_HANDLER.DATABASE.TEMPLATES.add(new TemplateCapsule(obj, mode, CURRENT_INSTANCE), mode);
+                        CURRENT_INSTANCE.DATA_HANDLER.TEMPLATES.add(new TemplateCapsule(obj, mode, CURRENT_INSTANCE), mode);
                     }
                     imported = true;
                 } else if (file.getName().toLowerCase().contains("state")) {
                     JsonArray array = (JsonArray) item;
                     for (JsonObject obj : array.getObjectArray()) {
-                        CURRENT_INSTANCE.DATA_HANDLER.DATABASE.STATES.add(new StateCapsule(obj, CURRENT_INSTANCE), mode);
+                        CURRENT_INSTANCE.DATA_HANDLER.STATES.add(new StateCapsule(obj, CURRENT_INSTANCE), mode);
                     }
                     imported = true;
                 }

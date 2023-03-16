@@ -21,7 +21,8 @@ import com.donny.dendrofinance.gui.menu.trading.LedgerGui;
 import com.donny.dendrofinance.gui.menu.trading.OrderBookGui;
 import com.donny.dendrofinance.gui.menu.trading.PositionGui;
 import com.donny.dendrofinance.gui.menu.trading.PricesGui;
-import com.donny.dendrofinance.gui.menu.transactions.DeleteEntryGui;
+import com.donny.dendrofinance.gui.menu.transactions.DeleteAllGui;
+import com.donny.dendrofinance.gui.menu.transactions.DeleteTransactionGui;
 import com.donny.dendrofinance.gui.menu.transactions.NewTransactionEntryGui;
 import com.donny.dendrofinance.gui.menu.transactions.SpecialTransactionEntryGui;
 import com.donny.dendrofinance.gui.menu.util.AccountReplacementGui;
@@ -33,6 +34,7 @@ import com.donny.dendrofinance.gui.menu.util.acc.TaxZeroGui;
 import com.donny.dendrofinance.gui.menu.util.taxgui.TaxGui;
 import com.donny.dendrofinance.instance.Instance;
 import com.donny.dendrofinance.types.LDate;
+import com.donny.dendrofinance.util.Curation;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
@@ -140,8 +142,8 @@ public class MainGui extends JFrame {
             DateRange full = new DateRange(false);
             full.setEditable(false);
             full.init(
-                    new LDate(CURRENT_INSTANCE.DATA_HANDLER.DATABASE.TRANSACTIONS.getMinDate(), CURRENT_INSTANCE),
-                    new LDate(CURRENT_INSTANCE.DATA_HANDLER.DATABASE.TRANSACTIONS.getMaxDate(), CURRENT_INSTANCE)
+                    new LDate(CURRENT_INSTANCE.DATA_HANDLER.TRANSACTIONS.getMinDate(), CURRENT_INSTANCE),
+                    new LDate(CURRENT_INSTANCE.DATA_HANDLER.TRANSACTIONS.getMaxDate(), CURRENT_INSTANCE)
             );
 
             COUNT = new JTextField();
@@ -238,7 +240,7 @@ public class MainGui extends JFrame {
                 JMenuItem delete = new JMenuItem("Delete");
                 delete.addActionListener(event -> {
                     if (validSelection())
-                        new DeleteEntryGui(this, getUUID(TABLE.getSelectedRow()), CURRENT_INSTANCE).setVisible(true);
+                        new DeleteTransactionGui(this, getUUID(TABLE.getSelectedRow()), CURRENT_INSTANCE).setVisible(true);
                 });
                 JMenuItem newTemplate = new JMenuItem("Save as Template");
                 newTemplate.addActionListener(event -> {
@@ -250,8 +252,14 @@ public class MainGui extends JFrame {
                 thisTrans.add(delete);
                 thisTrans.add(newTemplate);
 
+                JMenu allTrans = new JMenu("All");
+                JMenuItem deleteAll = new JMenuItem("Delete All in Search");
+                deleteAll.addActionListener(event -> new DeleteAllGui(this, getAllUUIDs(), CURRENT_INSTANCE).setVisible(true));
+                allTrans.add(deleteAll);
+
                 trans.add(newTrans);
                 trans.add(thisTrans);
+                trans.add(allTrans);
 
                 //reports
                 JMenu rep = new JMenu("Reports");
@@ -285,6 +293,7 @@ public class MainGui extends JFrame {
                 rep.add(asset);
                 rep.add(loans);
 
+                //trading
                 JMenu trad = new JMenu("Trading");
 
                 JMenuItem ledg = new JMenuItem("Trading Ledger");
@@ -301,6 +310,7 @@ public class MainGui extends JFrame {
                 trad.add(orbk);
                 trad.add(prc);
 
+                //utilities
                 JMenu util = new JMenu("Utilities");
 
                 JMenuItem repl = new JMenuItem("Account Replacement");
@@ -492,7 +502,7 @@ public class MainGui extends JFrame {
         while (TABLE_ACCESS.getRowCount() > 0) {
             TABLE_ACCESS.removeRow(0);
         }
-        ArrayList<TransactionCapsule> capsules = CURRENT_INSTANCE.DATA_HANDLER.DATABASE.TRANSACTIONS.hunt(start, end, searchString);
+        ArrayList<TransactionCapsule> capsules = CURRENT_INSTANCE.DATA_HANDLER.TRANSACTIONS.hunt(start, end, searchString);
         for (TransactionCapsule capsule : capsules) {
             for (String[] el : capsule.display()) {
                 TABLE_ACCESS.addRow(el);
@@ -503,7 +513,7 @@ public class MainGui extends JFrame {
     }
 
     public void tableCursorChanged(int cursor) {
-        TransactionCapsule capsule = CURRENT_INSTANCE.DATA_HANDLER.DATABASE.TRANSACTIONS.get(getUUID(cursor));
+        TransactionCapsule capsule = CURRENT_INSTANCE.DATA_HANDLER.TRANSACTIONS.get(getUUID(cursor));
         DISPLAY.setText(capsule.toString());
     }
 
@@ -525,6 +535,14 @@ public class MainGui extends JFrame {
         } else {
             return Long.parseUnsignedLong((String) TABLE_ACCESS.getValueAt(cursor, 0));
         }
+    }
+
+    public ArrayList<Long> getAllUUIDs() {
+        Curation<Long> out = new Curation<>();
+        for (int i = 0; i < TABLE_ACCESS.getRowCount(); i++) {
+            out.add(getUUID(i));
+        }
+        return out;
     }
 
     public void conclude(boolean save, boolean exit) {

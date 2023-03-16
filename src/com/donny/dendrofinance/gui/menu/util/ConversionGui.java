@@ -29,8 +29,8 @@ public class ConversionGui extends RegisterFrame {
             JLabel b = new JLabel("Amount");
             DATE = new JTextField();
             AMOUNT = new JTextField();
-            CUR_A = new SearchBox<>("Currency A", CURRENT_INSTANCE.getAllAssets());
-            CUR_B = new SearchBox<>("Currency B", CURRENT_INSTANCE.getAllAssets());
+            CUR_A = new SearchBox<>("Currency A", CURRENT_INSTANCE.getAllAssets(), CURRENT_INSTANCE);
+            CUR_B = new SearchBox<>("Currency B", CURRENT_INSTANCE.getAllAssets(), CURRENT_INSTANCE);
             JScrollPane pane = DendroFactory.getScrollField();
             DISPLAY = (JTextArea) pane.getViewport().getView();
             DISPLAY.setEditable(false);

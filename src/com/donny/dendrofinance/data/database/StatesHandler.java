@@ -1,7 +1,6 @@
 package com.donny.dendrofinance.data.database;
 
 import com.donny.dendrofinance.capsules.StateCapsule;
-import com.donny.dendrofinance.capsules.TransactionCapsule;
 import com.donny.dendrofinance.fileio.ImportHandler;
 import com.donny.dendrofinance.gui.form.SqlEscape;
 import com.donny.dendrofinance.instance.Instance;
@@ -9,7 +8,6 @@ import com.donny.dendrofinance.json.JsonArray;
 import com.donny.dendrofinance.json.JsonFormattingException;
 import com.donny.dendrofinance.json.JsonItem;
 import com.donny.dendrofinance.json.JsonObject;
-import com.donny.dendrofinance.types.LAccountSet;
 import com.donny.dendrofinance.types.LDate;
 
 import java.sql.ResultSet;
@@ -104,10 +102,11 @@ public class StatesHandler extends TableHandler<Long, StateCapsule> {
             return null;
         }
     }
+
     public StateCapsule getBefore(Long timestamp) {
         try {
             Statement statement = CURRENT_INSTANCE.DATA_HANDLER.DATABASE.con.createStatement();
-            statement.execute("SELECT TOP 1 dtm FROM STATES WHERE dtm < " + timestamp + " ORDER BY dtm DESC");
+            statement.execute("SELECT TOP 1 dtm FROM STATES WHERE dtm <= " + timestamp + " ORDER BY dtm DESC");
             ResultSet set = statement.getResultSet();
             if (set.next()) {
                 return get(set.getLong(1));

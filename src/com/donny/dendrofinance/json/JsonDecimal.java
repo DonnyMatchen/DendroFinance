@@ -65,6 +65,7 @@ public class JsonDecimal extends JsonItem {
     protected void stream(FileWriter writer) throws IOException {
         writer.write(decimal.toString());
     }
+
     @Override
     protected void stream(XarcOutputStream out) {
         out.write(decimal.toString());

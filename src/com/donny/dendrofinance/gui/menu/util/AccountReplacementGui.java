@@ -26,8 +26,8 @@ public class AccountReplacementGui extends RegisterFrame {
         //draw gui
         {
             RANGE = new DateRange(true);
-            OLD = new SearchBox<>("Existing Account", CURRENT_INSTANCE.ACCOUNTS);
-            NEW = new SearchBox<>("Replacement Account", CURRENT_INSTANCE.ACCOUNTS);
+            OLD = new SearchBox<>("Existing Account", CURRENT_INSTANCE.ACCOUNTS, CURRENT_INSTANCE);
+            NEW = new SearchBox<>("Replacement Account", CURRENT_INSTANCE.ACCOUNTS, CURRENT_INSTANCE);
             JButton go = new JButton("Do Change");
             go.addActionListener(event -> goAction());
 
@@ -72,7 +72,7 @@ public class AccountReplacementGui extends RegisterFrame {
         if (range != null) {
             Account a = OLD.getSelectedItem();
             Account b = NEW.getSelectedItem();
-            for (TransactionCapsule capsule : CURRENT_INSTANCE.DATA_HANDLER.DATABASE.TRANSACTIONS.getRange(range[0], range[1])) {
+            for (TransactionCapsule capsule : CURRENT_INSTANCE.DATA_HANDLER.TRANSACTIONS.getRange(range[0], range[1])) {
                 int index = -1;
                 AWColumn column = null;
                 BigDecimal value = null;

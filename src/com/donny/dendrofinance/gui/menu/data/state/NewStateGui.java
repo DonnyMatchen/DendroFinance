@@ -30,7 +30,7 @@ public class NewStateGui extends ModalFrame {
             add.addActionListener(event -> {
                 try {
                     LDate date = Validation.validateDate(DATE, CURRENT_INSTANCE);
-                    CURRENT_INSTANCE.DATA_HANDLER.DATABASE.STATES.add(new StateCapsule(date, CURRENT_INSTANCE), ImportHandler.ImportMode.OVERWRITE);
+                    CURRENT_INSTANCE.DATA_HANDLER.STATES.add(new StateCapsule(date, CURRENT_INSTANCE), ImportHandler.ImportMode.OVERWRITE);
                     CALLER.updateDate();
                     dispose();
                 } catch (ValidationFailedException e) {

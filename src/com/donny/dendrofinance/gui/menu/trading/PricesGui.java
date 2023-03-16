@@ -30,7 +30,7 @@ public class PricesGui extends RegisterFrame {
             JTable table = (JTable) pane.getViewport().getView();
             TABLE_ACCESS = (DefaultTableModel) table.getModel();
             RANGE = new DateRange(true);
-            CUR = new SearchBox<>("Asset", curInst.getAllUniqueAssets());
+            CUR = new SearchBox<>("Asset", curInst.getAllUniqueAssets(), CURRENT_INSTANCE);
             CUR.addListSelectionListener(event -> update());
 
             //back

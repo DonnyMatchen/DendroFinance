@@ -24,7 +24,7 @@ public class NewBudgetGui extends ModalFrame {
             NAME = new JTextField();
             TEMPLATE = new JComboBox<>();
             TEMPLATE.addItem("Blank");
-            for (BudgetCapsule capsule : CURRENT_INSTANCE.DATA_HANDLER.DATABASE.BUDGETS.getBudgets()) {
+            for (BudgetCapsule capsule : CURRENT_INSTANCE.DATA_HANDLER.BUDGETS.getBudgets()) {
                 TEMPLATE.addItem(capsule.getName());
             }
             JButton cancel = DendroFactory.getButton("Cancel");
@@ -96,7 +96,7 @@ public class NewBudgetGui extends ModalFrame {
             flag = false;
         }
         if (flag) {
-            for (BudgetCapsule capsule : CURRENT_INSTANCE.DATA_HANDLER.DATABASE.BUDGETS.getBudgets()) {
+            for (BudgetCapsule capsule : CURRENT_INSTANCE.DATA_HANDLER.BUDGETS.getBudgets()) {
                 if (capsule.getName().equalsIgnoreCase(NAME.getText())) {
                     flag = false;
                     break;
@@ -108,9 +108,9 @@ public class NewBudgetGui extends ModalFrame {
         }
         if (flag) {
             if (template == null) {
-                CURRENT_INSTANCE.DATA_HANDLER.DATABASE.BUDGETS.add(new BudgetCapsule(NAME.getText(), CURRENT_INSTANCE), ImportHandler.ImportMode.KEEP);
+                CURRENT_INSTANCE.DATA_HANDLER.BUDGETS.add(new BudgetCapsule(NAME.getText(), CURRENT_INSTANCE), ImportHandler.ImportMode.KEEP);
             } else {
-                CURRENT_INSTANCE.DATA_HANDLER.DATABASE.BUDGETS.add(new BudgetCapsule(template, NAME.getText()), ImportHandler.ImportMode.KEEP);
+                CURRENT_INSTANCE.DATA_HANDLER.BUDGETS.add(new BudgetCapsule(template, NAME.getText()), ImportHandler.ImportMode.KEEP);
             }
             CALLER.updateBudget();
             dispose();

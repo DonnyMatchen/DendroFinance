@@ -82,7 +82,7 @@ public class TemplateGui extends RegisterFrame {
         while (TABLE_ACCESS.getRowCount() > 0) {
             TABLE_ACCESS.removeRow(0);
         }
-        CURRENT_INSTANCE.DATA_HANDLER.DATABASE.TEMPLATES.getTemplates().forEach(capsule -> TABLE_ACCESS.addRow(new String[]{
+        CURRENT_INSTANCE.DATA_HANDLER.TEMPLATES.getTemplates().forEach(capsule -> TABLE_ACCESS.addRow(new String[]{
                 capsule.getName(),
                 Long.toUnsignedString(capsule.getRef())
         }));

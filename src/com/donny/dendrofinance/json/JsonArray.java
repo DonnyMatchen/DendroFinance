@@ -190,6 +190,7 @@ public class JsonArray extends JsonItem {
             }
         }
     }
+
     @Override
     protected void stream(XarcOutputStream out) {
         if (ARRAY.size() == 0) {

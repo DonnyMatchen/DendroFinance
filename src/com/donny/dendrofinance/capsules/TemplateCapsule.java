@@ -55,7 +55,7 @@ public class TemplateCapsule extends Capsule {
     }
 
     public TransactionCapsule getTemplate() {
-        return CURRENT_INSTANCE.DATA_HANDLER.DATABASE.TRANSACTIONS.get(REF);
+        return CURRENT_INSTANCE.DATA_HANDLER.TRANSACTIONS.get(REF);
     }
 
     @Override

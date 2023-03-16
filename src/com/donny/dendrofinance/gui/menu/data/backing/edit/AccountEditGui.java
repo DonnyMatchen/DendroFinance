@@ -30,9 +30,9 @@ public class AccountEditGui extends BackingEditGui<Account> {
         aid = new JTextField();
         budget = new JTextField();
 
-        currency = new SearchBox<>("Currency", CURRENT_INSTANCE.getAllAssets());
-        type = new SearchBox<>("Account Type", CURRENT_INSTANCE.ACCOUNT_TYPES);
-        exchange = new SearchBox<>("Exchange", CURRENT_INSTANCE.EXCHANGES);
+        currency = new SearchBox<>("Currency", CURRENT_INSTANCE.getAllAssets(), CURRENT_INSTANCE);
+        type = new SearchBox<>("Account Type", CURRENT_INSTANCE.ACCOUNT_TYPES, CURRENT_INSTANCE);
+        exchange = new SearchBox<>("Exchange", CURRENT_INSTANCE.EXCHANGES, CURRENT_INSTANCE);
 
         JLabel a = new JLabel("Account Name");
         JLabel b = new JLabel("Account ID");

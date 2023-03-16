@@ -50,16 +50,16 @@ public class XarcInputStream extends FileInputStream {
     public byte[] readAllBytes() {
         ArrayList<Byte> bytes = new ArrayList<>();
         boolean flag = true;
-        while(flag) {
+        while (flag) {
             int x = READER.read();
-            if(x != -1) {
-                bytes.add((byte)x);
+            if (x != -1) {
+                bytes.add((byte) x);
             } else {
                 flag = false;
             }
         }
         byte[] out = new byte[bytes.size()];
-        for(int i = 0; i < out.length; i++) {
+        for (int i = 0; i < out.length; i++) {
             out[i] = bytes.get(i);
         }
         return out;

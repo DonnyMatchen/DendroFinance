@@ -83,12 +83,12 @@ public class SpecialTransactionEntryGui extends ModalFrame {
             AUTOMATIC = new JTextField();
             AUTOMATIC.setBackground(DendroFactory.DISABLED);
             AUTOMATIC.setEditable(false);
-            F_EXCHANGE = new SearchBox<>("", new ArrayList<>());
-            T_EXCHANGE = new SearchBox<>("", new ArrayList<>());
-            F_CURRENCY = new SearchBox<>("", new ArrayList<>());
-            T_CURRENCY = new SearchBox<>("", new ArrayList<>());
-            FEE_CURRENCY = new SearchBox<>("", new ArrayList<>());
-            ACCOUNTS = new SearchBox<>("", new ArrayList<>());
+            F_EXCHANGE = new SearchBox<>("", new ArrayList<>(), CURRENT_INSTANCE);
+            T_EXCHANGE = new SearchBox<>("", new ArrayList<>(), CURRENT_INSTANCE);
+            F_CURRENCY = new SearchBox<>("", new ArrayList<>(), CURRENT_INSTANCE);
+            T_CURRENCY = new SearchBox<>("", new ArrayList<>(), CURRENT_INSTANCE);
+            FEE_CURRENCY = new SearchBox<>("", new ArrayList<>(), CURRENT_INSTANCE);
+            ACCOUNTS = new SearchBox<>("", new ArrayList<>(), CURRENT_INSTANCE);
 
             //group layout
             {

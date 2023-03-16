@@ -36,8 +36,8 @@ public class StateGui extends RegisterFrame {
             DateRange full = new DateRange(false);
             full.setEditable(false);
             full.init(
-                    new LDate(CURRENT_INSTANCE.DATA_HANDLER.DATABASE.STATES.getMinDate(), CURRENT_INSTANCE),
-                    new LDate(CURRENT_INSTANCE.DATA_HANDLER.DATABASE.STATES.getMaxDate(), CURRENT_INSTANCE)
+                    new LDate(CURRENT_INSTANCE.DATA_HANDLER.STATES.getMinDate(), CURRENT_INSTANCE),
+                    new LDate(CURRENT_INSTANCE.DATA_HANDLER.STATES.getMaxDate(), CURRENT_INSTANCE)
             );
             DATE = new JComboBox<>();
             DATE.addItemListener(event -> update());
@@ -72,14 +72,14 @@ public class StateGui extends RegisterFrame {
 
             JButton remove = DendroFactory.getButton("Remove");
             remove.addActionListener(event -> {
-                CURRENT_INSTANCE.DATA_HANDLER.DATABASE.STATES.delete(((LDate) DATE.getSelectedItem()).getTime());
+                CURRENT_INSTANCE.DATA_HANDLER.STATES.delete(((LDate) DATE.getSelectedItem()).getTime());
                 updateDate();
             });
             JButton removeAll = DendroFactory.getButton("Remove All");
             removeAll.addActionListener(event -> {
                 for (int i = 0; i < DATE.getItemCount(); i++) {
                     LDate date = DATE.getItemAt(i);
-                    CURRENT_INSTANCE.DATA_HANDLER.DATABASE.STATES.delete(date.getTime());
+                    CURRENT_INSTANCE.DATA_HANDLER.STATES.delete(date.getTime());
                 }
                 updateDate();
             });
@@ -241,7 +241,7 @@ public class StateGui extends RegisterFrame {
         }
         LDate date = (LDate) DATE.getSelectedItem();
         if (date != null) {
-            StateCapsule state = CURRENT_INSTANCE.DATA_HANDLER.DATABASE.STATES.get(date.getTime());
+            StateCapsule state = CURRENT_INSTANCE.DATA_HANDLER.STATES.get(date.getTime());
             Aggregation<Account> acc = state.getAccounts();
             for (Account a : CURRENT_INSTANCE.ACCOUNTS) {
                 if (acc.containsKey(a)) {
@@ -304,8 +304,8 @@ public class StateGui extends RegisterFrame {
     void updateDate() {
         DATE.removeAllItems();
         LDate[] range = RANGE.getRange(CURRENT_INSTANCE);
-        if(range != null) {
-            for (StateCapsule capsule : CURRENT_INSTANCE.DATA_HANDLER.DATABASE.STATES.getRange(range[0], range[1])) {
+        if (range != null) {
+            for (StateCapsule capsule : CURRENT_INSTANCE.DATA_HANDLER.STATES.getRange(range[0], range[1])) {
                 DATE.addItem(capsule.getDate());
             }
         }

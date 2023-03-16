@@ -10,19 +10,22 @@ import java.util.Arrays;
 public class XarcReader extends Xarc {
     private final byte[] IN_BUFFER, BUFFER;
     private boolean eof;
+
     public XarcReader(File file, int blockSize, EncryptionHandler handler, Instance curInst) throws IOException {
         super(file, "r", blockSize, handler, curInst);
-        BUFFER = new byte[blockSize*16];
-        IN_BUFFER = new byte[blockSize*16 + 16];
-        if(!test()) {
+        BUFFER = new byte[blockSize * 16];
+        IN_BUFFER = new byte[blockSize * 16 + 16];
+        if (!test()) {
             throw new IOException("Unable to verify Xarc");
         }
         block = 1;
         cursor = 0;
     }
+
     public XarcReader(File file, EncryptionHandler handler, Instance curInst) throws IOException {
         this(file, curInst.blockSize, handler, curInst);
     }
+
     public XarcReader(XarcWriter writer) throws IOException {
         this(new File(writer.FILE_NAME), writer.blockSize, writer.HANDLER, writer.CURRENT_INSTANCE);
     }
@@ -41,24 +44,26 @@ public class XarcReader extends Xarc {
 
     public void goTo(long blockIndex, int blockOffset, boolean load) {
         cursor = blockOffset;
-        if(block != blockIndex) {
+        if (block != blockIndex) {
             block = blockIndex;
-            if(load) {
+            if (load) {
                 loadBlock();
             }
         }
     }
+
     @Override
     public void goTo(long blockIndex, int blockOffset) {
         goTo(blockIndex, blockOffset, true);
     }
-    public void goTo(long blockIndex, boolean load) throws IOException {
+
+    public void goTo(long blockIndex, boolean load) {
         goTo(blockIndex, 0, load);
     }
 
     public int read() {
         boolean end = eof;
-        if(!end) {
+        if (!end) {
             if (cursor == 0) {
                 boolean q = loadBlock();
                 if (!q) {
@@ -93,10 +98,10 @@ public class XarcReader extends Xarc {
 
     public byte[] read(int n) {
         byte[] out = new byte[n];
-        for(int i = 0; i < n; i++) {
+        for (int i = 0; i < n; i++) {
             int x = read();
-            if(x != -1) {
-                out[i] = (byte)x;
+            if (x != -1) {
+                out[i] = (byte) x;
             } else {
                 break;
             }
@@ -105,10 +110,10 @@ public class XarcReader extends Xarc {
     }
 
     public int read(byte[] buffer, int offset, int length) {
-        for(int i = 0; i < length; i++) {
+        for (int i = 0; i < length; i++) {
             int x = read();
-            if(x != -1) {
-                buffer[i + offset] = (byte)x;
+            if (x != -1) {
+                buffer[i + offset] = (byte) x;
             } else {
                 return i;
             }
@@ -136,7 +141,7 @@ public class XarcReader extends Xarc {
         try {
             FILE.seek(XarcBlock.cipherOffset(blockIndex, blockSize));
             int n = FILE.read(IN_BUFFER, 0, IN_BUFFER.length);
-            if(n <= 0) {
+            if (n <= 0) {
                 eof = true;
             } else {
                 Arrays.fill(buffer, (byte) 0);
@@ -149,13 +154,16 @@ public class XarcReader extends Xarc {
         }
         return !eof;
     }
+
     /**
      * grabs a block of ciphertext and decrypts it, placing the plaintext in BUFFER
+     *
      * @param blockIndex index of the block to be read
      */
     public boolean loadBlock(long blockIndex) {
         return loadBlock(blockIndex, BUFFER);
     }
+
     public boolean loadBlock() {
         return loadBlock(block);
     }

@@ -31,8 +31,8 @@ public class ExportGui extends RegisterFrame {
             DateRange display = new DateRange(false);
             display.setEditable(false);
             display.init(
-                    new LDate(CURRENT_INSTANCE.DATA_HANDLER.DATABASE.TRANSACTIONS.getMinDate(), CURRENT_INSTANCE),
-                    new LDate(CURRENT_INSTANCE.DATA_HANDLER.DATABASE.TRANSACTIONS.getMaxDate(), CURRENT_INSTANCE)
+                    new LDate(CURRENT_INSTANCE.DATA_HANDLER.TRANSACTIONS.getMinDate(), CURRENT_INSTANCE),
+                    new LDate(CURRENT_INSTANCE.DATA_HANDLER.TRANSACTIONS.getMaxDate(), CURRENT_INSTANCE)
             );
 
             NAME = new JTextField();

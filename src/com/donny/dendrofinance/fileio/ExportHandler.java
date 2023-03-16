@@ -36,7 +36,7 @@ public class ExportHandler {
             case "JSON" -> {
                 if(flags[0]) {
                     JsonArray array = new JsonArray();
-                    for (TransactionCapsule capsule : CURRENT_INSTANCE.DATA_HANDLER.DATABASE.TRANSACTIONS.getRange(start, end)) {
+                    for (TransactionCapsule capsule : CURRENT_INSTANCE.DATA_HANDLER.TRANSACTIONS.getRange(start, end)) {
                         try {
                             array.add(capsule.export());
                         } catch (JsonFormattingException ex) {
@@ -48,7 +48,7 @@ public class ExportHandler {
 
                 if(flags[1]) {
                     JsonArray array = new JsonArray();
-                    for (BudgetCapsule capsule : CURRENT_INSTANCE.DATA_HANDLER.DATABASE.BUDGETS.getBudgets()) {
+                    for (BudgetCapsule capsule : CURRENT_INSTANCE.DATA_HANDLER.BUDGETS.getBudgets()) {
                         try {
                             array.add(capsule.export());
                         } catch (JsonFormattingException ex) {
@@ -60,7 +60,7 @@ public class ExportHandler {
 
                 if(flags[2]) {
                     JsonArray array = new JsonArray();
-                    for (TemplateCapsule capsule : CURRENT_INSTANCE.DATA_HANDLER.DATABASE.TEMPLATES.getTemplates()) {
+                    for (TemplateCapsule capsule : CURRENT_INSTANCE.DATA_HANDLER.TEMPLATES.getTemplates()) {
                         try {
                             array.add(capsule.export());
                         } catch (JsonFormattingException ex) {
@@ -72,7 +72,7 @@ public class ExportHandler {
 
                 if(flags[3]) {
                     JsonArray array = new JsonArray();
-                    for (StateCapsule capsule : CURRENT_INSTANCE.DATA_HANDLER.DATABASE.STATES.getRange(start, end)) {
+                    for (StateCapsule capsule : CURRENT_INSTANCE.DATA_HANDLER.STATES.getRange(start, end)) {
                         array.add(capsule.export());
                     }
                     CURRENT_INSTANCE.FILE_HANDLER.writeJson(directory, name + "-States.json", array);
@@ -82,7 +82,7 @@ public class ExportHandler {
                 EncryptionHandler encrypt = UnkPasswordGui.getTestPassword(caller, "exports", CURRENT_INSTANCE);
                 if(flags[0]) {
                     JsonArray array = new JsonArray();
-                    for (TransactionCapsule capsule : CURRENT_INSTANCE.DATA_HANDLER.DATABASE.TRANSACTIONS.getRange(start, end)) {
+                    for (TransactionCapsule capsule : CURRENT_INSTANCE.DATA_HANDLER.TRANSACTIONS.getRange(start, end)) {
                         try {
                             array.add(capsule.export());
                         } catch (JsonFormattingException ex) {
@@ -94,7 +94,7 @@ public class ExportHandler {
 
                 if(flags[1]) {
                     JsonArray array = new JsonArray();
-                    for (BudgetCapsule capsule : CURRENT_INSTANCE.DATA_HANDLER.DATABASE.BUDGETS.getBudgets()) {
+                    for (BudgetCapsule capsule : CURRENT_INSTANCE.DATA_HANDLER.BUDGETS.getBudgets()) {
                         try {
                             array.add(capsule.export());
                         } catch (JsonFormattingException ex) {
@@ -106,7 +106,7 @@ public class ExportHandler {
 
                 if(flags[2]) {
                     JsonArray array = new JsonArray();
-                    for (TemplateCapsule capsule : CURRENT_INSTANCE.DATA_HANDLER.DATABASE.TEMPLATES.getTemplates()) {
+                    for (TemplateCapsule capsule : CURRENT_INSTANCE.DATA_HANDLER.TEMPLATES.getTemplates()) {
                         try {
                             array.add(capsule.export());
                         } catch (JsonFormattingException ex) {
@@ -118,7 +118,7 @@ public class ExportHandler {
 
                 if(flags[3]) {
                     JsonArray array = new JsonArray();
-                    for (StateCapsule capsule : CURRENT_INSTANCE.DATA_HANDLER.DATABASE.STATES.getRange(start, end)) {
+                    for (StateCapsule capsule : CURRENT_INSTANCE.DATA_HANDLER.STATES.getRange(start, end)) {
                         array.add(capsule.export());
                     }
                     CURRENT_INSTANCE.FILE_HANDLER.writeEncryptJson(directory, name + "-States.xtbl", array, encrypt);
@@ -129,7 +129,7 @@ public class ExportHandler {
                     EncryptionHandler encrypt = UnkPasswordGui.getTestPassword(caller, "exports", CURRENT_INSTANCE);
                     if(flags[0]) {
                         JsonArray array = new JsonArray();
-                        for (TransactionCapsule capsule : CURRENT_INSTANCE.DATA_HANDLER.DATABASE.TRANSACTIONS.getRange(start, end)) {
+                        for (TransactionCapsule capsule : CURRENT_INSTANCE.DATA_HANDLER.TRANSACTIONS.getRange(start, end)) {
                             try {
                                 array.add(capsule.export());
                             } catch (JsonFormattingException ex) {
@@ -141,7 +141,7 @@ public class ExportHandler {
 
                     if(flags[1]) {
                         JsonArray array = new JsonArray();
-                        for (BudgetCapsule capsule : CURRENT_INSTANCE.DATA_HANDLER.DATABASE.BUDGETS.getBudgets()) {
+                        for (BudgetCapsule capsule : CURRENT_INSTANCE.DATA_HANDLER.BUDGETS.getBudgets()) {
                             try {
                                 array.add(capsule.export());
                             } catch (JsonFormattingException ex) {
@@ -153,7 +153,7 @@ public class ExportHandler {
 
                     if(flags[2]) {
                         JsonArray array = new JsonArray();
-                        for (TemplateCapsule capsule : CURRENT_INSTANCE.DATA_HANDLER.DATABASE.TEMPLATES.getTemplates()) {
+                        for (TemplateCapsule capsule : CURRENT_INSTANCE.DATA_HANDLER.TEMPLATES.getTemplates()) {
                             try {
                                 array.add(capsule.export());
                             } catch (JsonFormattingException ex) {
@@ -165,7 +165,7 @@ public class ExportHandler {
 
                     if(flags[3]) {
                         JsonArray array = new JsonArray();
-                        for (StateCapsule capsule : CURRENT_INSTANCE.DATA_HANDLER.DATABASE.STATES.getRange(start, end)) {
+                        for (StateCapsule capsule : CURRENT_INSTANCE.DATA_HANDLER.STATES.getRange(start, end)) {
                             array.add(capsule.export());
                         }
                         JsonItem.save(array, new XarcOutputStream(directory, name + "-States.xtbl", encrypt, CURRENT_INSTANCE));

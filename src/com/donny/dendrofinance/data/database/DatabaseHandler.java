@@ -8,10 +8,7 @@ import java.sql.*;
 public class DatabaseHandler {
     private final Instance CURRENT_INSTANCE;
     public Connection con;
-    public final BudgetHandler BUDGETS;
-    public final TemplateHandler TEMPLATES;
-    public final StatesHandler STATES;
-    public final TransactionHandler TRANSACTIONS;
+
 
     public DatabaseHandler(Instance curInst) {
         CURRENT_INSTANCE = curInst;
@@ -31,10 +28,6 @@ public class DatabaseHandler {
             curInst.LOG_HANDLER.save();
             System.exit(1);
         }
-        BUDGETS = new BudgetHandler(CURRENT_INSTANCE, this);
-        TEMPLATES = new TemplateHandler(CURRENT_INSTANCE, this);
-        STATES = new StatesHandler(CURRENT_INSTANCE, this);
-        TRANSACTIONS = new TransactionHandler(CURRENT_INSTANCE, this);
     }
 
     public void init() throws SQLException {

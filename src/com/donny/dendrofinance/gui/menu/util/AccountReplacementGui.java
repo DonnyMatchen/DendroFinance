@@ -72,7 +72,7 @@ public class AccountReplacementGui extends RegisterFrame {
         if (range != null) {
             Account a = OLD.getSelectedItem();
             Account b = NEW.getSelectedItem();
-            for (TransactionCapsule capsule : CURRENT_INSTANCE.DATA_HANDLER.DATABASE.TRANSACTIONS.getRange(range[0], range[1])) {
+            for (TransactionCapsule capsule : CURRENT_INSTANCE.DATA_HANDLER.TRANSACTIONS.getRange(range[0], range[1])) {
                 int index = -1;
                 AWColumn column = null;
                 BigDecimal value = null;

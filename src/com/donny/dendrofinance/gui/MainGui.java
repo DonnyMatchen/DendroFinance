@@ -140,8 +140,8 @@ public class MainGui extends JFrame {
             DateRange full = new DateRange(false);
             full.setEditable(false);
             full.init(
-                    new LDate(CURRENT_INSTANCE.DATA_HANDLER.DATABASE.TRANSACTIONS.getMinDate(), CURRENT_INSTANCE),
-                    new LDate(CURRENT_INSTANCE.DATA_HANDLER.DATABASE.TRANSACTIONS.getMaxDate(), CURRENT_INSTANCE)
+                    new LDate(CURRENT_INSTANCE.DATA_HANDLER.TRANSACTIONS.getMinDate(), CURRENT_INSTANCE),
+                    new LDate(CURRENT_INSTANCE.DATA_HANDLER.TRANSACTIONS.getMaxDate(), CURRENT_INSTANCE)
             );
 
             COUNT = new JTextField();
@@ -492,7 +492,7 @@ public class MainGui extends JFrame {
         while (TABLE_ACCESS.getRowCount() > 0) {
             TABLE_ACCESS.removeRow(0);
         }
-        ArrayList<TransactionCapsule> capsules = CURRENT_INSTANCE.DATA_HANDLER.DATABASE.TRANSACTIONS.hunt(start, end, searchString);
+        ArrayList<TransactionCapsule> capsules = CURRENT_INSTANCE.DATA_HANDLER.TRANSACTIONS.hunt(start, end, searchString);
         for (TransactionCapsule capsule : capsules) {
             for (String[] el : capsule.display()) {
                 TABLE_ACCESS.addRow(el);
@@ -503,7 +503,7 @@ public class MainGui extends JFrame {
     }
 
     public void tableCursorChanged(int cursor) {
-        TransactionCapsule capsule = CURRENT_INSTANCE.DATA_HANDLER.DATABASE.TRANSACTIONS.get(getUUID(cursor));
+        TransactionCapsule capsule = CURRENT_INSTANCE.DATA_HANDLER.TRANSACTIONS.get(getUUID(cursor));
         DISPLAY.setText(capsule.toString());
     }
 

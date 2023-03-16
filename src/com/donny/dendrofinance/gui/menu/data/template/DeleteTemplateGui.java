@@ -16,7 +16,7 @@ public class DeleteTemplateGui extends ModalFrame {
             JScrollPane pane = DendroFactory.getScrollField();
             JTextArea text = (JTextArea) pane.getViewport().getView();
             text.setEditable(false);
-            text.setText(curInst.DATA_HANDLER.DATABASE.TEMPLATES.get(name).toString());
+            text.setText(curInst.DATA_HANDLER.TEMPLATES.get(name).toString());
             JButton cancel = DendroFactory.getButton("Cancel");
             cancel.addActionListener(event -> dispose());
             JButton delete = DendroFactory.getButton("Ok");
@@ -64,7 +64,7 @@ public class DeleteTemplateGui extends ModalFrame {
     }
 
     public void deleteAction(String name, JFrame caller) {
-        CURRENT_INSTANCE.DATA_HANDLER.DATABASE.TEMPLATES.delete(name);
+        CURRENT_INSTANCE.DATA_HANDLER.TEMPLATES.delete(name);
         if (caller instanceof TemplateGui) {
             ((TemplateGui) caller).updateTable();
         }

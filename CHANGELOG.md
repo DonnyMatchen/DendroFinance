@@ -4,6 +4,11 @@
 * cash flow
 * statistics gui replacement
 
+## v0.11.2
+* corrected small issues related to `DataHandler.accountsAsOf` and `StateHandler`
+  * balance sheet now behaves as expected
+* moved `TableHandler`s from `DATA_HANDLER.DATABASE` to `DATA_HANDLER`
+
 ## v0.11.1
 * fixed a really silly error in UUID generation
 * and another in editing transactions

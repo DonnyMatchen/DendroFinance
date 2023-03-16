@@ -103,7 +103,7 @@ public class NetIncomeGui extends RegisterFrame {
                     "Net Income",
                     new LAccountSet(sb.toString(), CURRENT_INSTANCE)
             );
-            CURRENT_INSTANCE.DATA_HANDLER.DATABASE.TRANSACTIONS.add(capsule, ImportHandler.ImportMode.KEEP);
+            CURRENT_INSTANCE.DATA_HANDLER.TRANSACTIONS.add(capsule, ImportHandler.ImportMode.KEEP);
             CALLER.updateTable();
             dispose();
         } catch (ValidationFailedException e) {

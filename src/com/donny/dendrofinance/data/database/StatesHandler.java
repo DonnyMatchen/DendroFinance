@@ -107,7 +107,7 @@ public class StatesHandler extends TableHandler<Long, StateCapsule> {
     public StateCapsule getBefore(Long timestamp) {
         try {
             Statement statement = CURRENT_INSTANCE.DATA_HANDLER.DATABASE.con.createStatement();
-            statement.execute("SELECT TOP 1 dtm FROM STATES WHERE dtm < " + timestamp + " ORDER BY dtm DESC");
+            statement.execute("SELECT TOP 1 dtm FROM STATES WHERE dtm <= " + timestamp + " ORDER BY dtm DESC");
             ResultSet set = statement.getResultSet();
             if (set.next()) {
                 return get(set.getLong(1));

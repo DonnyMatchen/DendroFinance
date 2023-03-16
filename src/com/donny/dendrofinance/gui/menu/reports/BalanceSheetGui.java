@@ -302,7 +302,7 @@ public class BalanceSheetGui extends RegisterFrame {
             }
         } else {
             try {
-                LDate date = LDate.startDay(Validation.validateDate(DATE, CURRENT_INSTANCE));
+                LDate date = LDate.endDay(Validation.validateDate(DATE, CURRENT_INSTANCE));
                 HashMap<Account, BigDecimal> acc = CURRENT_INSTANCE.DATA_HANDLER.accountsAsOf(date);
                 Aggregation<AccountType> accTyp = new Aggregation<>();
                 Aggregation<BroadAccountType> typ = new Aggregation<>();

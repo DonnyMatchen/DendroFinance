@@ -33,8 +33,8 @@ public class OrderBookGui extends RegisterFrame {
             CURRENT_INSTANCE.installPeriod(PERIOD);
             YEAR.addItemListener(event -> update());
             PERIOD.addItemListener(event -> update());
-            LDate first = new LDate(CURRENT_INSTANCE.DATA_HANDLER.DATABASE.TRANSACTIONS.getMinDate(), CURRENT_INSTANCE);
-            LDate last = new LDate(CURRENT_INSTANCE.DATA_HANDLER.DATABASE.TRANSACTIONS.getMaxDate(), CURRENT_INSTANCE);
+            LDate first = new LDate(CURRENT_INSTANCE.DATA_HANDLER.TRANSACTIONS.getMinDate(), CURRENT_INSTANCE);
+            LDate last = new LDate(CURRENT_INSTANCE.DATA_HANDLER.TRANSACTIONS.getMaxDate(), CURRENT_INSTANCE);
             for (int i = first.getYear(); i < last.getYear() + 1; i++) {
                 YEAR.addItem("" + i);
             }

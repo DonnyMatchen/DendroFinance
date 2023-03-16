@@ -67,14 +67,14 @@ public class DeleteEntryGui extends ModalFrame {
                 );
             }
         }
-        area.setText(CURRENT_INSTANCE.DATA_HANDLER.DATABASE.TRANSACTIONS.get(UUID).toString());
+        area.setText(CURRENT_INSTANCE.DATA_HANDLER.TRANSACTIONS.get(UUID).toString());
         pack();
         Dimension d = Toolkit.getDefaultToolkit().getScreenSize();
         setLocation(d.width / 2 - getWidth() / 2, d.height / 2 - getHeight() / 2);
     }
 
     public void yes() {
-        CURRENT_INSTANCE.DATA_HANDLER.DATABASE.TRANSACTIONS.delete(UUID);
+        CURRENT_INSTANCE.DATA_HANDLER.TRANSACTIONS.delete(UUID);
         MAIN.updateTable();
         dispose();
     }

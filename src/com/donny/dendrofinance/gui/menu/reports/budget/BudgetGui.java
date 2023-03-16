@@ -55,8 +55,8 @@ public class BudgetGui extends RegisterFrame {
                 COLLAPSED.setSelected(true);
                 EXPANDED.addActionListener(event -> updateView());
                 COLLAPSED.addActionListener(event -> updateView());
-                LDate first = new LDate(CURRENT_INSTANCE.DATA_HANDLER.DATABASE.TRANSACTIONS.getMinDate(), CURRENT_INSTANCE);
-                LDate last = new LDate(CURRENT_INSTANCE.DATA_HANDLER.DATABASE.TRANSACTIONS.getMaxDate(), CURRENT_INSTANCE);
+                LDate first = new LDate(CURRENT_INSTANCE.DATA_HANDLER.TRANSACTIONS.getMinDate(), CURRENT_INSTANCE);
+                LDate last = new LDate(CURRENT_INSTANCE.DATA_HANDLER.TRANSACTIONS.getMaxDate(), CURRENT_INSTANCE);
                 for (int i = first.getYear(); i < last.getYear() + 1; i++) {
                     YEAR.addItem("" + i);
                 }
@@ -218,12 +218,12 @@ public class BudgetGui extends RegisterFrame {
     public final void updateBudget() {
         BUDGET.removeAllItems();
         BUDGET.addItem("<none>");
-        for (BudgetCapsule capsule : CURRENT_INSTANCE.DATA_HANDLER.DATABASE.BUDGETS.getBudgets()) {
+        for (BudgetCapsule capsule : CURRENT_INSTANCE.DATA_HANDLER.BUDGETS.getBudgets()) {
             BUDGET.addItem(capsule.getName());
         }
 
         EDIT_B.removeAllItems();
-        for (BudgetCapsule capsule : CURRENT_INSTANCE.DATA_HANDLER.DATABASE.BUDGETS.getBudgets()) {
+        for (BudgetCapsule capsule : CURRENT_INSTANCE.DATA_HANDLER.BUDGETS.getBudgets()) {
             EDIT_B.addItem(capsule.getName());
         }
     }
@@ -245,7 +245,7 @@ public class BudgetGui extends RegisterFrame {
         }
         if (COLLAPSED.isSelected()) {
             Aggregation<String> budgets = new Aggregation<>();
-            for (TransactionCapsule capsule : CURRENT_INSTANCE.DATA_HANDLER.DATABASE.TRANSACTIONS.getRange(
+            for (TransactionCapsule capsule : CURRENT_INSTANCE.DATA_HANDLER.TRANSACTIONS.getRange(
                     LDate.getRange(Integer.parseInt((String) YEAR.getSelectedItem()),
                             param, freq, CURRENT_INSTANCE))) {
                 if (!capsule.getDescription().contains("Net Income")) {
@@ -267,7 +267,7 @@ public class BudgetGui extends RegisterFrame {
             if (budgetName != null) {
                 boolean flag = true;
                 if (!budgetName.equals("<none>")) {
-                    for (BudgetCapsule capsule : CURRENT_INSTANCE.DATA_HANDLER.DATABASE.BUDGETS.getBudgets()) {
+                    for (BudgetCapsule capsule : CURRENT_INSTANCE.DATA_HANDLER.BUDGETS.getBudgets()) {
                         if (capsule.getName().equals(budgetName)) {
                             flag = false;
                             for (String budgetType : CURRENT_INSTANCE.DATA_HANDLER.getBudgetTypes()) {
@@ -320,7 +320,7 @@ public class BudgetGui extends RegisterFrame {
             }
         } else if (EXPANDED.isSelected()) {
             Aggregation<Account> accRevExp = new Aggregation<>();
-            for (TransactionCapsule capsule : CURRENT_INSTANCE.DATA_HANDLER.DATABASE.TRANSACTIONS.getRange(
+            for (TransactionCapsule capsule : CURRENT_INSTANCE.DATA_HANDLER.TRANSACTIONS.getRange(
                     LDate.getRange(Integer.parseInt((String) YEAR.getSelectedItem()),
                             param, freq, CURRENT_INSTANCE))) {
                 if (!capsule.getDescription().contains("Net Income")) {
@@ -342,7 +342,7 @@ public class BudgetGui extends RegisterFrame {
             if (budgetName != null) {
                 boolean flag = true;
                 if (!budgetName.equals("<none>")) {
-                    for (BudgetCapsule capsule : CURRENT_INSTANCE.DATA_HANDLER.DATABASE.BUDGETS.getBudgets()) {
+                    for (BudgetCapsule capsule : CURRENT_INSTANCE.DATA_HANDLER.BUDGETS.getBudgets()) {
                         if (capsule.getName().equals(budgetName)) {
                             flag = false;
                             for (Account account : CURRENT_INSTANCE.ACCOUNTS) {
@@ -402,7 +402,7 @@ public class BudgetGui extends RegisterFrame {
         }
         String pick = (String) EDIT_B.getSelectedItem();
         if (pick != null) {
-            for (BudgetCapsule capsule : CURRENT_INSTANCE.DATA_HANDLER.DATABASE.BUDGETS.getBudgets()) {
+            for (BudgetCapsule capsule : CURRENT_INSTANCE.DATA_HANDLER.BUDGETS.getBudgets()) {
                 if (capsule.getName().equals(pick)) {
                     for (Account account : CURRENT_INSTANCE.ACCOUNTS) {
                         if (!account.getBudgetType().equals("")) {
@@ -422,7 +422,7 @@ public class BudgetGui extends RegisterFrame {
         String pick = (String) EDIT_B.getSelectedItem();
         if (pick != null) {
             BudgetCapsule capsule = null;
-            for (BudgetCapsule e : CURRENT_INSTANCE.DATA_HANDLER.DATABASE.BUDGETS.getBudgets()) {
+            for (BudgetCapsule e : CURRENT_INSTANCE.DATA_HANDLER.BUDGETS.getBudgets()) {
                 if (e.getName().equals(pick)) {
                     capsule = e;
                     break;

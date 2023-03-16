@@ -62,14 +62,14 @@ public class RemoveBudgetGui extends ModalFrame {
 
     private void yesAction(BudgetGui caller, String budget) {
         BudgetCapsule capsule = null;
-        for (BudgetCapsule e : CURRENT_INSTANCE.DATA_HANDLER.DATABASE.BUDGETS.getBudgets()) {
+        for (BudgetCapsule e : CURRENT_INSTANCE.DATA_HANDLER.BUDGETS.getBudgets()) {
             if (e.getName().equals(budget)) {
                 capsule = e;
                 break;
             }
         }
         if (capsule != null) {
-            CURRENT_INSTANCE.DATA_HANDLER.DATABASE.BUDGETS.delete(capsule.getName());
+            CURRENT_INSTANCE.DATA_HANDLER.BUDGETS.delete(capsule.getName());
             caller.updateBudget();
         }
         dispose();

@@ -30,11 +30,19 @@ public class DataHandler {
     protected final Instance CURRENT_INSTANCE;
     protected final ArrayList<String> BUDGET_TYPES;
     public final DatabaseHandler DATABASE;
+    public final BudgetHandler BUDGETS;
+    public final StatesHandler STATES;
+    public final TransactionHandler TRANSACTIONS;
+    public final TemplateHandler TEMPLATES;
     public boolean budgetTypesChanged = false;
 
     public DataHandler(Instance curInst) {
         CURRENT_INSTANCE = curInst;
         DATABASE = new DatabaseHandler(CURRENT_INSTANCE);
+        BUDGETS = new BudgetHandler(CURRENT_INSTANCE, DATABASE);
+        TEMPLATES = new TemplateHandler(CURRENT_INSTANCE, DATABASE);
+        STATES = new StatesHandler(CURRENT_INSTANCE, DATABASE);
+        TRANSACTIONS = new TransactionHandler(CURRENT_INSTANCE, DATABASE);
         BUDGET_TYPES = new ArrayList<>();
         CURRENT_INSTANCE.LOG_HANDLER.trace(getClass(), "DataHandler Initiated");
     }
@@ -56,7 +64,7 @@ public class DataHandler {
     //state formation
     public void createStates() {
         LDate now = LDate.now(CURRENT_INSTANCE);
-        LDate dawn = new LDate(DATABASE.TRANSACTIONS.getMinDate(), CURRENT_INSTANCE);
+        LDate dawn = new LDate(TRANSACTIONS.getMinDate(), CURRENT_INSTANCE);
         switch (CURRENT_INSTANCE.freq) {
             case NEVER -> {
             }
@@ -64,10 +72,10 @@ public class DataHandler {
                 for (int y = dawn.getYear() + 1; y < now.getYear() + 1; y++) {
                     LDate check = new LDate(y, 1, 1, 0, 0, 0, 0, CURRENT_INSTANCE);
                     long c = check.getTime() - 1;
-                    if (DATABASE.STATES.get(check.getTime() - 1) == null) {
+                    if (STATES.get(check.getTime() - 1) == null) {
                         StateCapsule capsule = new StateCapsule(new LDate(c, CURRENT_INSTANCE), CURRENT_INSTANCE);
                         if (capsule.hasContents()) {
-                            DATABASE.STATES.add(capsule, ImportHandler.ImportMode.OVERWRITE);
+                            STATES.add(capsule, ImportHandler.ImportMode.OVERWRITE);
                             CURRENT_INSTANCE.LOG_HANDLER.info(getClass(), "New State added automatically: " + new LDate(c, CURRENT_INSTANCE));
                         }
                     }
@@ -94,10 +102,10 @@ public class DataHandler {
                 LDate check = new LDate(y, m, 1, 0, 0, 0, 0, CURRENT_INSTANCE);
                 while (check.compareTo(now) < 0) {
                     long c = check.getTime() - 1;
-                    if (DATABASE.STATES.get(check.getTime() - 1) == null) {
+                    if (STATES.get(check.getTime() - 1) == null) {
                         StateCapsule capsule = new StateCapsule(new LDate(c, CURRENT_INSTANCE), CURRENT_INSTANCE);
                         if (capsule.hasContents()) {
-                            DATABASE.STATES.add(capsule, ImportHandler.ImportMode.OVERWRITE);
+                            STATES.add(capsule, ImportHandler.ImportMode.OVERWRITE);
                         }
                     }
                     m += 3;
@@ -118,10 +126,10 @@ public class DataHandler {
                 LDate check = new LDate(y, m, 1, 0, 0, 0, 0, CURRENT_INSTANCE);
                 while (check.compareTo(now) < 0) {
                     long c = check.getTime() - 1;
-                    if (DATABASE.STATES.get(check.getTime() - 1) == null) {
+                    if (STATES.get(check.getTime() - 1) == null) {
                         StateCapsule capsule = new StateCapsule(new LDate(c, CURRENT_INSTANCE), CURRENT_INSTANCE);
                         if (capsule.hasContents()) {
-                            DATABASE.STATES.add(capsule, ImportHandler.ImportMode.OVERWRITE);
+                            STATES.add(capsule, ImportHandler.ImportMode.OVERWRITE);
                         }
                     }
                     m++;
@@ -138,7 +146,7 @@ public class DataHandler {
     //meta aggregation
     public ArrayList<CheckMetadata> getChecks(LDate start, LDate end) {
         ArrayList<CheckMetadata> meta = new ArrayList<>();
-        for (TransactionCapsule capsule : DATABASE.TRANSACTIONS.getRange(start, end)) {
+        for (TransactionCapsule capsule : TRANSACTIONS.getRange(start, end)) {
             if (capsule.hasMeta("check")) {
                 meta.addAll(capsule.getCheckMetadata());
             }
@@ -158,7 +166,7 @@ public class DataHandler {
 
     public ArrayList<LedgerMetadata> getLedgers(LDate start, LDate end) {
         ArrayList<LedgerMetadata> meta = new ArrayList<>();
-        for (TransactionCapsule capsule : DATABASE.TRANSACTIONS.getRange(start, end)) {
+        for (TransactionCapsule capsule : TRANSACTIONS.getRange(start, end)) {
             if (capsule.hasMeta("ledger")) {
                 meta.addAll(capsule.getLedgerMeta());
             }
@@ -179,20 +187,20 @@ public class DataHandler {
 
     //transactions + states
     public Aggregation<Account> accountsAsOf(LDate date) {
-        StateCapsule baseline = DATABASE.STATES.getBefore(date.getTime());
+        StateCapsule baseline = STATES.getBefore(date.getTime());
         Aggregation<Account> accounts = new Aggregation<>();
         if (baseline != null) {
             JsonObject acc = baseline.exportAccounts();
             for (String key : acc.getFields()) {
                 accounts.add(CURRENT_INSTANCE.ACCOUNTS.getElement(key), acc.getDecimal(key).decimal);
             }
-            for (TransactionCapsule capsule : DATABASE.TRANSACTIONS.getRange(baseline.getDate(), date)) {
+            for (TransactionCapsule capsule : TRANSACTIONS.getRange(baseline.getDate(), date)) {
                 for (AccountWrapper wrapper : capsule.getAccounts()) {
                     accounts.add(wrapper.ACCOUNT, wrapper.getAlphaProcessed());
                 }
             }
         } else {
-            for (TransactionCapsule capsule : DATABASE.TRANSACTIONS.getRange(date)) {
+            for (TransactionCapsule capsule : TRANSACTIONS.getRange(date)) {
                 for (AccountWrapper wrapper : capsule.getAccounts()) {
                     accounts.add(wrapper.ACCOUNT, wrapper.getAlphaProcessed());
                 }
@@ -234,14 +242,14 @@ public class DataHandler {
     }
 
     public ArrayList<AssetMetadata> assetsAsOf(LDate date) {
-        StateCapsule baseline = DATABASE.STATES.getBefore(date.getTime());
+        StateCapsule baseline = STATES.getBefore(date.getTime());
         ArrayList<AssetMetadata> assets = new ArrayList<>();
         ArrayList<TransactionCapsule> range;
         if (baseline != null) {
             assets.addAll(baseline.getAssets());
-            range = DATABASE.TRANSACTIONS.getRange(baseline.getDate(), date);
+            range = TRANSACTIONS.getRange(baseline.getDate(), date);
         } else {
-            range = DATABASE.TRANSACTIONS.getRange(date);
+            range = TRANSACTIONS.getRange(date);
         }
         for (TransactionCapsule capsule : range) {
             if (capsule.hasMeta("asset")) {
@@ -276,14 +284,14 @@ public class DataHandler {
     }
 
     public ArrayList<LoanMetadata> loansAsOf(LDate date) {
-        StateCapsule baseline = DATABASE.STATES.getBefore(date.getTime());
+        StateCapsule baseline = STATES.getBefore(date.getTime());
         ArrayList<LoanMetadata> loans = new ArrayList<>();
         ArrayList<TransactionCapsule> range;
         if (baseline != null) {
             loans.addAll(baseline.getLoans());
-            range = DATABASE.TRANSACTIONS.getRange(baseline.getDate(), date);
+            range = TRANSACTIONS.getRange(baseline.getDate(), date);
         } else {
-            range = DATABASE.TRANSACTIONS.getRange(date);
+            range = TRANSACTIONS.getRange(date);
         }
         for (TransactionCapsule capsule : range) {
             if (capsule.hasMeta("loan")) {
@@ -320,7 +328,7 @@ public class DataHandler {
     public ArrayList<OrderBookEntry> getOrderBook(LDate start, LDate end) {
         ArrayList<OrderBookEntry> orderBook = new ArrayList<>();
         ArrayList<Position> positions = getPositions(start);
-        for (TransactionCapsule capsule : DATABASE.TRANSACTIONS.getRange(start, end)) {
+        for (TransactionCapsule capsule : TRANSACTIONS.getRange(start, end)) {
             if (capsule.hasMeta("ledger")) {
                 for (LedgerMetadata meta : capsule.getLedgerMeta()) {
                     boolean flag = true, auxFlag = true;
@@ -405,13 +413,13 @@ public class DataHandler {
 
     public ArrayList<Position> getPositions(LDate date) {
         ArrayList<Position> positions = new ArrayList<>();
-        StateCapsule baseline = DATABASE.STATES.getBefore(date.getTime());
+        StateCapsule baseline = STATES.getBefore(date.getTime());
         ArrayList<TransactionCapsule> range;
         if (baseline != null) {
             positions.addAll(baseline.getPositions());
-            range = DATABASE.TRANSACTIONS.getRange(baseline.getDate(), date);
+            range = TRANSACTIONS.getRange(baseline.getDate(), date);
         } else {
-            range = DATABASE.TRANSACTIONS.getRange(date);
+            range = TRANSACTIONS.getRange(date);
         }
         for (TransactionCapsule capsule : range) {
             if (capsule.hasMeta("ledger")) {
@@ -529,7 +537,7 @@ public class DataHandler {
                                         + amount + ")", CURRENT_INSTANCE)
                 );
                 capsule.addLedgerMeta(CURRENT_INSTANCE.main, currency, cost.multiply(BigDecimal.valueOf(-1)), amount, cost);
-                DATABASE.TRANSACTIONS.add(capsule, ImportHandler.ImportMode.KEEP);
+                TRANSACTIONS.add(capsule, ImportHandler.ImportMode.KEEP);
                 return true;
             } else if (amount.compareTo(BigDecimal.ZERO) < 0) {
                 Position temp = getPosition(currency, date);
@@ -586,7 +594,7 @@ public class DataHandler {
                                 + amount + ")" + gl, CURRENT_INSTANCE)
                 );
                 capsule.addLedgerMeta(currency, CURRENT_INSTANCE.main, amount, cost, cost);
-                DATABASE.TRANSACTIONS.add(capsule, ImportHandler.ImportMode.KEEP);
+                TRANSACTIONS.add(capsule, ImportHandler.ImportMode.KEEP);
                 return true;
             } else {
                 return false;
@@ -637,7 +645,7 @@ public class DataHandler {
                 );
                 capsule.addLedgerMeta(CURRENT_INSTANCE.main, currency, cost.multiply(BigDecimal.valueOf(-1)), amount, cost);
                 capsule.addLedgerMeta(feeCur, CURRENT_INSTANCE.main, fee.multiply(BigDecimal.valueOf(-1)), BigDecimal.ZERO, feeVal);
-                DATABASE.TRANSACTIONS.add(capsule, ImportHandler.ImportMode.KEEP);
+                TRANSACTIONS.add(capsule, ImportHandler.ImportMode.KEEP);
                 return true;
             } else if (amount.compareTo(BigDecimal.ZERO) < 0) {
                 //sell
@@ -697,7 +705,7 @@ public class DataHandler {
                 );
                 capsule.addLedgerMeta(currency, CURRENT_INSTANCE.main, amount, cost, cost);
                 capsule.addLedgerMeta(feeCur, CURRENT_INSTANCE.main, fee.multiply(BigDecimal.valueOf(-1)), BigDecimal.ZERO, feeVal);
-                DATABASE.TRANSACTIONS.add(capsule, ImportHandler.ImportMode.KEEP);
+                TRANSACTIONS.add(capsule, ImportHandler.ImportMode.KEEP);
                 return true;
             } else {
                 return false;
@@ -740,7 +748,7 @@ public class DataHandler {
                                 + amount + ")", CURRENT_INSTANCE)
                 );
                 capsule.addLedgerMeta(CURRENT_INSTANCE.main, currency, BigDecimal.ZERO, amount, cost);
-                DATABASE.TRANSACTIONS.add(capsule, ImportHandler.ImportMode.KEEP);
+                TRANSACTIONS.add(capsule, ImportHandler.ImportMode.KEEP);
                 return true;
             } else if (amount.compareTo(BigDecimal.ZERO) < 0) {
                 capsule.insert(
@@ -754,7 +762,7 @@ public class DataHandler {
                                 + amount + ")", CURRENT_INSTANCE)
                 );
                 capsule.addLedgerMeta(currency, CURRENT_INSTANCE.main, amount, BigDecimal.ZERO, cost);
-                DATABASE.TRANSACTIONS.add(capsule, ImportHandler.ImportMode.KEEP);
+                TRANSACTIONS.add(capsule, ImportHandler.ImportMode.KEEP);
                 return true;
             } else {
                 return false;
@@ -802,7 +810,7 @@ public class DataHandler {
                                 + ", G!" + Account.selfIncName + "(" + cost + ")", CURRENT_INSTANCE)
                 );
                 capsule.addLedgerMeta(CURRENT_INSTANCE.main, nw, cost.multiply(BigDecimal.valueOf(-1)), adjAmount, cost);
-                DATABASE.TRANSACTIONS.add(capsule, ImportHandler.ImportMode.KEEP);
+                TRANSACTIONS.add(capsule, ImportHandler.ImportMode.KEEP);
                 return true;
             } else {
                 return false;
@@ -858,7 +866,7 @@ public class DataHandler {
                             + toAmount + ")", CURRENT_INSTANCE)
             );
             capsule.addLedgerMeta(currency, CURRENT_INSTANCE.main, fee, BigDecimal.ZERO, cost);
-            DATABASE.TRANSACTIONS.add(capsule, ImportHandler.ImportMode.KEEP);
+            TRANSACTIONS.add(capsule, ImportHandler.ImportMode.KEEP);
             return true;
         } catch (NumberFormatException ex) {
             return false;
@@ -912,7 +920,7 @@ public class DataHandler {
                 capsule.addLedgerMeta(transCur, CURRENT_INSTANCE.main, transitLoss, BigDecimal.ZERO, cost1.abs());
             }
             capsule.addLedgerMeta(costCur, CURRENT_INSTANCE.main, fee, BigDecimal.ZERO, cost2.abs());
-            DATABASE.TRANSACTIONS.add(capsule, ImportHandler.ImportMode.KEEP);
+            TRANSACTIONS.add(capsule, ImportHandler.ImportMode.KEEP);
             return true;
         } catch (NumberFormatException ex) {
             return false;
@@ -989,7 +997,7 @@ public class DataHandler {
                             + toAmount + ")" + gl, CURRENT_INSTANCE)
             );
             capsule.addLedgerMeta(fromCur, toCur, fromAmount, toAmount, cost);
-            DATABASE.TRANSACTIONS.add(capsule, ImportHandler.ImportMode.KEEP);
+            TRANSACTIONS.add(capsule, ImportHandler.ImportMode.KEEP);
             return true;
         } catch (NumberFormatException ex) {
             return false;
@@ -998,7 +1006,7 @@ public class DataHandler {
 
     //checks
     public void checkLedgers(LDate start, LDate end) {
-        for (TransactionCapsule capsule : DATABASE.TRANSACTIONS.getRange(start, end)) {
+        for (TransactionCapsule capsule : TRANSACTIONS.getRange(start, end)) {
             if (capsule.hasMeta("ledger")) {
                 Aggregation<String> curAg = new Aggregation<>();
                 Aggregation<String> ledgAg = new Aggregation<>();
@@ -1043,7 +1051,7 @@ public class DataHandler {
             map.add(entry.END_REF, entry.profit());
         }
         for (Long uuid : map.keySet()) {
-            TransactionCapsule capsule = DATABASE.TRANSACTIONS.get(uuid);
+            TransactionCapsule capsule = TRANSACTIONS.get(uuid);
             boolean flag = false;
             BigDecimal total = BigDecimal.ZERO;
             if (capsule.hasGhostAccounts()) {

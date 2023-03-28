@@ -139,7 +139,7 @@ public class Exchange implements UniqueName, Serializable {
             }
         }
         return new String[]{
-                NAME, ALT, "" + fiat, "" + stock, "" + crypto, "" + inv
+                NAME, ALT, String.valueOf(fiat), String.valueOf(stock), String.valueOf(crypto), String.valueOf(inv)
         };
     }
 

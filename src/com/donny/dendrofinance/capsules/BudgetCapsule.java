@@ -76,6 +76,22 @@ public class BudgetCapsule extends Capsule {
         return contents;
     }
 
+    public boolean containsAccount(String accountName) {
+        return contents.get(accountName) != null;
+    }
+
+    public BigDecimal getValue(String accountName) {
+        if (containsAccount(accountName)) {
+            return contents.getDecimal(accountName).decimal;
+        } else {
+            return BigDecimal.ZERO;
+        }
+    }
+
+    public void update() {
+        CURRENT_INSTANCE.DATA_HANDLER.BUDGETS.update(this);
+    }
+
     @Override
     public JsonObject export() throws JsonFormattingException {
         JsonObject obj = new JsonObject();

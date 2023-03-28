@@ -277,13 +277,13 @@ public class StateGui extends RegisterFrame {
                             ASSETS.addRow(new String[]{
                                     meta.NAME,
                                     c.encode(values.get(c)),
-                                    "" + counts.get(c)
+                                    String.valueOf(counts.get(c))
                             });
                         } else {
                             ASSETS.addRow(new String[]{
                                     "",
                                     c.encode(values.get(c)),
-                                    "" + counts.get(c)
+                                    String.valueOf(counts.get(c))
                             });
                         }
                         first = false;

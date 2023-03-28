@@ -26,7 +26,7 @@ public class NewTemplateGui extends ModalFrame {
             ID = new JTextField();
             ID.setBackground(DendroFactory.DISABLED);
             ID.setEditable(false);
-            ID.setText("" + uuid);
+            ID.setText(String.valueOf(uuid));
             NAME = new JTextField();
 
             JButton save = DendroFactory.getButton("Save");

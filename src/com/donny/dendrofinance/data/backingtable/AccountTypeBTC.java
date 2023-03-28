@@ -55,7 +55,7 @@ public class AccountTypeBTC extends BackingTableCore<AccountType> {
             if (a.NAME.toLowerCase().contains(search.toLowerCase())
                     || a.TYPE.toString().toLowerCase().contains(search.toLowerCase())) {
                 out.add(new String[]{
-                        a.NAME, "" + a.TYPE
+                        a.NAME, String.valueOf(a.TYPE)
                 });
             }
         }

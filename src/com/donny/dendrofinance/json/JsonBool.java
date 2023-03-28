@@ -27,7 +27,7 @@ public class JsonBool extends JsonItem {
 
     @Override
     public String toString() {
-        return "" + bool;
+        return String.valueOf(bool);
     }
 
     @Override

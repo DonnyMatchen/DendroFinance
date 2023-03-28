@@ -10,6 +10,7 @@ import com.donny.dendrofinance.gui.MainGui;
 import com.donny.dendrofinance.gui.customswing.DendroFactory;
 import com.donny.dendrofinance.gui.customswing.RegisterFrame;
 import com.donny.dendrofinance.gui.form.Cleaning;
+import com.donny.dendrofinance.gui.form.Validation;
 import com.donny.dendrofinance.instance.Frequency;
 import com.donny.dendrofinance.instance.Instance;
 import com.donny.dendrofinance.json.JsonDecimal;
@@ -32,7 +33,7 @@ public class BudgetGui extends RegisterFrame {
 
         //draw GUI
         {
-            JTabbedPane BACK = new JTabbedPane();
+            JTabbedPane back = new JTabbedPane();
             //view tab
             {
                 JPanel view = new JPanel();
@@ -58,7 +59,7 @@ public class BudgetGui extends RegisterFrame {
                 LDate first = new LDate(CURRENT_INSTANCE.DATA_HANDLER.TRANSACTIONS.getMinDate(), CURRENT_INSTANCE);
                 LDate last = new LDate(CURRENT_INSTANCE.DATA_HANDLER.TRANSACTIONS.getMaxDate(), CURRENT_INSTANCE);
                 for (int i = first.getYear(); i < last.getYear() + 1; i++) {
-                    YEAR.addItem("" + i);
+                    YEAR.addItem(String.valueOf(i));
                 }
                 YEAR.addItemListener(event -> updateView());
                 PERIOD = new JComboBox<>();
@@ -125,7 +126,7 @@ public class BudgetGui extends RegisterFrame {
                     );
                 }
 
-                BACK.addTab("View", view);
+                back.addTab("View", view);
             }
             //edit tab
             {
@@ -202,10 +203,10 @@ public class BudgetGui extends RegisterFrame {
                     );
                 }
 
-                BACK.addTab("Edit", edit);
+                back.addTab("Edit", edit);
             }
 
-            add(BACK);
+            add(back);
         }
         updateBudget();
         updateView();
@@ -274,7 +275,7 @@ public class BudgetGui extends RegisterFrame {
                                 BigDecimal budgeted = BigDecimal.ZERO;
                                 for (Account account : CURRENT_INSTANCE.ACCOUNTS) {
                                     if (account.getBudgetType().equals(budgetType)) {
-                                        budgeted = budgeted.add(capsule.getBudget().getDecimal(account.getName()).decimal);
+                                        budgeted = budgeted.add(capsule.getValue(account.getName()));
                                     }
                                 }
                                 if (budgets.get(budgetType).abs().add(budgeted.abs()).compareTo(BigDecimal.ZERO) > 0) {
@@ -347,15 +348,15 @@ public class BudgetGui extends RegisterFrame {
                             flag = false;
                             for (Account account : CURRENT_INSTANCE.ACCOUNTS) {
                                 if (!account.getBudgetType().equals("")) {
-                                    if (accRevExp.get(account).abs().add(capsule.getBudget().getDecimal(account.getName()).decimal.abs()).compareTo(BigDecimal.ZERO) > 0) {
+                                    if (accRevExp.get(account).abs().add(capsule.getValue(account.getName()).abs()).compareTo(BigDecimal.ZERO) > 0) {
                                         VIEW_TABLE_ACCESS.addRow(new String[]{
                                                 account.getName(),
                                                 CURRENT_INSTANCE.$(accRevExp.get(account)),
-                                                CURRENT_INSTANCE.$(capsule.getBudget().getDecimal(account.getName()).decimal.multiply(beta)),
-                                                CURRENT_INSTANCE.$(accRevExp.get(account).subtract(capsule.getBudget().getDecimal(account.getName()).decimal.multiply(beta)))
+                                                CURRENT_INSTANCE.$(capsule.getValue(account.getName()).multiply(beta)),
+                                                CURRENT_INSTANCE.$(accRevExp.get(account).subtract(capsule.getValue(account.getName()).multiply(beta)))
                                         });
                                         total = total.add(accRevExp.get(account));
-                                        bTotal = bTotal.add(capsule.getBudget().getDecimal(account.getName()).decimal.multiply(beta));
+                                        bTotal = bTotal.add(capsule.getValue(account.getName()).multiply(beta));
                                     }
                                 }
                             }
@@ -408,7 +409,7 @@ public class BudgetGui extends RegisterFrame {
                         if (!account.getBudgetType().equals("")) {
                             EDIT_TABLE_ACCESS.addRow(new String[]{
                                     account.getName(),
-                                    CURRENT_INSTANCE.$(capsule.getBudget().getDecimal(account.getName()).decimal)
+                                    CURRENT_INSTANCE.$(capsule.getValue(account.getName()))
                             });
                         }
                     }
@@ -430,9 +431,16 @@ public class BudgetGui extends RegisterFrame {
             }
             for (int i = 0; i < EDIT_TABLE_ACCESS.getRowCount(); i++) {
                 String a = (String) EDIT_TABLE_ACCESS.getValueAt(i, 0);
-                String b = (String) EDIT_TABLE_ACCESS.getValueAt(i, 1);
+                BigDecimal b = Cleaning.cleanNumber((String) EDIT_TABLE_ACCESS.getValueAt(i, 1));
                 if (capsule != null) {
-                    capsule.getBudget().put(a, new JsonDecimal(Cleaning.cleanNumber(b)));
+                    if (b.compareTo(BigDecimal.ZERO) != 0) {
+                        capsule.getBudget().put(a, new JsonDecimal(b));
+                    } else {
+                        if (capsule.containsAccount(a)) {
+                            capsule.getBudget().remove(a);
+                        }
+                    }
+                    capsule.update();
                 }
             }
             updateBudget();

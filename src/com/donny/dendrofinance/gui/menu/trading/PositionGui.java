@@ -82,22 +82,15 @@ public class PositionGui extends RegisterFrame {
         while (TABLE_ACCESS.getRowCount() > 0) {
             TABLE_ACCESS.removeRow(0);
         }
-        boolean useDate;
         LDate point = LDate.now(CURRENT_INSTANCE);
         if (DATE.getText().equals("")) {
-            useDate = false;
-        } else {
             try {
                 LDate date = Validation.validateDate(DATE, CURRENT_INSTANCE);
-                if (date.toDateString().equals(point.toDateString())) {
-                    useDate = false;
-                } else {
-                    useDate = true;
+                if (!date.toDateString().equals(point.toDateString())) {
                     point = date;
                 }
             } catch (ValidationFailedException e) {
                 CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Not a valid date: " + DATE.getText());
-                useDate = false;
             }
         }
         BigDecimal tCost = BigDecimal.ZERO, tVal = BigDecimal.ZERO;

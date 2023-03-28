@@ -125,7 +125,7 @@ public class CheckGui extends RegisterFrame {
                                 (!OUTSTANDING.isSelected() || check.isOutstanding())
                 ) {
                     TABLE_ACCESS.addRow(new String[]{
-                            "" + check.REF,
+                            String.valueOf(check.REF),
                             check.ISSUED.toDateString(),
                             check.isOutstanding() ? "Outstanding" : check.CASHED.toDateString(),
                             check.CHECK_NUMBER,

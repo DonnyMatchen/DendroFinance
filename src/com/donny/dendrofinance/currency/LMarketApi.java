@@ -942,18 +942,19 @@ public class LMarketApi implements UniqueName, Serializable {
                 case "@search-tic@" -> SEARCH.getTicker().toUpperCase();
                 case "@search-tic-l@" -> SEARCH.getTicker().toLowerCase();
                 case "@search-name@" -> getAlteredName(SEARCH);
-                case "@year@" -> DATE == null ? "" : "" + DATE.getYear();
-                case "@year-2@" -> DATE == null ? "" : "" + DATE.getYear() % 100;
+                case "@year@" -> DATE == null ? "" : String.valueOf(DATE.getYear());
+                case "@year-2@" -> DATE == null ? "" : String.valueOf(DATE.getYear() % 100);
                 case "@month@" ->
-                        DATE == null ? "" : DATE.getMonth() < 10 ? "0" + DATE.getMonth() : "" + DATE.getMonth();
+                        DATE == null ? "" : DATE.getMonth() < 10 ? "0" + DATE.getMonth() : String.valueOf(DATE.getMonth());
                 case "@month-str@" -> DATE == null ? "" : DATE.getMonthStringShort();
                 case "@month-long@" -> DATE == null ? "" : DATE.getMonthString();
-                case "@day@" -> DATE == null ? "" : DATE.getDay() < 10 ? "0" + DATE.getDay() : "" + DATE.getDay();
-                case "@epoch@" -> DATE == null ? "" : "" + DATE.getTime();
-                case "@epoch-second@" -> DATE == null ? "" : "" + (DATE.getTime() / 1000);
-                case "@epoch-second-m@" -> DATE == null ? "" : "" + (DATE.getTime() / 1000 - 1);
-                case "@epoch-day@" -> DATE == null ? "" : "" + (DATE.getTime() / 86400000);
-                case "@epoch-day-m@" -> DATE == null ? "" : "" + (DATE.getTime() / 86400000 - 1);
+                case "@day@" ->
+                        DATE == null ? "" : DATE.getDay() < 10 ? "0" + DATE.getDay() : String.valueOf(DATE.getDay());
+                case "@epoch@" -> DATE == null ? "" : String.valueOf(DATE.getTime());
+                case "@epoch-second@" -> DATE == null ? "" : String.valueOf(DATE.getTime() / 1000);
+                case "@epoch-second-m@" -> DATE == null ? "" : String.valueOf(DATE.getTime() / 1000 - 1);
+                case "@epoch-day@" -> DATE == null ? "" : String.valueOf(DATE.getTime() / 86400000);
+                case "@epoch-day-m@" -> DATE == null ? "" : String.valueOf(DATE.getTime() / 86400000 - 1);
                 case "@key@" -> KEY;
                 default -> "";
             };
@@ -1049,18 +1050,19 @@ public class LMarketApi implements UniqueName, Serializable {
                 case "@searches-tic@" -> aggregateTicker();
                 case "@searches-tic-l@" -> aggregateTicker().toLowerCase();
                 case "@searches-name@" -> aggregateName();
-                case "@year@" -> DATE == null ? "" : "" + DATE.getYear();
-                case "@year-2@" -> DATE == null ? "" : "" + DATE.getYear() % 100;
+                case "@year@" -> DATE == null ? "" : String.valueOf(DATE.getYear());
+                case "@year-2@" -> DATE == null ? "" : String.valueOf(DATE.getYear() % 100);
                 case "@month@" ->
-                        DATE == null ? "" : DATE.getMonth() < 10 ? "0" + DATE.getMonth() : "" + DATE.getMonth();
+                        DATE == null ? "" : DATE.getMonth() < 10 ? "0" + DATE.getMonth() : String.valueOf(DATE.getMonth());
                 case "@month-str@" -> DATE == null ? "" : DATE.getMonthStringShort();
                 case "@month-long@" -> DATE == null ? "" : DATE.getMonthString();
-                case "@day@" -> DATE == null ? "" : DATE.getDay() < 10 ? "0" + DATE.getDay() : "" + DATE.getDay();
-                case "@epoch@" -> DATE == null ? "" : "" + DATE.getTime();
-                case "@epoch-second@" -> DATE == null ? "" : "" + (DATE.getTime() / 1000);
-                case "@epoch-second-m@" -> DATE == null ? "" : "" + (DATE.getTime() / 1000 - 1);
-                case "@epoch-day@" -> DATE == null ? "" : "" + (DATE.getTime() / 86400000);
-                case "@epoch-day-m@" -> DATE == null ? "" : "" + (DATE.getTime() / 86400000 - 1);
+                case "@day@" ->
+                        DATE == null ? "" : DATE.getDay() < 10 ? "0" + DATE.getDay() : String.valueOf(DATE.getDay());
+                case "@epoch@" -> DATE == null ? "" : String.valueOf(DATE.getTime());
+                case "@epoch-second@" -> DATE == null ? "" : String.valueOf(DATE.getTime() / 1000);
+                case "@epoch-second-m@" -> DATE == null ? "" : String.valueOf(DATE.getTime() / 1000 - 1);
+                case "@epoch-day@" -> DATE == null ? "" : String.valueOf(DATE.getTime() / 86400000);
+                case "@epoch-day-m@" -> DATE == null ? "" : String.valueOf(DATE.getTime() / 86400000 - 1);
                 case "@key@" -> KEY;
                 default -> "";
             };

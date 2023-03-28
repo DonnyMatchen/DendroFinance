@@ -10,7 +10,7 @@ public class Cleaning {
         String allowed = "0123456789.-";
         StringBuilder out = new StringBuilder();
         for (char c : raw.toCharArray()) {
-            if (allowed.contains("" + c)) {
+            if (allowed.contains(String.valueOf(c))) {
                 out.append(c);
             }
         }
@@ -27,7 +27,7 @@ public class Cleaning {
         String allowed = "0123456789.-";
         StringBuilder out = new StringBuilder();
         for (char c : raw.toCharArray()) {
-            if (allowed.contains("" + c)) {
+            if (allowed.contains(String.valueOf(c))) {
                 out.append(c);
             }
         }
@@ -47,7 +47,7 @@ public class Cleaning {
         String allowed = "0123456789-";
         StringBuilder out = new StringBuilder();
         for (char c : raw.toCharArray()) {
-            if (allowed.contains("" + c)) {
+            if (allowed.contains(String.valueOf(c))) {
                 out.append(c);
             }
         }

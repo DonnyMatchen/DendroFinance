@@ -3,6 +3,13 @@
 * cash flow
 * statistics gui replacement
 
+## v0.11.3
+* minor optimizations
+  * `"" + int` replaced with `String.valueOf(int)`
+* bug fixes
+  * fixed bug adding new account
+  * budgets now work correctly and are more compact
+
 ## v0.11.2
 * corrected small issues related to `DataHandler.accountsAsOf` and `StateHandler`
   * balance sheet now behaves as expected

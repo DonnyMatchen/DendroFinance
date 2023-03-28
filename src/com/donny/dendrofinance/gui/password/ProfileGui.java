@@ -275,7 +275,7 @@ public class ProfileGui extends ModalFrame {
             }
         }
         if (config.containsKey("precision")) {
-            PRECISION.setText("" + config.getDecimal("precision").decimal);
+            PRECISION.setText(String.valueOf(config.getDecimal("precision").decimal));
         }
         if (config.containsKey("main")) {
             CUR.setText(config.getString("main").getString());
@@ -284,13 +284,13 @@ public class ProfileGui extends ModalFrame {
             CUR2.setText(config.getString("main__").getString());
         }
         if (config.containsKey("block")) {
-            BLOCK.setText("" + config.getDecimal("block").decimal);
+            BLOCK.setText(String.valueOf(config.getDecimal("block").decimal));
         }
         if (config.containsKey("freq")) {
             FREQ.setSelectedItem(Frequency.fromString(config.getString("freq").getString()));
         }
         if (config.containsKey("range")) {
-            RANGE.setText("" + config.getDecimal("range").decimal);
+            RANGE.setText(String.valueOf(config.getDecimal("range").decimal));
         }
         pack();
         Dimension d = Toolkit.getDefaultToolkit().getScreenSize();

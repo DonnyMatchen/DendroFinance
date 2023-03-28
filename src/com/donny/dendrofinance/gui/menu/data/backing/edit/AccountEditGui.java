@@ -47,7 +47,7 @@ public class AccountEditGui extends BackingEditGui<Account> {
         if (INDEX >= 0) {
             Account acc = TABLE.getElement(INDEX);
             name.setText(acc.getName());
-            aid.setText("" + acc.getAid());
+            aid.setText(String.valueOf(acc.getAid()));
             budget.setText(acc.getBudgetType());
             currency.setSelectedIndex(acc.getCurrency());
             type.setSelectedIndex(acc.getAccountType());
@@ -141,11 +141,11 @@ public class AccountEditGui extends BackingEditGui<Account> {
                     currency.getSelectedItem(),
                     type.getSelectedItem(),
                     Validation.validateStringAllowEmpty(budget),
-                    exchange.getSelectedItem() == null ? null : exchange.getSelectedItem(),
+                    exchange.getSelectedItem(),
                     CURRENT_INSTANCE,
                     true
             );
-            if (TABLE.getElement(INDEX).inSpecial()) {
+            if (TABLE.getElement(INDEX) != null && TABLE.getElement(INDEX).inSpecial()) {
                 Account.changeSpecial(TABLE.getElement(INDEX).getName(), temp.getName());
             }
             if (INDEX >= 0) {

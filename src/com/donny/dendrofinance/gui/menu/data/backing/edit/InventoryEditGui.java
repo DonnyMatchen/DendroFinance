@@ -48,8 +48,8 @@ public class InventoryEditGui extends BackingEditGui<LInventory> {
             name.setText(inv.getName());
             ticker.setText(inv.getTicker());
             symbol.setText(inv.getSymbol().replace("§", ""));
-            places.setText("" + inv.getPlaces());
-            factor.setText("" + inv.getFactor());
+            places.setText(String.valueOf(inv.getPlaces()));
+            factor.setText(String.valueOf(inv.getFactor()));
             val.setText(inv.getUnitValue().toString());
             merch.setSelected(inv.isMerchandise());
             comod.setSelected(inv.isCommodity());

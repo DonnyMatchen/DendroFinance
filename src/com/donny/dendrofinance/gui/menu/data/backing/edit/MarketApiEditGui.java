@@ -145,10 +145,10 @@ public class MarketApiEditGui extends BackingEditGui<LMarketApi> {
             crypto.setSelected(root.cryptocurrencies());
             inventory.setSelected(root.inventories());
             sep.setText(root.SEPARATOR);
-            mBound.setText("" + root.MULTI_LIMIT);
-            mhBound.setText("" + root.MULTI_HIST_LIMIT);
-            attemptLimit.setText("" + root.ATTEMPT_LIMIT);
-            duration.setText("" + root.DURATION);
+            mBound.setText(String.valueOf(root.MULTI_LIMIT));
+            mhBound.setText(String.valueOf(root.MULTI_HIST_LIMIT));
+            attemptLimit.setText(String.valueOf(root.ATTEMPT_LIMIT));
+            duration.setText(String.valueOf(root.DURATION));
         }
 
         //group layout

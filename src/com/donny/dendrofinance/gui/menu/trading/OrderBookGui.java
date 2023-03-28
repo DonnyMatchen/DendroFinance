@@ -36,7 +36,7 @@ public class OrderBookGui extends RegisterFrame {
             LDate first = new LDate(CURRENT_INSTANCE.DATA_HANDLER.TRANSACTIONS.getMinDate(), CURRENT_INSTANCE);
             LDate last = new LDate(CURRENT_INSTANCE.DATA_HANDLER.TRANSACTIONS.getMaxDate(), CURRENT_INSTANCE);
             for (int i = first.getYear(); i < last.getYear() + 1; i++) {
-                YEAR.addItem("" + i);
+                YEAR.addItem(String.valueOf(i));
             }
 
             //back

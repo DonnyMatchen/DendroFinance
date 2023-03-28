@@ -53,7 +53,7 @@ public class AccountBTC extends BackingTableCore<Account> {
         ArrayList<String[]> out = new ArrayList<>();
         for (String key : KEYS) {
             Account a = MAP.get(key);
-            boolean allow = ((a.getAid() + "").contains(search)
+            boolean allow = ((String.valueOf(a.getAid())).contains(search)
                     || a.getName().toLowerCase().contains(search.toLowerCase())
                     || a.getCurrency().getName().toLowerCase().contains(search.toLowerCase())
                     || a.getCurrency().toString().toLowerCase().contains(search.toLowerCase())
@@ -62,7 +62,7 @@ public class AccountBTC extends BackingTableCore<Account> {
                     || a.getBroadAccountType().toString().toLowerCase().contains(search.toLowerCase()));
             if (allow) {
                 out.add(new String[]{
-                        "" + a.getAid(), a.getName(), a.getCurrency().getName(), a.getAccountType().NAME,
+                        String.valueOf(a.getAid()), a.getName(), a.getCurrency().getName(), a.getAccountType().NAME,
                         a.getBroadAccountType().toString(), a.getBudgetType(), !a.EXPORT ? "X" : ""
                 });
             }

@@ -508,7 +508,7 @@ public class MainGui extends JFrame {
                 TABLE_ACCESS.addRow(el);
             }
         }
-        COUNT.setText("" + capsules.size());
+        COUNT.setText(String.valueOf(capsules.size()));
         force = true;
     }
 

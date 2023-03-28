@@ -52,8 +52,8 @@ public class CurrencyEditGui extends BackingEditGui<LCurrency> {
             alt.setText(cur.getAltName());
             ticker.setText(cur.getTicker());
             symbol.setText(cur.getSymbol());
-            places.setText("" + cur.getPlaces());
-            factor.setText("" + cur.getFactor());
+            places.setText(String.valueOf(cur.getPlaces()));
+            factor.setText(String.valueOf(cur.getFactor()));
             fiat.setSelected(cur.isFiat());
             extinct.setSelected(cur.isDead());
             token.setSelected(cur.isToken());

@@ -13,7 +13,7 @@ import java.awt.*;
 import java.util.ArrayList;
 
 public class SearchBox<E extends UniqueName> extends JPanel {
-    private  final Instance CURRENT_INSTANCE;
+    private final Instance CURRENT_INSTANCE;
     private final JLabel TITLE;
     private final JTextField SEARCH;
     private final JList<E> LIST;

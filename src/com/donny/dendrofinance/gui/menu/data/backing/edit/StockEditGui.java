@@ -2,11 +2,11 @@ package com.donny.dendrofinance.gui.menu.data.backing.edit;
 
 import com.donny.dendrofinance.currency.LStock;
 import com.donny.dendrofinance.data.backingtable.BackingTableCore;
-import com.donny.dendrofinance.gui.customswing.DendroFactory;
-import com.donny.dendrofinance.gui.form.Validation;
-import com.donny.dendrofinance.gui.form.ValidationFailedException;
 import com.donny.dendrofinance.gui.menu.data.backing.BackingTableGui;
-import com.donny.dendrofinance.instance.Instance;
+import com.donny.dendrofinance.instance.ProgramInstance;
+import com.donny.dendroroot.gui.customswing.DendroFactory;
+import com.donny.dendroroot.gui.form.Validation;
+import com.donny.dendroroot.gui.form.ValidationFailedException;
 
 import javax.swing.*;
 
@@ -14,7 +14,7 @@ public class StockEditGui extends BackingEditGui<LStock> {
     private JTextField name, ticker, factor;
     private JCheckBox publik, dead;
 
-    public StockEditGui(BackingTableGui<LStock> caller, BackingTableCore<LStock> core, int index, Instance curInst) {
+    public StockEditGui(BackingTableGui<LStock> caller, BackingTableCore<LStock> core, int index, ProgramInstance curInst) {
         super(caller, core, index, curInst);
     }
 

@@ -1,10 +1,10 @@
 package com.donny.dendrofinance.gui.password;
 
 import com.donny.dendrofinance.DendroFinance;
-import com.donny.dendrofinance.gui.customswing.DendroFactory;
-import com.donny.dendrofinance.instance.Instance;
-import com.donny.dendrofinance.instance.Frequency;
-import com.donny.dendrofinance.json.*;
+import com.donny.dendrofinance.instance.ProgramInstance;
+import com.donny.dendroroot.gui.customswing.DendroFactory;
+import com.donny.dendroroot.instance.Frequency;
+import com.donny.dendroroot.json.*;
 
 import javax.swing.*;
 import java.awt.*;
@@ -20,12 +20,12 @@ import java.util.Comparator;
  */
 public class PasswordGui extends JFrame {
     public final ArrayList<JsonObject> PROFILES;
-    private final Instance CURRENT_INSTANCE;
+    private final ProgramInstance CURRENT_INSTANCE;
     private final JPasswordField PASSWORD;
     private final JComboBox<String> PROFILE;
     public boolean done = false;
 
-    public PasswordGui(Instance curInst) {
+    public PasswordGui(ProgramInstance curInst) {
         super("Log In");
         CURRENT_INSTANCE = curInst;
         PROFILES = new ArrayList<>();

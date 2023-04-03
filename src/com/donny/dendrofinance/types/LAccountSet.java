@@ -3,26 +3,26 @@ package com.donny.dendrofinance.types;
 import com.donny.dendrofinance.account.AWColumn;
 import com.donny.dendrofinance.account.AccountWrapper;
 import com.donny.dendrofinance.currency.LCurrency;
-import com.donny.dendrofinance.instance.Instance;
-import com.donny.dendrofinance.json.JsonArray;
-import com.donny.dendrofinance.json.JsonFormattingException;
-import com.donny.dendrofinance.json.JsonObject;
-import com.donny.dendrofinance.util.ExportableToJson;
+import com.donny.dendrofinance.instance.ProgramInstance;
+import com.donny.dendroroot.json.JsonArray;
+import com.donny.dendroroot.json.JsonFormattingException;
+import com.donny.dendroroot.json.JsonObject;
+import com.donny.dendroroot.util.ExportableToJson;
 
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Iterator;
 
 public class LAccountSet implements ExportableToJson, Comparable<LAccountSet>, Iterable<AccountWrapper> {
-    private final Instance CURRENT_INSTANCE;
+    private final ProgramInstance CURRENT_INSTANCE;
     private final ArrayList<AccountWrapper> REGISTRY;
 
-    public LAccountSet(Instance curInst) {
+    public LAccountSet(ProgramInstance curInst) {
         REGISTRY = new ArrayList<>();
         CURRENT_INSTANCE = curInst;
     }
 
-    public LAccountSet(JsonArray array, Instance curInst) {
+    public LAccountSet(JsonArray array, ProgramInstance curInst) {
         this(curInst);
         for (JsonObject obj : array.getObjectArray()) {
             if (obj.containsKey(new String[]{"a", "acc"}) && obj.containsKey(new String[]{"c", "col"}) && obj.containsKey(new String[]{"v", "val"})) {
@@ -32,7 +32,7 @@ public class LAccountSet implements ExportableToJson, Comparable<LAccountSet>, I
         sort();
     }
 
-    public LAccountSet(String raw, Instance curInst) {
+    public LAccountSet(String raw, ProgramInstance curInst) {
         this(curInst);
         for (String acc : raw.replace("{", "").replace("}", "").replace(" ", "").split(",")) {
             AccountWrapper wrapper = new AccountWrapper(acc, CURRENT_INSTANCE);

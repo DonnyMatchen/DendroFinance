@@ -3,11 +3,11 @@ package com.donny.dendrofinance.gui.menu.data.backing.edit;
 import com.donny.dendrofinance.currency.LCurrency;
 import com.donny.dendrofinance.currency.LMarketApi;
 import com.donny.dendrofinance.data.backingtable.BackingTableCore;
-import com.donny.dendrofinance.gui.customswing.DendroFactory;
-import com.donny.dendrofinance.gui.form.Validation;
-import com.donny.dendrofinance.gui.form.ValidationFailedException;
 import com.donny.dendrofinance.gui.menu.data.backing.BackingTableGui;
-import com.donny.dendrofinance.instance.Instance;
+import com.donny.dendrofinance.instance.ProgramInstance;
+import com.donny.dendroroot.gui.customswing.DendroFactory;
+import com.donny.dendroroot.gui.form.Validation;
+import com.donny.dendroroot.gui.form.ValidationFailedException;
 
 import javax.swing.*;
 import java.util.ArrayList;
@@ -18,7 +18,7 @@ public class MarketApiEditGui extends BackingEditGui<LMarketApi> {
     private JTextArea url_, urlH_, urlM_, urlMH_, key_, path_, pathH_, pathM_, pathMH_, nats_, excluded_, included_;
     private JCheckBox multi, fiat, crypto, stock, inventory;
 
-    public MarketApiEditGui(BackingTableGui<LMarketApi> caller, BackingTableCore<LMarketApi> core, int index, Instance curInst) {
+    public MarketApiEditGui(BackingTableGui<LMarketApi> caller, BackingTableCore<LMarketApi> core, int index, ProgramInstance curInst) {
         super(caller, core, index, curInst);
     }
 

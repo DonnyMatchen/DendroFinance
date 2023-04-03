@@ -1,27 +1,27 @@
 package com.donny.dendrofinance.currency;
 
 import com.donny.dendrofinance.account.Account;
-import com.donny.dendrofinance.instance.Instance;
-import com.donny.dendrofinance.json.JsonDecimal;
-import com.donny.dendrofinance.json.JsonFormattingException;
-import com.donny.dendrofinance.json.JsonObject;
-import com.donny.dendrofinance.json.JsonString;
-import com.donny.dendrofinance.types.LDate;
-import com.donny.dendrofinance.util.UniqueName;
+import com.donny.dendrofinance.instance.ProgramInstance;
+import com.donny.dendroroot.json.JsonDecimal;
+import com.donny.dendroroot.json.JsonFormattingException;
+import com.donny.dendroroot.json.JsonObject;
+import com.donny.dendroroot.json.JsonString;
+import com.donny.dendroroot.types.LDate;
+import com.donny.dendroroot.util.UniqueName;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 
 public class LCurrency implements UniqueName, Serializable {
-    protected final Instance CURRENT_INSTANCE;
+    protected final ProgramInstance CURRENT_INSTANCE;
     private final String NAME, TIC, SYMBOL, ALT_NAME;
     private final int PLACES;
     private final BigDecimal FACTOR;
     private final boolean FIAT, EXTINCT, TOKEN, FORWARDS;
 
     public LCurrency(String name, String tic, boolean fiat, String symbol, boolean forwards, int places,
-                     BigDecimal factor, String alt, boolean token, boolean dead, Instance curInst) {
+                     BigDecimal factor, String alt, boolean token, boolean dead, ProgramInstance curInst) {
         CURRENT_INSTANCE = curInst;
         NAME = name;
         TIC = tic;
@@ -35,7 +35,7 @@ public class LCurrency implements UniqueName, Serializable {
         FORWARDS = forwards;
     }
 
-    protected LCurrency(String name, String tic, String symbol, int places, JsonObject obj, Instance curInst) {
+    protected LCurrency(String name, String tic, String symbol, int places, JsonObject obj, ProgramInstance curInst) {
         CURRENT_INSTANCE = curInst;
         NAME = name;
         TIC = tic;
@@ -54,7 +54,7 @@ public class LCurrency implements UniqueName, Serializable {
     }
 
     public LCurrency(String name, String tic, boolean fiat, String symbol, boolean forwards, int places,
-                     String alt, boolean token, boolean dead, Instance curInst) {
+                     String alt, boolean token, boolean dead, ProgramInstance curInst) {
         this(name, tic, fiat, symbol, forwards, places, BigDecimal.ONE, alt, token, dead, curInst);
     }
 
@@ -72,7 +72,7 @@ public class LCurrency implements UniqueName, Serializable {
         FORWARDS = old.FORWARDS;
     }
 
-    public LCurrency(JsonObject obj, Instance curInst) {
+    public LCurrency(JsonObject obj, ProgramInstance curInst) {
         CURRENT_INSTANCE = curInst;
         String flags = obj.getString("flags").getString();
         if (!obj.containsKey("name")) {

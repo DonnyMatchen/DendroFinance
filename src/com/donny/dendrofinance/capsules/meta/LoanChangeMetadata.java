@@ -1,11 +1,11 @@
 package com.donny.dendrofinance.capsules.meta;
 
-import com.donny.dendrofinance.instance.Instance;
-import com.donny.dendrofinance.json.JsonDecimal;
-import com.donny.dendrofinance.json.JsonFormattingException;
-import com.donny.dendrofinance.json.JsonObject;
-import com.donny.dendrofinance.json.JsonString;
-import com.donny.dendrofinance.types.LDate;
+import com.donny.dendrofinance.instance.ProgramInstance;
+import com.donny.dendroroot.json.JsonDecimal;
+import com.donny.dendroroot.json.JsonFormattingException;
+import com.donny.dendroroot.json.JsonObject;
+import com.donny.dendroroot.json.JsonString;
+import com.donny.dendroroot.types.LDate;
 
 import java.math.BigDecimal;
 
@@ -22,7 +22,7 @@ public class LoanChangeMetadata {
         CHANGE = change;
     }
 
-    public LoanChangeMetadata(long uuid, LDate date, JsonObject obj, Instance curInst) {
+    public LoanChangeMetadata(long uuid, LDate date, JsonObject obj, ProgramInstance curInst) {
         this(
                 obj.containsKey(new String[]{"u", "ref", "uuid"}) ? obj.getDecimal(new String[]{"u", "ref", "uuid"}).decimal.longValue() : uuid,
                 obj.containsKey(new String[]{"t", "date", "timestamp"}) ? new LDate(obj.getDecimal(new String[]{"t", "date", "timestamp"}), curInst) : date,

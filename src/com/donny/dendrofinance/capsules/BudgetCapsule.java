@@ -2,31 +2,36 @@ package com.donny.dendrofinance.capsules;
 
 import com.donny.dendrofinance.account.Account;
 import com.donny.dendrofinance.fileio.ImportHandler;
-import com.donny.dendrofinance.instance.Instance;
-import com.donny.dendrofinance.json.JsonDecimal;
-import com.donny.dendrofinance.json.JsonFormattingException;
-import com.donny.dendrofinance.json.JsonObject;
-import com.donny.dendrofinance.json.JsonString;
+import com.donny.dendrofinance.instance.ProgramInstance;
+import com.donny.dendroroot.data.Capsule;
+import com.donny.dendroroot.json.JsonDecimal;
+import com.donny.dendroroot.json.JsonFormattingException;
+import com.donny.dendroroot.json.JsonObject;
+import com.donny.dendroroot.json.JsonString;
 
 import java.math.BigDecimal;
 import java.sql.SQLException;
 
 public class BudgetCapsule extends Capsule {
+    private final ProgramInstance CURRENT_INSTANCE;
+
     private String name;
     private JsonObject contents;
 
-    public BudgetCapsule(String name, Instance curInst) {
+    public BudgetCapsule(String name, ProgramInstance curInst) {
         this(name, getEmptyBudget(curInst), curInst);
     }
 
-    public BudgetCapsule(String name, JsonObject contents, Instance curInst) {
+    public BudgetCapsule(String name, JsonObject contents, ProgramInstance curInst) {
         super(curInst);
+        CURRENT_INSTANCE = curInst;
         this.name = name;
         this.contents = contents;
     }
 
-    public BudgetCapsule(JsonObject obj, ImportHandler.ImportMode mode, Instance curInst) throws SQLException {
+    public BudgetCapsule(JsonObject obj, ImportHandler.ImportMode mode, ProgramInstance curInst) throws SQLException {
         super(curInst);
+        CURRENT_INSTANCE = curInst;
         String candidate = obj.getString(new String[]{"n", "name"}).getString();
         boolean safe = CURRENT_INSTANCE.UNIQUE_HANDLER.checkName(candidate, "BUDGETS");
         if (!safe) {
@@ -42,8 +47,9 @@ public class BudgetCapsule extends Capsule {
         contents = obj.getObject(new String[]{"c", "contents"});
     }
 
-    public BudgetCapsule(JsonObject obj, Instance curInst) {
+    public BudgetCapsule(JsonObject obj, ProgramInstance curInst) {
         super(curInst);
+        CURRENT_INSTANCE = curInst;
         name = obj.getString(new String[]{"n", "name"}).getString();
         contents = obj.getObject(new String[]{"c", "contents"});
     }
@@ -53,7 +59,7 @@ public class BudgetCapsule extends Capsule {
         contents = capsule.contents;
     }
 
-    public static JsonObject getEmptyBudget(Instance curInst) {
+    public static JsonObject getEmptyBudget(ProgramInstance curInst) {
         JsonObject obj = new JsonObject();
         for (Account account : curInst.ACCOUNTS) {
             if (!account.getBudgetType().equals("")) {

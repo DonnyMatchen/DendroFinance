@@ -1,14 +1,14 @@
 package com.donny.dendrofinance.data.metatable;
 
-import com.donny.dendrofinance.instance.Instance;
-import com.donny.dendrofinance.types.LDate;
+import com.donny.dendrofinance.instance.ProgramInstance;
+import com.donny.dendroroot.types.LDate;
 
 import java.util.ArrayList;
 
 public abstract class MetaTableCore {
-    protected final Instance CURRENT_INSTANCE;
+    protected final ProgramInstance CURRENT_INSTANCE;
 
-    public MetaTableCore(Instance curInst) {
+    public MetaTableCore(ProgramInstance curInst) {
         CURRENT_INSTANCE = curInst;
     }
 

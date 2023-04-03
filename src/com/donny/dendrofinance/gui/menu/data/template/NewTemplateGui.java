@@ -2,20 +2,20 @@ package com.donny.dendrofinance.gui.menu.data.template;
 
 import com.donny.dendrofinance.capsules.TemplateCapsule;
 import com.donny.dendrofinance.fileio.ImportHandler;
-import com.donny.dendrofinance.gui.customswing.DendroFactory;
-import com.donny.dendrofinance.gui.customswing.ModalFrame;
-import com.donny.dendrofinance.gui.form.Cleaning;
-import com.donny.dendrofinance.gui.form.Validation;
-import com.donny.dendrofinance.gui.form.ValidationFailedException;
-import com.donny.dendrofinance.instance.Instance;
+import com.donny.dendrofinance.gui.customswing.ProgramModalFrame;
+import com.donny.dendrofinance.instance.ProgramInstance;
+import com.donny.dendroroot.gui.customswing.DendroFactory;
+import com.donny.dendroroot.gui.form.Cleaning;
+import com.donny.dendroroot.gui.form.Validation;
+import com.donny.dendroroot.gui.form.ValidationFailedException;
 
 import javax.swing.*;
 import java.awt.*;
 
-public class NewTemplateGui extends ModalFrame {
+public class NewTemplateGui extends ProgramModalFrame {
     private final JTextField NAME, ID;
 
-    public NewTemplateGui(JFrame caller, long uuid, Instance curInst) {
+    public NewTemplateGui(JFrame caller, long uuid, ProgramInstance curInst) {
         super(caller, "New Template", curInst);
 
         //draw gui
@@ -91,7 +91,7 @@ public class NewTemplateGui extends ModalFrame {
         setLocation(d.width / 2 - getWidth() / 2, d.height / 2 - getHeight() / 2);
     }
 
-    public NewTemplateGui(JFrame caller, String name, Instance curInst) {
+    public NewTemplateGui(JFrame caller, String name, ProgramInstance curInst) {
         super(caller, "New Template", curInst);
 
         //draw gui

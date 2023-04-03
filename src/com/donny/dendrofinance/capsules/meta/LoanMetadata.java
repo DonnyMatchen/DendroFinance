@@ -1,10 +1,10 @@
 package com.donny.dendrofinance.capsules.meta;
 
 import com.donny.dendrofinance.currency.LCurrency;
-import com.donny.dendrofinance.instance.Instance;
-import com.donny.dendrofinance.json.*;
-import com.donny.dendrofinance.types.LDate;
-import com.donny.dendrofinance.util.LMath;
+import com.donny.dendrofinance.instance.ProgramInstance;
+import com.donny.dendroroot.json.*;
+import com.donny.dendroroot.types.LDate;
+import com.donny.dendroroot.util.LMath;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -16,9 +16,9 @@ public class LoanMetadata {
     public final LCurrency CUR;
     public final BigDecimal PRINC, RATE;
     public final ArrayList<LoanChangeMetadata> EVENTS;
-    private final Instance CURRENT_INSTANCE;
+    private final ProgramInstance CURRENT_INSTANCE;
 
-    public LoanMetadata(long uuid, LDate date, String name, String description, LCurrency currency, BigDecimal principal, BigDecimal rate, Instance curInst) {
+    public LoanMetadata(long uuid, LDate date, String name, String description, LCurrency currency, BigDecimal principal, BigDecimal rate, ProgramInstance curInst) {
         NAME = name;
         DESC = description;
         ROOT_REF = uuid;
@@ -30,7 +30,7 @@ public class LoanMetadata {
         CURRENT_INSTANCE = curInst;
     }
 
-    public LoanMetadata(long uuid, LDate date, JsonObject obj, Instance curInst) {
+    public LoanMetadata(long uuid, LDate date, JsonObject obj, ProgramInstance curInst) {
         this(
                 obj.containsKey(new String[]{"r", "ref", "root-ref"}) ? obj.getDecimal(new String[]{"r", "ref", "root-ref"}).decimal.longValue() : uuid,
                 obj.containsKey(new String[]{"t", "date", "timestamp"}) ? new LDate(obj.getDecimal(new String[]{"t", "date", "timestamp"}), curInst) : date,

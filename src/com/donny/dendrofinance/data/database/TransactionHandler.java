@@ -2,11 +2,13 @@ package com.donny.dendrofinance.data.database;
 
 import com.donny.dendrofinance.capsules.TransactionCapsule;
 import com.donny.dendrofinance.fileio.ImportHandler;
-import com.donny.dendrofinance.gui.form.SqlEscape;
-import com.donny.dendrofinance.instance.Instance;
-import com.donny.dendrofinance.json.*;
+import com.donny.dendrofinance.gui.SqlEscape;
+import com.donny.dendrofinance.instance.ProgramInstance;
 import com.donny.dendrofinance.types.LAccountSet;
-import com.donny.dendrofinance.types.LDate;
+import com.donny.dendroroot.json.JsonFormattingException;
+import com.donny.dendroroot.json.JsonItem;
+import com.donny.dendroroot.json.JsonObject;
+import com.donny.dendroroot.types.LDate;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -16,7 +18,7 @@ import java.util.Comparator;
 
 public class TransactionHandler extends TableHandler<Long, TransactionCapsule> {
 
-    public TransactionHandler(Instance curInst, DatabaseHandler database) {
+    public TransactionHandler(ProgramInstance curInst, DatabaseHandler database) {
         super(curInst, database);
     }
 

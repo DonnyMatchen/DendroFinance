@@ -1,11 +1,11 @@
 package com.donny.dendrofinance.account;
 
-import com.donny.dendrofinance.instance.Instance;
-import com.donny.dendrofinance.json.JsonDecimal;
-import com.donny.dendrofinance.json.JsonFormattingException;
-import com.donny.dendrofinance.json.JsonObject;
-import com.donny.dendrofinance.json.JsonString;
-import com.donny.dendrofinance.util.ExportableToJson;
+import com.donny.dendrofinance.instance.ProgramInstance;
+import com.donny.dendroroot.json.JsonDecimal;
+import com.donny.dendroroot.json.JsonFormattingException;
+import com.donny.dendroroot.json.JsonObject;
+import com.donny.dendroroot.json.JsonString;
+import com.donny.dendroroot.util.ExportableToJson;
 
 import java.math.BigDecimal;
 
@@ -28,7 +28,7 @@ public class AccountWrapper implements ExportableToJson {
         );
     }
 
-    public AccountWrapper(JsonObject obj, Instance curInst) {
+    public AccountWrapper(JsonObject obj, ProgramInstance curInst) {
         this(
                 curInst.ACCOUNTS.getElement(obj.getString(new String[]{"a", "acc"}).getString()),
                 obj.getString(new String[]{"c", "col"}).getString(),
@@ -36,7 +36,7 @@ public class AccountWrapper implements ExportableToJson {
         );
     }
 
-    public AccountWrapper(String raw, Instance curInst) {
+    public AccountWrapper(String raw, ProgramInstance curInst) {
         String[] acv = raw.split("\\(");
         String[] ac = acv[0].split("!");
         ACCOUNT = curInst.ACCOUNTS.getElement(ac[1]);

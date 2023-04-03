@@ -1,13 +1,13 @@
 package com.donny.dendrofinance.capsules.totals;
 
 import com.donny.dendrofinance.currency.LCurrency;
-import com.donny.dendrofinance.instance.Instance;
-import com.donny.dendrofinance.json.JsonArray;
-import com.donny.dendrofinance.json.JsonFormattingException;
-import com.donny.dendrofinance.json.JsonObject;
-import com.donny.dendrofinance.json.JsonString;
-import com.donny.dendrofinance.types.LDate;
-import com.donny.dendrofinance.util.ExportableToJson;
+import com.donny.dendrofinance.instance.ProgramInstance;
+import com.donny.dendroroot.json.JsonArray;
+import com.donny.dendroroot.json.JsonFormattingException;
+import com.donny.dendroroot.json.JsonObject;
+import com.donny.dendroroot.json.JsonString;
+import com.donny.dendroroot.types.LDate;
+import com.donny.dendroroot.util.ExportableToJson;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -15,11 +15,11 @@ import java.util.Comparator;
 import java.util.List;
 
 public class Position implements ExportableToJson {
-    private final Instance CURRENT_INSTANCE;
+    private final ProgramInstance CURRENT_INSTANCE;
     public final LCurrency ASSET;
     public final ArrayList<PositionElement> ELEMENTS;
 
-    public Position(LCurrency asset, Instance curInst) {
+    public Position(LCurrency asset, ProgramInstance curInst) {
         CURRENT_INSTANCE = curInst;
         ASSET = asset;
         ELEMENTS = new ArrayList<>();
@@ -30,7 +30,7 @@ public class Position implements ExportableToJson {
         ELEMENTS.addAll(base.ELEMENTS);
     }
 
-    public Position(JsonObject object, Instance curInst) {
+    public Position(JsonObject object, ProgramInstance curInst) {
         this(curInst.getLCurrency(object.getString("asset").getString()), curInst);
         for (JsonObject element : object.getArray("elements").getObjectArray()) {
             ELEMENTS.add(new PositionElement(element, CURRENT_INSTANCE));

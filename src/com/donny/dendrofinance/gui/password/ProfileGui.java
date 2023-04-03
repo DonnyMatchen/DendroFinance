@@ -1,27 +1,27 @@
 package com.donny.dendrofinance.gui.password;
 
-import com.donny.dendrofinance.gui.customswing.DendroFactory;
-import com.donny.dendrofinance.gui.customswing.ModalFrame;
-import com.donny.dendrofinance.gui.form.Validation;
-import com.donny.dendrofinance.gui.form.ValidationFailedException;
-import com.donny.dendrofinance.instance.Instance;
-import com.donny.dendrofinance.instance.Frequency;
-import com.donny.dendrofinance.json.JsonDecimal;
-import com.donny.dendrofinance.json.JsonFormattingException;
-import com.donny.dendrofinance.json.JsonObject;
-import com.donny.dendrofinance.json.JsonString;
+import com.donny.dendrofinance.gui.customswing.ProgramModalFrame;
+import com.donny.dendrofinance.instance.ProgramInstance;
+import com.donny.dendroroot.gui.customswing.DendroFactory;
+import com.donny.dendroroot.gui.form.Validation;
+import com.donny.dendroroot.gui.form.ValidationFailedException;
+import com.donny.dendroroot.instance.Frequency;
+import com.donny.dendroroot.json.JsonDecimal;
+import com.donny.dendroroot.json.JsonFormattingException;
+import com.donny.dendroroot.json.JsonObject;
+import com.donny.dendroroot.json.JsonString;
 
 import javax.swing.*;
 import java.awt.*;
 import java.math.BigDecimal;
 
-public class ProfileGui extends ModalFrame {
+public class ProfileGui extends ProgramModalFrame {
     private final JCheckBox AMER, DAY, AUTO;
     private final JTextField NAME, PRECISION, CUR, CUR2, BLOCK, RANGE;
     private final JComboBox<Frequency> FREQ;
     private final PasswordGui CALLER;
 
-    public ProfileGui(PasswordGui caller, JsonObject config, Instance curInst) {
+    public ProfileGui(PasswordGui caller, JsonObject config, ProgramInstance curInst) {
         super(caller, "Profile Gui", curInst);
         CALLER = caller;
         {

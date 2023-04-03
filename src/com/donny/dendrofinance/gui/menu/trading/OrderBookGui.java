@@ -1,23 +1,23 @@
 package com.donny.dendrofinance.gui.menu.trading;
 
 import com.donny.dendrofinance.capsules.totals.OrderBookEntry;
-import com.donny.dendrofinance.gui.MainGui;
-import com.donny.dendrofinance.gui.customswing.DendroFactory;
-import com.donny.dendrofinance.gui.customswing.RegisterFrame;
-import com.donny.dendrofinance.instance.Frequency;
-import com.donny.dendrofinance.instance.Instance;
-import com.donny.dendrofinance.types.LDate;
+import com.donny.dendrofinance.gui.ProgramMainGui;
+import com.donny.dendrofinance.gui.customswing.ProgramRegisterFrame;
+import com.donny.dendrofinance.instance.ProgramInstance;
+import com.donny.dendroroot.gui.customswing.DendroFactory;
+import com.donny.dendroroot.instance.Frequency;
+import com.donny.dendroroot.types.LDate;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.util.Objects;
 
-public class OrderBookGui extends RegisterFrame {
+public class OrderBookGui extends ProgramRegisterFrame {
     private final JComboBox<String> YEAR, PERIOD;
     private final DefaultTableModel TABLE_ACCESS;
 
-    public OrderBookGui(MainGui caller, Instance curInst) {
+    public OrderBookGui(ProgramMainGui caller, ProgramInstance curInst) {
         super(caller, "Order Book", curInst);
         //Draw Gui
         {

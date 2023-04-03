@@ -1,11 +1,11 @@
 package com.donny.dendrofinance.capsules.totals;
 
 import com.donny.dendrofinance.currency.LCurrency;
-import com.donny.dendrofinance.instance.Instance;
-import com.donny.dendrofinance.json.JsonDecimal;
-import com.donny.dendrofinance.json.JsonObject;
-import com.donny.dendrofinance.types.LDate;
-import com.donny.dendrofinance.util.ExportableToJson;
+import com.donny.dendrofinance.instance.ProgramInstance;
+import com.donny.dendroroot.json.JsonDecimal;
+import com.donny.dendroroot.json.JsonObject;
+import com.donny.dendroroot.types.LDate;
+import com.donny.dendroroot.util.ExportableToJson;
 
 import java.math.BigDecimal;
 
@@ -22,7 +22,7 @@ public class PositionElement implements ExportableToJson {
         UNIT = unit;
     }
 
-    public PositionElement(JsonObject object, Instance curInst) {
+    public PositionElement(JsonObject object, ProgramInstance curInst) {
         this(
                 object.getDecimal("ref").decimal.longValue(),
                 new LDate(object.getDecimal("date"), curInst),

@@ -1,19 +1,19 @@
 package com.donny.dendrofinance.gui.menu.data;
 
-import com.donny.dendrofinance.gui.MainGui;
-import com.donny.dendrofinance.gui.customswing.DendroFactory;
-import com.donny.dendrofinance.gui.customswing.RegisterFrame;
-import com.donny.dendrofinance.instance.Instance;
+import com.donny.dendrofinance.gui.ProgramMainGui;
+import com.donny.dendrofinance.gui.customswing.ProgramRegisterFrame;
+import com.donny.dendrofinance.instance.ProgramInstance;
+import com.donny.dendroroot.gui.customswing.DendroFactory;
 
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-public class BudgetTypeGui extends RegisterFrame {
+public class BudgetTypeGui extends ProgramRegisterFrame {
     private final JTextArea BUDGETS;
 
-    public BudgetTypeGui(MainGui caller, Instance curInst) {
+    public BudgetTypeGui(ProgramMainGui caller, ProgramInstance curInst) {
         super(caller, "Budget Type Edit", curInst);
 
         //draw gui

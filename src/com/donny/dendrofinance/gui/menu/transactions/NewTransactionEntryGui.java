@@ -1,20 +1,21 @@
 package com.donny.dendrofinance.gui.menu.transactions;
 
 import com.donny.dendrofinance.account.Account;
-import com.donny.dendrofinance.currency.LCurrency;
 import com.donny.dendrofinance.capsules.TemplateCapsule;
 import com.donny.dendrofinance.capsules.TransactionCapsule;
+import com.donny.dendrofinance.currency.LCurrency;
 import com.donny.dendrofinance.fileio.ImportHandler;
-import com.donny.dendrofinance.gui.MainGui;
-import com.donny.dendrofinance.gui.customswing.DendroFactory;
-import com.donny.dendrofinance.gui.customswing.ModalFrame;
-import com.donny.dendrofinance.gui.customswing.SearchBox;
-import com.donny.dendrofinance.gui.form.Cleaning;
-import com.donny.dendrofinance.gui.form.Validation;
-import com.donny.dendrofinance.gui.form.ValidationFailedException;
-import com.donny.dendrofinance.instance.Instance;
-import com.donny.dendrofinance.json.*;
-import com.donny.dendrofinance.types.LDate;
+import com.donny.dendrofinance.gui.BTCSearchBox;
+import com.donny.dendrofinance.gui.ProgramMainGui;
+import com.donny.dendrofinance.gui.customswing.ProgramModalFrame;
+import com.donny.dendrofinance.gui.form.ProgramValidation;
+import com.donny.dendrofinance.instance.ProgramInstance;
+import com.donny.dendroroot.gui.customswing.DendroFactory;
+import com.donny.dendroroot.gui.form.Cleaning;
+import com.donny.dendroroot.gui.form.Validation;
+import com.donny.dendroroot.gui.form.ValidationFailedException;
+import com.donny.dendroroot.json.*;
+import com.donny.dendroroot.types.LDate;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -24,8 +25,8 @@ import java.text.ParseException;
 import java.util.Arrays;
 import java.util.Vector;
 
-public class NewTransactionEntryGui extends ModalFrame {
-    public final MainGui MAIN;
+public class NewTransactionEntryGui extends ProgramModalFrame {
+    public final ProgramMainGui MAIN;
     public final long UUID;
     public final boolean CLONE;
     private final JTextField DATE, ENT;
@@ -37,11 +38,11 @@ public class NewTransactionEntryGui extends ModalFrame {
     public JsonObject metaObject;
     private int column;
 
-    public NewTransactionEntryGui(MainGui caller, Instance curInst) {
+    public NewTransactionEntryGui(ProgramMainGui caller, ProgramInstance curInst) {
         this(caller, 0, false, curInst);
     }
 
-    public NewTransactionEntryGui(MainGui caller, long uuid, boolean clone, Instance curInst) {
+    public NewTransactionEntryGui(ProgramMainGui caller, long uuid, boolean clone, ProgramInstance curInst) {
         super(caller, (uuid == 0 ? "New" : clone ? "Clone" : "Edit") + " Transaction Entry", curInst);
         MAIN = caller;
         UUID = uuid;
@@ -83,7 +84,7 @@ public class NewTransactionEntryGui extends ModalFrame {
                 type.addItem("Ghost");
                 type.addItem("Tracking");
                 JTextField amount = new JTextField();
-                SearchBox<Account> account = new SearchBox<>("Account", CURRENT_INSTANCE.getDCAccounts(), CURRENT_INSTANCE);
+                BTCSearchBox<Account> account = new BTCSearchBox<>("Account", CURRENT_INSTANCE.getDCAccounts(), CURRENT_INSTANCE);
                 column = 0;
                 type.addItemListener(event -> {
                     int x = type.getSelectedIndex();
@@ -517,7 +518,7 @@ public class NewTransactionEntryGui extends ModalFrame {
                     Validation.validateString(ENT),
                     Validation.validateStringAllowEmpty(ITM),
                     Validation.validateStringAllowEmpty(DESC),
-                    Validation.validateAccountSet(ACC, CURRENT_INSTANCE)
+                    ProgramValidation.validateAccountSet(ACC, CURRENT_INSTANCE)
             );
             capsule.setMeta(Validation.validateJsonObject(META));
             CURRENT_INSTANCE.DATA_HANDLER.TRANSACTIONS.add(capsule, ImportHandler.ImportMode.OVERWRITE);

@@ -5,20 +5,20 @@ import com.donny.dendrofinance.account.Account;
 import com.donny.dendrofinance.account.AccountWrapper;
 import com.donny.dendrofinance.account.Exchange;
 import com.donny.dendrofinance.capsules.StateCapsule;
-import com.donny.dendrofinance.currency.LCurrency;
-import com.donny.dendrofinance.currency.LInventory;
-import com.donny.dendrofinance.currency.LStock;
-import com.donny.dendrofinance.data.database.*;
 import com.donny.dendrofinance.capsules.TransactionCapsule;
 import com.donny.dendrofinance.capsules.meta.*;
 import com.donny.dendrofinance.capsules.totals.OrderBookEntry;
 import com.donny.dendrofinance.capsules.totals.Position;
+import com.donny.dendrofinance.currency.LCurrency;
+import com.donny.dendrofinance.currency.LInventory;
+import com.donny.dendrofinance.currency.LStock;
+import com.donny.dendrofinance.data.database.*;
 import com.donny.dendrofinance.fileio.ImportHandler;
-import com.donny.dendrofinance.instance.Instance;
-import com.donny.dendrofinance.json.JsonObject;
+import com.donny.dendrofinance.instance.ProgramInstance;
 import com.donny.dendrofinance.types.LAccountSet;
-import com.donny.dendrofinance.types.LDate;
-import com.donny.dendrofinance.util.Aggregation;
+import com.donny.dendroroot.json.JsonObject;
+import com.donny.dendroroot.types.LDate;
+import com.donny.dendroroot.util.Aggregation;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -27,7 +27,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 
 public class DataHandler {
-    protected final Instance CURRENT_INSTANCE;
+    protected final ProgramInstance CURRENT_INSTANCE;
     protected final ArrayList<String> BUDGET_TYPES;
     public final DatabaseHandler DATABASE;
     public final BudgetHandler BUDGETS;
@@ -36,7 +36,7 @@ public class DataHandler {
     public final TemplateHandler TEMPLATES;
     public boolean budgetTypesChanged = false;
 
-    public DataHandler(Instance curInst) {
+    public DataHandler(ProgramInstance curInst) {
         CURRENT_INSTANCE = curInst;
         DATABASE = new DatabaseHandler(CURRENT_INSTANCE);
         BUDGETS = new BudgetHandler(CURRENT_INSTANCE, DATABASE);

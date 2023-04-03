@@ -1,15 +1,15 @@
 package com.donny.dendrofinance.gui.menu.reports.budget;
 
 import com.donny.dendrofinance.capsules.BudgetCapsule;
-import com.donny.dendrofinance.gui.customswing.DendroFactory;
-import com.donny.dendrofinance.gui.customswing.ModalFrame;
-import com.donny.dendrofinance.instance.Instance;
+import com.donny.dendrofinance.gui.customswing.ProgramModalFrame;
+import com.donny.dendrofinance.instance.ProgramInstance;
+import com.donny.dendroroot.gui.customswing.DendroFactory;
 
 import javax.swing.*;
 import java.awt.*;
 
-public class RemoveBudgetGui extends ModalFrame {
-    public RemoveBudgetGui(BudgetGui caller, String budget, Instance curInst) {
+public class RemoveBudgetGui extends ProgramModalFrame {
+    public RemoveBudgetGui(BudgetGui caller, String budget, ProgramInstance curInst) {
         super(caller, "Remove Budget", curInst);
         if (budget == null) {
             dispose();

@@ -4,15 +4,16 @@ import com.donny.dendrofinance.capsules.BudgetCapsule;
 import com.donny.dendrofinance.capsules.StateCapsule;
 import com.donny.dendrofinance.capsules.TemplateCapsule;
 import com.donny.dendrofinance.capsules.TransactionCapsule;
-import com.donny.dendrofinance.fileio.xarc.XarcInputStream;
-import com.donny.dendrofinance.gui.password.UnkPasswordGui;
-import com.donny.dendrofinance.instance.Instance;
-import com.donny.dendrofinance.json.JsonArray;
-import com.donny.dendrofinance.json.JsonFormattingException;
-import com.donny.dendrofinance.json.JsonItem;
-import com.donny.dendrofinance.json.JsonObject;
+import com.donny.dendrofinance.instance.ProgramInstance;
 import com.donny.dendrofinance.types.LAccountSet;
-import com.donny.dendrofinance.types.LDate;
+import com.donny.dendroroot.fileio.EncryptionHandler;
+import com.donny.dendroroot.gui.password.UnkPasswordGui;
+import com.donny.dendroroot.json.JsonArray;
+import com.donny.dendroroot.json.JsonFormattingException;
+import com.donny.dendroroot.json.JsonItem;
+import com.donny.dendroroot.json.JsonObject;
+import com.donny.dendroroot.types.LDate;
+import com.donny.dendroroot.xarc.XarcInputStream;
 import com.fasterxml.jackson.core.JsonFactory;
 
 import javax.swing.*;
@@ -22,7 +23,7 @@ import java.sql.SQLException;
 import java.text.ParseException;
 
 public class ImportHandler {
-    private final Instance CURRENT_INSTANCE;
+    private final ProgramInstance CURRENT_INSTANCE;
 
     public enum ImportMode {
         /*
@@ -55,7 +56,7 @@ public class ImportHandler {
         }
     }
 
-    public ImportHandler(Instance curInst) {
+    public ImportHandler(ProgramInstance curInst) {
         CURRENT_INSTANCE = curInst;
         CURRENT_INSTANCE.LOG_HANDLER.trace(getClass(), "ImportHandler initiated");
     }

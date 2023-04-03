@@ -1,26 +1,30 @@
 package com.donny.dendrofinance.capsules;
 
 import com.donny.dendrofinance.fileio.ImportHandler;
-import com.donny.dendrofinance.instance.Instance;
-import com.donny.dendrofinance.json.JsonDecimal;
-import com.donny.dendrofinance.json.JsonFormattingException;
-import com.donny.dendrofinance.json.JsonObject;
-import com.donny.dendrofinance.json.JsonString;
+import com.donny.dendrofinance.instance.ProgramInstance;
+import com.donny.dendroroot.data.Capsule;
+import com.donny.dendroroot.json.JsonDecimal;
+import com.donny.dendroroot.json.JsonFormattingException;
+import com.donny.dendroroot.json.JsonObject;
+import com.donny.dendroroot.json.JsonString;
 
 import java.sql.SQLException;
 
 public class TemplateCapsule extends Capsule {
+    private final ProgramInstance CURRENT_INSTANCE;
     private String name;
     private final long REF;
 
-    public TemplateCapsule(String name, long ref, Instance curInst) {
+    public TemplateCapsule(String name, long ref, ProgramInstance curInst) {
         super(curInst);
+        CURRENT_INSTANCE = curInst;
         this.name = name;
         REF = ref;
     }
 
-    public TemplateCapsule(JsonObject obj, ImportHandler.ImportMode mode, Instance curInst) throws SQLException {
+    public TemplateCapsule(JsonObject obj, ImportHandler.ImportMode mode, ProgramInstance curInst) throws SQLException {
         super(curInst);
+        CURRENT_INSTANCE = curInst;
         String candidate = obj.getString(new String[]{"n", "name"}).getString();
         boolean safe = CURRENT_INSTANCE.UNIQUE_HANDLER.checkName(candidate, "TEMPLATES");
         if (!safe) {
@@ -36,8 +40,9 @@ public class TemplateCapsule extends Capsule {
         REF = obj.getDecimal(new String[]{"r", "ref"}).decimal.longValue();
     }
 
-    public TemplateCapsule(JsonObject obj, Instance curInst) {
+    public TemplateCapsule(JsonObject obj, ProgramInstance curInst) {
         super(curInst);
+        CURRENT_INSTANCE = curInst;
         name = obj.getString(new String[]{"n", "name"}).getString();
         REF = obj.getDecimal(new String[]{"r", "ref"}).decimal.longValue();
     }

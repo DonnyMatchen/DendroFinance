@@ -1,12 +1,12 @@
 package com.donny.dendrofinance.gui.menu.reports;
 
 import com.donny.dendrofinance.capsules.meta.CheckMetadata;
-import com.donny.dendrofinance.gui.MainGui;
-import com.donny.dendrofinance.gui.customswing.DateRange;
-import com.donny.dendrofinance.gui.customswing.DendroFactory;
-import com.donny.dendrofinance.gui.customswing.RegisterFrame;
-import com.donny.dendrofinance.instance.Instance;
-import com.donny.dendrofinance.types.LDate;
+import com.donny.dendrofinance.gui.ProgramMainGui;
+import com.donny.dendrofinance.gui.customswing.ProgramRegisterFrame;
+import com.donny.dendrofinance.instance.ProgramInstance;
+import com.donny.dendroroot.gui.customswing.DateRange;
+import com.donny.dendroroot.gui.customswing.DendroFactory;
+import com.donny.dendroroot.types.LDate;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -15,14 +15,14 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 
-public class CheckGui extends RegisterFrame {
+public class CheckGui extends ProgramRegisterFrame {
     private final DateRange RANGE;
     private final JTextField SEARCH;
     private final JCheckBox OUTSTANDING;
     private final JTable TABLE;
     private final DefaultTableModel TABLE_ACCESS;
 
-    public CheckGui(MainGui caller, Instance curInst) {
+    public CheckGui(ProgramMainGui caller, ProgramInstance curInst) {
         super(caller, "Check Gui", curInst);
 
         //draw gui
@@ -105,7 +105,7 @@ public class CheckGui extends RegisterFrame {
                 );
             }
         }
-        RANGE.initDefault(CURRENT_INSTANCE);
+        RANGE.initRange(CURRENT_INSTANCE.range, CURRENT_INSTANCE);
         updateTable();
         pack();
         Dimension d = Toolkit.getDefaultToolkit().getScreenSize();

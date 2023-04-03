@@ -3,16 +3,16 @@ package com.donny.dendrofinance.data.backingtable;
 import com.donny.dendrofinance.currency.LCurrency;
 import com.donny.dendrofinance.gui.menu.data.backing.BackingTableGui;
 import com.donny.dendrofinance.gui.menu.data.backing.edit.CurrencyEditGui;
-import com.donny.dendrofinance.instance.Instance;
-import com.donny.dendrofinance.json.JsonArray;
-import com.donny.dendrofinance.json.JsonObject;
+import com.donny.dendrofinance.instance.ProgramInstance;
+import com.donny.dendroroot.json.JsonArray;
+import com.donny.dendroroot.json.JsonObject;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Comparator;
 
 public class CurrencyBTC extends BackingTableCore<LCurrency> {
-    public CurrencyBTC(Instance curInst) {
+    public CurrencyBTC(ProgramInstance curInst) {
         super(curInst, true);
     }
 

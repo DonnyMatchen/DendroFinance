@@ -3,26 +3,26 @@ package com.donny.dendrofinance.account;
 import com.donny.dendrofinance.currency.LCurrency;
 import com.donny.dendrofinance.currency.LInventory;
 import com.donny.dendrofinance.currency.LStock;
-import com.donny.dendrofinance.instance.Instance;
-import com.donny.dendrofinance.json.JsonArray;
-import com.donny.dendrofinance.json.JsonFormattingException;
-import com.donny.dendrofinance.json.JsonObject;
-import com.donny.dendrofinance.json.JsonString;
-import com.donny.dendrofinance.util.UniqueName;
+import com.donny.dendrofinance.instance.ProgramInstance;
+import com.donny.dendroroot.json.JsonArray;
+import com.donny.dendroroot.json.JsonFormattingException;
+import com.donny.dendroroot.json.JsonObject;
+import com.donny.dendroroot.json.JsonString;
+import com.donny.dendroroot.util.UniqueName;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Comparator;
 
 public class Exchange implements UniqueName, Serializable {
-    private final Instance CURRENT_INSTANCE;
+    private final ProgramInstance CURRENT_INSTANCE;
     public final String NAME, ALT;
     public final ArrayList<String> SUPPORTED;
     public final ArrayList<String> FEE;
     public final ArrayList<JsonObject> STAKING;
     public final boolean EXPORT;
 
-    public Exchange(String name, String alt, ArrayList<String> sup, Instance curInst, boolean export) {
+    public Exchange(String name, String alt, ArrayList<String> sup, ProgramInstance curInst, boolean export) {
         CURRENT_INSTANCE = curInst;
         NAME = name;
         ALT = alt;
@@ -32,16 +32,16 @@ public class Exchange implements UniqueName, Serializable {
         EXPORT = export;
     }
 
-    public Exchange(String name, String alt, Instance curInst, boolean export) {
+    public Exchange(String name, String alt, ProgramInstance curInst, boolean export) {
         this(name, alt, new ArrayList<>(), curInst, export);
     }
 
-    public Exchange(String name, String alt, ArrayList<String> sup, ArrayList<JsonObject> stak, Instance curInst, boolean export) {
+    public Exchange(String name, String alt, ArrayList<String> sup, ArrayList<JsonObject> stak, ProgramInstance curInst, boolean export) {
         this(name, alt, sup, curInst, export);
         STAKING.addAll(stak);
     }
 
-    public Exchange(JsonObject obj, Instance curInst, boolean export) {
+    public Exchange(JsonObject obj, ProgramInstance curInst, boolean export) {
         this(obj.getString("name").getString(), obj.getString("alt").getString(), curInst, export);
         for (JsonString string : obj.getArray("supported").getStringArray()) {
             SUPPORTED.add(string.getString());

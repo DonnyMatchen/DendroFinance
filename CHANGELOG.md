@@ -3,6 +3,9 @@
 * cash flow
 * statistics gui replacement
 
+## v0.11.4
+* moved generic program functions to library
+
 ## v0.11.3
 * minor optimizations
   * `"" + int` replaced with `String.valueOf(int)`

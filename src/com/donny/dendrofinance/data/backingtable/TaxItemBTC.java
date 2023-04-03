@@ -1,17 +1,17 @@
 package com.donny.dendrofinance.data.backingtable;
 
 import com.donny.dendrofinance.gui.menu.data.backing.BackingTableGui;
-import com.donny.dendrofinance.instance.Instance;
-import com.donny.dendrofinance.json.JsonArray;
-import com.donny.dendrofinance.json.JsonFormattingException;
-import com.donny.dendrofinance.json.JsonObject;
+import com.donny.dendrofinance.instance.ProgramInstance;
 import com.donny.dendrofinance.tax.TaxItem;
+import com.donny.dendroroot.json.JsonArray;
+import com.donny.dendroroot.json.JsonFormattingException;
+import com.donny.dendroroot.json.JsonObject;
 
 import java.util.ArrayList;
 import java.util.Comparator;
 
 public class TaxItemBTC extends BackingTableCore<TaxItem> {
-    public TaxItemBTC(Instance curInst) {
+    public TaxItemBTC(ProgramInstance curInst) {
         super(curInst, true);
     }
 

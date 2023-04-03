@@ -2,19 +2,19 @@ package com.donny.dendrofinance.gui.menu.reports.budget;
 
 import com.donny.dendrofinance.capsules.BudgetCapsule;
 import com.donny.dendrofinance.fileio.ImportHandler;
-import com.donny.dendrofinance.gui.customswing.DendroFactory;
-import com.donny.dendrofinance.gui.customswing.ModalFrame;
-import com.donny.dendrofinance.instance.Instance;
+import com.donny.dendrofinance.gui.customswing.ProgramModalFrame;
+import com.donny.dendrofinance.instance.ProgramInstance;
+import com.donny.dendroroot.gui.customswing.DendroFactory;
 
 import javax.swing.*;
 import java.awt.*;
 
-public class NewBudgetGui extends ModalFrame {
+public class NewBudgetGui extends ProgramModalFrame {
     public final BudgetGui CALLER;
     private final JTextField NAME;
     private final JComboBox<String> TEMPLATE;
 
-    public NewBudgetGui(BudgetGui caller, Instance curInst) {
+    public NewBudgetGui(BudgetGui caller, ProgramInstance curInst) {
         super(caller, "New Budget", curInst);
         CALLER = caller;
         //draw gui

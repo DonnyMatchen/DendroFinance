@@ -1,12 +1,11 @@
 package com.donny.dendrofinance.currency;
 
 import com.donny.dendrofinance.capsules.totals.Position;
-import com.donny.dendrofinance.instance.Instance;
-import com.donny.dendrofinance.json.JsonDecimal;
-import com.donny.dendrofinance.json.JsonFormattingException;
-import com.donny.dendrofinance.json.JsonObject;
-import com.donny.dendrofinance.json.JsonString;
-import com.donny.dendrofinance.types.LDate;
+import com.donny.dendrofinance.instance.ProgramInstance;
+import com.donny.dendroroot.json.JsonDecimal;
+import com.donny.dendroroot.json.JsonFormattingException;
+import com.donny.dendroroot.json.JsonObject;
+import com.donny.dendroroot.json.JsonString;
 
 import java.math.BigDecimal;
 
@@ -14,7 +13,7 @@ public class LInventory extends LCurrency {
     private final BigDecimal STATIC_VALUE;
     private final boolean COMMODITY, MERCHANDISE, PUBLIC;
 
-    public LInventory(String name, String ticker, String symbol, int places, BigDecimal val, boolean merch, Instance curInst) {
+    public LInventory(String name, String ticker, String symbol, int places, BigDecimal val, boolean merch, ProgramInstance curInst) {
         super(name, ticker, false, symbol + "§", true, places, "", false, false, curInst);
         MERCHANDISE = merch;
         COMMODITY = false;
@@ -22,7 +21,7 @@ public class LInventory extends LCurrency {
         STATIC_VALUE = val;
     }
 
-    public LInventory(String name, String ticker, String symbol, int places, boolean merch, boolean pub, Instance curInst) {
+    public LInventory(String name, String ticker, String symbol, int places, boolean merch, boolean pub, ProgramInstance curInst) {
         super(name, ticker, false, symbol + "§", true, places, "", false, false, curInst);
         MERCHANDISE = merch;
         COMMODITY = true;
@@ -30,7 +29,7 @@ public class LInventory extends LCurrency {
         STATIC_VALUE = BigDecimal.ZERO;
     }
 
-    public LInventory(String name, String ticker, String symbol, int places, BigDecimal factor, boolean merch, boolean pub, Instance curInst) {
+    public LInventory(String name, String ticker, String symbol, int places, BigDecimal factor, boolean merch, boolean pub, ProgramInstance curInst) {
         super(name, ticker, false, symbol + "§", true, places, factor, "", false, false, curInst);
         MERCHANDISE = merch;
         COMMODITY = true;
@@ -38,7 +37,7 @@ public class LInventory extends LCurrency {
         STATIC_VALUE = BigDecimal.ZERO;
     }
 
-    public LInventory(String name, BigDecimal val, boolean merch, Instance curInst) {
+    public LInventory(String name, BigDecimal val, boolean merch, ProgramInstance curInst) {
         super(name, "", false, "§", true, 0, "", false, false, curInst);
         MERCHANDISE = merch;
         COMMODITY = false;
@@ -46,7 +45,7 @@ public class LInventory extends LCurrency {
         STATIC_VALUE = val;
     }
 
-    public LInventory(JsonObject obj, Instance curInst) {
+    public LInventory(JsonObject obj, ProgramInstance curInst) {
         super(
                 obj.getString("name").getString(),
                 obj.getString("tic").getString(),

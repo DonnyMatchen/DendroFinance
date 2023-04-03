@@ -1,19 +1,19 @@
 package com.donny.dendrofinance.gui.menu.transactions;
 
-import com.donny.dendrofinance.gui.MainGui;
-import com.donny.dendrofinance.gui.customswing.DendroFactory;
-import com.donny.dendrofinance.gui.customswing.ModalFrame;
-import com.donny.dendrofinance.instance.Instance;
+import com.donny.dendrofinance.gui.ProgramMainGui;
+import com.donny.dendrofinance.gui.customswing.ProgramModalFrame;
+import com.donny.dendrofinance.instance.ProgramInstance;
+import com.donny.dendroroot.gui.customswing.DendroFactory;
 
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
 
-public class DeleteAllGui extends ModalFrame {
-    public final MainGui CALLER;
+public class DeleteAllGui extends ProgramModalFrame {
+    public final ProgramMainGui CALLER;
     public final ArrayList<Long> UUIDS;
 
-    public DeleteAllGui(MainGui caller, ArrayList<Long> uuids, Instance curInst) {
+    public DeleteAllGui(ProgramMainGui caller, ArrayList<Long> uuids, ProgramInstance curInst) {
         super(caller, "Delete Transaction Entry", curInst);
         UUIDS = uuids;
         CALLER = caller;

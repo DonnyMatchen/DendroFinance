@@ -2,11 +2,11 @@ package com.donny.dendrofinance.gui.menu.data.backing.edit;
 
 import com.donny.dendrofinance.currency.LCurrency;
 import com.donny.dendrofinance.data.backingtable.BackingTableCore;
-import com.donny.dendrofinance.gui.customswing.DendroFactory;
-import com.donny.dendrofinance.gui.form.Validation;
-import com.donny.dendrofinance.gui.form.ValidationFailedException;
 import com.donny.dendrofinance.gui.menu.data.backing.BackingTableGui;
-import com.donny.dendrofinance.instance.Instance;
+import com.donny.dendrofinance.instance.ProgramInstance;
+import com.donny.dendroroot.gui.customswing.DendroFactory;
+import com.donny.dendroroot.gui.form.Validation;
+import com.donny.dendroroot.gui.form.ValidationFailedException;
 
 import javax.swing.*;
 
@@ -14,7 +14,7 @@ public class CurrencyEditGui extends BackingEditGui<LCurrency> {
     private JTextField name, alt, ticker, symbol, places, factor;
     private JCheckBox fiat, extinct, token, forwards;
 
-    public CurrencyEditGui(BackingTableGui<LCurrency> caller, BackingTableCore<LCurrency> core, int index, Instance curInst) {
+    public CurrencyEditGui(BackingTableGui<LCurrency> caller, BackingTableCore<LCurrency> core, int index, ProgramInstance curInst) {
         super(caller, core, index, curInst);
     }
 

@@ -3,11 +3,11 @@ package com.donny.dendrofinance.gui.menu.data.backing.edit;
 import com.donny.dendrofinance.account.AccountType;
 import com.donny.dendrofinance.account.BroadAccountType;
 import com.donny.dendrofinance.data.backingtable.BackingTableCore;
-import com.donny.dendrofinance.gui.customswing.DendroFactory;
-import com.donny.dendrofinance.gui.form.Validation;
-import com.donny.dendrofinance.gui.form.ValidationFailedException;
 import com.donny.dendrofinance.gui.menu.data.backing.BackingTableGui;
-import com.donny.dendrofinance.instance.Instance;
+import com.donny.dendrofinance.instance.ProgramInstance;
+import com.donny.dendroroot.gui.customswing.DendroFactory;
+import com.donny.dendroroot.gui.form.Validation;
+import com.donny.dendroroot.gui.form.ValidationFailedException;
 
 import javax.swing.*;
 
@@ -15,7 +15,7 @@ public class AccountTypeEditGui extends BackingEditGui<AccountType> {
     private JTextField name;
     private JComboBox<String> type;
 
-    public AccountTypeEditGui(BackingTableGui<AccountType> caller, BackingTableCore<AccountType> core, int index, Instance curInst) {
+    public AccountTypeEditGui(BackingTableGui<AccountType> caller, BackingTableCore<AccountType> core, int index, ProgramInstance curInst) {
         super(caller, core, index, curInst);
     }
 

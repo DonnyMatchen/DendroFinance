@@ -2,20 +2,20 @@ package com.donny.dendrofinance.gui.menu.data.state;
 
 import com.donny.dendrofinance.capsules.StateCapsule;
 import com.donny.dendrofinance.fileio.ImportHandler;
-import com.donny.dendrofinance.gui.customswing.DendroFactory;
-import com.donny.dendrofinance.gui.customswing.ModalFrame;
-import com.donny.dendrofinance.gui.form.Validation;
-import com.donny.dendrofinance.gui.form.ValidationFailedException;
-import com.donny.dendrofinance.instance.Instance;
-import com.donny.dendrofinance.types.LDate;
+import com.donny.dendrofinance.gui.customswing.ProgramModalFrame;
+import com.donny.dendrofinance.instance.ProgramInstance;
+import com.donny.dendroroot.gui.customswing.DendroFactory;
+import com.donny.dendroroot.gui.form.Validation;
+import com.donny.dendroroot.gui.form.ValidationFailedException;
+import com.donny.dendroroot.types.LDate;
 
 import javax.swing.*;
 
-public class NewStateGui extends ModalFrame {
+public class NewStateGui extends ProgramModalFrame {
     private final StateGui CALLER;
     private final JTextField DATE;
 
-    public NewStateGui(StateGui caller, Instance curInst) {
+    public NewStateGui(StateGui caller, ProgramInstance curInst) {
         super(caller, "New State", curInst);
         CALLER = caller;
 

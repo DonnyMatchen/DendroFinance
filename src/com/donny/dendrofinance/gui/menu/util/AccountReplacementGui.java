@@ -4,30 +4,30 @@ import com.donny.dendrofinance.account.AWColumn;
 import com.donny.dendrofinance.account.Account;
 import com.donny.dendrofinance.account.AccountWrapper;
 import com.donny.dendrofinance.capsules.TransactionCapsule;
-import com.donny.dendrofinance.gui.MainGui;
-import com.donny.dendrofinance.gui.customswing.DateRange;
-import com.donny.dendrofinance.gui.customswing.DendroFactory;
-import com.donny.dendrofinance.gui.customswing.RegisterFrame;
-import com.donny.dendrofinance.gui.customswing.SearchBox;
-import com.donny.dendrofinance.instance.Instance;
-import com.donny.dendrofinance.types.LDate;
+import com.donny.dendrofinance.gui.BTCSearchBox;
+import com.donny.dendrofinance.gui.ProgramMainGui;
+import com.donny.dendrofinance.gui.customswing.ProgramRegisterFrame;
+import com.donny.dendrofinance.instance.ProgramInstance;
+import com.donny.dendroroot.gui.customswing.DateRange;
+import com.donny.dendroroot.gui.customswing.DendroFactory;
+import com.donny.dendroroot.types.LDate;
 
 import javax.swing.*;
 import java.awt.*;
 import java.math.BigDecimal;
 
-public class AccountReplacementGui extends RegisterFrame {
+public class AccountReplacementGui extends ProgramRegisterFrame {
     private final DateRange RANGE;
-    private final SearchBox<Account> OLD, NEW;
+    private final BTCSearchBox<Account> OLD, NEW;
 
-    public AccountReplacementGui(MainGui caller, Instance curInst) {
+    public AccountReplacementGui(ProgramMainGui caller, ProgramInstance curInst) {
         super(caller, "Account Replacement", curInst);
 
         //draw gui
         {
             RANGE = new DateRange(true);
-            OLD = new SearchBox<>("Existing Account", CURRENT_INSTANCE.ACCOUNTS, CURRENT_INSTANCE);
-            NEW = new SearchBox<>("Replacement Account", CURRENT_INSTANCE.ACCOUNTS, CURRENT_INSTANCE);
+            OLD = new BTCSearchBox<>("Existing Account", CURRENT_INSTANCE.ACCOUNTS, CURRENT_INSTANCE);
+            NEW = new BTCSearchBox<>("Replacement Account", CURRENT_INSTANCE.ACCOUNTS, CURRENT_INSTANCE);
             JButton go = new JButton("Do Change");
             go.addActionListener(event -> goAction());
 
@@ -61,7 +61,7 @@ public class AccountReplacementGui extends RegisterFrame {
                 );
             }
         }
-        RANGE.initDefault(CURRENT_INSTANCE);
+        RANGE.initRange(CURRENT_INSTANCE.range, CURRENT_INSTANCE);
         pack();
         Dimension d = Toolkit.getDefaultToolkit().getScreenSize();
         setLocation(d.width / 2 - getWidth() / 2, d.height / 2 - getHeight() / 2);

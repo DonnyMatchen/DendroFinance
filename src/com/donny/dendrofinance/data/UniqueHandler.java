@@ -1,6 +1,6 @@
 package com.donny.dendrofinance.data;
 
-import com.donny.dendrofinance.instance.Instance;
+import com.donny.dendrofinance.instance.ProgramInstance;
 
 import java.security.SecureRandom;
 import java.sql.Connection;
@@ -8,9 +8,9 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 public class UniqueHandler {
-    private final Instance CURRENT_INSTANCE;
+    private final ProgramInstance CURRENT_INSTANCE;
 
-    public UniqueHandler(Instance curInst) {
+    public UniqueHandler(ProgramInstance curInst) {
         CURRENT_INSTANCE = curInst;
         CURRENT_INSTANCE.LOG_HANDLER.trace(getClass(), "UniqueHandler Initiated");
     }

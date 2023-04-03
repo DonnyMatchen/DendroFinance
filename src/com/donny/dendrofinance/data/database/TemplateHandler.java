@@ -2,9 +2,9 @@ package com.donny.dendrofinance.data.database;
 
 import com.donny.dendrofinance.capsules.TemplateCapsule;
 import com.donny.dendrofinance.fileio.ImportHandler;
-import com.donny.dendrofinance.gui.form.SqlEscape;
-import com.donny.dendrofinance.instance.Instance;
-import com.donny.dendrofinance.json.JsonObject;
+import com.donny.dendrofinance.gui.SqlEscape;
+import com.donny.dendrofinance.instance.ProgramInstance;
+import com.donny.dendroroot.json.JsonObject;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -12,7 +12,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 
 public class TemplateHandler extends TableHandler<String, TemplateCapsule> {
-    public TemplateHandler(Instance curInst, DatabaseHandler database) {
+    public TemplateHandler(ProgramInstance curInst, DatabaseHandler database) {
         super(curInst, database);
     }
 

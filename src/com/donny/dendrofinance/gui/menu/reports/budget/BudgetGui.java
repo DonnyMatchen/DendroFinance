@@ -6,16 +6,15 @@ import com.donny.dendrofinance.account.AccountWrapper;
 import com.donny.dendrofinance.account.BroadAccountType;
 import com.donny.dendrofinance.capsules.BudgetCapsule;
 import com.donny.dendrofinance.capsules.TransactionCapsule;
-import com.donny.dendrofinance.gui.MainGui;
-import com.donny.dendrofinance.gui.customswing.DendroFactory;
-import com.donny.dendrofinance.gui.customswing.RegisterFrame;
-import com.donny.dendrofinance.gui.form.Cleaning;
-import com.donny.dendrofinance.gui.form.Validation;
-import com.donny.dendrofinance.instance.Frequency;
-import com.donny.dendrofinance.instance.Instance;
-import com.donny.dendrofinance.json.JsonDecimal;
-import com.donny.dendrofinance.types.LDate;
-import com.donny.dendrofinance.util.Aggregation;
+import com.donny.dendrofinance.gui.ProgramMainGui;
+import com.donny.dendrofinance.gui.customswing.ProgramRegisterFrame;
+import com.donny.dendrofinance.instance.ProgramInstance;
+import com.donny.dendroroot.gui.customswing.DendroFactory;
+import com.donny.dendroroot.gui.form.Cleaning;
+import com.donny.dendroroot.instance.Frequency;
+import com.donny.dendroroot.json.JsonDecimal;
+import com.donny.dendroroot.types.LDate;
+import com.donny.dendroroot.util.Aggregation;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -23,12 +22,12 @@ import java.awt.*;
 import java.math.BigDecimal;
 import java.util.Objects;
 
-public class BudgetGui extends RegisterFrame {
+public class BudgetGui extends ProgramRegisterFrame {
     private final JRadioButton EXPANDED, COLLAPSED;
     private final JComboBox<String> EDIT_B, BUDGET, YEAR, PERIOD;
     private final DefaultTableModel VIEW_TABLE_ACCESS, EDIT_TABLE_ACCESS;
 
-    public BudgetGui(MainGui caller, Instance curInst) {
+    public BudgetGui(ProgramMainGui caller, ProgramInstance curInst) {
         super(caller, "Budgets", curInst);
 
         //draw GUI

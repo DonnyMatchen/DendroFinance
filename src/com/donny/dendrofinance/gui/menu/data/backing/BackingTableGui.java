@@ -1,11 +1,11 @@
 package com.donny.dendrofinance.gui.menu.data.backing;
 
 import com.donny.dendrofinance.data.backingtable.BackingTableCore;
-import com.donny.dendrofinance.gui.MainGui;
-import com.donny.dendrofinance.gui.customswing.DendroFactory;
-import com.donny.dendrofinance.gui.customswing.RegisterFrame;
-import com.donny.dendrofinance.instance.Instance;
-import com.donny.dendrofinance.util.UniqueName;
+import com.donny.dendrofinance.gui.ProgramMainGui;
+import com.donny.dendrofinance.gui.customswing.ProgramRegisterFrame;
+import com.donny.dendrofinance.instance.ProgramInstance;
+import com.donny.dendroroot.gui.customswing.DendroFactory;
+import com.donny.dendroroot.util.UniqueName;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
@@ -17,7 +17,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-public class BackingTableGui<E extends UniqueName> extends RegisterFrame {
+public class BackingTableGui<E extends UniqueName> extends ProgramRegisterFrame {
     private final BackingTableCore<E> TABLE_CORE;
 
     private final JTextField SEARCH;
@@ -25,7 +25,7 @@ public class BackingTableGui<E extends UniqueName> extends RegisterFrame {
     private final DefaultTableModel TABLE_ACCESS;
     private final JButton UP, DOWN, EDIT, DELETE;
 
-    public BackingTableGui(MainGui caller, BackingTableCore<E> core, Instance curInst) {
+    public BackingTableGui(ProgramMainGui caller, BackingTableCore<E> core, ProgramInstance curInst) {
         super(caller, core.getName(true), curInst);
         TABLE_CORE = core;
 

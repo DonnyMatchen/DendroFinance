@@ -1,26 +1,26 @@
 package com.donny.dendrofinance.gui.menu.trading;
 
-import com.donny.dendrofinance.currency.LCurrency;
 import com.donny.dendrofinance.capsules.meta.LedgerMetadata;
-import com.donny.dendrofinance.gui.MainGui;
-import com.donny.dendrofinance.gui.customswing.DateRange;
-import com.donny.dendrofinance.gui.customswing.DendroFactory;
-import com.donny.dendrofinance.gui.customswing.RegisterFrame;
-import com.donny.dendrofinance.gui.customswing.SearchBox;
-import com.donny.dendrofinance.instance.Instance;
-import com.donny.dendrofinance.types.LDate;
+import com.donny.dendrofinance.currency.LCurrency;
+import com.donny.dendrofinance.gui.BTCSearchBox;
+import com.donny.dendrofinance.gui.ProgramMainGui;
+import com.donny.dendrofinance.gui.customswing.ProgramRegisterFrame;
+import com.donny.dendrofinance.instance.ProgramInstance;
+import com.donny.dendroroot.gui.customswing.DateRange;
+import com.donny.dendroroot.gui.customswing.DendroFactory;
+import com.donny.dendroroot.types.LDate;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.math.BigDecimal;
 
-public class LedgerGui extends RegisterFrame {
+public class LedgerGui extends ProgramRegisterFrame {
     private final DateRange RANGE;
-    private final SearchBox<LCurrency> CUR;
+    private final BTCSearchBox<LCurrency> CUR;
     private final DefaultTableModel TABLE_ACCESS;
 
-    public LedgerGui(MainGui caller, Instance curInst) {
+    public LedgerGui(ProgramMainGui caller, ProgramInstance curInst) {
         super(caller, "Trading Ledgers", curInst);
         //Draw Gui
         {
@@ -30,7 +30,7 @@ public class LedgerGui extends RegisterFrame {
             JTable table = (JTable) pane.getViewport().getView();
             TABLE_ACCESS = (DefaultTableModel) table.getModel();
             RANGE = new DateRange(true);
-            CUR = new SearchBox<>("Asset", curInst.getAllUniqueAssets(), CURRENT_INSTANCE);
+            CUR = new BTCSearchBox<>("Asset", curInst.getAllUniqueAssets(), CURRENT_INSTANCE);
             CUR.addListSelectionListener(event -> update());
 
             //back
@@ -59,7 +59,7 @@ public class LedgerGui extends RegisterFrame {
                 );
             }
         }
-        RANGE.initDefault(CURRENT_INSTANCE);
+        RANGE.initRange(CURRENT_INSTANCE.range, CURRENT_INSTANCE);
         pack();
         Dimension d = Toolkit.getDefaultToolkit().getScreenSize();
         setLocation(d.width / 2 - getWidth() / 2, d.height / 2 - getHeight() / 2);

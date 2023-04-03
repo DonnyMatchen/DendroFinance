@@ -1,12 +1,12 @@
 package com.donny.dendrofinance.capsules.meta;
 
 import com.donny.dendrofinance.currency.LCurrency;
-import com.donny.dendrofinance.instance.Instance;
-import com.donny.dendrofinance.json.*;
-import com.donny.dendrofinance.types.LDate;
-import com.donny.dendrofinance.util.Aggregation;
-import com.donny.dendrofinance.util.Curation;
-import com.donny.dendrofinance.util.ExportableToJson;
+import com.donny.dendrofinance.instance.ProgramInstance;
+import com.donny.dendroroot.json.*;
+import com.donny.dendroroot.types.LDate;
+import com.donny.dendroroot.util.Aggregation;
+import com.donny.dendroroot.util.Curation;
+import com.donny.dendroroot.util.ExportableToJson;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -31,7 +31,7 @@ public class AssetMetadata implements ExportableToJson {
         EVENTS = new ArrayList<>();
     }
 
-    public AssetMetadata(long uuid, LDate date, JsonObject obj, Instance curInst) {
+    public AssetMetadata(long uuid, LDate date, JsonObject obj, ProgramInstance curInst) {
         this(
                 obj.containsKey(new String[]{"r", "ref", "root-ref"}) ? obj.getDecimal(new String[]{"r", "ref", "root-ref"}).decimal.longValue() : uuid,
                 obj.containsKey(new String[]{"t", "date", "timestamp"}) ? new LDate(obj.getDecimal(new String[]{"t", "date", "timestamp"}), curInst) : date,

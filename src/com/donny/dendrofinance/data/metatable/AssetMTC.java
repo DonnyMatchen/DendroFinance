@@ -1,9 +1,9 @@
 package com.donny.dendrofinance.data.metatable;
 
-import com.donny.dendrofinance.currency.LCurrency;
 import com.donny.dendrofinance.capsules.meta.AssetMetadata;
-import com.donny.dendrofinance.instance.Instance;
-import com.donny.dendrofinance.types.LDate;
+import com.donny.dendrofinance.currency.LCurrency;
+import com.donny.dendrofinance.instance.ProgramInstance;
+import com.donny.dendroroot.types.LDate;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -11,7 +11,7 @@ import java.util.HashMap;
 
 public class AssetMTC extends MetaTableCore {
 
-    public AssetMTC(Instance curInst) {
+    public AssetMTC(ProgramInstance curInst) {
         super(curInst);
     }
 

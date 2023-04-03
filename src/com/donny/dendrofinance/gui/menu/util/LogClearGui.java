@@ -1,22 +1,22 @@
 package com.donny.dendrofinance.gui.menu.util;
 
-import com.donny.dendrofinance.gui.MainGui;
-import com.donny.dendrofinance.gui.customswing.DendroFactory;
-import com.donny.dendrofinance.gui.customswing.RegisterFrame;
-import com.donny.dendrofinance.instance.Instance;
+import com.donny.dendrofinance.gui.ProgramMainGui;
+import com.donny.dendrofinance.gui.customswing.ProgramRegisterFrame;
+import com.donny.dendrofinance.instance.ProgramInstance;
+import com.donny.dendroroot.gui.customswing.DendroFactory;
 
 import javax.swing.*;
 import java.awt.*;
 import java.io.File;
 import java.util.ArrayList;
 
-public class LogClearGui extends RegisterFrame {
+public class LogClearGui extends ProgramRegisterFrame {
     private final JList<String> LIST;
     private final JTextArea VIEW;
 
     private final File LOGS;
 
-    public LogClearGui(MainGui caller, Instance curInst) {
+    public LogClearGui(ProgramMainGui caller, ProgramInstance curInst) {
         super(caller, "Log Clearing", curInst);
 
         LOGS = new File(CURRENT_INSTANCE.data.getPath() + File.separator + "Logs");

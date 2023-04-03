@@ -4,13 +4,14 @@ import com.donny.dendrofinance.account.Account;
 import com.donny.dendrofinance.account.BroadAccountType;
 import com.donny.dendrofinance.account.Exchange;
 import com.donny.dendrofinance.currency.LCurrency;
-import com.donny.dendrofinance.gui.MainGui;
-import com.donny.dendrofinance.gui.customswing.DendroFactory;
-import com.donny.dendrofinance.gui.customswing.ModalFrame;
-import com.donny.dendrofinance.gui.customswing.SearchBox;
-import com.donny.dendrofinance.gui.form.Validation;
-import com.donny.dendrofinance.gui.form.ValidationFailedException;
-import com.donny.dendrofinance.instance.Instance;
+import com.donny.dendrofinance.gui.BTCSearchBox;
+import com.donny.dendrofinance.gui.ProgramMainGui;
+import com.donny.dendrofinance.gui.customswing.ProgramModalFrame;
+import com.donny.dendrofinance.instance.ProgramInstance;
+import com.donny.dendroroot.gui.customswing.DendroFactory;
+import com.donny.dendroroot.gui.customswing.SearchBox;
+import com.donny.dendroroot.gui.form.Validation;
+import com.donny.dendroroot.gui.form.ValidationFailedException;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionListener;
@@ -19,20 +20,20 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Enumeration;
 
-public class SpecialTransactionEntryGui extends ModalFrame {
-    private final MainGui MAIN;
+public class SpecialTransactionEntryGui extends ProgramModalFrame {
+    private final ProgramMainGui MAIN;
     private final JPanel FORM;
     private final ButtonGroup GROUP;
     private final JLabel A, B, C, D, E, F;
     private final JTextField DATE, COST, F_AMOUNT, T_AMOUNT, FEE_AMOUNT, UNIT, FEE_UNIT, AUTOMATIC;
     private final JScrollPane DESCRIPTION;
     private final JTextArea DESCRIPTION_TEXT;
-    private final SearchBox<Exchange> F_EXCHANGE, T_EXCHANGE;
-    private final SearchBox<LCurrency> F_CURRENCY, T_CURRENCY, FEE_CURRENCY;
-    private final SearchBox<Account> ACCOUNTS;
+    private final BTCSearchBox<Exchange> F_EXCHANGE, T_EXCHANGE;
+    private final BTCSearchBox<LCurrency> F_CURRENCY, T_CURRENCY, FEE_CURRENCY;
+    private final BTCSearchBox<Account> ACCOUNTS;
     private final JButton INSERT;
 
-    public SpecialTransactionEntryGui(MainGui caller, Instance curInst) {
+    public SpecialTransactionEntryGui(ProgramMainGui caller, ProgramInstance curInst) {
         super(caller, "New Special Transaction Entry", curInst);
         MAIN = caller;
         //draw GUI
@@ -83,12 +84,12 @@ public class SpecialTransactionEntryGui extends ModalFrame {
             AUTOMATIC = new JTextField();
             AUTOMATIC.setBackground(DendroFactory.DISABLED);
             AUTOMATIC.setEditable(false);
-            F_EXCHANGE = new SearchBox<>("", new ArrayList<>(), CURRENT_INSTANCE);
-            T_EXCHANGE = new SearchBox<>("", new ArrayList<>(), CURRENT_INSTANCE);
-            F_CURRENCY = new SearchBox<>("", new ArrayList<>(), CURRENT_INSTANCE);
-            T_CURRENCY = new SearchBox<>("", new ArrayList<>(), CURRENT_INSTANCE);
-            FEE_CURRENCY = new SearchBox<>("", new ArrayList<>(), CURRENT_INSTANCE);
-            ACCOUNTS = new SearchBox<>("", new ArrayList<>(), CURRENT_INSTANCE);
+            F_EXCHANGE = new BTCSearchBox<>("", new ArrayList<>(), CURRENT_INSTANCE);
+            T_EXCHANGE = new BTCSearchBox<>("", new ArrayList<>(), CURRENT_INSTANCE);
+            F_CURRENCY = new BTCSearchBox<>("", new ArrayList<>(), CURRENT_INSTANCE);
+            T_CURRENCY = new BTCSearchBox<>("", new ArrayList<>(), CURRENT_INSTANCE);
+            FEE_CURRENCY = new BTCSearchBox<>("", new ArrayList<>(), CURRENT_INSTANCE);
+            ACCOUNTS = new BTCSearchBox<>("", new ArrayList<>(), CURRENT_INSTANCE);
 
             //group layout
             {

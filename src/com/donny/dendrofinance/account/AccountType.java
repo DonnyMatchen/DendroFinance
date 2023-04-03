@@ -1,9 +1,9 @@
 package com.donny.dendrofinance.account;
 
-import com.donny.dendrofinance.json.JsonFormattingException;
-import com.donny.dendrofinance.json.JsonObject;
-import com.donny.dendrofinance.json.JsonString;
-import com.donny.dendrofinance.util.UniqueName;
+import com.donny.dendroroot.json.JsonFormattingException;
+import com.donny.dendroroot.json.JsonObject;
+import com.donny.dendroroot.json.JsonString;
+import com.donny.dendroroot.util.UniqueName;
 
 public class AccountType implements UniqueName {
     public final String NAME;

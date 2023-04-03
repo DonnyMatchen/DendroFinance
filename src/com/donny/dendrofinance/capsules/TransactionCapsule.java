@@ -4,27 +4,30 @@ import com.donny.dendrofinance.account.AWColumn;
 import com.donny.dendrofinance.account.Account;
 import com.donny.dendrofinance.account.AccountWrapper;
 import com.donny.dendrofinance.account.BroadAccountType;
-import com.donny.dendrofinance.currency.LCurrency;
 import com.donny.dendrofinance.capsules.meta.*;
+import com.donny.dendrofinance.currency.LCurrency;
 import com.donny.dendrofinance.fileio.ImportHandler;
-import com.donny.dendrofinance.instance.Instance;
-import com.donny.dendrofinance.json.*;
+import com.donny.dendrofinance.instance.ProgramInstance;
 import com.donny.dendrofinance.types.LAccountSet;
-import com.donny.dendrofinance.types.LDate;
+import com.donny.dendroroot.data.Capsule;
+import com.donny.dendroroot.json.*;
+import com.donny.dendroroot.types.LDate;
 
 import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
 public class TransactionCapsule extends Capsule implements Comparable<TransactionCapsule> {
+    private final ProgramInstance CURRENT_INSTANCE;
     private final long UUID;
     private LDate date;
     private String entity, items, description;
     private LAccountSet accounts;
     private JsonObject metadata;
 
-    public TransactionCapsule(Instance curInst) {
+    public TransactionCapsule(ProgramInstance curInst) {
         super(curInst);
+        CURRENT_INSTANCE = curInst;
         UUID = curInst.UNIQUE_HANDLER.generateUUID();
         date = LDate.now(curInst);
         entity = "UNKNOWN";
@@ -35,8 +38,9 @@ public class TransactionCapsule extends Capsule implements Comparable<Transactio
     }
 
     public TransactionCapsule(long uuid, LDate date, String ent, String itm, String desc,
-                              LAccountSet accounts, JsonObject metadata, Instance curInst) {
+                              LAccountSet accounts, JsonObject metadata, ProgramInstance curInst) {
         super(curInst);
+        CURRENT_INSTANCE = curInst;
         UUID = uuid;
         this.date = date;
         entity = ent;
@@ -47,8 +51,9 @@ public class TransactionCapsule extends Capsule implements Comparable<Transactio
     }
 
     public TransactionCapsule(LDate date, String ent, String itm, String desc,
-                              LAccountSet accounts, JsonObject metadata, Instance curInst) {
+                              LAccountSet accounts, JsonObject metadata, ProgramInstance curInst) {
         super(curInst);
+        CURRENT_INSTANCE = curInst;
         UUID = CURRENT_INSTANCE.UNIQUE_HANDLER.generateUUID();
         this.date = date;
         entity = ent;
@@ -58,8 +63,9 @@ public class TransactionCapsule extends Capsule implements Comparable<Transactio
         this.metadata = metadata;
     }
 
-    public TransactionCapsule(JsonObject obj, ImportHandler.ImportMode mode, Instance curInst) throws SQLException {
+    public TransactionCapsule(JsonObject obj, ImportHandler.ImportMode mode, ProgramInstance curInst) throws SQLException {
         super(curInst);
+        CURRENT_INSTANCE = curInst;
         if (obj.containsKey(new String[]{"u", "_uuid", "uuid"})) {
             long candidate = obj.getDecimal(new String[]{"_uuid", "uuid", "u"}).decimal.longValue();
             boolean safe = CURRENT_INSTANCE.UNIQUE_HANDLER.checkUuid(candidate);
@@ -84,8 +90,9 @@ public class TransactionCapsule extends Capsule implements Comparable<Transactio
         metadata = obj.getObject(new String[]{"m", "meta-data", "meta"});
     }
 
-    public TransactionCapsule(JsonObject obj, Instance curInst) {
+    public TransactionCapsule(JsonObject obj, ProgramInstance curInst) {
         super(curInst);
+        CURRENT_INSTANCE = curInst;
         UUID = obj.containsKey(new String[]{"u", "_uuid", "uuid"}) ?
                 obj.getDecimal(new String[]{"u", "_uuid", "uuid"}).decimal.longValue() :
                 curInst.UNIQUE_HANDLER.generateUUID();

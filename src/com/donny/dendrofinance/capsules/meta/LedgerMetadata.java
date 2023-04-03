@@ -1,12 +1,12 @@
 package com.donny.dendrofinance.capsules.meta;
 
 import com.donny.dendrofinance.currency.LCurrency;
-import com.donny.dendrofinance.instance.Instance;
-import com.donny.dendrofinance.json.JsonDecimal;
-import com.donny.dendrofinance.json.JsonFormattingException;
-import com.donny.dendrofinance.json.JsonObject;
-import com.donny.dendrofinance.json.JsonString;
-import com.donny.dendrofinance.types.LDate;
+import com.donny.dendrofinance.instance.ProgramInstance;
+import com.donny.dendroroot.json.JsonDecimal;
+import com.donny.dendroroot.json.JsonFormattingException;
+import com.donny.dendroroot.json.JsonObject;
+import com.donny.dendroroot.json.JsonString;
+import com.donny.dendroroot.types.LDate;
 
 import java.math.BigDecimal;
 
@@ -18,9 +18,9 @@ public class LedgerMetadata {
     // TO_AMNT is always positive
     // MAIN_VALUE is always positive
     public final BigDecimal FROM_AMNT, TO_AMNT, MAIN_VALUE;
-    private final Instance CURRENT_INSTANCE;
+    private final ProgramInstance CURRENT_INSTANCE;
 
-    public LedgerMetadata(long uuid, LDate date, LCurrency from, LCurrency to, BigDecimal cost, BigDecimal amount, BigDecimal mainValue, Instance curInst) {
+    public LedgerMetadata(long uuid, LDate date, LCurrency from, LCurrency to, BigDecimal cost, BigDecimal amount, BigDecimal mainValue, ProgramInstance curInst) {
         UUID = uuid;
         DATE = date;
         FROM = from;
@@ -31,7 +31,7 @@ public class LedgerMetadata {
         CURRENT_INSTANCE = curInst;
     }
 
-    public LedgerMetadata(long uuid, LDate date, JsonObject obj, Instance curInst) {
+    public LedgerMetadata(long uuid, LDate date, JsonObject obj, ProgramInstance curInst) {
         this(uuid,
                 obj.containsKey("date") ? new LDate(obj.getDecimal("date"), curInst) : date,
                 curInst.getLCurrency(obj.getString("from-cur").getString()),

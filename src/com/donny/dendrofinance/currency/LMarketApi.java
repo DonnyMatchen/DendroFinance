@@ -1,10 +1,10 @@
 package com.donny.dendrofinance.currency;
 
-import com.donny.dendrofinance.fileio.ApiLimitReachedException;
-import com.donny.dendrofinance.instance.Instance;
-import com.donny.dendrofinance.json.*;
-import com.donny.dendrofinance.types.LDate;
-import com.donny.dendrofinance.util.UniqueName;
+import com.donny.dendrofinance.instance.ProgramInstance;
+import com.donny.dendroroot.fileio.ApiLimitReachedException;
+import com.donny.dendroroot.json.*;
+import com.donny.dendroroot.types.LDate;
+import com.donny.dendroroot.util.UniqueName;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -49,13 +49,13 @@ public class LMarketApi implements UniqueName, Serializable {
     public final int ATTEMPT_LIMIT, DURATION, MULTI_LIMIT, MULTI_HIST_LIMIT;
     public final boolean MULTIPLE;
     private int attempts = 0;
-    private final Instance CURRENT_INSTANCE;
+    private final ProgramInstance CURRENT_INSTANCE;
     private final ArrayList<String> BASE_PARSE, BASE_HIST_PARSE, MULTI_PARSE, MULTI_HIST_PARSE;
     private final ArrayList<LCurrency> NATS, EXCLUDED, INCLUDED;
 
     public LMarketApi(String name, String types, String baseUrl, String baseUrlHist, String multiUrl,
                       String multiUrlHist, String sep, String apiKey, int mLimit, int mhLimit, int attemptLimit,
-                      int duration, boolean multiple, Instance curInst) {
+                      int duration, boolean multiple, ProgramInstance curInst) {
         CURRENT_INSTANCE = curInst;
         NAME = name;
         TYPES = types;
@@ -80,7 +80,7 @@ public class LMarketApi implements UniqueName, Serializable {
     }
 
     public LMarketApi(String name, String types, String baseUrl, String baseUrlHist, String apiKey, int attemptLimit,
-                      int duration, Instance curInst) {
+                      int duration, ProgramInstance curInst) {
         this(
                 name,
                 types,
@@ -99,7 +99,7 @@ public class LMarketApi implements UniqueName, Serializable {
         );
     }
 
-    public LMarketApi(JsonObject object, Instance curInst) {
+    public LMarketApi(JsonObject object, ProgramInstance curInst) {
         this(
                 object.getString("name").getString(),
                 object.getString("types").getString(),

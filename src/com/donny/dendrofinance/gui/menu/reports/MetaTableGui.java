@@ -1,13 +1,13 @@
 package com.donny.dendrofinance.gui.menu.reports;
 
 import com.donny.dendrofinance.data.metatable.MetaTableCore;
-import com.donny.dendrofinance.gui.MainGui;
-import com.donny.dendrofinance.gui.customswing.DendroFactory;
-import com.donny.dendrofinance.gui.customswing.RegisterFrame;
-import com.donny.dendrofinance.gui.form.Validation;
-import com.donny.dendrofinance.gui.form.ValidationFailedException;
-import com.donny.dendrofinance.instance.Instance;
-import com.donny.dendrofinance.types.LDate;
+import com.donny.dendrofinance.gui.ProgramMainGui;
+import com.donny.dendrofinance.gui.customswing.ProgramRegisterFrame;
+import com.donny.dendrofinance.instance.ProgramInstance;
+import com.donny.dendroroot.gui.customswing.DendroFactory;
+import com.donny.dendroroot.gui.form.Validation;
+import com.donny.dendroroot.gui.form.ValidationFailedException;
+import com.donny.dendroroot.types.LDate;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -17,7 +17,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-public class MetaTableGui extends RegisterFrame {
+public class MetaTableGui extends ProgramRegisterFrame {
     private final MetaTableCore CORE;
 
     private final JTextField DATE, SEARCH;
@@ -25,7 +25,7 @@ public class MetaTableGui extends RegisterFrame {
     private final DefaultTableModel TABLE_ACCESS;
     private final JTextArea INFO;
 
-    public MetaTableGui(MainGui caller, MetaTableCore core, Instance curInst) {
+    public MetaTableGui(ProgramMainGui caller, MetaTableCore core, ProgramInstance curInst) {
         super(caller, core.getId(true), curInst);
         CORE = core;
 

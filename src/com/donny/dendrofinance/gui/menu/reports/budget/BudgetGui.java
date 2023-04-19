@@ -9,12 +9,12 @@ import com.donny.dendrofinance.capsules.TransactionCapsule;
 import com.donny.dendrofinance.gui.ProgramMainGui;
 import com.donny.dendrofinance.gui.customswing.ProgramRegisterFrame;
 import com.donny.dendrofinance.instance.ProgramInstance;
+import com.donny.dendroroot.collections.DecimalAggregation;
 import com.donny.dendroroot.gui.customswing.DendroFactory;
 import com.donny.dendroroot.gui.form.Cleaning;
 import com.donny.dendroroot.instance.Frequency;
 import com.donny.dendroroot.json.JsonDecimal;
 import com.donny.dendroroot.types.LDate;
-import com.donny.dendroroot.collections.DecimalAggregation;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;

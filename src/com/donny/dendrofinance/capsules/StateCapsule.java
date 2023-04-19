@@ -5,13 +5,13 @@ import com.donny.dendrofinance.capsules.meta.AssetMetadata;
 import com.donny.dendrofinance.capsules.meta.LoanMetadata;
 import com.donny.dendrofinance.capsules.totals.Position;
 import com.donny.dendrofinance.instance.ProgramInstance;
+import com.donny.dendroroot.collections.DecimalAggregation;
 import com.donny.dendroroot.data.Capsule;
 import com.donny.dendroroot.json.JsonArray;
 import com.donny.dendroroot.json.JsonDecimal;
 import com.donny.dendroroot.json.JsonFormattingException;
 import com.donny.dendroroot.json.JsonObject;
 import com.donny.dendroroot.types.LDate;
-import com.donny.dendroroot.collections.DecimalAggregation;
 
 import java.util.ArrayList;
 

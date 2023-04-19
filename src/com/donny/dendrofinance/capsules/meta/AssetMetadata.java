@@ -2,10 +2,10 @@ package com.donny.dendrofinance.capsules.meta;
 
 import com.donny.dendrofinance.currency.LCurrency;
 import com.donny.dendrofinance.instance.ProgramInstance;
+import com.donny.dendroroot.collections.Curation;
+import com.donny.dendroroot.collections.DecimalAggregation;
 import com.donny.dendroroot.json.*;
 import com.donny.dendroroot.types.LDate;
-import com.donny.dendroroot.collections.DecimalAggregation;
-import com.donny.dendroroot.collections.Curation;
 import com.donny.dendroroot.util.ExportableToJson;
 
 import java.math.BigDecimal;

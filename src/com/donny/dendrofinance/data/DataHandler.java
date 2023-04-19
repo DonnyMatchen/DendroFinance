@@ -16,9 +16,9 @@ import com.donny.dendrofinance.data.database.*;
 import com.donny.dendrofinance.fileio.ImportHandler;
 import com.donny.dendrofinance.instance.ProgramInstance;
 import com.donny.dendrofinance.types.LAccountSet;
+import com.donny.dendroroot.collections.DecimalAggregation;
 import com.donny.dendroroot.json.JsonObject;
 import com.donny.dendroroot.types.LDate;
-import com.donny.dendroroot.collections.DecimalAggregation;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;

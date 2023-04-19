@@ -6,13 +6,13 @@ import com.donny.dendrofinance.account.BroadAccountType;
 import com.donny.dendrofinance.gui.ProgramMainGui;
 import com.donny.dendrofinance.gui.customswing.ProgramRegisterFrame;
 import com.donny.dendrofinance.instance.ProgramInstance;
+import com.donny.dendroroot.collections.DecimalAggregation;
 import com.donny.dendroroot.gui.customswing.DateRange;
 import com.donny.dendroroot.gui.customswing.DendroFactory;
 import com.donny.dendroroot.gui.form.Cleaning;
 import com.donny.dendroroot.gui.form.Validation;
 import com.donny.dendroroot.gui.form.ValidationFailedException;
 import com.donny.dendroroot.types.LDate;
-import com.donny.dendroroot.collections.DecimalAggregation;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;

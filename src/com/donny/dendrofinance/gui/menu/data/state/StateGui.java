@@ -9,10 +9,10 @@ import com.donny.dendrofinance.currency.LCurrency;
 import com.donny.dendrofinance.gui.ProgramMainGui;
 import com.donny.dendrofinance.gui.customswing.ProgramRegisterFrame;
 import com.donny.dendrofinance.instance.ProgramInstance;
+import com.donny.dendroroot.collections.DecimalAggregation;
 import com.donny.dendroroot.gui.customswing.DateRange;
 import com.donny.dendroroot.gui.customswing.DendroFactory;
 import com.donny.dendroroot.types.LDate;
-import com.donny.dendroroot.collections.DecimalAggregation;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;

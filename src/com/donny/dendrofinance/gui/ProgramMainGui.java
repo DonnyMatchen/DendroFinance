@@ -33,13 +33,13 @@ import com.donny.dendrofinance.gui.menu.util.acc.NetIncomeGui;
 import com.donny.dendrofinance.gui.menu.util.acc.TaxZeroGui;
 import com.donny.dendrofinance.gui.menu.util.taxgui.TaxGui;
 import com.donny.dendrofinance.instance.ProgramInstance;
+import com.donny.dendroroot.collections.Curation;
 import com.donny.dendroroot.gui.ClosePrompt;
 import com.donny.dendroroot.gui.MainGui;
 import com.donny.dendroroot.gui.customswing.AlertGui;
 import com.donny.dendroroot.gui.customswing.DateRange;
 import com.donny.dendroroot.gui.customswing.DendroFactory;
 import com.donny.dendroroot.types.LDate;
-import com.donny.dendroroot.collections.Curation;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;

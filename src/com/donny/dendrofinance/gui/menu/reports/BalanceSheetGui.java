@@ -12,7 +12,7 @@ import com.donny.dendroroot.gui.form.Cleaning;
 import com.donny.dendroroot.gui.form.Validation;
 import com.donny.dendroroot.gui.form.ValidationFailedException;
 import com.donny.dendroroot.types.LDate;
-import com.donny.dendroroot.util.Aggregation;
+import com.donny.dendroroot.collections.DecimalAggregation;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -207,8 +207,8 @@ public class BalanceSheetGui extends ProgramRegisterFrame {
             if (range != null) {
                 HashMap<Account, BigDecimal> accBegin = CURRENT_INSTANCE.DATA_HANDLER.accountsAsOf(range[0]);
                 HashMap<Account, BigDecimal> accEnd = CURRENT_INSTANCE.DATA_HANDLER.accountsAsOf(range[1]);
-                Aggregation<AccountType> accTyp = new Aggregation<>();
-                Aggregation<BroadAccountType> typ = new Aggregation<>();
+                DecimalAggregation<AccountType> accTyp = new DecimalAggregation<>();
+                DecimalAggregation<BroadAccountType> typ = new DecimalAggregation<>();
                 for (Account a : CURRENT_INSTANCE.ACCOUNTS) {
                     if (accBegin.containsKey(a) || accEnd.containsKey(a)) {
                         BigDecimal compare = BigDecimal.ONE;
@@ -304,8 +304,8 @@ public class BalanceSheetGui extends ProgramRegisterFrame {
             try {
                 LDate date = LDate.endDay(Validation.validateDate(DATE, CURRENT_INSTANCE));
                 HashMap<Account, BigDecimal> acc = CURRENT_INSTANCE.DATA_HANDLER.accountsAsOf(date);
-                Aggregation<AccountType> accTyp = new Aggregation<>();
-                Aggregation<BroadAccountType> typ = new Aggregation<>();
+                DecimalAggregation<AccountType> accTyp = new DecimalAggregation<>();
+                DecimalAggregation<BroadAccountType> typ = new DecimalAggregation<>();
                 for (Account a : CURRENT_INSTANCE.ACCOUNTS) {
                     if (acc.containsKey(a)) {
                         BigDecimal compare = BigDecimal.ONE;

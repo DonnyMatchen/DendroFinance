@@ -12,7 +12,7 @@ import com.donny.dendrofinance.instance.ProgramInstance;
 import com.donny.dendroroot.gui.customswing.DateRange;
 import com.donny.dendroroot.gui.customswing.DendroFactory;
 import com.donny.dendroroot.types.LDate;
-import com.donny.dendroroot.util.Aggregation;
+import com.donny.dendroroot.collections.DecimalAggregation;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -242,7 +242,7 @@ public class StateGui extends ProgramRegisterFrame {
         LDate date = (LDate) DATE.getSelectedItem();
         if (date != null) {
             StateCapsule state = CURRENT_INSTANCE.DATA_HANDLER.STATES.get(date.getTime());
-            Aggregation<Account> acc = state.getAccounts();
+            DecimalAggregation<Account> acc = state.getAccounts();
             for (Account a : CURRENT_INSTANCE.ACCOUNTS) {
                 if (acc.containsKey(a)) {
                     ACCOUNTS.addRow(new String[]{

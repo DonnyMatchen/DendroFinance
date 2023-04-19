@@ -4,8 +4,8 @@ import com.donny.dendrofinance.currency.LCurrency;
 import com.donny.dendrofinance.instance.ProgramInstance;
 import com.donny.dendroroot.json.*;
 import com.donny.dendroroot.types.LDate;
-import com.donny.dendroroot.util.Aggregation;
-import com.donny.dendroroot.util.Curation;
+import com.donny.dendroroot.collections.DecimalAggregation;
+import com.donny.dendroroot.collections.Curation;
 import com.donny.dendroroot.util.ExportableToJson;
 
 import java.math.BigDecimal;
@@ -66,7 +66,7 @@ public class AssetMetadata implements ExportableToJson {
     }
 
     public HashMap<LCurrency, BigDecimal> getValues() {
-        Aggregation<LCurrency> out = new Aggregation<>();
+        DecimalAggregation<LCurrency> out = new DecimalAggregation<>();
         out.add(CURRENCY, VAL);
         for (AssetChangeMetadata meta : EVENTS) {
             out.add(meta.CURRENCY, meta.CHANGE);
@@ -75,7 +75,7 @@ public class AssetMetadata implements ExportableToJson {
     }
 
     public HashMap<LCurrency, BigDecimal> getCount() {
-        Aggregation<LCurrency> out = new Aggregation<>();
+        DecimalAggregation<LCurrency> out = new DecimalAggregation<>();
         out.add(CURRENCY, COUNT);
         for (AssetChangeMetadata meta : EVENTS) {
             out.add(meta.CURRENCY, meta.COUNT);

@@ -11,14 +11,14 @@ import com.donny.dendroroot.json.JsonDecimal;
 import com.donny.dendroroot.json.JsonFormattingException;
 import com.donny.dendroroot.json.JsonObject;
 import com.donny.dendroroot.types.LDate;
-import com.donny.dendroroot.util.Aggregation;
+import com.donny.dendroroot.collections.DecimalAggregation;
 
 import java.util.ArrayList;
 
 public class StateCapsule extends Capsule {
     private ProgramInstance CURRENT_INSTANCE;
     private final LDate DATE;
-    private final Aggregation<Account> ACCOUNTS;
+    private final DecimalAggregation<Account> ACCOUNTS;
     private final ArrayList<Position> POSITIONS;
     private final ArrayList<AssetMetadata> ASSETS;
     private final ArrayList<LoanMetadata> LOANS;
@@ -36,7 +36,7 @@ public class StateCapsule extends Capsule {
     public StateCapsule(LDate date, JsonObject acc, JsonArray pos, JsonObject meta, ProgramInstance curInst) {
         super(curInst);
         DATE = date;
-        ACCOUNTS = new Aggregation<>();
+        ACCOUNTS = new DecimalAggregation<>();
         for (String key : acc.getFields()) {
             ACCOUNTS.put(CURRENT_INSTANCE.ACCOUNTS.getElement(key), acc.getDecimal(key).decimal);
         }
@@ -57,7 +57,7 @@ public class StateCapsule extends Capsule {
     public StateCapsule(JsonObject obj, ProgramInstance curInst) {
         super(curInst);
         DATE = new LDate(obj.getDecimal(new String[]{"t", "timestamp", "date"}).decimal.longValue(), curInst);
-        ACCOUNTS = new Aggregation<>();
+        ACCOUNTS = new DecimalAggregation<>();
         JsonObject acc = obj.getObject(new String[]{"a", "acc", "accounts"});
         for (String key : acc.getFields()) {
             ACCOUNTS.put(CURRENT_INSTANCE.ACCOUNTS.getElement(key), acc.getDecimal(key).decimal);
@@ -81,7 +81,7 @@ public class StateCapsule extends Capsule {
         return DATE;
     }
 
-    public Aggregation<Account> getAccounts() {
+    public DecimalAggregation<Account> getAccounts() {
         return ACCOUNTS;
     }
 

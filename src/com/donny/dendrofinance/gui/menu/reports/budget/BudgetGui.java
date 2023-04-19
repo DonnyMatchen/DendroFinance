@@ -14,7 +14,7 @@ import com.donny.dendroroot.gui.form.Cleaning;
 import com.donny.dendroroot.instance.Frequency;
 import com.donny.dendroroot.json.JsonDecimal;
 import com.donny.dendroroot.types.LDate;
-import com.donny.dendroroot.util.Aggregation;
+import com.donny.dendroroot.collections.DecimalAggregation;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -244,7 +244,7 @@ public class BudgetGui extends ProgramRegisterFrame {
             param = LDate.getMonth(period);
         }
         if (COLLAPSED.isSelected()) {
-            Aggregation<String> budgets = new Aggregation<>();
+            DecimalAggregation<String> budgets = new DecimalAggregation<>();
             for (TransactionCapsule capsule : CURRENT_INSTANCE.DATA_HANDLER.TRANSACTIONS.getRange(
                     LDate.getRange(Integer.parseInt((String) YEAR.getSelectedItem()),
                             param, freq, CURRENT_INSTANCE))) {
@@ -319,7 +319,7 @@ public class BudgetGui extends ProgramRegisterFrame {
                 }
             }
         } else if (EXPANDED.isSelected()) {
-            Aggregation<Account> accRevExp = new Aggregation<>();
+            DecimalAggregation<Account> accRevExp = new DecimalAggregation<>();
             for (TransactionCapsule capsule : CURRENT_INSTANCE.DATA_HANDLER.TRANSACTIONS.getRange(
                     LDate.getRange(Integer.parseInt((String) YEAR.getSelectedItem()),
                             param, freq, CURRENT_INSTANCE))) {

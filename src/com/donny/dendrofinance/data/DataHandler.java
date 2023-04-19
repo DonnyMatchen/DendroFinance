@@ -18,7 +18,7 @@ import com.donny.dendrofinance.instance.ProgramInstance;
 import com.donny.dendrofinance.types.LAccountSet;
 import com.donny.dendroroot.json.JsonObject;
 import com.donny.dendroroot.types.LDate;
-import com.donny.dendroroot.util.Aggregation;
+import com.donny.dendroroot.collections.DecimalAggregation;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -143,7 +143,7 @@ public class DataHandler {
         }
     }
 
-    //meta aggregation
+    //meta DecimalAggregation
     public ArrayList<CheckMetadata> getChecks(LDate start, LDate end) {
         ArrayList<CheckMetadata> meta = new ArrayList<>();
         for (TransactionCapsule capsule : TRANSACTIONS.getRange(start, end)) {
@@ -186,9 +186,9 @@ public class DataHandler {
     }
 
     //transactions + states
-    public Aggregation<Account> accountsAsOf(LDate date) {
+    public DecimalAggregation<Account> accountsAsOf(LDate date) {
         StateCapsule baseline = STATES.getBefore(date.getTime());
-        Aggregation<Account> accounts = new Aggregation<>();
+        DecimalAggregation<Account> accounts = new DecimalAggregation<>();
         if (baseline != null) {
             JsonObject acc = baseline.exportAccounts();
             for (String key : acc.getFields()) {
@@ -220,7 +220,7 @@ public class DataHandler {
     public HashMap<LCurrency, BigDecimal> pricesAsOf(LCurrency cur, LDate date) {
         CURRENT_INSTANCE.LOG_HANDLER.trace(getClass(), "Price-get started");
         HashMap<Account, BigDecimal> acc = accountsAsOf(LDate.endDay(date));
-        Aggregation<LCurrency> assets = new Aggregation<>();
+        DecimalAggregation<LCurrency> assets = new DecimalAggregation<>();
         ArrayList<LCurrency> significant = new ArrayList<>();
         for (Account a : acc.keySet()) {
             assets.add(a.getCurrency(), acc.get(a));
@@ -1008,8 +1008,8 @@ public class DataHandler {
     public void checkLedgers(LDate start, LDate end) {
         for (TransactionCapsule capsule : TRANSACTIONS.getRange(start, end)) {
             if (capsule.hasMeta("ledger")) {
-                Aggregation<String> curAg = new Aggregation<>();
-                Aggregation<String> ledgAg = new Aggregation<>();
+                DecimalAggregation<String> curAg = new DecimalAggregation<>();
+                DecimalAggregation<String> ledgAg = new DecimalAggregation<>();
                 for (AccountWrapper wrapper : capsule.getAccounts()) {
                     if (wrapper.COLUMN == AWColumn.TRACKER) {
                         String c = wrapper.ACCOUNT.getCurrency().toUnifiedString();
@@ -1046,7 +1046,7 @@ public class DataHandler {
                 Account.clStockName, Account.clInventoryName, Account.clFiatName, Account.clCryptoName,
                 Account.clltStockName, Account.clltInventoryName, Account.clltFiatName, Account.clltCryptoName
         ));
-        Aggregation<Long> map = new Aggregation<>();
+        DecimalAggregation<Long> map = new DecimalAggregation<>();
         for (OrderBookEntry entry : getOrderBook(start, end)) {
             map.add(entry.END_REF, entry.profit());
         }

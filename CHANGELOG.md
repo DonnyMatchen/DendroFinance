@@ -5,6 +5,7 @@
 
 ## v0.11.4
 * moved generic program functions to library
+* made code a little more readable
 
 ## v0.11.3
 * minor optimizations

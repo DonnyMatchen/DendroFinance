@@ -172,10 +172,10 @@ public class ProgramMainGui extends MainGui {
                 logout.addActionListener(event -> new ClosePrompt(this, false).setVisible(true));
 
                 file.add(save);
-                file.add(new JSeparator());
+                file.addSeparator();
                 file.add(imp);
                 file.add(exp);
-                file.add(new JSeparator());
+                file.addSeparator();
                 file.add(logout);
 
                 //data
@@ -212,7 +212,7 @@ public class ProgramMainGui extends MainGui {
                 data.add(exchLst);
                 data.add(accLst);
                 data.add(mApiLst);
-                data.add(new JSeparator());
+                data.addSeparator();
                 data.add(accountMeta);
                 data.add(budgetTyp);
                 data.add(template);
@@ -286,13 +286,13 @@ public class ProgramMainGui extends MainGui {
                 loans.addActionListener(event -> new MetaTableGui(this, new LoanMTC(CURRENT_INSTANCE), CURRENT_INSTANCE).setVisible(true));
 
                 rep.add(checks);
-                rep.add(new JSeparator());
+                rep.addSeparator();
                 rep.add(bal);
                 rep.add(dif);
                 rep.add(acc);
-                rep.add(new JSeparator());
+                rep.addSeparator();
                 rep.add(budg);
-                rep.add(new JSeparator());
+                rep.addSeparator();
                 rep.add(asset);
                 rep.add(loans);
 
@@ -335,7 +335,7 @@ public class ProgramMainGui extends MainGui {
                 util.add(repl);
                 util.add(conv);
                 util.add(logs);
-                util.add(new JSeparator());
+                util.addSeparator();
                 util.add(taxes);
                 util.add(appDep);
                 util.add(netInc);

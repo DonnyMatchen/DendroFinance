@@ -16,7 +16,7 @@ import com.donny.dendroroot.types.LDate;
 import java.util.ArrayList;
 
 public class StateCapsule extends Capsule {
-    private ProgramInstance CURRENT_INSTANCE;
+    private final ProgramInstance CURRENT_INSTANCE;
     private final LDate DATE;
     private final DecimalAggregation<Account> ACCOUNTS;
     private final ArrayList<Position> POSITIONS;
@@ -35,6 +35,7 @@ public class StateCapsule extends Capsule {
 
     public StateCapsule(LDate date, JsonObject acc, JsonArray pos, JsonObject meta, ProgramInstance curInst) {
         super(curInst);
+        CURRENT_INSTANCE = curInst;
         DATE = date;
         ACCOUNTS = new DecimalAggregation<>();
         for (String key : acc.getFields()) {
@@ -56,6 +57,7 @@ public class StateCapsule extends Capsule {
 
     public StateCapsule(JsonObject obj, ProgramInstance curInst) {
         super(curInst);
+        CURRENT_INSTANCE = curInst;
         DATE = new LDate(obj.getDecimal(new String[]{"t", "timestamp", "date"}).decimal.longValue(), curInst);
         ACCOUNTS = new DecimalAggregation<>();
         JsonObject acc = obj.getObject(new String[]{"a", "acc", "accounts"});

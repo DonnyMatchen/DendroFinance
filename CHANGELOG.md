@@ -3,6 +3,10 @@
 * cash flow
 * statistics gui replacement
 
+## v0.11.5
+* added character limits matching database field sizes
+* the date on a transaction can now be updated
+
 ## v0.11.4
 * moved generic program functions to library
 * made code a little more readable

@@ -59,25 +59,39 @@ public class TransactionHandler extends TableHandler<Long, TransactionCapsule> {
                     }
                     case KEEP -> uuid = CURRENT_INSTANCE.UNIQUE_HANDLER.generateUUID();
                     case OVERWRITE -> {
-                        try {
-                            Statement insert = CURRENT_INSTANCE.DATA_HANDLER.DATABASE.con.createStatement();
-                            insert.execute("""
-                                    UPDATE TRANSACTIONS
-                                    SET dtm = %s, ent = '%s', itm = '%s', des = '%s', acc = '%s', meta = '%s'
-                                    WHERE uuid = %s
-                                    """.formatted(
-                                    dtm,
-                                    SqlEscape.eat(capsule.getEntity()),
-                                    SqlEscape.eat(capsule.getItems()),
-                                    SqlEscape.eat(capsule.getDescription()),
-                                    SqlEscape.eat(capsule.getAccounts().toString()),
-                                    SqlEscape.eat(capsule.getMeta().toString()),
-                                    uuid
-                            ));
+                        TransactionCapsule old = get(uuid);
+                        if (old.getDate().getTime() == dtm) {
+                            try {
+                                Statement insert = CURRENT_INSTANCE.DATA_HANDLER.DATABASE.con.createStatement();
+                                insert.execute("""
+                                        UPDATE TRANSACTIONS
+                                        SET ent = '%s', itm = '%s', des = '%s', acc = '%s', meta = '%s'
+                                        WHERE uuid = %s
+                                        """.formatted(
+                                        SqlEscape.feed(capsule.getEntity()),
+                                        SqlEscape.feed(capsule.getItems()),
+                                        SqlEscape.feed(capsule.getDescription()),
+                                        SqlEscape.feed(capsule.getAccounts().toString()),
+                                        SqlEscape.feed(capsule.getMeta().toString()),
+                                        uuid
+                                ));
+                            } catch (SQLException e) {
+                                CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Failed to update transaction:\n" + capsule.toFlatString());
+                                return false;
+                            }
                             return true;
-                        } catch (SQLException e) {
-                            CURRENT_INSTANCE.LOG_HANDLER.error(getClass(), "Failed to update transaction:\n" + capsule.toFlatString());
-                            return false;
+                        } else {
+                            int counter = 0;
+                            boolean deleted = false;
+                            while (counter < 10 && !deleted) {
+                                if (delete(uuid)) {
+                                    deleted = true;
+                                }
+                                counter++;
+                            }
+                            if (!deleted) {
+                                return false;
+                            }
                         }
                     }
                 }

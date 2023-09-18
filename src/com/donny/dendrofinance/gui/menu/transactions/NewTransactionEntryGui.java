@@ -8,6 +8,7 @@ import com.donny.dendrofinance.fileio.ImportHandler;
 import com.donny.dendrofinance.gui.BTCSearchBox;
 import com.donny.dendrofinance.gui.ProgramMainGui;
 import com.donny.dendrofinance.gui.customswing.ProgramModalFrame;
+import com.donny.dendrofinance.gui.customswing.SizeFilter;
 import com.donny.dendrofinance.gui.form.ProgramValidation;
 import com.donny.dendrofinance.instance.ProgramInstance;
 import com.donny.dendroroot.gui.customswing.DendroFactory;
@@ -65,13 +66,18 @@ public class NewTransactionEntryGui extends ProgramModalFrame {
                 JLabel e = new JLabel("Accounts");
 
                 DATE = new JTextField();
+                SizeFilter.install(DATE, 255);
                 ENT = new JTextField();
+                SizeFilter.install(ENT, 255);
                 JScrollPane itmScroll = DendroFactory.getLongField();
                 ITM = (JTextArea) itmScroll.getViewport().getView();
+                SizeFilter.install(ITM, 255);
                 JScrollPane descScroll = DendroFactory.getLongField();
                 DESC = (JTextArea) descScroll.getViewport().getView();
+                SizeFilter.install(DESC, 255);
                 JScrollPane accScroll = DendroFactory.getLongField();
                 ACC = (JTextArea) accScroll.getViewport().getView();
+                SizeFilter.install(ACC, 1024);
 
                 JButton insert = DendroFactory.getButton("Save");
                 insert.addActionListener(event -> insertAction());
@@ -274,6 +280,7 @@ public class NewTransactionEntryGui extends ProgramModalFrame {
 
                 JScrollPane textPane = DendroFactory.getScrollField();
                 META = (JTextArea) textPane.getViewport().getView();
+                SizeFilter.install(META, 8192);
                 textPane.setViewportView(META);
                 TYPE = new JComboBox<>();
                 TYPE.addItemListener(event -> metaTypeChanged());

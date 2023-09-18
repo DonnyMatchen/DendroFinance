@@ -3,6 +3,7 @@ package com.donny.dendrofinance.gui.menu.reports.budget;
 import com.donny.dendrofinance.capsules.BudgetCapsule;
 import com.donny.dendrofinance.fileio.ImportHandler;
 import com.donny.dendrofinance.gui.customswing.ProgramModalFrame;
+import com.donny.dendrofinance.gui.customswing.SizeFilter;
 import com.donny.dendrofinance.instance.ProgramInstance;
 import com.donny.dendroroot.gui.customswing.DendroFactory;
 
@@ -22,6 +23,7 @@ public class NewBudgetGui extends ProgramModalFrame {
             JLabel a = new JLabel("Budget Name");
             JLabel b = new JLabel("Template");
             NAME = new JTextField();
+            SizeFilter.install(NAME, 255);
             TEMPLATE = new JComboBox<>();
             TEMPLATE.addItem("Blank");
             for (BudgetCapsule capsule : CURRENT_INSTANCE.DATA_HANDLER.BUDGETS.getBudgets()) {

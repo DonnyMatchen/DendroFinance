@@ -3,6 +3,7 @@ package com.donny.dendrofinance.gui.menu.data.template;
 import com.donny.dendrofinance.capsules.TemplateCapsule;
 import com.donny.dendrofinance.fileio.ImportHandler;
 import com.donny.dendrofinance.gui.customswing.ProgramModalFrame;
+import com.donny.dendrofinance.gui.customswing.SizeFilter;
 import com.donny.dendrofinance.instance.ProgramInstance;
 import com.donny.dendroroot.gui.customswing.DendroFactory;
 import com.donny.dendroroot.gui.form.Cleaning;
@@ -28,6 +29,7 @@ public class NewTemplateGui extends ProgramModalFrame {
             ID.setEditable(false);
             ID.setText(String.valueOf(uuid));
             NAME = new JTextField();
+            SizeFilter.install(NAME, 255);
 
             JButton save = DendroFactory.getButton("Save");
             save.addActionListener(event -> saveAction());

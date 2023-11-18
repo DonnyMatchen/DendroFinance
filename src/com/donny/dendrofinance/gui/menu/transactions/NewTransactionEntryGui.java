@@ -77,6 +77,7 @@ public class NewTransactionEntryGui extends ProgramModalFrame {
                 SizeFilter.install(DESC, 255);
                 JScrollPane accScroll = DendroFactory.getLongField();
                 ACC = (JTextArea) accScroll.getViewport().getView();
+                ACC.setText("{}");
                 SizeFilter.install(ACC, 1024);
 
                 JButton insert = DendroFactory.getButton("Save");
@@ -108,14 +109,15 @@ public class NewTransactionEntryGui extends ProgramModalFrame {
                 });
                 JButton addAcc = DendroFactory.getButton("Add");
                 addAcc.addActionListener(event -> {
-                    String now = ACC.getText();
-                    ACC.setText(
-                            now +
-                                    ((String) type.getSelectedItem()).charAt(0) +
-                                    "!" +
-                                    account.getSelectedItem() +
-                                    "(" + Cleaning.cleanNumber(amount.getText()) + "), "
-                    );
+                    String acc = ACC.getText();
+                    if(acc.equals("{}") || !acc.contains("!")) {
+                        acc = "{" + ((String) type.getSelectedItem()).charAt(0) + "!" + account.getSelectedItem() +
+                                "(" + Cleaning.cleanNumber(amount.getText()) + ")}";
+                    } else {
+                        acc = acc.substring(0, acc.length() - 1) + ", " + ((String) type.getSelectedItem()).charAt(0) +
+                                "!" + account.getSelectedItem() + "(" + Cleaning.cleanNumber(amount.getText()) + ")}";
+                    }
+                    ACC.setText(acc);
                     amount.setText("");
                     if (type.getSelectedIndex() > 1) {
                         type.setSelectedIndex(0);

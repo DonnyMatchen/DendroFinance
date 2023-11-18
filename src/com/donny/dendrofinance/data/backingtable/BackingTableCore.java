@@ -1,11 +1,11 @@
 package com.donny.dendrofinance.data.backingtable;
 
 import com.donny.dendrofinance.gui.menu.data.backing.BackingTableGui;
-import com.donny.dendrofinance.instance.Instance;
-import com.donny.dendrofinance.json.JsonArray;
-import com.donny.dendrofinance.json.JsonFormattingException;
-import com.donny.dendrofinance.util.ExportableToJson;
-import com.donny.dendrofinance.util.UniqueName;
+import com.donny.dendrofinance.instance.ProgramInstance;
+import com.donny.dendroroot.json.JsonArray;
+import com.donny.dendroroot.json.JsonFormattingException;
+import com.donny.dendroroot.util.ExportableToJson;
+import com.donny.dendroroot.util.UniqueName;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -13,12 +13,12 @@ import java.util.Iterator;
 
 public abstract class BackingTableCore<E extends UniqueName> implements Iterable<E>, ExportableToJson {
     public final boolean SORTABLE;
-    protected final Instance CURRENT_INSTANCE;
+    protected final ProgramInstance CURRENT_INSTANCE;
     protected final ArrayList<String> KEYS;
     protected final HashMap<String, E> MAP;
     public boolean changed;
 
-    public BackingTableCore(Instance curInst, boolean sort) {
+    public BackingTableCore(ProgramInstance curInst, boolean sort) {
         CURRENT_INSTANCE = curInst;
         KEYS = new ArrayList<>();
         MAP = new HashMap<>();
@@ -189,10 +189,14 @@ public abstract class BackingTableCore<E extends UniqueName> implements Iterable
 
     @Override
     public Iterator<E> iterator() {
+        return getMaster().iterator();
+    }
+
+    public ArrayList<E> getMaster() {
         ArrayList<E> out = new ArrayList<>();
         for (String key : KEYS) {
             out.add(MAP.get(key));
         }
-        return out.iterator();
+        return out;
     }
 }

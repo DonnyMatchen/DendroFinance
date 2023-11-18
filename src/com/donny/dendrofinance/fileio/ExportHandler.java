@@ -4,23 +4,24 @@ import com.donny.dendrofinance.capsules.BudgetCapsule;
 import com.donny.dendrofinance.capsules.StateCapsule;
 import com.donny.dendrofinance.capsules.TemplateCapsule;
 import com.donny.dendrofinance.capsules.TransactionCapsule;
-import com.donny.dendrofinance.fileio.xarc.XarcOutputStream;
-import com.donny.dendrofinance.gui.password.UnkPasswordGui;
-import com.donny.dendrofinance.instance.Instance;
-import com.donny.dendrofinance.json.JsonArray;
-import com.donny.dendrofinance.json.JsonFormattingException;
-import com.donny.dendrofinance.json.JsonItem;
-import com.donny.dendrofinance.types.LDate;
+import com.donny.dendrofinance.instance.ProgramInstance;
+import com.donny.dendroroot.fileio.EncryptionHandler;
+import com.donny.dendroroot.gui.password.UnkPasswordGui;
+import com.donny.dendroroot.json.JsonArray;
+import com.donny.dendroroot.json.JsonFormattingException;
+import com.donny.dendroroot.json.JsonItem;
+import com.donny.dendroroot.types.LDate;
+import com.donny.dendroroot.xarc.XarcOutputStream;
 
 import javax.swing.*;
 import java.io.File;
 import java.io.IOException;
 
 public class ExportHandler {
-    private final Instance CURRENT_INSTANCE;
+    private final ProgramInstance CURRENT_INSTANCE;
     private final File DIR;
 
-    public ExportHandler(Instance curInst) {
+    public ExportHandler(ProgramInstance curInst) {
         CURRENT_INSTANCE = curInst;
         DIR = new File(CURRENT_INSTANCE.data.getPath() + File.separator + "Exports");
         CURRENT_INSTANCE.LOG_HANDLER.trace(getClass(), "ExportHandler initiated");

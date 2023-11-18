@@ -1,10 +1,10 @@
 package com.donny.dendrofinance.gui.menu.util.taxgui;
 
-import com.donny.dendrofinance.gui.customswing.DendroFactory;
-import com.donny.dendrofinance.gui.customswing.ModalFrame;
-import com.donny.dendrofinance.gui.form.Cleaning;
-import com.donny.dendrofinance.instance.Instance;
+import com.donny.dendrofinance.gui.customswing.ProgramModalFrame;
+import com.donny.dendrofinance.instance.ProgramInstance;
 import com.donny.dendrofinance.tax.TaxItem;
+import com.donny.dendroroot.gui.customswing.DendroFactory;
+import com.donny.dendroroot.gui.form.Cleaning;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -12,12 +12,12 @@ import java.awt.*;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 
-public class NewTaxGui extends ModalFrame {
+public class NewTaxGui extends ProgramModalFrame {
     private final JTextField NAME, BOUND, EXEMPT;
     private final JTable TABLE;
     private final DefaultTableModel TABLE_ACCESS;
 
-    public NewTaxGui(TaxGui caller, Instance curInst) {
+    public NewTaxGui(TaxGui caller, ProgramInstance curInst) {
         super(caller, "New Tax", curInst);
 
         //draw gui

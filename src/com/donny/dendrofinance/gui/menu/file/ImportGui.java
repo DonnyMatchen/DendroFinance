@@ -1,24 +1,24 @@
 package com.donny.dendrofinance.gui.menu.file;
 
 import com.donny.dendrofinance.fileio.ImportHandler;
-import com.donny.dendrofinance.gui.MainGui;
-import com.donny.dendrofinance.gui.customswing.DendroFactory;
-import com.donny.dendrofinance.gui.customswing.RegisterFrame;
-import com.donny.dendrofinance.instance.Instance;
+import com.donny.dendrofinance.gui.ProgramMainGui;
+import com.donny.dendrofinance.gui.customswing.ProgramRegisterFrame;
+import com.donny.dendrofinance.instance.ProgramInstance;
+import com.donny.dendroroot.gui.customswing.DendroFactory;
 
 import javax.swing.*;
 import java.awt.*;
 import java.io.File;
 import java.sql.SQLException;
 
-public class ImportGui extends RegisterFrame {
+public class ImportGui extends ProgramRegisterFrame {
     private final String DIR;
-    private final MainGui MAIN_GUI;
+    private final ProgramMainGui MAIN_GUI;
     private final JComboBox<String> MODE;
     private final JList<String> LIST;
     private final DefaultListModel<String> LIST_ACCESS;
 
-    public ImportGui(MainGui caller, Instance curInst) {
+    public ImportGui(ProgramMainGui caller, ProgramInstance curInst) {
         super(caller, "Import", curInst);
 
         DIR = CURRENT_INSTANCE.data.getPath() + File.separator + "Imports";

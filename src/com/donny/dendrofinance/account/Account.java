@@ -1,12 +1,12 @@
 package com.donny.dendrofinance.account;
 
 import com.donny.dendrofinance.currency.LCurrency;
-import com.donny.dendrofinance.instance.Instance;
-import com.donny.dendrofinance.json.JsonDecimal;
-import com.donny.dendrofinance.json.JsonFormattingException;
-import com.donny.dendrofinance.json.JsonObject;
-import com.donny.dendrofinance.json.JsonString;
-import com.donny.dendrofinance.util.UniqueName;
+import com.donny.dendrofinance.instance.ProgramInstance;
+import com.donny.dendroroot.json.JsonDecimal;
+import com.donny.dendroroot.json.JsonFormattingException;
+import com.donny.dendroroot.json.JsonObject;
+import com.donny.dendroroot.json.JsonString;
+import com.donny.dendroroot.util.UniqueName;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -174,14 +174,14 @@ public class Account implements UniqueName, Serializable {
 
     public final boolean EXPORT;
     public final Exchange EXCHANGE;
-    private final Instance CURRENT_INSTANCE;
+    private final ProgramInstance CURRENT_INSTANCE;
     private final String NAME;
     private final int AID;
     private final LCurrency CUR;
     private final AccountType TYPE;
     private final String BUDGET;
 
-    public Account(String name, int aid, LCurrency cur, AccountType type, String budget, Exchange exchange, Instance curInst, boolean export) {
+    public Account(String name, int aid, LCurrency cur, AccountType type, String budget, Exchange exchange, ProgramInstance curInst, boolean export) {
         CURRENT_INSTANCE = curInst;
         NAME = name;
         AID = aid;
@@ -192,11 +192,11 @@ public class Account implements UniqueName, Serializable {
         EXCHANGE = exchange;
     }
 
-    public Account(String name, int aid, LCurrency cur, AccountType type, Exchange exchange, Instance curInst, boolean export) {
+    public Account(String name, int aid, LCurrency cur, AccountType type, Exchange exchange, ProgramInstance curInst, boolean export) {
         this(name, aid, cur, type, "", exchange, curInst, export);
     }
 
-    public Account(JsonObject obj, Instance curInst) {
+    public Account(JsonObject obj, ProgramInstance curInst) {
         CURRENT_INSTANCE = curInst;
         NAME = obj.getString("name").getString();
         AID = obj.getDecimal("id").decimal.intValue();
@@ -296,8 +296,7 @@ public class Account implements UniqueName, Serializable {
         if (NAME.equals(fixedAssetsTypeName)) return true;
         if (NAME.equals(receiveTypeName)) return true;
         if (NAME.equals(appreciationName)) return true;
-        if (NAME.equals(depreciationName)) return true;
-        return false;
+        return NAME.equals(depreciationName);
     }
 
     public BigDecimal getAlpha(boolean credit, BigDecimal input) {

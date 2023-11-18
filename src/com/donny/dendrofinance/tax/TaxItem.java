@@ -1,8 +1,8 @@
 package com.donny.dendrofinance.tax;
 
-import com.donny.dendrofinance.json.*;
-import com.donny.dendrofinance.util.ExportableToJson;
-import com.donny.dendrofinance.util.UniqueName;
+import com.donny.dendroroot.json.*;
+import com.donny.dendroroot.util.ExportableToJson;
+import com.donny.dendroroot.util.UniqueName;
 
 import java.io.Serializable;
 import java.math.BigDecimal;

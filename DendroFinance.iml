@@ -7,7 +7,7 @@
     </content>
     <orderEntry type="jdk" jdkName="17" jdkType="JavaSDK" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" exported="" name="fasterxml.jackson.core" level="project" />
     <orderEntry type="library" name="hsqldb" level="project" />
+    <orderEntry type="library" name="DendroRoot-v1.0.0" level="project" />
   </component>
 </module>

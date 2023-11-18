@@ -1,24 +1,24 @@
 package com.donny.dendrofinance.gui.menu.data;
 
-import com.donny.dendrofinance.gui.MainGui;
-import com.donny.dendrofinance.gui.customswing.DendroFactory;
-import com.donny.dendrofinance.gui.customswing.RegisterFrame;
-import com.donny.dendrofinance.instance.Instance;
-import com.donny.dendrofinance.json.JsonFormattingException;
-import com.donny.dendrofinance.json.JsonItem;
-import com.donny.dendrofinance.json.JsonObject;
+import com.donny.dendrofinance.gui.ProgramMainGui;
+import com.donny.dendrofinance.gui.customswing.ProgramRegisterFrame;
+import com.donny.dendrofinance.instance.ProgramInstance;
+import com.donny.dendroroot.gui.customswing.DendroFactory;
+import com.donny.dendroroot.json.JsonFormattingException;
+import com.donny.dendroroot.json.JsonItem;
+import com.donny.dendroroot.json.JsonObject;
 
 import javax.swing.*;
 import java.awt.*;
 import java.io.File;
 
-public class AccountMetaGui extends RegisterFrame {
+public class AccountMetaGui extends ProgramRegisterFrame {
     private final JTextArea GIFT, BRAVE;
 
     private final JsonObject ACCOUNT_OBJECT;
     private final File ACCOUNTS;
 
-    public AccountMetaGui(MainGui caller, Instance curInst) {
+    public AccountMetaGui(ProgramMainGui caller, ProgramInstance curInst) {
         super(caller, "Accounts Metadata Edit", curInst);
 
         //draw gui

@@ -1,26 +1,26 @@
 package com.donny.dendrofinance.gui.menu.util;
 
 import com.donny.dendrofinance.currency.LCurrency;
-import com.donny.dendrofinance.gui.MainGui;
-import com.donny.dendrofinance.gui.customswing.DendroFactory;
-import com.donny.dendrofinance.gui.customswing.RegisterFrame;
-import com.donny.dendrofinance.gui.customswing.SearchBox;
-import com.donny.dendrofinance.gui.form.Cleaning;
-import com.donny.dendrofinance.gui.form.Validation;
-import com.donny.dendrofinance.gui.form.ValidationFailedException;
-import com.donny.dendrofinance.instance.Instance;
-import com.donny.dendrofinance.types.LDate;
+import com.donny.dendrofinance.gui.BTCSearchBox;
+import com.donny.dendrofinance.gui.ProgramMainGui;
+import com.donny.dendrofinance.gui.customswing.ProgramRegisterFrame;
+import com.donny.dendrofinance.instance.ProgramInstance;
+import com.donny.dendroroot.gui.customswing.DendroFactory;
+import com.donny.dendroroot.gui.form.Cleaning;
+import com.donny.dendroroot.gui.form.Validation;
+import com.donny.dendroroot.gui.form.ValidationFailedException;
+import com.donny.dendroroot.types.LDate;
 
 import javax.swing.*;
 import java.awt.*;
 import java.math.BigDecimal;
 
-public class ConversionGui extends RegisterFrame {
+public class ConversionGui extends ProgramRegisterFrame {
     private final JTextField DATE, AMOUNT;
-    private final SearchBox<LCurrency> CUR_A, CUR_B;
+    private final BTCSearchBox<LCurrency> CUR_A, CUR_B;
     private final JTextArea DISPLAY;
 
-    public ConversionGui(MainGui caller, Instance curInst) {
+    public ConversionGui(ProgramMainGui caller, ProgramInstance curInst) {
         super(caller, "Asset Conversion", curInst);
 
         //draw gui
@@ -29,8 +29,8 @@ public class ConversionGui extends RegisterFrame {
             JLabel b = new JLabel("Amount");
             DATE = new JTextField();
             AMOUNT = new JTextField();
-            CUR_A = new SearchBox<>("Currency A", CURRENT_INSTANCE.getAllAssets(), CURRENT_INSTANCE);
-            CUR_B = new SearchBox<>("Currency B", CURRENT_INSTANCE.getAllAssets(), CURRENT_INSTANCE);
+            CUR_A = new BTCSearchBox<>("Currency A", CURRENT_INSTANCE.getAllAssets(), CURRENT_INSTANCE);
+            CUR_B = new BTCSearchBox<>("Currency B", CURRENT_INSTANCE.getAllAssets(), CURRENT_INSTANCE);
             JScrollPane pane = DendroFactory.getScrollField();
             DISPLAY = (JTextArea) pane.getViewport().getView();
             DISPLAY.setEditable(false);

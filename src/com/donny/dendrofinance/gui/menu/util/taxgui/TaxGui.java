@@ -1,21 +1,21 @@
 package com.donny.dendrofinance.gui.menu.util.taxgui;
 
-import com.donny.dendrofinance.gui.MainGui;
-import com.donny.dendrofinance.gui.customswing.DendroFactory;
-import com.donny.dendrofinance.gui.customswing.RegisterFrame;
-import com.donny.dendrofinance.gui.form.Cleaning;
-import com.donny.dendrofinance.instance.Instance;
+import com.donny.dendrofinance.gui.ProgramMainGui;
+import com.donny.dendrofinance.gui.customswing.ProgramRegisterFrame;
+import com.donny.dendrofinance.instance.ProgramInstance;
+import com.donny.dendroroot.gui.customswing.DendroFactory;
+import com.donny.dendroroot.gui.form.Cleaning;
 
 import javax.swing.*;
 import javax.swing.event.MouseInputAdapter;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 
-public class TaxGui extends RegisterFrame {
+public class TaxGui extends ProgramRegisterFrame {
     private final JTextField VALUE, EXEMPT, RESULT;
     private final JComboBox<String> ITEMS;
 
-    public TaxGui(MainGui caller, Instance curInst) {
+    public TaxGui(ProgramMainGui caller, ProgramInstance curInst) {
         super(caller, "Tax Calculator", curInst);
 
         //draw gui

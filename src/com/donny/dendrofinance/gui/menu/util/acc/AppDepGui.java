@@ -3,15 +3,15 @@ package com.donny.dendrofinance.gui.menu.util.acc;
 import com.donny.dendrofinance.account.Account;
 import com.donny.dendrofinance.capsules.TransactionCapsule;
 import com.donny.dendrofinance.fileio.ImportHandler;
-import com.donny.dendrofinance.gui.MainGui;
-import com.donny.dendrofinance.gui.customswing.DendroFactory;
-import com.donny.dendrofinance.gui.customswing.RegisterFrame;
-import com.donny.dendrofinance.gui.form.Cleaning;
-import com.donny.dendrofinance.gui.form.Validation;
-import com.donny.dendrofinance.gui.form.ValidationFailedException;
-import com.donny.dendrofinance.instance.Instance;
+import com.donny.dendrofinance.gui.ProgramMainGui;
+import com.donny.dendrofinance.gui.customswing.ProgramRegisterFrame;
+import com.donny.dendrofinance.instance.ProgramInstance;
 import com.donny.dendrofinance.types.LAccountSet;
-import com.donny.dendrofinance.types.LDate;
+import com.donny.dendroroot.gui.customswing.DendroFactory;
+import com.donny.dendroroot.gui.form.Cleaning;
+import com.donny.dendroroot.gui.form.Validation;
+import com.donny.dendroroot.gui.form.ValidationFailedException;
+import com.donny.dendroroot.types.LDate;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
@@ -19,10 +19,10 @@ import javax.swing.event.DocumentListener;
 import java.awt.*;
 import java.math.BigDecimal;
 
-public class AppDepGui extends RegisterFrame {
+public class AppDepGui extends ProgramRegisterFrame {
     private final JTextField DATE, STOCK, STOCK_CURRENT, STOCK_APP, CRYPTO, CRYPTO_CURRENT, CRYPTO_APP, INV, INV_CURRENT, INV_APP, FIAT, FIAT_CURRENT, FIAT_APP;
 
-    public AppDepGui(MainGui caller, Instance curInst) {
+    public AppDepGui(ProgramMainGui caller, ProgramInstance curInst) {
         super(caller, "Appreciation Automator", curInst);
 
         //draw gui

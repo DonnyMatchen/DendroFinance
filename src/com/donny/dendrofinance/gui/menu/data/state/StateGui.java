@@ -6,13 +6,13 @@ import com.donny.dendrofinance.capsules.meta.AssetMetadata;
 import com.donny.dendrofinance.capsules.meta.LoanMetadata;
 import com.donny.dendrofinance.capsules.totals.Position;
 import com.donny.dendrofinance.currency.LCurrency;
-import com.donny.dendrofinance.gui.MainGui;
-import com.donny.dendrofinance.gui.customswing.DateRange;
-import com.donny.dendrofinance.gui.customswing.DendroFactory;
-import com.donny.dendrofinance.gui.customswing.RegisterFrame;
-import com.donny.dendrofinance.instance.Instance;
-import com.donny.dendrofinance.types.LDate;
-import com.donny.dendrofinance.util.Aggregation;
+import com.donny.dendrofinance.gui.ProgramMainGui;
+import com.donny.dendrofinance.gui.customswing.ProgramRegisterFrame;
+import com.donny.dendrofinance.instance.ProgramInstance;
+import com.donny.dendroroot.collections.DecimalAggregation;
+import com.donny.dendroroot.gui.customswing.DateRange;
+import com.donny.dendroroot.gui.customswing.DendroFactory;
+import com.donny.dendroroot.types.LDate;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -21,12 +21,12 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class StateGui extends RegisterFrame {
+public class StateGui extends ProgramRegisterFrame {
     private final DateRange RANGE;
     private final JComboBox<LDate> DATE;
     private final DefaultTableModel ACCOUNTS, POSITIONS, ASSETS, LOANS;
 
-    public StateGui(MainGui caller, Instance curInst) {
+    public StateGui(ProgramMainGui caller, ProgramInstance curInst) {
         super(caller, "States", curInst);
 
         //Draw Gui
@@ -242,7 +242,7 @@ public class StateGui extends RegisterFrame {
         LDate date = (LDate) DATE.getSelectedItem();
         if (date != null) {
             StateCapsule state = CURRENT_INSTANCE.DATA_HANDLER.STATES.get(date.getTime());
-            Aggregation<Account> acc = state.getAccounts();
+            DecimalAggregation<Account> acc = state.getAccounts();
             for (Account a : CURRENT_INSTANCE.ACCOUNTS) {
                 if (acc.containsKey(a)) {
                     ACCOUNTS.addRow(new String[]{

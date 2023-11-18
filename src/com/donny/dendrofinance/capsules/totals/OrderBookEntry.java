@@ -1,13 +1,13 @@
 package com.donny.dendrofinance.capsules.totals;
 
 import com.donny.dendrofinance.currency.LCurrency;
-import com.donny.dendrofinance.instance.Instance;
-import com.donny.dendrofinance.json.JsonDecimal;
-import com.donny.dendrofinance.json.JsonFormattingException;
-import com.donny.dendrofinance.json.JsonObject;
-import com.donny.dendrofinance.json.JsonString;
-import com.donny.dendrofinance.types.LDate;
-import com.donny.dendrofinance.util.ExportableToJson;
+import com.donny.dendrofinance.instance.ProgramInstance;
+import com.donny.dendroroot.json.JsonDecimal;
+import com.donny.dendroroot.json.JsonFormattingException;
+import com.donny.dendroroot.json.JsonObject;
+import com.donny.dendroroot.json.JsonString;
+import com.donny.dendroroot.types.LDate;
+import com.donny.dendroroot.util.ExportableToJson;
 
 import java.math.BigDecimal;
 
@@ -28,7 +28,7 @@ public class OrderBookEntry implements ExportableToJson {
         SOLD = sold;
     }
 
-    public OrderBookEntry(JsonObject object, Instance curInst) {
+    public OrderBookEntry(JsonObject object, ProgramInstance curInst) {
         this(
                 curInst.getLCurrency(object.getString("asset").getString()),
                 new LDate(object.getDecimal("start"), curInst),

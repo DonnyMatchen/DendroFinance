@@ -1,24 +1,31 @@
 package com.donny.dendrofinance.capsules;
 
 import com.donny.dendrofinance.account.Account;
-import com.donny.dendrofinance.capsules.meta.*;
+import com.donny.dendrofinance.capsules.meta.AssetMetadata;
+import com.donny.dendrofinance.capsules.meta.LoanMetadata;
 import com.donny.dendrofinance.capsules.totals.Position;
-import com.donny.dendrofinance.instance.Instance;
-import com.donny.dendrofinance.json.*;
-import com.donny.dendrofinance.types.LDate;
-import com.donny.dendrofinance.util.Aggregation;
+import com.donny.dendrofinance.instance.ProgramInstance;
+import com.donny.dendroroot.collections.DecimalAggregation;
+import com.donny.dendroroot.data.Capsule;
+import com.donny.dendroroot.json.JsonArray;
+import com.donny.dendroroot.json.JsonDecimal;
+import com.donny.dendroroot.json.JsonFormattingException;
+import com.donny.dendroroot.json.JsonObject;
+import com.donny.dendroroot.types.LDate;
 
 import java.util.ArrayList;
 
 public class StateCapsule extends Capsule {
+    private final ProgramInstance CURRENT_INSTANCE;
     private final LDate DATE;
-    private final Aggregation<Account> ACCOUNTS;
+    private final DecimalAggregation<Account> ACCOUNTS;
     private final ArrayList<Position> POSITIONS;
     private final ArrayList<AssetMetadata> ASSETS;
     private final ArrayList<LoanMetadata> LOANS;
 
-    public StateCapsule(LDate date, Instance curInst) {
+    public StateCapsule(LDate date, ProgramInstance curInst) {
         super(curInst);
+        CURRENT_INSTANCE = curInst;
         DATE = date;
         ACCOUNTS = CURRENT_INSTANCE.DATA_HANDLER.accountsAsOf(date);
         POSITIONS = CURRENT_INSTANCE.DATA_HANDLER.getPositions(date);
@@ -26,10 +33,11 @@ public class StateCapsule extends Capsule {
         LOANS = CURRENT_INSTANCE.DATA_HANDLER.loansAsOf(date);
     }
 
-    public StateCapsule(LDate date, JsonObject acc, JsonArray pos, JsonObject meta, Instance curInst) {
+    public StateCapsule(LDate date, JsonObject acc, JsonArray pos, JsonObject meta, ProgramInstance curInst) {
         super(curInst);
+        CURRENT_INSTANCE = curInst;
         DATE = date;
-        ACCOUNTS = new Aggregation<>();
+        ACCOUNTS = new DecimalAggregation<>();
         for (String key : acc.getFields()) {
             ACCOUNTS.put(CURRENT_INSTANCE.ACCOUNTS.getElement(key), acc.getDecimal(key).decimal);
         }
@@ -47,10 +55,11 @@ public class StateCapsule extends Capsule {
         }
     }
 
-    public StateCapsule(JsonObject obj, Instance curInst) {
+    public StateCapsule(JsonObject obj, ProgramInstance curInst) {
         super(curInst);
+        CURRENT_INSTANCE = curInst;
         DATE = new LDate(obj.getDecimal(new String[]{"t", "timestamp", "date"}).decimal.longValue(), curInst);
-        ACCOUNTS = new Aggregation<>();
+        ACCOUNTS = new DecimalAggregation<>();
         JsonObject acc = obj.getObject(new String[]{"a", "acc", "accounts"});
         for (String key : acc.getFields()) {
             ACCOUNTS.put(CURRENT_INSTANCE.ACCOUNTS.getElement(key), acc.getDecimal(key).decimal);
@@ -74,7 +83,7 @@ public class StateCapsule extends Capsule {
         return DATE;
     }
 
-    public Aggregation<Account> getAccounts() {
+    public DecimalAggregation<Account> getAccounts() {
         return ACCOUNTS;
     }
 

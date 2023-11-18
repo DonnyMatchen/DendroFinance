@@ -1,14 +1,14 @@
 package com.donny.dendrofinance.data.metatable;
 
 import com.donny.dendrofinance.capsules.meta.LoanMetadata;
-import com.donny.dendrofinance.instance.Instance;
-import com.donny.dendrofinance.types.LDate;
+import com.donny.dendrofinance.instance.ProgramInstance;
+import com.donny.dendroroot.types.LDate;
 
 import java.util.ArrayList;
 
 public class LoanMTC extends MetaTableCore {
 
-    public LoanMTC(Instance curInst) {
+    public LoanMTC(ProgramInstance curInst) {
         super(curInst);
     }
 

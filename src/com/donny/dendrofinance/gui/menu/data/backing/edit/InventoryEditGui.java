@@ -2,11 +2,11 @@ package com.donny.dendrofinance.gui.menu.data.backing.edit;
 
 import com.donny.dendrofinance.currency.LInventory;
 import com.donny.dendrofinance.data.backingtable.BackingTableCore;
-import com.donny.dendrofinance.gui.customswing.DendroFactory;
-import com.donny.dendrofinance.gui.form.Validation;
-import com.donny.dendrofinance.gui.form.ValidationFailedException;
 import com.donny.dendrofinance.gui.menu.data.backing.BackingTableGui;
-import com.donny.dendrofinance.instance.Instance;
+import com.donny.dendrofinance.instance.ProgramInstance;
+import com.donny.dendroroot.gui.customswing.DendroFactory;
+import com.donny.dendroroot.gui.form.Validation;
+import com.donny.dendroroot.gui.form.ValidationFailedException;
 
 import javax.swing.*;
 
@@ -14,7 +14,7 @@ public class InventoryEditGui extends BackingEditGui<LInventory> {
     private JTextField name, ticker, symbol, places, factor, val;
     private JCheckBox merch, comod, publik;
 
-    public InventoryEditGui(BackingTableGui<LInventory> caller, BackingTableCore<LInventory> core, int index, Instance curInst) {
+    public InventoryEditGui(BackingTableGui<LInventory> caller, BackingTableCore<LInventory> core, int index, ProgramInstance curInst) {
         super(caller, core, index, curInst);
     }
 

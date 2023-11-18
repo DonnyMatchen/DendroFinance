@@ -5,22 +5,22 @@ import com.donny.dendrofinance.account.AccountType;
 import com.donny.dendrofinance.account.Exchange;
 import com.donny.dendrofinance.currency.LCurrency;
 import com.donny.dendrofinance.data.backingtable.BackingTableCore;
-import com.donny.dendrofinance.gui.customswing.DendroFactory;
-import com.donny.dendrofinance.gui.customswing.SearchBox;
-import com.donny.dendrofinance.gui.form.Validation;
-import com.donny.dendrofinance.gui.form.ValidationFailedException;
+import com.donny.dendrofinance.gui.BTCSearchBox;
 import com.donny.dendrofinance.gui.menu.data.backing.BackingTableGui;
-import com.donny.dendrofinance.instance.Instance;
+import com.donny.dendrofinance.instance.ProgramInstance;
+import com.donny.dendroroot.gui.customswing.DendroFactory;
+import com.donny.dendroroot.gui.form.Validation;
+import com.donny.dendroroot.gui.form.ValidationFailedException;
 
 import javax.swing.*;
 
 public class AccountEditGui extends BackingEditGui<Account> {
     private JTextField name, aid, budget;
-    private SearchBox<LCurrency> currency;
-    private SearchBox<AccountType> type;
-    private SearchBox<Exchange> exchange;
+    private BTCSearchBox<LCurrency> currency;
+    private BTCSearchBox<AccountType> type;
+    private BTCSearchBox<Exchange> exchange;
 
-    public AccountEditGui(BackingTableGui<Account> caller, BackingTableCore<Account> core, int index, Instance curInst) {
+    public AccountEditGui(BackingTableGui<Account> caller, BackingTableCore<Account> core, int index, ProgramInstance curInst) {
         super(caller, core, index, curInst);
     }
 
@@ -30,9 +30,9 @@ public class AccountEditGui extends BackingEditGui<Account> {
         aid = new JTextField();
         budget = new JTextField();
 
-        currency = new SearchBox<>("Currency", CURRENT_INSTANCE.getAllAssets(), CURRENT_INSTANCE);
-        type = new SearchBox<>("Account Type", CURRENT_INSTANCE.ACCOUNT_TYPES, CURRENT_INSTANCE);
-        exchange = new SearchBox<>("Exchange", CURRENT_INSTANCE.EXCHANGES, CURRENT_INSTANCE);
+        currency = new BTCSearchBox<>("Currency", CURRENT_INSTANCE.getAllAssets(), CURRENT_INSTANCE);
+        type = new BTCSearchBox<>("Account Type", CURRENT_INSTANCE.ACCOUNT_TYPES, CURRENT_INSTANCE);
+        exchange = new BTCSearchBox<>("Exchange", CURRENT_INSTANCE.EXCHANGES, CURRENT_INSTANCE);
 
         JLabel a = new JLabel("Account Name");
         JLabel b = new JLabel("Account ID");

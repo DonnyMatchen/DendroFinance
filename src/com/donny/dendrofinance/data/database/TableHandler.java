@@ -1,14 +1,14 @@
 package com.donny.dendrofinance.data.database;
 
 import com.donny.dendrofinance.fileio.ImportHandler;
-import com.donny.dendrofinance.instance.Instance;
-import com.donny.dendrofinance.json.JsonObject;
+import com.donny.dendrofinance.instance.ProgramInstance;
+import com.donny.dendroroot.json.JsonObject;
 
 public abstract class TableHandler<Identifier, Capsule> {
-    protected final Instance CURRENT_INSTANCE;
+    protected final ProgramInstance CURRENT_INSTANCE;
     protected final DatabaseHandler DATABASE;
 
-    public TableHandler(Instance curInst, DatabaseHandler database) {
+    public TableHandler(ProgramInstance curInst, DatabaseHandler database) {
         CURRENT_INSTANCE = curInst;
         DATABASE = database;
     }

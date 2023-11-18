@@ -1,16 +1,16 @@
 package com.donny.dendrofinance.data.database;
 
-import com.donny.dendrofinance.instance.Instance;
+import com.donny.dendrofinance.instance.ProgramInstance;
 
 import java.io.File;
 import java.sql.*;
 
 public class DatabaseHandler {
-    private final Instance CURRENT_INSTANCE;
+    private final ProgramInstance CURRENT_INSTANCE;
     public Connection con;
 
 
-    public DatabaseHandler(Instance curInst) {
+    public DatabaseHandler(ProgramInstance curInst) {
         CURRENT_INSTANCE = curInst;
         try {
             con = DriverManager.getConnection(

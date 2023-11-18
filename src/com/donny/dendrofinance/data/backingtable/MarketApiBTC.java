@@ -3,14 +3,14 @@ package com.donny.dendrofinance.data.backingtable;
 import com.donny.dendrofinance.currency.LMarketApi;
 import com.donny.dendrofinance.gui.menu.data.backing.BackingTableGui;
 import com.donny.dendrofinance.gui.menu.data.backing.edit.MarketApiEditGui;
-import com.donny.dendrofinance.instance.Instance;
-import com.donny.dendrofinance.json.JsonArray;
-import com.donny.dendrofinance.json.JsonObject;
+import com.donny.dendrofinance.instance.ProgramInstance;
+import com.donny.dendroroot.json.JsonArray;
+import com.donny.dendroroot.json.JsonObject;
 
 import java.util.ArrayList;
 
 public class MarketApiBTC extends BackingTableCore<LMarketApi> {
-    public MarketApiBTC(Instance curInst) {
+    public MarketApiBTC(ProgramInstance curInst) {
         super(curInst, false);
     }
 

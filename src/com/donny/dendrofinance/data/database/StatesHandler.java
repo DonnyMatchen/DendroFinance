@@ -2,13 +2,13 @@ package com.donny.dendrofinance.data.database;
 
 import com.donny.dendrofinance.capsules.StateCapsule;
 import com.donny.dendrofinance.fileio.ImportHandler;
-import com.donny.dendrofinance.gui.form.SqlEscape;
-import com.donny.dendrofinance.instance.Instance;
-import com.donny.dendrofinance.json.JsonArray;
-import com.donny.dendrofinance.json.JsonFormattingException;
-import com.donny.dendrofinance.json.JsonItem;
-import com.donny.dendrofinance.json.JsonObject;
-import com.donny.dendrofinance.types.LDate;
+import com.donny.dendrofinance.gui.SqlEscape;
+import com.donny.dendrofinance.instance.ProgramInstance;
+import com.donny.dendroroot.json.JsonArray;
+import com.donny.dendroroot.json.JsonFormattingException;
+import com.donny.dendroroot.json.JsonItem;
+import com.donny.dendroroot.json.JsonObject;
+import com.donny.dendroroot.types.LDate;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -16,7 +16,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 
 public class StatesHandler extends TableHandler<Long, StateCapsule> {
-    public StatesHandler(Instance curInst, DatabaseHandler database) {
+    public StatesHandler(ProgramInstance curInst, DatabaseHandler database) {
         super(curInst, database);
     }
 

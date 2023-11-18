@@ -1,16 +1,16 @@
 package com.donny.dendrofinance.gui.menu.trading;
 
+import com.donny.dendrofinance.capsules.totals.Position;
 import com.donny.dendrofinance.currency.LCurrency;
 import com.donny.dendrofinance.currency.LInventory;
 import com.donny.dendrofinance.currency.LStock;
-import com.donny.dendrofinance.capsules.totals.Position;
-import com.donny.dendrofinance.gui.MainGui;
-import com.donny.dendrofinance.gui.customswing.DendroFactory;
-import com.donny.dendrofinance.gui.customswing.RegisterFrame;
-import com.donny.dendrofinance.gui.form.Validation;
-import com.donny.dendrofinance.gui.form.ValidationFailedException;
-import com.donny.dendrofinance.instance.Instance;
-import com.donny.dendrofinance.types.LDate;
+import com.donny.dendrofinance.gui.ProgramMainGui;
+import com.donny.dendrofinance.gui.customswing.ProgramRegisterFrame;
+import com.donny.dendrofinance.instance.ProgramInstance;
+import com.donny.dendroroot.gui.customswing.DendroFactory;
+import com.donny.dendroroot.gui.form.Validation;
+import com.donny.dendroroot.gui.form.ValidationFailedException;
+import com.donny.dendroroot.types.LDate;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -19,11 +19,11 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class PositionGui extends RegisterFrame {
+public class PositionGui extends ProgramRegisterFrame {
     private final JTextField DATE;
     private final DefaultTableModel TABLE_ACCESS;
 
-    public PositionGui(MainGui caller, Instance curInst) {
+    public PositionGui(ProgramMainGui caller, ProgramInstance curInst) {
         super(caller, "Trading Position", curInst);
 
         //Draw Gui

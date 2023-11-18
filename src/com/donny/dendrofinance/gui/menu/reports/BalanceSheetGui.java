@@ -3,16 +3,16 @@ package com.donny.dendrofinance.gui.menu.reports;
 import com.donny.dendrofinance.account.Account;
 import com.donny.dendrofinance.account.AccountType;
 import com.donny.dendrofinance.account.BroadAccountType;
-import com.donny.dendrofinance.gui.MainGui;
-import com.donny.dendrofinance.gui.customswing.DateRange;
-import com.donny.dendrofinance.gui.customswing.DendroFactory;
-import com.donny.dendrofinance.gui.customswing.RegisterFrame;
-import com.donny.dendrofinance.gui.form.Cleaning;
-import com.donny.dendrofinance.gui.form.Validation;
-import com.donny.dendrofinance.gui.form.ValidationFailedException;
-import com.donny.dendrofinance.instance.Instance;
-import com.donny.dendrofinance.types.LDate;
-import com.donny.dendrofinance.util.Aggregation;
+import com.donny.dendrofinance.gui.ProgramMainGui;
+import com.donny.dendrofinance.gui.customswing.ProgramRegisterFrame;
+import com.donny.dendrofinance.instance.ProgramInstance;
+import com.donny.dendroroot.collections.DecimalAggregation;
+import com.donny.dendroroot.gui.customswing.DateRange;
+import com.donny.dendroroot.gui.customswing.DendroFactory;
+import com.donny.dendroroot.gui.form.Cleaning;
+import com.donny.dendroroot.gui.form.Validation;
+import com.donny.dendroroot.gui.form.ValidationFailedException;
+import com.donny.dendroroot.types.LDate;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -22,12 +22,12 @@ import java.awt.event.KeyEvent;
 import java.math.BigDecimal;
 import java.util.HashMap;
 
-public class BalanceSheetGui extends RegisterFrame {
+public class BalanceSheetGui extends ProgramRegisterFrame {
     private final JTextField DATE, SEARCH, THRESH;
     private final DateRange RANGE;
     private final DefaultTableModel TABLE_ACCESS;
 
-    public BalanceSheetGui(MainGui caller, boolean diff, Instance curInst) {
+    public BalanceSheetGui(ProgramMainGui caller, boolean diff, ProgramInstance curInst) {
         super(caller, diff ? "Change in Accounts" : "Balance Sheet", curInst);
         //draw gui
         {
@@ -191,7 +191,7 @@ public class BalanceSheetGui extends RegisterFrame {
         }
         LDate now = LDate.now(curInst);
         DATE.setText(now.toDateString());
-        RANGE.initDefault(CURRENT_INSTANCE);
+        RANGE.initRange(CURRENT_INSTANCE.range, CURRENT_INSTANCE);
         updateTable(diff);
         pack();
         Dimension d = Toolkit.getDefaultToolkit().getScreenSize();
@@ -207,8 +207,8 @@ public class BalanceSheetGui extends RegisterFrame {
             if (range != null) {
                 HashMap<Account, BigDecimal> accBegin = CURRENT_INSTANCE.DATA_HANDLER.accountsAsOf(range[0]);
                 HashMap<Account, BigDecimal> accEnd = CURRENT_INSTANCE.DATA_HANDLER.accountsAsOf(range[1]);
-                Aggregation<AccountType> accTyp = new Aggregation<>();
-                Aggregation<BroadAccountType> typ = new Aggregation<>();
+                DecimalAggregation<AccountType> accTyp = new DecimalAggregation<>();
+                DecimalAggregation<BroadAccountType> typ = new DecimalAggregation<>();
                 for (Account a : CURRENT_INSTANCE.ACCOUNTS) {
                     if (accBegin.containsKey(a) || accEnd.containsKey(a)) {
                         BigDecimal compare = BigDecimal.ONE;
@@ -304,8 +304,8 @@ public class BalanceSheetGui extends RegisterFrame {
             try {
                 LDate date = LDate.endDay(Validation.validateDate(DATE, CURRENT_INSTANCE));
                 HashMap<Account, BigDecimal> acc = CURRENT_INSTANCE.DATA_HANDLER.accountsAsOf(date);
-                Aggregation<AccountType> accTyp = new Aggregation<>();
-                Aggregation<BroadAccountType> typ = new Aggregation<>();
+                DecimalAggregation<AccountType> accTyp = new DecimalAggregation<>();
+                DecimalAggregation<BroadAccountType> typ = new DecimalAggregation<>();
                 for (Account a : CURRENT_INSTANCE.ACCOUNTS) {
                     if (acc.containsKey(a)) {
                         BigDecimal compare = BigDecimal.ONE;

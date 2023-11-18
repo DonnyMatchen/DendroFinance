@@ -5,14 +5,14 @@ import com.donny.dendrofinance.account.BroadAccountType;
 import com.donny.dendrofinance.currency.LCurrency;
 import com.donny.dendrofinance.currency.LInventory;
 import com.donny.dendrofinance.currency.LStock;
-import com.donny.dendrofinance.gui.MainGui;
-import com.donny.dendrofinance.gui.customswing.DendroFactory;
-import com.donny.dendrofinance.gui.customswing.RegisterFrame;
-import com.donny.dendrofinance.gui.customswing.SearchBox;
-import com.donny.dendrofinance.gui.form.Validation;
-import com.donny.dendrofinance.gui.form.ValidationFailedException;
-import com.donny.dendrofinance.instance.Instance;
-import com.donny.dendrofinance.types.LDate;
+import com.donny.dendrofinance.gui.BTCSearchBox;
+import com.donny.dendrofinance.gui.ProgramMainGui;
+import com.donny.dendrofinance.gui.customswing.ProgramRegisterFrame;
+import com.donny.dendrofinance.instance.ProgramInstance;
+import com.donny.dendroroot.gui.customswing.DendroFactory;
+import com.donny.dendroroot.gui.form.Validation;
+import com.donny.dendroroot.gui.form.ValidationFailedException;
+import com.donny.dendroroot.types.LDate;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -22,12 +22,12 @@ import java.awt.event.KeyEvent;
 import java.math.BigDecimal;
 import java.util.HashMap;
 
-public class AssetStatusGui extends RegisterFrame {
+public class AssetStatusGui extends ProgramRegisterFrame {
     private final JTextField DATE;
-    private final SearchBox<LCurrency> CURRENCY;
+    private final BTCSearchBox<LCurrency> CURRENCY;
     private final DefaultTableModel TABLE_ACCESS;
 
-    public AssetStatusGui(MainGui caller, Instance curInst) {
+    public AssetStatusGui(ProgramMainGui caller, ProgramInstance curInst) {
         super(caller, "Market Asset Status", curInst);
         //draw gui
         {
@@ -43,7 +43,7 @@ public class AssetStatusGui extends RegisterFrame {
                 }
             });
 
-            CURRENCY = new SearchBox<>("Currency", curInst.getAllAssets(), CURRENT_INSTANCE);
+            CURRENCY = new BTCSearchBox<>("Currency", curInst.getAllAssets(), CURRENT_INSTANCE);
 
             JButton enter = DendroFactory.getButton("Enter");
             enter.addActionListener(event -> enterAction(getCurrency()));

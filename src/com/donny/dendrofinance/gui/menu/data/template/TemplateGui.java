@@ -1,20 +1,20 @@
 package com.donny.dendrofinance.gui.menu.data.template;
 
-import com.donny.dendrofinance.gui.MainGui;
-import com.donny.dendrofinance.gui.customswing.AlertGui;
-import com.donny.dendrofinance.gui.customswing.DendroFactory;
-import com.donny.dendrofinance.gui.customswing.RegisterFrame;
-import com.donny.dendrofinance.instance.Instance;
+import com.donny.dendrofinance.gui.ProgramMainGui;
+import com.donny.dendrofinance.gui.customswing.ProgramRegisterFrame;
+import com.donny.dendrofinance.instance.ProgramInstance;
+import com.donny.dendroroot.gui.customswing.AlertGui;
+import com.donny.dendroroot.gui.customswing.DendroFactory;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 
-public class TemplateGui extends RegisterFrame {
+public class TemplateGui extends ProgramRegisterFrame {
     private final JTable TABLE;
     private final DefaultTableModel TABLE_ACCESS;
 
-    public TemplateGui(MainGui caller, Instance curInst) {
+    public TemplateGui(ProgramMainGui caller, ProgramInstance curInst) {
         super(caller, "Templates", curInst);
 
         //draw gui

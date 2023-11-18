@@ -1,22 +1,22 @@
 package com.donny.dendrofinance.gui.menu.file;
 
-import com.donny.dendrofinance.gui.MainGui;
-import com.donny.dendrofinance.gui.customswing.DateRange;
-import com.donny.dendrofinance.gui.customswing.DendroFactory;
-import com.donny.dendrofinance.gui.customswing.RegisterFrame;
-import com.donny.dendrofinance.instance.Instance;
-import com.donny.dendrofinance.types.LDate;
+import com.donny.dendrofinance.gui.ProgramMainGui;
+import com.donny.dendrofinance.gui.customswing.ProgramRegisterFrame;
+import com.donny.dendrofinance.instance.ProgramInstance;
+import com.donny.dendroroot.gui.customswing.DateRange;
+import com.donny.dendroroot.gui.customswing.DendroFactory;
+import com.donny.dendroroot.types.LDate;
 
 import javax.swing.*;
 import java.awt.*;
 
-public class ExportGui extends RegisterFrame {
+public class ExportGui extends ProgramRegisterFrame {
     private final DateRange RANGE;
     private final JTextField NAME;
     private final JComboBox<String> TYPE;
     private final JCheckBox TRANSACTION, BUDGET, TEMPLATE, STATE;
 
-    public ExportGui(MainGui caller, Instance curInst) {
+    public ExportGui(ProgramMainGui caller, ProgramInstance curInst) {
         super(caller, "Export", curInst);
 
         //draw gui
@@ -138,7 +138,7 @@ public class ExportGui extends RegisterFrame {
             }
         }
         TRANSACTION.setSelected(true);
-        RANGE.initDefault(CURRENT_INSTANCE);
+        RANGE.initRange(CURRENT_INSTANCE.range, CURRENT_INSTANCE);
         pack();
         Dimension d = Toolkit.getDefaultToolkit().getScreenSize();
         setLocation(d.width / 2 - getWidth() / 2, d.height / 2 - getHeight() / 2);

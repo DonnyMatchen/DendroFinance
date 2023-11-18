@@ -1,22 +1,22 @@
 package com.donny.dendrofinance.currency;
 
-import com.donny.dendrofinance.instance.Instance;
-import com.donny.dendrofinance.json.JsonDecimal;
-import com.donny.dendrofinance.json.JsonFormattingException;
-import com.donny.dendrofinance.json.JsonObject;
-import com.donny.dendrofinance.json.JsonString;
+import com.donny.dendrofinance.instance.ProgramInstance;
+import com.donny.dendroroot.json.JsonDecimal;
+import com.donny.dendroroot.json.JsonFormattingException;
+import com.donny.dendroroot.json.JsonObject;
+import com.donny.dendroroot.json.JsonString;
 
 import java.math.BigDecimal;
 
 public class LStock extends LCurrency {
     private final boolean PUBLIC;
 
-    public LStock(String name, String ticker, boolean publik, BigDecimal factor, boolean dead, Instance curInst) {
+    public LStock(String name, String ticker, boolean publik, BigDecimal factor, boolean dead, ProgramInstance curInst) {
         super(name, ticker, false, "§", true, 6, factor, "", false, dead, curInst);
         PUBLIC = publik;
     }
 
-    public LStock(JsonObject obj, Instance curInst) {
+    public LStock(JsonObject obj, ProgramInstance curInst) {
         this(
                 obj.getString("name").getString(),
                 obj.getString("tic").getString(),

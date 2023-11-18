@@ -693,7 +693,7 @@ public class NewTransactionEntryGui extends ProgramModalFrame {
                             if (flag) {
                                 JsonObject obj = new JsonObject();
                                 if (
-                                        tableAccess.getValueAt(i, 0).toString().equals("")
+                                        tableAccess.getValueAt(i, 0).toString().isEmpty()
                                                 || tableAccess.getValueAt(i, 0).toString().equalsIgnoreCase("null")
                                                 || tableAccess.getValueAt(i, 0).toString().equalsIgnoreCase("outstanding")
                                 ) {

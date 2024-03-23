@@ -1,7 +1,7 @@
 package com.donny.dendrofinance.gui.menu.util;
 
 import com.donny.dendrofinance.currency.LCurrency;
-import com.donny.dendrofinance.gui.BTCSearchBox;
+import com.donny.dendrofinance.gui.customswing.BTCSearchBox;
 import com.donny.dendrofinance.gui.ProgramMainGui;
 import com.donny.dendrofinance.gui.customswing.ProgramRegisterFrame;
 import com.donny.dendrofinance.instance.ProgramInstance;

@@ -1,4 +1,4 @@
-package com.donny.dendrofinance.gui;
+package com.donny.dendrofinance.gui.customswing;
 
 import com.donny.dendrofinance.data.backingtable.BackingTableCore;
 import com.donny.dendrofinance.instance.ProgramInstance;

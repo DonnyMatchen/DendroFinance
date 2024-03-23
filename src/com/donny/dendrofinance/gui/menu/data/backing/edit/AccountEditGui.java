@@ -5,7 +5,7 @@ import com.donny.dendrofinance.account.AccountType;
 import com.donny.dendrofinance.account.Exchange;
 import com.donny.dendrofinance.currency.LCurrency;
 import com.donny.dendrofinance.data.backingtable.BackingTableCore;
-import com.donny.dendrofinance.gui.BTCSearchBox;
+import com.donny.dendrofinance.gui.customswing.BTCSearchBox;
 import com.donny.dendrofinance.gui.menu.data.backing.BackingTableGui;
 import com.donny.dendrofinance.instance.ProgramInstance;
 import com.donny.dendroroot.gui.customswing.DendroFactory;

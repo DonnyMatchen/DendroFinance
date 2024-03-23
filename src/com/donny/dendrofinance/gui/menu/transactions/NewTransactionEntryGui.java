@@ -5,7 +5,7 @@ import com.donny.dendrofinance.capsules.TemplateCapsule;
 import com.donny.dendrofinance.capsules.TransactionCapsule;
 import com.donny.dendrofinance.currency.LCurrency;
 import com.donny.dendrofinance.fileio.ImportHandler;
-import com.donny.dendrofinance.gui.BTCSearchBox;
+import com.donny.dendrofinance.gui.customswing.BTCSearchBox;
 import com.donny.dendrofinance.gui.ProgramMainGui;
 import com.donny.dendrofinance.gui.customswing.ProgramModalFrame;
 import com.donny.dendrofinance.gui.customswing.SizeFilter;

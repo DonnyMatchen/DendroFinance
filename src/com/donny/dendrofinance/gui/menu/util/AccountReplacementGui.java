@@ -4,7 +4,7 @@ import com.donny.dendrofinance.account.AWColumn;
 import com.donny.dendrofinance.account.Account;
 import com.donny.dendrofinance.account.AccountWrapper;
 import com.donny.dendrofinance.capsules.TransactionCapsule;
-import com.donny.dendrofinance.gui.BTCSearchBox;
+import com.donny.dendrofinance.gui.customswing.BTCSearchBox;
 import com.donny.dendrofinance.gui.ProgramMainGui;
 import com.donny.dendrofinance.gui.customswing.ProgramRegisterFrame;
 import com.donny.dendrofinance.instance.ProgramInstance;

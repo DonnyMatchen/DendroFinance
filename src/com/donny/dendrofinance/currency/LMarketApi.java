@@ -980,7 +980,8 @@ public class LMarketApi implements UniqueName, Serializable {
                         DATE == null ? "" : new LDate(DATE.getTime() - 604800000, NAT.CURRENT_INSTANCE).getMonthString();
                 case "@day-seven@" ->
                         DATE == null ? "" : new LDate(DATE.getTime() - 604800000, NAT.CURRENT_INSTANCE).getDay() < 10 ?
-                                "0" + DATE.getDay() : String.valueOf(DATE.getDay());
+                                "0" + new LDate(DATE.getTime() - 604800000, NAT.CURRENT_INSTANCE).getDay() :
+                                String.valueOf(new LDate(DATE.getTime() - 604800000, NAT.CURRENT_INSTANCE).getDay());
                 case "@epoch-seven@" -> DATE == null ? "" : String.valueOf(DATE.getTime() - 604800000);
                 case "@epoch-second-seven@" -> DATE == null ? "" : String.valueOf((DATE.getTime() / 1000) - 604800);
                 case "@epoch-second-m-seven@" -> DATE == null ? "" : String.valueOf((DATE.getTime() / 1000) - 604801);
@@ -1023,6 +1024,17 @@ public class LMarketApi implements UniqueName, Serializable {
                 "@epoch-second-m@",
                 "@epoch-day@",
                 "@epoch-day-m@",
+                "@year-seven@",
+                "@year-2-seven@",
+                "@month-seven@",
+                "@month-str-seven@",
+                "@month-long-seven@",
+                "@day-seven@",
+                "@epoch-seven@",
+                "@epoch-second-seven@",
+                "@epoch-second-m-seven@",
+                "@epoch-day-seven@",
+                "@epoch-day-m-seven@",
                 "@key@"
         ));
         protected final ArrayList<LCurrency> SEARCHES;
@@ -1094,6 +1106,27 @@ public class LMarketApi implements UniqueName, Serializable {
                 case "@epoch-second-m@" -> DATE == null ? "" : String.valueOf(DATE.getTime() / 1000 - 1);
                 case "@epoch-day@" -> DATE == null ? "" : String.valueOf(DATE.getTime() / 86400000);
                 case "@epoch-day-m@" -> DATE == null ? "" : String.valueOf(DATE.getTime() / 86400000 - 1);
+                case "@year-seven@" ->
+                        DATE == null ? "" : String.valueOf(new LDate(DATE.getTime() - 604800000, NAT.CURRENT_INSTANCE).getYear());
+                case "@year-2-seven@" ->
+                        DATE == null ? "" : String.valueOf(new LDate(DATE.getTime() - 604800000, NAT.CURRENT_INSTANCE).getYear() % 100);
+                case "@month-seven@" ->
+                        DATE == null ? "" : new LDate(DATE.getTime() - 604800000, NAT.CURRENT_INSTANCE).getMonth() < 10 ?
+                                "0" + new LDate(DATE.getTime() - 604800000, NAT.CURRENT_INSTANCE).getMonth() :
+                                String.valueOf(new LDate(DATE.getTime() - 604800000, NAT.CURRENT_INSTANCE).getMonth());
+                case "@month-str-seven@" ->
+                        DATE == null ? "" : new LDate(DATE.getTime() - 604800000, NAT.CURRENT_INSTANCE).getMonthStringShort();
+                case "@month-long-seven@" ->
+                        DATE == null ? "" : new LDate(DATE.getTime() - 604800000, NAT.CURRENT_INSTANCE).getMonthString();
+                case "@day-seven@" ->
+                        DATE == null ? "" : new LDate(DATE.getTime() - 604800000, NAT.CURRENT_INSTANCE).getDay() < 10 ?
+                                "0" + new LDate(DATE.getTime() - 604800000, NAT.CURRENT_INSTANCE).getDay() :
+                                String.valueOf(new LDate(DATE.getTime() - 604800000, NAT.CURRENT_INSTANCE).getDay());
+                case "@epoch-seven@" -> DATE == null ? "" : String.valueOf(DATE.getTime() - 604800000);
+                case "@epoch-second-seven@" -> DATE == null ? "" : String.valueOf((DATE.getTime() / 1000) - 604800);
+                case "@epoch-second-m-seven@" -> DATE == null ? "" : String.valueOf((DATE.getTime() / 1000) - 604801);
+                case "@epoch-day-seven@" -> DATE == null ? "" : String.valueOf((DATE.getTime() / 86400000) - 7);
+                case "@epoch-day-m-seven@" -> DATE == null ? "" : String.valueOf((DATE.getTime() / 86400000) - 8);
                 case "@key@" -> KEY;
                 default -> "";
             };

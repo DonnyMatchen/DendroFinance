@@ -63,6 +63,17 @@ TOKENS:
 @epoch-second-m@ - the date as a number of seconds since 00:00:00 01/01/1970 UTC +0, subtracted by 1
 @epoch-day@ - the date as a number of days since 00:00:00 01/01/1970 UTC +0
 @epoch-day-m@ - the date as a number of days since 00:00:00 01/01/1970 UTC +0, subtracted by 1
+@year-seven@ - the year 7 days before the base date as a four-digit number
+@year-2-seven@ - the year 7 days before the base date as a two-digit number
+@month-seven@ - the month 7 days before the base date as a two-digit integer
+@month-str-seven@ - the month 7 days before the base date as a three character string
+@month-long-seven@ - the month 7 days before the base date as a full length word
+@day-seven@ - the day 7 days before the base date as a two-digit string
+@epoch-seven@ - the date 7 days before the base date as a number of milliseconds since 00:00:00 01/01/1970 UTC +0
+@epoch-second-seven@ - the date 7 days before the base date as a number of seconds since 00:00:00 01/01/1970 UTC +0
+@epoch-second-m-seven@ - the date 7 days before the base date as a number of seconds since 00:00:00 01/01/1970 UTC +0, subtracted by 1
+@epoch-day-seven@ - the date 7 days before the base date as a number of days since 00:00:00 01/01/1970 UTC +0
+@epoch-day-m-seven@ - the date 7 days before the base date as a number of days since 00:00:00 01/01/1970 UTC +0, subtracted by 1
 @key@ - the API key
 
 Regular Search:

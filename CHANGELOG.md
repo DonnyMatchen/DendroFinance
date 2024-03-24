@@ -3,6 +3,11 @@
 * cash flow
 * statistics gui replacement
 
+## v0.11.6
+* added new tokens to Market APIs
+  * added "last week" time options
+* moved `BTCSearchBox` to `gui.customswing`
+
 ## v0.11.5
 * added character limits matching database field sizes
 * the date on a transaction can now be updated

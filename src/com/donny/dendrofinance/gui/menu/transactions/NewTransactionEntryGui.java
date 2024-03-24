@@ -1,15 +1,13 @@
 package com.donny.dendrofinance.gui.menu.transactions;
 
-import com.donny.dendrofinance.account.Account;
 import com.donny.dendrofinance.capsules.TemplateCapsule;
 import com.donny.dendrofinance.capsules.TransactionCapsule;
 import com.donny.dendrofinance.currency.LCurrency;
 import com.donny.dendrofinance.fileio.ImportHandler;
-import com.donny.dendrofinance.gui.customswing.BTCSearchBox;
 import com.donny.dendrofinance.gui.ProgramMainGui;
+import com.donny.dendrofinance.gui.customswing.AccountsFrame;
 import com.donny.dendrofinance.gui.customswing.ProgramModalFrame;
 import com.donny.dendrofinance.gui.customswing.SizeFilter;
-import com.donny.dendrofinance.gui.form.ProgramValidation;
 import com.donny.dendrofinance.instance.ProgramInstance;
 import com.donny.dendroroot.gui.customswing.DendroFactory;
 import com.donny.dendroroot.gui.form.Cleaning;
@@ -31,7 +29,8 @@ public class NewTransactionEntryGui extends ProgramModalFrame {
     public final long UUID;
     public final boolean CLONE;
     private final JTextField DATE, ENT;
-    private final JTextArea ITM, DESC, ACC;
+    private final JTextArea ITM, DESC;
+    private final AccountsFrame ACC;
 
     private final JComboBox<String> TYPE;
     private final JTextArea META;
@@ -75,55 +74,13 @@ public class NewTransactionEntryGui extends ProgramModalFrame {
                 JScrollPane descScroll = DendroFactory.getLongField();
                 DESC = (JTextArea) descScroll.getViewport().getView();
                 SizeFilter.install(DESC, 255);
-                JScrollPane accScroll = DendroFactory.getLongField();
-                ACC = (JTextArea) accScroll.getViewport().getView();
-                ACC.setText("{}");
-                SizeFilter.install(ACC, 1024);
+
+                ACC = new AccountsFrame(CURRENT_INSTANCE);
 
                 JButton insert = DendroFactory.getButton("Save");
                 insert.addActionListener(event -> insertAction());
                 JButton cancel = DendroFactory.getButton("Cancel");
                 cancel.addActionListener(event -> dispose());
-
-                JComboBox<String> type = new JComboBox<>();
-                type.addItem("Debit");
-                type.addItem("Credit");
-                type.addItem("Ghost");
-                type.addItem("Tracking");
-                JTextField amount = new JTextField();
-                BTCSearchBox<Account> account = new BTCSearchBox<>("Account", CURRENT_INSTANCE.getDCAccounts(), CURRENT_INSTANCE);
-                column = 0;
-                type.addItemListener(event -> {
-                    int x = type.getSelectedIndex();
-                    switch (x) {
-                        case 0, 1 -> {
-                            if (column > 1) {
-                                account.setMaster(CURRENT_INSTANCE.getDCAccounts());
-                            }
-                        }
-                        case 2 -> account.setMaster(CURRENT_INSTANCE.getGhostAccounts());
-                        case 3 -> account.setMaster(CURRENT_INSTANCE.getTrackingAccounts());
-                        default -> account.setMaster(CURRENT_INSTANCE.ACCOUNTS);
-                    }
-                    column = x;
-                });
-                JButton addAcc = DendroFactory.getButton("Add");
-                addAcc.addActionListener(event -> {
-                    String acc = ACC.getText();
-                    if (acc.equals("{}") || !acc.contains("!")) {
-                        acc = "{" + ((String) type.getSelectedItem()).charAt(0) + "!" + account.getSelectedItem() +
-                                "(" + Cleaning.cleanNumber(amount.getText()) + ")}";
-                    } else {
-                        acc = acc.substring(0, acc.length() - 1) + ", " + ((String) type.getSelectedItem()).charAt(0) +
-                                "!" + account.getSelectedItem() + "(" + Cleaning.cleanNumber(amount.getText()) + ")}";
-                    }
-                    ACC.setText(acc);
-                    amount.setText("");
-                    if (type.getSelectedIndex() > 1) {
-                        type.setSelectedIndex(0);
-                    }
-                    account.clear();
-                });
 
                 JComboBox<TemplateCapsule> templates = new JComboBox<>();
                 CURRENT_INSTANCE.DATA_HANDLER.TEMPLATES.getTemplates().forEach(templates::addItem);
@@ -135,7 +92,7 @@ public class NewTransactionEntryGui extends ProgramModalFrame {
                         ENT.setText(capsule.getEntity());
                         ITM.setText(capsule.getItems());
                         DESC.setText(capsule.getDescription());
-                        ACC.setText(capsule.getAccounts().toString());
+                        ACC.load(capsule.getAccounts());
                         metaObject = capsule.getMeta();
                     }
                 });
@@ -147,6 +104,12 @@ public class NewTransactionEntryGui extends ProgramModalFrame {
                     main.setHorizontalGroup(
                             main.createSequentialGroup().addContainerGap().addGroup(
                                     main.createParallelGroup(GroupLayout.Alignment.CENTER).addGroup(
+                                            main.createSequentialGroup().addComponent(
+                                                    templates, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
+                                            ).addGap(DendroFactory.SMALL_GAP).addComponent(
+                                                    load, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                            )
+                                    ).addGroup(
                                             main.createSequentialGroup().addGroup(
                                                     main.createParallelGroup(GroupLayout.Alignment.TRAILING).addComponent(
                                                             a, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
@@ -156,8 +119,6 @@ public class NewTransactionEntryGui extends ProgramModalFrame {
                                                             c, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                                     ).addComponent(
                                                             d, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
-                                                    ).addComponent(
-                                                            e, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                                     )
                                             ).addGap(DendroFactory.SMALL_GAP).addGroup(
                                                     main.createParallelGroup(GroupLayout.Alignment.LEADING).addComponent(
@@ -168,25 +129,7 @@ public class NewTransactionEntryGui extends ProgramModalFrame {
                                                             itmScroll, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
                                                     ).addComponent(
                                                             descScroll, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
-                                                    ).addComponent(
-                                                            accScroll, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
                                                     )
-                                            )
-                                    ).addGroup(
-                                            main.createSequentialGroup().addComponent(
-                                                    account, 150, 150, Short.MAX_VALUE
-                                            ).addGap(DendroFactory.SMALL_GAP).addComponent(
-                                                    type, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
-                                            ).addGap(DendroFactory.SMALL_GAP).addComponent(
-                                                    amount, 150, 150, 150
-                                            ).addGap(DendroFactory.SMALL_GAP).addComponent(
-                                                    addAcc, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
-                                            )
-                                    ).addGroup(
-                                            main.createSequentialGroup().addComponent(
-                                                    templates, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
-                                            ).addGap(DendroFactory.SMALL_GAP).addComponent(
-                                                    load, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                             )
                                     ).addGroup(
                                             main.createSequentialGroup().addComponent(
@@ -225,22 +168,6 @@ public class NewTransactionEntryGui extends ProgramModalFrame {
                                             ).addComponent(
                                                     descScroll, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                             )
-                                    ).addGap(DendroFactory.SMALL_GAP).addGroup(
-                                            main.createParallelGroup(GroupLayout.Alignment.LEADING).addComponent(
-                                                    e, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
-                                            ).addComponent(
-                                                    accScroll, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
-                                            )
-                                    )
-                            ).addGap(DendroFactory.SMALL_GAP).addGroup(
-                                    main.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(
-                                            account, 150, 150, 150
-                                    ).addComponent(
-                                            type, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
-                                    ).addComponent(
-                                            amount, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
-                                    ).addComponent(
-                                            addAcc, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
                                     )
                             ).addGap(DendroFactory.LARGE_GAP).addGroup(
                                     main.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(
@@ -263,6 +190,52 @@ public class NewTransactionEntryGui extends ProgramModalFrame {
                 back.addTab("Transaction", tab);
             }
 
+            //accounts tab
+            {
+                JPanel tab = new JPanel();
+                tab.setBorder(null);
+
+                JScrollPane accScroll = DendroFactory.getScrollPane(false, true);
+                accScroll.setViewportView(ACC);
+
+                JButton insert = DendroFactory.getButton("Save");
+                insert.addActionListener(event -> insertAction());
+                JButton cancel = DendroFactory.getButton("Cancel");
+                cancel.addActionListener(event -> dispose());
+
+                GroupLayout main = new GroupLayout(tab);
+                tab.setLayout(main);
+                main.setHorizontalGroup(
+                        main.createSequentialGroup().addContainerGap().addGroup(
+                                main.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(
+                                        accScroll
+                                ).addGroup(
+                                        main.createSequentialGroup().addComponent(
+                                                cancel, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                        ).addGap(
+                                                DendroFactory.SMALL_GAP, DendroFactory.SMALL_GAP, Short.MAX_VALUE
+                                        ).addComponent(
+                                                insert, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                        )
+                                )
+                        ).addContainerGap()
+                );
+                main.setVerticalGroup(
+                        main.createSequentialGroup().addContainerGap().addComponent(
+                                accScroll
+                        ).addGap(DendroFactory.MEDIUM_GAP).addGroup(
+                                main.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(
+                                        cancel, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                ).addComponent(
+                                        insert, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                )
+                        ).addContainerGap()
+                );
+
+                back.addTab("Accounts", tab);
+            }
+
+
             //meta tab
             {
                 JPanel tab = new JPanel();
@@ -271,13 +244,13 @@ public class NewTransactionEntryGui extends ProgramModalFrame {
                 JLabel a = new JLabel("List");
                 JLabel b = new JLabel("Json");
 
-                JButton metaNew = DendroFactory.getButton("New");
+                JButton metaNew = DendroFactory.getButton("New Row");
                 metaNew.addActionListener(event -> mNewAction());
-                JButton update = DendroFactory.getButton("Update");
+                JButton update = DendroFactory.getButton("Update Table From Metadata");
                 update.addActionListener(event -> mUpdateAction());
-                JButton save = DendroFactory.getButton("Save");
+                JButton save = DendroFactory.getButton("Save Table to Metadata");
                 save.addActionListener(event -> mSaveAction());
-                JButton delete = DendroFactory.getButton("Delete");
+                JButton delete = DendroFactory.getButton("Delete Row");
                 delete.addActionListener(event -> mDeleteAction());
 
                 JScrollPane textPane = DendroFactory.getScrollField();
@@ -289,6 +262,11 @@ public class NewTransactionEntryGui extends ProgramModalFrame {
                 JScrollPane tablePane = DendroFactory.getTable(new String[]{}, new Object[][]{}, true);
                 TABLE = (JTable) tablePane.getViewport().getView();
                 tablePane.setViewportView(TABLE);
+
+                JButton insert = DendroFactory.getButton("Save");
+                insert.addActionListener(event -> insertAction());
+                JButton cancel = DendroFactory.getButton("Cancel");
+                cancel.addActionListener(event -> dispose());
 
                 //meta tab
                 {
@@ -320,6 +298,14 @@ public class NewTransactionEntryGui extends ProgramModalFrame {
                                             textPane, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
                                     ).addComponent(
                                             update, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE
+                                    ).addGroup(
+                                            main.createSequentialGroup().addComponent(
+                                                    cancel, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                            ).addGap(
+                                                    DendroFactory.SMALL_GAP, DendroFactory.SMALL_GAP, Short.MAX_VALUE
+                                            ).addComponent(
+                                                    insert, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                            )
                                     )
                             ).addContainerGap()
                     );
@@ -356,6 +342,14 @@ public class NewTransactionEntryGui extends ProgramModalFrame {
                                     DendroFactory.SMALL_GAP, DendroFactory.SMALL_GAP, DendroFactory.SMALL_GAP
                             ).addComponent(
                                     update, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                            ).addGap(
+                                    DendroFactory.SMALL_GAP, DendroFactory.SMALL_GAP, Short.MAX_VALUE
+                            ).addGroup(
+                                    main.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(
+                                            cancel, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                    ).addComponent(
+                                            insert, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE
+                                    )
                             ).addContainerGap()
                     );
                 }
@@ -373,7 +367,7 @@ public class NewTransactionEntryGui extends ProgramModalFrame {
             ENT.setText(capsule.getEntity());
             ITM.setText(capsule.getItems());
             DESC.setText(capsule.getDescription());
-            ACC.setText(capsule.getAccounts().toString());
+            ACC.load(capsule.getAccounts());
             metaObject = capsule.getMeta();
         }
         META.setText(metaObject.print());
@@ -527,7 +521,7 @@ public class NewTransactionEntryGui extends ProgramModalFrame {
                     Validation.validateString(ENT),
                     Validation.validateStringAllowEmpty(ITM),
                     Validation.validateStringAllowEmpty(DESC),
-                    ProgramValidation.validateAccountSet(ACC, CURRENT_INSTANCE)
+                    ACC.export()
             );
             capsule.setMeta(Validation.validateJsonObject(META));
             CURRENT_INSTANCE.DATA_HANDLER.TRANSACTIONS.add(capsule, ImportHandler.ImportMode.OVERWRITE);

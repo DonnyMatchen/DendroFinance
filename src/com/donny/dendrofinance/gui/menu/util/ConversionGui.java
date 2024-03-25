@@ -1,8 +1,8 @@
 package com.donny.dendrofinance.gui.menu.util;
 
 import com.donny.dendrofinance.currency.LCurrency;
-import com.donny.dendrofinance.gui.customswing.BTCSearchBox;
 import com.donny.dendrofinance.gui.ProgramMainGui;
+import com.donny.dendrofinance.gui.customswing.BTCSearchBox;
 import com.donny.dendrofinance.gui.customswing.ProgramRegisterFrame;
 import com.donny.dendrofinance.instance.ProgramInstance;
 import com.donny.dendroroot.gui.customswing.DendroFactory;
@@ -101,7 +101,7 @@ public class ConversionGui extends ProgramRegisterFrame {
     private void convertAction() {
         try {
             LDate date = Validation.validateDate(DATE, CURRENT_INSTANCE);
-            if (!DATE.getText().equals("") && !date.toDateString().equals(LDate.now(CURRENT_INSTANCE).toDateString())) {
+            if (!DATE.getText().isEmpty() && !date.toDateString().equals(LDate.now(CURRENT_INSTANCE).toDateString())) {
                 LCurrency a = CUR_A.getSelectedItem();
                 LCurrency b = CUR_B.getSelectedItem();
                 BigDecimal x = Cleaning.cleanNumber(AMOUNT.getText());

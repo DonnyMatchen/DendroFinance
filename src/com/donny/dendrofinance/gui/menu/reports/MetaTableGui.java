@@ -208,7 +208,7 @@ public class MetaTableGui extends ProgramRegisterFrame {
             LDate date = Validation.validateDate(DATE, CURRENT_INSTANCE);
             String identifier = (String) TABLE.getValueAt(row, 0);
             String name = (String) TABLE.getValueAt(row, 1);
-            if (identifier.equals("")) {
+            if (identifier.isEmpty()) {
                 tableCursorChanged(row - 1);
             } else {
                 INFO.setText(CORE.print(identifier, name, date));

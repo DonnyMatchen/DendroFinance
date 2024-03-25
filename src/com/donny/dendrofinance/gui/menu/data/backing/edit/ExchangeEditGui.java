@@ -162,7 +162,7 @@ public class ExchangeEditGui extends BackingEditGui<Exchange> {
         tText.setBackground(DendroFactory.CONTENT);
         try {
             Exchange exchange;
-            if (tText.getText().equals("")) {
+            if (tText.getText().isEmpty()) {
                 exchange = new Exchange(
                         Validation.validateString(name),
                         Validation.validateStringAllowEmpty(alt),
@@ -198,7 +198,7 @@ public class ExchangeEditGui extends BackingEditGui<Exchange> {
                         true
                 );
             }
-            if (!fText.getText().equals("")) {
+            if (!fText.getText().isEmpty()) {
                 exchange.FEE.clear();
                 exchange.FEE.addAll(Arrays.asList(Validation.validateString(fText).replace(" ", "").replace("\n", "").split(",")));
             }

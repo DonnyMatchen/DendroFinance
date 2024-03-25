@@ -250,7 +250,7 @@ public class BudgetGui extends ProgramRegisterFrame {
                             param, freq, CURRENT_INSTANCE))) {
                 if (!capsule.getDescription().contains("Net Income")) {
                     for (AccountWrapper wrapper : capsule.getAccounts()) {
-                        if (!wrapper.ACCOUNT.getBudgetType().equals("")) {
+                        if (!wrapper.ACCOUNT.getBudgetType().isEmpty()) {
                             BigDecimal val = wrapper.VALUE;
                             if (wrapper.COLUMN == AWColumn.DEBIT) {
                                 val = val.multiply(BigDecimal.valueOf(-1));
@@ -346,7 +346,7 @@ public class BudgetGui extends ProgramRegisterFrame {
                         if (capsule.getName().equals(budgetName)) {
                             flag = false;
                             for (Account account : CURRENT_INSTANCE.ACCOUNTS) {
-                                if (!account.getBudgetType().equals("")) {
+                                if (!account.getBudgetType().isEmpty()) {
                                     if (accRevExp.get(account).abs().add(capsule.getValue(account.getName()).abs()).compareTo(BigDecimal.ZERO) > 0) {
                                         VIEW_TABLE_ACCESS.addRow(new String[]{
                                                 account.getName(),
@@ -371,7 +371,7 @@ public class BudgetGui extends ProgramRegisterFrame {
                 }
                 if (flag) {
                     for (Account account : CURRENT_INSTANCE.ACCOUNTS) {
-                        if (!account.getBudgetType().equals("")) {
+                        if (!account.getBudgetType().isEmpty()) {
                             if (accRevExp.get(account).compareTo(BigDecimal.ZERO) != 0) {
                                 VIEW_TABLE_ACCESS.addRow(new String[]{
                                         account.getName(),
@@ -405,7 +405,7 @@ public class BudgetGui extends ProgramRegisterFrame {
             for (BudgetCapsule capsule : CURRENT_INSTANCE.DATA_HANDLER.BUDGETS.getBudgets()) {
                 if (capsule.getName().equals(pick)) {
                     for (Account account : CURRENT_INSTANCE.ACCOUNTS) {
-                        if (!account.getBudgetType().equals("")) {
+                        if (!account.getBudgetType().isEmpty()) {
                             EDIT_TABLE_ACCESS.addRow(new String[]{
                                     account.getName(),
                                     CURRENT_INSTANCE.$(capsule.getValue(account.getName()))

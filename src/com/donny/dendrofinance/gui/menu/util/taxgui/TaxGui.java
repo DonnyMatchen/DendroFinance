@@ -136,7 +136,7 @@ public class TaxGui extends ProgramRegisterFrame {
     }
 
     private void calculateAction() {
-        if (EXEMPT.getText().equals("")) {
+        if (EXEMPT.getText().isEmpty()) {
             RESULT.setText(CURRENT_INSTANCE.$(CURRENT_INSTANCE.TAX_ITEMS.getElement((String) ITEMS.getSelectedItem()).process(Cleaning.cleanNumber(VALUE.getText()))));
         } else {
             RESULT.setText(CURRENT_INSTANCE.$(CURRENT_INSTANCE.TAX_ITEMS.getElement((String) ITEMS.getSelectedItem()).process(Cleaning.cleanNumber(VALUE.getText()), Cleaning.cleanNumber(EXEMPT.getText()))));

@@ -83,7 +83,7 @@ public class PositionGui extends ProgramRegisterFrame {
             TABLE_ACCESS.removeRow(0);
         }
         LDate point = LDate.now(CURRENT_INSTANCE);
-        if (DATE.getText().equals("")) {
+        if (DATE.getText().isEmpty()) {
             try {
                 LDate date = Validation.validateDate(DATE, CURRENT_INSTANCE);
                 if (!date.toDateString().equals(point.toDateString())) {

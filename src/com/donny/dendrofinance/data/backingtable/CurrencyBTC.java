@@ -69,7 +69,7 @@ public class CurrencyBTC extends BackingTableCore<LCurrency> {
                 }
             }
             StringBuilder name = new StringBuilder(cur.getName());
-            if (!cur.getAltName().equals("")) {
+            if (!cur.getAltName().isEmpty()) {
                 name.append(" [").append(cur.getAltName()).append("]");
             }
             if (cur.isDead()) {

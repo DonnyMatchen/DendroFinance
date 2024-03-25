@@ -100,7 +100,7 @@ public class StateCapsule extends Capsule {
     }
 
     public boolean hasContents() {
-        return !(ACCOUNTS.size() == 0 && POSITIONS.size() == 0 && ASSETS.size() == 0 && LOANS.size() == 0);
+        return !(ACCOUNTS.isEmpty() && POSITIONS.isEmpty() && ASSETS.isEmpty() && LOANS.isEmpty());
     }
 
     public JsonObject exportAccounts() {

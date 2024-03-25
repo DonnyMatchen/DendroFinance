@@ -53,7 +53,7 @@ public class MarketApiBTC extends BackingTableCore<LMarketApi> {
         for (String key : KEYS) {
             LMarketApi item = MAP.get(key);
             out.add(new String[]{
-                    item.NAME, item.KEY.equals("") ? "" : "X", item.stocks() ? "X" : "",
+                    item.NAME, item.KEY.isEmpty() ? "" : "X", item.stocks() ? "X" : "",
                     item.fiatCurrencies() ? "X" : "", item.cryptocurrencies() ? "X" : "",
                     item.inventories() ? "X" : "",
             });

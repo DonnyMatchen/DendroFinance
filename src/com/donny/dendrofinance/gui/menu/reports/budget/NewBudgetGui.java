@@ -94,7 +94,7 @@ public class NewBudgetGui extends ProgramModalFrame {
     public void okAction() {
         boolean flag = true;
         BudgetCapsule template = null;
-        if (NAME.getText().equals("")) {
+        if (NAME.getText().isEmpty()) {
             flag = false;
         }
         if (flag) {

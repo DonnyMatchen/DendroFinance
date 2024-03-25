@@ -62,7 +62,7 @@ public class BudgetCapsule extends Capsule {
     public static JsonObject getEmptyBudget(ProgramInstance curInst) {
         JsonObject obj = new JsonObject();
         for (Account account : curInst.ACCOUNTS) {
-            if (!account.getBudgetType().equals("")) {
+            if (!account.getBudgetType().isEmpty()) {
                 obj.put(account.getName(), new JsonDecimal(BigDecimal.ZERO));
             }
         }

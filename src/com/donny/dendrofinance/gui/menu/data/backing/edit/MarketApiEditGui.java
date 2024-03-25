@@ -455,10 +455,10 @@ public class MarketApiEditGui extends BackingEditGui<LMarketApi> {
                         true,
                         CURRENT_INSTANCE
                 );
-                if (!pathM_.getText().equals("")) {
+                if (!pathM_.getText().isEmpty()) {
                     temp.resetMultiParsePath(new ArrayList<>(Arrays.asList(Validation.validateString(pathM_).replace(" ", "").split(","))));
                 }
-                if (!pathMH_.getText().equals("")) {
+                if (!pathMH_.getText().isEmpty()) {
                     temp.resetMultiParsePathHistory(new ArrayList<>(Arrays.asList(Validation.validateString(pathMH_).replace(" ", "").split(","))));
                 }
             } else {
@@ -473,14 +473,14 @@ public class MarketApiEditGui extends BackingEditGui<LMarketApi> {
                         CURRENT_INSTANCE
                 );
             }
-            if (!path_.getText().equals("")) {
+            if (!path_.getText().isEmpty()) {
                 temp.resetBaseParsePath(new ArrayList<>(Arrays.asList(Validation.validateString(path_).replace(" ", "").split(","))));
             }
-            if (!pathH_.getText().equals("")) {
+            if (!pathH_.getText().isEmpty()) {
                 temp.resetBaseParsePathHistory(new ArrayList<>(Arrays.asList(Validation.validateString(pathH_).replace(" ", "").split(","))));
             }
             ArrayList<LCurrency> list;
-            if (!nats_.getText().equals("")) {
+            if (!nats_.getText().isEmpty()) {
                 list = new ArrayList<>();
                 for (String s : Validation.validateString(nats_).replace(" ", "").split(",")) {
                     LCurrency c = CURRENT_INSTANCE.getLCurrency(s);
@@ -490,7 +490,7 @@ public class MarketApiEditGui extends BackingEditGui<LMarketApi> {
                 }
                 temp.resetNats(new ArrayList<>(list));
             }
-            if (!included_.getText().equals("")) {
+            if (!included_.getText().isEmpty()) {
                 list = new ArrayList<>();
                 for (String s : Validation.validateString(included_).replace(" ", "").split(",")) {
                     LCurrency c = CURRENT_INSTANCE.getLCurrency(s);
@@ -500,7 +500,7 @@ public class MarketApiEditGui extends BackingEditGui<LMarketApi> {
                 }
                 temp.resetIncluded(new ArrayList<>(list));
             }
-            if (!excluded_.getText().equals("")) {
+            if (!excluded_.getText().isEmpty()) {
                 list = new ArrayList<>();
                 for (String s : Validation.validateString(excluded_).replace(" ", "").split(",")) {
                     LCurrency c = CURRENT_INSTANCE.getLCurrency(s);

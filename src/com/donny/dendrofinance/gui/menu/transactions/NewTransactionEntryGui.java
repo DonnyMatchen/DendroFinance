@@ -36,7 +36,6 @@ public class NewTransactionEntryGui extends ProgramModalFrame {
     private final JTextArea META;
     private final JTable TABLE;
     public JsonObject metaObject;
-    private int column;
 
     public NewTransactionEntryGui(ProgramMainGui caller, ProgramInstance curInst) {
         this(caller, 0, false, curInst);
@@ -62,7 +61,6 @@ public class NewTransactionEntryGui extends ProgramModalFrame {
                 JLabel b = new JLabel("Entity");
                 JLabel c = new JLabel("Items");
                 JLabel d = new JLabel("Description");
-                JLabel e = new JLabel("Accounts");
 
                 DATE = new JTextField();
                 SizeFilter.install(DATE, 255);

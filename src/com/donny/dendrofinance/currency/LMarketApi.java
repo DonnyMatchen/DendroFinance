@@ -938,7 +938,7 @@ public class LMarketApi implements UniqueName, Serializable {
         }
 
         protected String getAlteredName(LCurrency currency) {
-            if (currency.getAltName().equals("")) {
+            if (currency.getAltName().isEmpty()) {
                 return currency.getName().toLowerCase().replace(" ", "-");
             } else {
                 return currency.getAltName();

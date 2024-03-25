@@ -101,7 +101,7 @@ public class ConversionGui extends ProgramRegisterFrame {
     private void convertAction() {
         try {
             LDate date = Validation.validateDate(DATE, CURRENT_INSTANCE);
-            if (!DATE.getText().equals("") && !date.toDateString().equals(LDate.now(CURRENT_INSTANCE).toDateString())) {
+            if (!DATE.getText().isEmpty() && !date.toDateString().equals(LDate.now(CURRENT_INSTANCE).toDateString())) {
                 LCurrency a = CUR_A.getSelectedItem();
                 LCurrency b = CUR_B.getSelectedItem();
                 BigDecimal x = Cleaning.cleanNumber(AMOUNT.getText());

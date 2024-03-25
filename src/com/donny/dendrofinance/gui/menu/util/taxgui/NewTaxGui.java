@@ -138,7 +138,7 @@ public class NewTaxGui extends ProgramModalFrame {
 
     private void saveAction(TaxGui caller) {
         TaxItem item;
-        if (BOUND.getText().equals("")) {
+        if (BOUND.getText().isEmpty()) {
             item = new TaxItem(
                     NAME.getText(),
                     new BigDecimal(EXEMPT.getText())

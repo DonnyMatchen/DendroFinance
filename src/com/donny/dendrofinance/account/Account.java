@@ -317,7 +317,7 @@ public class Account implements UniqueName, Serializable {
         if (EXCHANGE != null) {
             obj.put("exchange", new JsonString(EXCHANGE.NAME));
         }
-        if (!BUDGET.equals("")) {
+        if (!BUDGET.isEmpty()) {
             obj.put("budget", new JsonString(BUDGET));
         }
         return obj;

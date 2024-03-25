@@ -259,7 +259,7 @@ public class BalanceSheetGui extends ProgramRegisterFrame {
                         }
                     }
                 }
-                if (SEARCH.getText().equals("")) {
+                if (SEARCH.getText().isEmpty()) {
                     TABLE_ACCESS.addRow(new String[]{});
                     for (AccountType type : CURRENT_INSTANCE.ACCOUNT_TYPES) {
                         if (accTyp.containsKey(type)) {
@@ -344,7 +344,7 @@ public class BalanceSheetGui extends ProgramRegisterFrame {
                         }
                     }
                 }
-                if (SEARCH.getText().equals("")) {
+                if (SEARCH.getText().isEmpty()) {
                     TABLE_ACCESS.addRow(new String[]{});
                     for (AccountType type : CURRENT_INSTANCE.ACCOUNT_TYPES) {
                         if (accTyp.containsKey(type)) {

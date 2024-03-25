@@ -115,7 +115,7 @@ public class SmallSearchBox<E extends UniqueName> extends JPanel {
         return false;
     }
 
-    public boolean setSelectedItem(int index) {
+    public boolean setSelectedIndex(int index) {
         if (index < 0 || index >= LIST.getModel().getSize()) {
             return false;
         } else {

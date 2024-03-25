@@ -122,7 +122,7 @@ public class AppDepGui extends ProgramRegisterFrame {
             DATE.getDocument().addDocumentListener(new DocumentListener() {
                 private void sharedAction() {
                     try {
-                        if (!DATE.getText().equals("")) {
+                        if (!DATE.getText().isEmpty()) {
                             LDate date = Validation.validateDate(DATE, CURRENT_INSTANCE);
                             STOCK_CURRENT.setText(CURRENT_INSTANCE.main.encode(CURRENT_INSTANCE.DATA_HANDLER.accountAsOf(Account.stockName, date)));
                             CRYPTO_CURRENT.setText(CURRENT_INSTANCE.main.encode(CURRENT_INSTANCE.DATA_HANDLER.accountAsOf(Account.cryptoName, date)));

@@ -6,8 +6,7 @@ import com.donny.dendrofinance.account.AccountWrapper;
 import com.donny.dendrofinance.instance.ProgramInstance;
 import com.donny.dendrofinance.types.LAccountSet;
 import com.donny.dendroroot.gui.customswing.DendroFactory;
-import com.donny.dendroroot.gui.form.Validation;
-import com.donny.dendroroot.gui.form.ValidationFailedException;
+import com.donny.dendroroot.gui.form.Cleaning;
 
 import javax.swing.*;
 import java.util.ArrayList;
@@ -128,13 +127,13 @@ public class AccountsFrame extends JPanel {
         redraw();
     }
 
-    public LAccountSet export() throws ValidationFailedException {
+    public LAccountSet export() {
         LAccountSet set = new LAccountSet(CURRENT_INSTANCE);
         for (int i = 0; i < ACCOUNTS.size(); i++) {
             set.add(new AccountWrapper(
                     ACCOUNTS.get(i).getSelectedItem(),
                     AWColumn.fromString(((String) Objects.requireNonNull(COLUMNS.get(i).getSelectedItem())).charAt(0) + ""),
-                    Validation.validateDecimal(VALUES.get(i))
+                    Cleaning.cleanNumber(VALUES.get(i).getText())
             ));
         }
         return set;

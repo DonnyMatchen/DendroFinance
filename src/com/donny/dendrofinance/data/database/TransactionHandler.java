@@ -296,7 +296,7 @@ public class TransactionHandler extends TableHandler<Long, TransactionCapsule> {
             boolean flag = true;
             OUTER:
             for (String token : tokens) {
-                if (!token.equals("")) {
+                if (!token.isEmpty()) {
                     switch (token.charAt(0)) {
                         case '$' -> {
                             switch (token) {

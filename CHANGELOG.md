@@ -3,6 +3,12 @@
 * cash flow
 * statistics gui replacement
 
+## v0.12.0
+* major overhaul to `NewTransactionEntryGui`
+  * accounts moved to its own tab and made much more user friendly
+  * buttons on meta tab made clearer
+  * cancel and save are now on all three tabs
+
 ## v0.11.6
 * added new tokens to Market APIs
   * added "last week" time options
